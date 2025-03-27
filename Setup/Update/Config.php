@@ -408,6 +408,10 @@ class Config extends AbstractConfig
                 'DisableB2BForSomeAmazonMarketplaces',
                 'AddConditionDescriptorIntoEbayDescriptionTemplate',
             ],
+            'y25_m03' => [
+                'DeleteTemplateDescriptionIdColumnFromAmazonListingProductTable',
+                'AddCustomAttributeForConditionDescriptorIntoEbayDescriptionTemplate',
+            ],
         ];
     }
 
@@ -500,6 +504,8 @@ class Config extends AbstractConfig
 
             \Ess\M2ePro\Setup\Update\y25_m02\DisableB2BForSomeAmazonMarketplaces::class,
             \Ess\M2ePro\Setup\Update\y25_m02\AddConditionDescriptorIntoEbayDescriptionTemplate::class,
+
+            \Ess\M2ePro\Setup\Update\y25_m03\AddCustomAttributeForConditionDescriptorIntoEbayDescriptionTemplate::class,
         ];
     }
 

@@ -102,10 +102,21 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
             'condition_attribute',
             'condition_note_mode',
             'condition_note_template',
-            DescriptionResource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID,
-            DescriptionResource::COLUMN_CONDITION_GRADE_ID,
-            DescriptionResource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER,
-            DescriptionResource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID,
+            DescriptionResource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_MODE,
+            DescriptionResource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_VALUE,
+            DescriptionResource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_ATTRIBUTE,
+
+            DescriptionResource::COLUMN_CONDITION_GRADE_ID_MODE,
+            DescriptionResource::COLUMN_CONDITION_GRADE_ID_VALUE,
+            DescriptionResource::COLUMN_CONDITION_GRADE_ID_ATTRIBUTE,
+
+            DescriptionResource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_MODE,
+            DescriptionResource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_CUSTOM_VALUE,
+            DescriptionResource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_ATTRIBUTE,
+
+            DescriptionResource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_MODE,
+            DescriptionResource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_ATTRIBUTE,
+            DescriptionResource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_VALUE,
         ];
 
         return $this->isSettingsDifferent($keys);

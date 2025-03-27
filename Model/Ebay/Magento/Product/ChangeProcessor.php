@@ -38,6 +38,7 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
                 $this->getDescriptionTrackingAttributes(),
                 $this->getProductIdentifiersTrackingAttributes(),
                 $this->getImagesTrackingAttributes(),
+                $this->getConditionDescriptorAttributes(),
                 $this->getCategoriesTrackingAttributes(),
                 $this->getShippingTrackingAttributes(),
                 $this->getOtherTrackingAttributes()
@@ -79,7 +80,10 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
             ];
         }
 
-        if (array_intersect($attributes, $this->getDescriptionTrackingAttributes())) {
+        if (
+            array_intersect($attributes, $this->getDescriptionTrackingAttributes())
+            || array_intersect($attributes, $this->getConditionDescriptorAttributes())
+        ) {
             $priority = 5;
 
             if ($this->getListingProduct()->isListed()) {
@@ -192,6 +196,31 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
         );
 
         return array_unique($trackingAttributes);
+    }
+
+    public function getConditionDescriptorAttributes(): array
+    {
+        $attributes = [];
+        $template = $this->getEbayListingProduct()
+                         ->getEbayDescriptionTemplate();
+
+        if ($template->isConditionProfessionalGraderIdModeAttribute()) {
+            $attributes[] = $template->getConditionProfessionalGraderIdAttribute();
+        }
+
+        if ($template->isConditionGradeIdModeAttribute()) {
+            $attributes[] = $template->getConditionGradeIdAttribute();
+        }
+
+        if ($template->isConditionGradeCertificationModeAttribute()) {
+            $attributes[] = $template->getConditionGradeCertificationAttribute();
+        }
+
+        if ($template->isConditionGradeCardConditionModeAttribute()) {
+            $attributes[] = $template->getConditionGradeCardConditionIdAttribute();
+        }
+
+        return array_unique($attributes);
     }
 
     private function getProductIdentifiersTrackingAttributes(): array

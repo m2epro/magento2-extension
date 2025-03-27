@@ -5990,247 +5990,296 @@ class Installer
             \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_TEMPLATE_DESCRIPTION
         );
         $ebayTemplateDescriptionTable = $this->getConnection()
-                                             ->newTable($ebayTemplateDescriptionTableName)
-                                             ->addColumn(
-                                                 EbayTemplateDescription::COLUMN_TEMPLATE_DESCRIPTION_ID,
-                                                 Table::TYPE_INTEGER,
-                                                 null,
-                                                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
-                                             )
-                                             ->addColumn(
-                                                 'is_custom_template',
-                                                 Table::TYPE_SMALLINT,
-                                                 null,
-                                                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
-                                             )
-                                             ->addColumn(
-                                                 'title_mode',
-                                                 Table::TYPE_SMALLINT,
-                                                 null,
-                                                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                             )
-                                             ->addColumn(
-                                                 'title_template',
-                                                 Table::TYPE_TEXT,
-                                                 255,
-                                                 ['nullable' => false]
-                                             )
-                                             ->addColumn(
-                                                 'subtitle_mode',
-                                                 Table::TYPE_SMALLINT,
-                                                 null,
-                                                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                             )
-                                             ->addColumn(
-                                                 'subtitle_template',
-                                                 Table::TYPE_TEXT,
-                                                 255,
-                                                 ['nullable' => false]
-                                             )
-                                             ->addColumn(
-                                                 'description_mode',
-                                                 Table::TYPE_SMALLINT,
-                                                 null,
-                                                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                             )
-                                             ->addColumn(
-                                                 'description_template',
-                                                 Table::TYPE_TEXT,
-                                                 self::LONG_COLUMN_SIZE,
-                                                 ['nullable' => false]
-                                             )
-                                             ->addColumn(
-                                                 'condition_mode',
-                                                 Table::TYPE_SMALLINT,
-                                                 null,
-                                                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                             )
-                                             ->addColumn(
-                                                 'condition_value',
-                                                 Table::TYPE_INTEGER,
-                                                 null,
-                                                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                             )
-                                             ->addColumn(
-                                                 'condition_attribute',
-                                                 Table::TYPE_TEXT,
-                                                 255,
-                                                 ['nullable' => false]
-                                             )
-                                             ->addColumn(
-                                                 'condition_note_mode',
-                                                 Table::TYPE_SMALLINT,
-                                                 null,
-                                                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                             )
-                                             ->addColumn(
-                                                 EbayTemplateDescription::COLUMN_CONDITION_NOTE_TEMPLATE,
-                                                 Table::TYPE_TEXT,
-                                                 null,
-                                                 ['nullable' => false]
-                                             )
-                                             ->addColumn(
-                                                 EbayTemplateDescription::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID,
-                                                 Table::TYPE_INTEGER,
-                                                 null,
-                                                 ['unsigned' => true, 'nullable' => true]
-                                             )
-                                             ->addColumn(
-                                                 EbayTemplateDescription::COLUMN_CONDITION_GRADE_ID,
-                                                 Table::TYPE_INTEGER,
-                                                 null,
-                                                 ['unsigned' => true, 'nullable' => true]
-                                             )
-                                             ->addColumn(
-                                                 EbayTemplateDescription::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER,
-                                                 Table::TYPE_TEXT,
-                                                 255,
-                                                 ['nullable' => true]
-                                             )
-                                             ->addColumn(
-                                                 EbayTemplateDescription::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID,
-                                                 Table::TYPE_INTEGER,
-                                                 null,
-                                                 ['unsigned' => true, 'nullable' => true]
-                                             )
-                                             ->addColumn(
-                                                 'product_details',
-                                                 Table::TYPE_TEXT,
-                                                 null,
-                                                 ['default' => null]
-                                             )
-                                             ->addColumn(
-                                                 'cut_long_titles',
-                                                 Table::TYPE_SMALLINT,
-                                                 null,
-                                                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                             )
-                                             ->addColumn(
-                                                 'editor_type',
-                                                 Table::TYPE_SMALLINT,
-                                                 null,
-                                                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                             )
-                                             ->addColumn(
-                                                 'enhancement',
-                                                 Table::TYPE_TEXT,
-                                                 255,
-                                                 ['nullable' => false]
-                                             )
-                                             ->addColumn(
-                                                 'gallery_type',
-                                                 Table::TYPE_SMALLINT,
-                                                 null,
-                                                 ['unsigned' => true, 'nullable' => false, 'default' => 4]
-                                             )
-                                             ->addColumn(
-                                                 'image_main_mode',
-                                                 Table::TYPE_SMALLINT,
-                                                 null,
-                                                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                             )
-                                             ->addColumn(
-                                                 'image_main_attribute',
-                                                 Table::TYPE_TEXT,
-                                                 255,
-                                                 ['nullable' => false]
-                                             )
-                                             ->addColumn(
-                                                 'gallery_images_mode',
-                                                 Table::TYPE_SMALLINT,
-                                                 null,
-                                                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                             )
-                                             ->addColumn(
-                                                 'gallery_images_limit',
-                                                 Table::TYPE_SMALLINT,
-                                                 null,
-                                                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
-                                             )
-                                             ->addColumn(
-                                                 'gallery_images_attribute',
-                                                 Table::TYPE_TEXT,
-                                                 255,
-                                                 ['nullable' => false]
-                                             )
-                                             ->addColumn(
-                                                 'variation_images_mode',
-                                                 Table::TYPE_SMALLINT,
-                                                 null,
-                                                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
-                                             )
-                                             ->addColumn(
-                                                 'variation_images_limit',
-                                                 Table::TYPE_SMALLINT,
-                                                 null,
-                                                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
-                                             )
-                                             ->addColumn(
-                                                 'variation_images_attribute',
-                                                 Table::TYPE_TEXT,
-                                                 255,
-                                                 ['nullable' => false]
-                                             )
-                                             ->addColumn(
-                                                 'default_image_url',
-                                                 Table::TYPE_TEXT,
-                                                 255,
-                                                 ['default' => null]
-                                             )
-                                             ->addColumn(
-                                                 'variation_configurable_images',
-                                                 Table::TYPE_TEXT,
-                                                 null,
-                                                 ['default' => null]
-                                             )
-                                             ->addColumn(
-                                                 EbayTemplateDescription::COLUMN_USE_SUPERSIZE_IMAGES,
-                                                 Table::TYPE_SMALLINT,
-                                                 null,
-                                                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                             )
-                                             ->addColumn(
-                                                 EbayTemplateDescription::COLUMN_VIDEO_MODE,
-                                                 Table::TYPE_SMALLINT,
-                                                 null,
-                                                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                             )
-                                             ->addColumn(
-                                                 EbayTemplateDescription::COLUMN_VIDEO_ATTRIBUTE,
-                                                 Table::TYPE_TEXT,
-                                                 255,
-                                                 ['default' => null]
-                                             )
-                                             ->addColumn(
-                                                 'watermark_mode',
-                                                 Table::TYPE_SMALLINT,
-                                                 null,
-                                                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                             )
-                                             ->addColumn(
-                                                 'watermark_image',
-                                                 Table::TYPE_BLOB,
-                                                 self::LONG_COLUMN_SIZE,
-                                                 ['default' => null]
-                                             )
-                                             ->addColumn(
-                                                 'watermark_settings',
-                                                 Table::TYPE_TEXT,
-                                                 null,
-                                                 ['default' => null]
-                                             )
-                                             ->addColumn(
-                                                 EbayTemplateDescription::COLUMN_COMPLIANCE_DOCUMENTS,
-                                                 Table::TYPE_TEXT,
-                                                 null,
-                                                 ['default' => null]
-                                             )
-                                             ->addIndex('is_custom_template', 'is_custom_template')
-                                             ->setOption('type', 'INNODB')
-                                             ->setOption('charset', 'utf8')
-                                             ->setOption('collate', 'utf8_general_ci')
-                                             ->setOption('row_format', 'dynamic');
-        $this->getConnection()->createTable($ebayTemplateDescriptionTable);
+                                             ->newTable($ebayTemplateDescriptionTableName);
+        $ebayTemplateDescriptionTable->addColumn(
+            EbayTemplateDescription::COLUMN_TEMPLATE_DESCRIPTION_ID,
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'primary' => true, 'nullable' => false]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'is_custom_template',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 1]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'title_mode',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'title_template',
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => false]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'subtitle_mode',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'subtitle_template',
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => false]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'description_mode',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'description_template',
+            Table::TYPE_TEXT,
+            self::LONG_COLUMN_SIZE,
+            ['nullable' => false]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'condition_mode',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'condition_value',
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'condition_attribute',
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => false]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'condition_note_mode',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            EbayTemplateDescription::COLUMN_CONDITION_NOTE_TEMPLATE,
+            Table::TYPE_TEXT,
+            null,
+            ['nullable' => false]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            EbayTemplateDescription::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_VALUE,
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'nullable' => true]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            EbayTemplateDescription::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_MODE,
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            EbayTemplateDescription::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_ATTRIBUTE,
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => true]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            EbayTemplateDescription::COLUMN_CONDITION_GRADE_ID_VALUE,
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'nullable' => true]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            EbayTemplateDescription::COLUMN_CONDITION_GRADE_ID_MODE,
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            EbayTemplateDescription::COLUMN_CONDITION_GRADE_ID_ATTRIBUTE,
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => true]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            EbayTemplateDescription::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_CUSTOM_VALUE,
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => true]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            EbayTemplateDescription::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_MODE,
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            EbayTemplateDescription::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_ATTRIBUTE,
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => true]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            EbayTemplateDescription::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_VALUE,
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'nullable' => true]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            EbayTemplateDescription::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_MODE,
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            EbayTemplateDescription::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_ATTRIBUTE,
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => true]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'product_details',
+            Table::TYPE_TEXT,
+            null,
+            ['default' => null]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'cut_long_titles',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'editor_type',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'enhancement',
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => false]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'gallery_type',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 4]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'image_main_mode',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'image_main_attribute',
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => false]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'gallery_images_mode',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'gallery_images_limit',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 1]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'gallery_images_attribute',
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => false]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'variation_images_mode',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 1]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'variation_images_limit',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 1]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'variation_images_attribute',
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => false]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'default_image_url',
+            Table::TYPE_TEXT,
+            255,
+            ['default' => null]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'variation_configurable_images',
+            Table::TYPE_TEXT,
+            null,
+            ['default' => null]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            EbayTemplateDescription::COLUMN_USE_SUPERSIZE_IMAGES,
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            EbayTemplateDescription::COLUMN_VIDEO_MODE,
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            EbayTemplateDescription::COLUMN_VIDEO_ATTRIBUTE,
+            Table::TYPE_TEXT,
+            255,
+            ['default' => null]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'watermark_mode',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'watermark_image',
+            Table::TYPE_BLOB,
+            self::LONG_COLUMN_SIZE,
+            ['default' => null]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            'watermark_settings',
+            Table::TYPE_TEXT,
+            null,
+            ['default' => null]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            EbayTemplateDescription::COLUMN_COMPLIANCE_DOCUMENTS,
+            Table::TYPE_TEXT,
+            null,
+            ['default' => null]
+        );
+        $ebayTemplateDescriptionTable->addIndex('is_custom_template', 'is_custom_template');
+        $ebayTemplateDescriptionTable->setOption('type', 'INNODB');
+        $ebayTemplateDescriptionTable->setOption('charset', 'utf8');
+        $ebayTemplateDescriptionTable->setOption('collate', 'utf8_general_ci');
+        $ebayTemplateDescriptionTable->setOption('row_format', 'dynamic');
+        $this->getConnection()
+             ->createTable($ebayTemplateDescriptionTable);
         #endregion
 
         $ebayTemplateOtherCategoryTable = $this->getConnection()->newTable(
@@ -9551,12 +9600,6 @@ class Installer
         );
         $amazonListingProductTable->addColumn(
             'template_product_type_id',
-            Table::TYPE_INTEGER,
-            null,
-            ['unsigned' => true, 'default' => null]
-        );
-        $amazonListingProductTable->addColumn(
-            'template_description_id',
             Table::TYPE_INTEGER,
             null,
             ['unsigned' => true, 'default' => null]

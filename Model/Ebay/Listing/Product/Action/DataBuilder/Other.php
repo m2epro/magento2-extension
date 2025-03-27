@@ -69,9 +69,14 @@ class Other extends AbstractModel
 
     private function getConditionDescriptors(\Ess\M2ePro\Model\Ebay\Template\Description\Source $source): array
     {
-        $descriptors = [];
-        $conditionDescriptors = $source->getConditionDescriptors();
+        $this->searchNotFoundAttributes();
 
+        $conditionDescriptors = $source->getConditionDescriptors();
+        foreach ($conditionDescriptors['not_found_attributes'] as $attribute) {
+            $this->processNotFoundAttributes($attribute);
+        }
+
+        $descriptors = [];
         foreach ($conditionDescriptors['required_descriptors'] as $descriptorId => $gradeId) {
             $descriptors[] = [
                 'name' => (string)$descriptorId,

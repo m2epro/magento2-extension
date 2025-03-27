@@ -868,7 +868,7 @@ HTML
                 'name' => 'restock_date_value',
                 'label' => $this->__('Restock Date'),
                 'required' => true,
-                'date_format' => $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT),
+                'date_format' => $this->_localeDate->getDateFormatWithLongYear(),
                 'time_format' => $this->_localeDate->getTimeFormat(\IntlDateFormatter::SHORT),
                 'value' => $formData['restock_date_value'],
             ]

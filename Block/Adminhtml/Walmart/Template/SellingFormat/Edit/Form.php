@@ -799,7 +799,7 @@ HTML
                 'container_id' => 'sale_time_start_date_value_tr',
                 'label' => __('Start Date Value'),
                 'value' => $this->formData['sale_time_start_date_value'],
-                'date_format' => $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT),
+                'date_format' => $this->_localeDate->getDateFormatWithLongYear(),
                 'field_extra_attributes' => 'style="display: none;"',
             ]
         );
@@ -845,7 +845,7 @@ HTML
                 'container_id' => 'sale_time_end_date_value_tr',
                 'label' => __('End Date Value'),
                 'value' => $this->formData['sale_time_end_date_value'],
-                'date_format' => $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT),
+                'date_format' => $this->_localeDate->getDateFormatWithLongYear(),
                 'field_extra_attributes' => 'style="display: none;"',
             ]
         );

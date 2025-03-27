@@ -8,16 +8,11 @@ use Ess\M2ePro\Model\ResourceModel\Ebay\Template\Description as ResourceDescript
 
 class Data extends AbstractForm
 {
-    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
-    protected $magentoAttributeHelper;
-
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-
-    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
-    private $globalDataHelper;
-
-    private $attributes = [];
+    private \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper;
+    private \Ess\M2ePro\Helper\Data $dataHelper;
+    private \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper;
+    private array $attributes = [];
+    private ?array $allAttributesByTypes = null;
 
     public function __construct(
         \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
@@ -45,19 +40,7 @@ class Data extends AbstractForm
     protected function _prepareForm()
     {
         $attributesConfigurable = $this->magentoAttributeHelper->getAllConfigurable();
-
-        $allAttributesByTypes = [
-            'text' => $this->magentoAttributeHelper->filterByInputTypes($this->attributes, ['text']),
-            'text_textarea' => $this->magentoAttributeHelper->filterByInputTypes(
-                $this->attributes,
-                ['text', 'textarea']
-            ),
-            'text_select' => $this->magentoAttributeHelper->filterByInputTypes($this->attributes, ['text', 'select']),
-            'text_images' => $this->magentoAttributeHelper->filterByInputTypes(
-                $this->attributes,
-                ['text', 'image', 'media_image', 'gallery', 'multiline', 'textarea', 'select', 'multiselect']
-            ),
-        ];
+        $allAttributesByTypes = $this->getAllAttributesByTypes();
 
         $formData = $this->getFormData();
 
@@ -114,7 +97,6 @@ class Data extends AbstractForm
         );
 
         // region Conditions
-
         $conditions = [
             [
                 'label' => __('New, New with tags, New with box, Brand New'),
@@ -342,83 +324,13 @@ class Data extends AbstractForm
             ]
         );
 
-        $professionalGraderValues = ['' => __('None')];
-        foreach (Description::getConditionalProfessionalGraderIdLabelMap() as $id => $label) {
-            $professionalGraderValues[] = [
-                'value' => $id,
-                'label' => __($label),
-            ];
-        }
+        // for Graded Condition
+        $this->addToFieldsetConditionDescriptorIdProfessionalGraderId($fieldset, $formData);
+        $this->addToFieldsetConditionDescriptorGradeId($fieldset, $formData);
+        $this->addToFieldsetConditionDescriptorCertificationNumber($fieldset, $formData);
 
-        $fieldset->addField(
-            'condition_descriptor_professional_grader',
-            self::SELECT,
-            [
-                'container_id' => 'condition_descriptor_professional_grader_tr',
-                'label' => __('Professional Grader'),
-                'title' => __('Professional Grader'),
-                'name' => sprintf('description[%s]', ResourceDescription::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID),
-                'value' => $formData[ResourceDescription::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID],
-                'values' => $professionalGraderValues,
-                'required' => true,
-            ]
-        );
-
-        $gradeValues = ['' => __('None')];
-        foreach (Description::getConditionalGradeIdLabelMap() as $id => $label) {
-            $gradeValues[] = [
-                'value' => $id,
-                'label' => __($label),
-            ];
-        }
-
-        $fieldset->addField(
-            'condition_descriptor_grade',
-            self::SELECT,
-            [
-                'container_id' => 'condition_descriptor_grade_tr',
-                'label' => __('Grade'),
-                'title' => __('Grade'),
-                'name' => sprintf('description[%s]', ResourceDescription::COLUMN_CONDITION_GRADE_ID),
-                'value' => $formData[ResourceDescription::COLUMN_CONDITION_GRADE_ID],
-                'values' => $gradeValues,
-                'required' => true,
-            ]
-        );
-
-        $fieldset->addField(
-            'condition_descriptor_certification_number',
-            'text',
-            [
-                'container_id' => 'condition_descriptor_certification_number_tr',
-                'label' => __('Certification Number'),
-                'name' => sprintf('description[%s]', ResourceDescription::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER),
-                'value' => $formData[ ResourceDescription::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER],
-                'class' => 'M2ePro-validate-condition-descriptor-certification-number-length',
-            ]
-        );
-
-        $cardConditionValues = ['' => __('None')];
-        foreach (Description::getConditionalCardIdLabelMap() as $id => $val) {
-            $cardConditionValues[] = [
-                'value' => $id,
-                'label' => __($val),
-            ];
-        }
-
-        $fieldset->addField(
-            'condition_descriptor_card_condition',
-            self::SELECT,
-            [
-                'container_id' => 'condition_descriptor_card_condition_tr',
-                'label' => __('Card Condition'),
-                'title' => __('Card Condition'),
-                'name' => sprintf('description[%s]', ResourceDescription::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID),
-                'value' => $formData[ResourceDescription::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID],
-                'values' => $cardConditionValues,
-                'required' => true,
-            ]
-        );
+        // for Ungraded Condition
+        $this->addToFieldsetConditionDescriptorGradeCardConditionId($fieldset, $formData);
 
         // endregion
 
@@ -1540,6 +1452,282 @@ JS
         return parent::_prepareForm();
     }
 
+    private function getAllAttributesByTypes(): array
+    {
+        return $this->allAttributesByTypes
+            ?? $this->allAttributesByTypes = [
+                'text' => $this->magentoAttributeHelper->filterByInputTypes(
+                    $this->attributes,
+                    ['text']
+                ),
+                'text_textarea' => $this->magentoAttributeHelper->filterByInputTypes(
+                    $this->attributes,
+                    ['text', 'textarea']
+                ),
+                'text_select' => $this->magentoAttributeHelper->filterByInputTypes(
+                    $this->attributes,
+                    ['text', 'select']
+                ),
+                'text_images' => $this->magentoAttributeHelper->filterByInputTypes(
+                    $this->attributes,
+                    ['text', 'image', 'media_image', 'gallery', 'multiline', 'textarea', 'select', 'multiselect']
+                ),
+            ];
+    }
+
+    private function addToFieldsetConditionDescriptorIdProfessionalGraderId(
+        \Magento\Framework\Data\Form\Element\Fieldset $fieldset,
+        array $formData
+    ): void {
+        $this->addToFieldsetTypeSelectConditionDescriptorGrader(
+            'Professional Grader',
+            'condition_descriptor_professional_grader',
+            'M2ePro-validate-condition-descriptor-for-graded',
+            Description::getConditionalProfessionalGraderIdLabelMap(),
+            ResourceDescription::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_MODE,
+            ResourceDescription::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_VALUE,
+            ResourceDescription::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_ATTRIBUTE,
+            $fieldset,
+            $formData
+        );
+    }
+
+    private function addToFieldsetConditionDescriptorGradeId(
+        \Magento\Framework\Data\Form\Element\Fieldset $fieldset,
+        array $formData
+    ): void {
+        $this->addToFieldsetTypeSelectConditionDescriptorGrader(
+            'Grade',
+            'condition_descriptor_grade',
+            'M2ePro-validate-condition-descriptor-for-graded',
+            Description::getConditionalGradeIdLabelMap(),
+            ResourceDescription::COLUMN_CONDITION_GRADE_ID_MODE,
+            ResourceDescription::COLUMN_CONDITION_GRADE_ID_VALUE,
+            ResourceDescription::COLUMN_CONDITION_GRADE_ID_ATTRIBUTE,
+            $fieldset,
+            $formData
+        );
+    }
+
+    private function addToFieldsetConditionDescriptorGradeCardConditionId(
+        \Magento\Framework\Data\Form\Element\Fieldset $fieldset,
+        array $formData
+    ): void {
+        $this->addToFieldsetTypeSelectConditionDescriptorGrader(
+            'Card Condition',
+            'condition_descriptor_grade_card_condition',
+            'M2ePro-validate-condition-descriptor-for-ungraded',
+            Description::getConditionalCardConditionIdLabelMap(),
+            ResourceDescription::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_MODE,
+            ResourceDescription::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_VALUE,
+            ResourceDescription::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_ATTRIBUTE,
+            $fieldset,
+            $formData
+        );
+    }
+
+    private function addToFieldsetTypeSelectConditionDescriptorGrader(
+        string $gradeLabel,
+        string $elementId,
+        string $className,
+        array $idLabelMap,
+        string $fieldNameMode,
+        string $fieldNameValue,
+        string $fieldAttributeValue,
+        \Magento\Framework\Data\Form\Element\Fieldset $fieldset,
+        $formData
+    ): void {
+        $mode = (int)$formData[$fieldNameMode];
+
+        $descriptors = [];
+        $isEbayMode = $mode === Description::CONDITION_DESCRIPTOR_MODE_EBAY;
+        foreach ($idLabelMap as $id => $label) {
+            $item = [
+                'label' => __($label),
+                'value' => Description::CONDITION_DESCRIPTOR_MODE_EBAY,
+                'attrs' => [
+                    'attribute_code' => $id,
+                ],
+            ];
+
+            if (
+                $isEbayMode
+                && (int)$formData[$fieldNameValue] === $id
+            ) {
+                $item['attrs']['selected'] = 'selected';
+            }
+
+            $descriptors[] = $item;
+        }
+
+        $attributes = [];
+        $isAttributeMode = $mode === Description::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE;
+        foreach ($this->getAllAttributesByTypes()['text_select'] as $attribute) {
+            $item = [
+                'value' => Description::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE,
+                'label' => $attribute['label'],
+                'attrs' => [
+                    'attribute_code' => $attribute['code'],
+                ],
+            ];
+
+            if (
+                $isAttributeMode
+                && $formData[$fieldAttributeValue] === $attribute['code']
+            ) {
+                $item['attrs']['selected'] = 'selected';
+            }
+
+            $attributes[] = $item;
+        }
+
+        $fieldset->addField(
+            $elementId,
+            self::SELECT,
+            [
+                'container_id' => $elementId . '_tr',
+                'label' => __($gradeLabel),
+                'name' => sprintf('description[%s]', $fieldNameMode),
+                'values' => [
+                    Description::CONDITION_DESCRIPTOR_MODE_NONE => __('None'),
+                    [
+                        'label' => __('Select ' . $gradeLabel),
+                        'value' => $descriptors,
+                    ],
+                    [
+                        'label' => __('Magento Attribute'),
+                        'value' => $attributes,
+                        'attrs' => [
+                            'is_magento_attribute' => true,
+                            'class' => 'duration_attribute',
+                        ],
+                    ],
+                ],
+                'value' => (int)$formData[$fieldNameMode] === Description::CONDITION_DESCRIPTOR_MODE_NONE
+                    ? (int)$formData[$fieldNameMode]
+                    : -1,
+                'create_magento_attribute' => true,
+                'class' => $className,
+                'required' => true,
+                'hidden' => true,
+            ],
+        )->addCustomAttribute(
+            'allowed_attribute_types',
+            'text,select'
+        );
+
+        $fieldset->addField(
+            $elementId . '_attribute',
+            'hidden',
+            [
+                'name' => sprintf('description[%s]', $fieldAttributeValue),
+                'value' => $formData[$fieldAttributeValue],
+            ]
+        );
+
+        $fieldset->addField(
+            $elementId . '_value',
+            'hidden',
+            [
+                'name' => sprintf('description[%s]', $fieldNameValue),
+                'value' => $formData[$fieldNameValue],
+            ]
+        );
+    }
+
+    private function addToFieldsetConditionDescriptorCertificationNumber(
+        \Magento\Framework\Data\Form\Element\Fieldset $fieldset,
+        array $formData
+    ): void {
+        $fieldset->addField(
+            'condition_descriptor_certification_number_attribute',
+            'hidden',
+            [
+                'name' => sprintf(
+                    'description[%s]',
+                    ResourceDescription::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_ATTRIBUTE
+                ),
+                'value' => $formData[ResourceDescription::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_ATTRIBUTE],
+            ]
+        );
+
+        $mode = (int)$formData[ResourceDescription::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_MODE];
+
+        $magentoProductAttributeOptions = [];
+        $isModeAttribute = $mode === Description::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE;
+        foreach ($this->attributes as $attribute) {
+            $option = [
+                'value' => Description::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE,
+                'label' => $attribute['label'],
+                'attrs' => [
+                    'attribute_code' => $attribute['code'],
+                ],
+            ];
+
+            $isSelected = $isModeAttribute
+                && $attribute['code']
+                === $formData[ResourceDescription::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_ATTRIBUTE];
+
+            if ($isSelected) {
+                $option['attrs']['selected'] = 'selected';
+            }
+
+            $magentoProductAttributeOptions[] = $option;
+        }
+
+        $fieldset->addField(
+            'condition_descriptor_certification_number_mode',
+            self::SELECT,
+            [
+                'container_id' => 'condition_descriptor_certification_number_mode_tr',
+                'name' => sprintf(
+                    'description[%s]',
+                    ResourceDescription::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_MODE
+                ),
+                'label' => __('Certification Number'),
+                'title' => __('Certification Number'),
+                'values' => [
+                    [
+                        'label' => __('None'),
+                        'value' => Description::CONDITION_DESCRIPTOR_MODE_NONE,
+                    ],
+                    [
+                        'label' => __('Custom Value'),
+                        'value' => Description::CONDITION_DESCRIPTOR_MODE_CUSTOM,
+                    ],
+                    [
+                        'label' => __('Magento Attribute'),
+                        'attrs' => ['is_magento_attribute' => true],
+                        'value' => $magentoProductAttributeOptions,
+                    ],
+                ],
+                'class' => 'M2ePro-required-if-calculated',
+                'create_magento_attribute' => true,
+                'value' => $mode !== Description::CONDITION_DESCRIPTOR_MODE_NONE ? (string)$mode : '',
+            ]
+        )->addCustomAttribute('allowed_attribute_types', 'text');
+
+        $fieldset->addField(
+            'condition_descriptor_certification_number_value',
+            'text',
+            [
+                'name' => sprintf(
+                    'description[%s]',
+                    ResourceDescription::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_CUSTOM_VALUE
+                ),
+                'label' => __('Certification Number Value'),
+                'title' => __('Certification Number Value'),
+                'value' => $formData[ResourceDescription::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_CUSTOM_VALUE],
+                'class' => 'M2ePro-required-when-visible'
+                    . ' M2ePro-validate-condition-descriptor-certification-number-length'
+                    . ' input-text',
+                'required' => true,
+                'field_extra_attributes' => 'id="condition_descriptor_certification_number_value_tr"'
+                    . ' style="display: none;"',
+            ]
+        );
+    }
+
     protected function _toHtml()
     {
         return parent::_toHtml() . $this->getCustomInsertsHtml() . $this->getDescriptionPreviewHtml();
@@ -1643,11 +1831,13 @@ JS
         return $data;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function getDefault()
     {
-        $default = $this->modelFactory->getObject('Ebay_Template_Description_Builder')->getDefaultData();
+        /** @var \Ess\M2ePro\Model\Ebay\Template\Description\Builder $templateBuilder */
+        $templateBuilder = $this->modelFactory->getObject('Ebay_Template_Description_Builder');
+        $default = $templateBuilder->getDefaultData();
 
         $default['enhancement'] = explode(',', $default['enhancement']);
         $default['product_details'] = \Ess\M2ePro\Helper\Json::decode($default['product_details']);
@@ -1662,7 +1852,7 @@ JS
         return $default;
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function getCustomInsertsHtml()
     {
@@ -2036,5 +2226,5 @@ HTML;
 HTML;
     }
 
-    //########################################
+    // ----------------------------------------
 }

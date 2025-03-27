@@ -145,7 +145,7 @@ class Form extends AbstractForm
             'local_date_format',
             'hidden',
             [
-                'value' => $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT),
+                'value' => $this->_localeDate->getDateFormatWithLongYear(),
             ]
         );
 
@@ -714,7 +714,7 @@ If the <b>Price Change</b> is used, the <b>Rounding</b> will be applied to the f
                 'label' => __('Start Date Value'),
                 'name' => 'regular_sale_price_start_date_value',
                 'value' => $formData['regular_sale_price_start_date_value'],
-                'date_format' => $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT),
+                'date_format' => $this->_localeDate->getDateFormatWithLongYear(),
             ]
         );
 
@@ -776,7 +776,7 @@ If the <b>Price Change</b> is used, the <b>Rounding</b> will be applied to the f
                 'label' => __('End Date Value'),
                 'name' => 'regular_sale_price_end_date_value',
                 'value' => $formData['regular_sale_price_end_date_value'],
-                'date_format' => $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT),
+                'date_format' => $this->_localeDate->getDateFormatWithLongYear(),
             ]
         );
 

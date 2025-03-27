@@ -151,6 +151,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
                 'online_reserve_price' => 'online_reserve_price',
                 'online_buyitnow_price' => 'online_buyitnow_price',
 
+                'end_date' => 'end_date',
+                'start_date' => 'start_date',
+
                 'is_duplicate' => 'is_duplicate',
             ]
         );

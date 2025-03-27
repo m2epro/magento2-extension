@@ -209,43 +209,178 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         return $src['value'];
     }
 
+    // ----------------------------------------
+
     /**
      * @return array{
      *     required_descriptors: array<int, int>,
-     *     optional_descriptors: array<int, string>
+     *     optional_descriptors: array<int, string>,
+     *     not_found_attributes: string[]
      * }
      */
     public function getConditionDescriptors(): array
     {
-        $condition = (int)$this->getConditionFromTemplate();
-        $template = $this->getEbayDescriptionTemplate();
+        $descriptors = $this->getFilledConditionDescriptors();
 
-        $requiredDescriptors = [];
-        $optionalDescriptors = [];
+        return [
+            'required_descriptors' => $descriptors['required'],
+            'optional_descriptors' => $descriptors['optional'],
+            'not_found_attributes' => $descriptors['not_found'],
+        ];
+    }
+
+    private function getFilledConditionDescriptors(): array
+    {
+        $defaultDescriptors = [
+            'required' => [],
+            'optional' => [],
+            'not_found' => [],
+        ];
+
+        $condition = (int)$this->getConditionFromTemplate();
 
         if ($condition === Description::CONDITION_EBAY_GRADED) {
-            $requiredDescriptors = [
-                Description::CONDITION_DESCRIPTOR_ID_PROFESSIONAL_GRADER
-                => $template->getConditionProfessionalGraderId(),
-                Description::CONDITION_DESCRIPTOR_ID_GRADE => $template->getConditionGradeId(),
-            ];
-
-            if ($certNumber = $template->retrieveConditionGradeCertificationNumber()) {
-                $optionalDescriptors[Description::CONDITION_DESCRIPTOR_ID_CERTIFICATION_NUMBER] = $certNumber;
-            }
+            return $this->getDescriptorsForGradedCondition($defaultDescriptors);
         }
 
         if ($condition === Description::CONDITION_EBAY_UNGRADED) {
-            $requiredDescriptors = [
-                Description::CONDITION_DESCRIPTOR_ID_CARD_CONDITION => $template->getConditionGradeCardConditionId(),
-            ];
+            return $this->getDescriptorsForUngradedCondition($defaultDescriptors);
         }
 
-        return [
-            'required_descriptors' => $requiredDescriptors,
-            'optional_descriptors' => $optionalDescriptors,
-        ];
+        return $defaultDescriptors;
     }
+
+    private function getDescriptorsForGradedCondition(array $descriptors): array
+    {
+        $template = $this->getEbayDescriptionTemplate();
+
+        $professionalGraderId = $this->retrieveConditionDescriptorProfessionalGraderId($template);
+        $gradeId = $this->retrieveConditionDescriptorGradeId($template);
+
+        // ----------------------------------------
+
+        $notFound = [];
+        if ($professionalGraderId === null) {
+            $notFound[] = 'Professional Grader';
+        }
+
+        if ($gradeId === null) {
+            $notFound[] = 'Grade';
+        }
+
+        if (!empty($notFound)) {
+            $descriptors['not_found'] = $notFound;
+
+            return $descriptors;
+        }
+
+        // ----------------------------------------
+
+        $descriptors['required'][Description::CONDITION_DESCRIPTOR_ID_PROFESSIONAL_GRADER] = $professionalGraderId;
+        $descriptors['required'][Description::CONDITION_DESCRIPTOR_ID_GRADE] = $gradeId;
+
+        if ($certNumber = $this->retrieveConditionDescriptorCertificationNumber($template)) {
+            $descriptors['optional'][Description::CONDITION_DESCRIPTOR_ID_CERTIFICATION_NUMBER] = $certNumber;
+        }
+
+        return $descriptors;
+    }
+
+    private function getDescriptorsForUngradedCondition(array $descriptors): array
+    {
+        $template = $this->getEbayDescriptionTemplate();
+        $cardConditionId = $this->retrieveConditionGradeCardConditionId($template);
+
+        if ($cardConditionId === null) {
+            $descriptors['not_found'][] = 'Card Condition';
+
+            return $descriptors;
+        }
+
+        $descriptors['required'][Description::CONDITION_DESCRIPTOR_ID_CARD_CONDITION] = $cardConditionId;
+
+        return $descriptors;
+    }
+
+    private function retrieveConditionDescriptorProfessionalGraderId(Description $template): ?string
+    {
+        if ($template->isConditionProfessionalGraderIdModeEbay()) {
+            return $template->getConditionProfessionalGraderIdValue();
+        }
+
+        if ($template->isConditionProfessionalGraderIdModeAttribute()) {
+            $attribute = $this->findProductAttributeValue(
+                $template->getConditionProfessionalGraderIdAttribute()
+            );
+
+            $flippedMap = array_flip(
+                Description::getConditionalProfessionalGraderIdLabelMap()
+            );
+
+            return $flippedMap[$attribute] ?? null;
+        }
+
+        return null;
+    }
+
+    private function retrieveConditionDescriptorGradeId(Description $template): ?string
+    {
+        if ($template->isConditionGradeIdModeEbay()) {
+            return $template->getConditionGradeIdValue();
+        }
+
+        if ($template->isConditionGradeIdModeAttribute()) {
+            $attribute = $this->findProductAttributeValue(
+                $template->getConditionGradeIdAttribute()
+            );
+
+            $flippedMap = array_flip(
+                Description::getConditionalGradeIdLabelMap()
+            );
+
+            return $flippedMap[$attribute] ?? null;
+        }
+
+        return null;
+    }
+
+    private function retrieveConditionDescriptorCertificationNumber(Description $template): ?string
+    {
+        if ($template->isConditionGradeCertificationModeCustom()) {
+            return $template->getConditionGradeCertificationCustomValue();
+        }
+
+        if ($template->isConditionGradeCertificationModeAttribute()) {
+            return $this->findProductAttributeValue(
+                $template->getConditionGradeCertificationAttribute()
+            );
+        }
+
+        return null;
+    }
+
+    private function retrieveConditionGradeCardConditionId(Description $template): ?string
+    {
+        if ($template->isConditionGradeCardConditionEbay()) {
+            return $template->getConditionGradeCardConditionIdValue();
+        }
+
+        if ($template->isConditionGradeCardConditionModeAttribute()) {
+            $attribute = $this->findProductAttributeValue(
+                $template->getConditionGradeCardConditionIdAttribute()
+            );
+
+            $flippedMap = array_flip(
+                Description::getConditionalCardConditionIdLabelMap()
+            );
+
+            return $flippedMap[$attribute] ?? null;
+        }
+
+        return null;
+    }
+
+    // ----------------------------------------
 
     /**
      * @return string
@@ -668,5 +803,15 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                 $description = str_replace($tags[$i], $newTag, $description);
             }
         }
+    }
+
+    // ----------------------------------------
+
+    private function findProductAttributeValue(string $attributeKey): ?string
+    {
+        $value = $this->getMagentoProduct()
+                      ->getAttributeValue($attributeKey);
+
+        return !empty($value) ? $value : null;
     }
 }

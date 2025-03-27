@@ -115,7 +115,6 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
                 'value' => '',
                 'class' => 'M2ePro-required-when-visible M2ePro-input-datetime M2ePro-correct-date-range',
                 'disabled' => true,
-                'date_format' => $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT),
             ]
         );
         $this->setData('promotions_from_date_value', $promotionsFromDateValue);
@@ -161,7 +160,6 @@ HTML;
                 'value' => '',
                 'class' => 'M2ePro-required-when-visible M2ePro-input-datetime',
                 'disabled' => true,
-                'date_format' => $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT),
                 'tooltip' => $toDateTooltip,
             ]
         );

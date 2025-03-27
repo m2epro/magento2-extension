@@ -43,6 +43,11 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public const CONDITION_EBAY_GRADED = 27501;
     public const CONDITION_EBAY_UNGRADED = 4001;
 
+    public const CONDITION_DESCRIPTOR_MODE_NONE = 0;
+    public const CONDITION_DESCRIPTOR_MODE_EBAY = 1;
+    public const CONDITION_DESCRIPTOR_MODE_CUSTOM = 2;
+    public const CONDITION_DESCRIPTOR_MODE_ATTRIBUTE = 3;
+
     public const CONDITION_DESCRIPTOR_ID_PROFESSIONAL_GRADER = 27501;
     public const CONDITION_DESCRIPTOR_ID_GRADE = 27502;
     public const CONDITION_DESCRIPTOR_ID_CERTIFICATION_NUMBER = 27503;
@@ -427,48 +432,50 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
     // ----------------------------------------
 
-    public function getConditionProfessionalGraderId(): int
+    public function isConditionProfessionalGraderIdModeAttribute(): bool
     {
-        $id = $this->getDataByKey(
-            DescriptionResource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID
-        );
-
-        if ($id === null) {
-            throw new \RuntimeException('Condition Professional Grader ID not found');
-        }
-
-        return (int)$id;
+        return $this->getConditionProfessionalGraderIdMode() === self::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE;
     }
 
-    public function getConditionGradeId(): int
+    public function getConditionProfessionalGraderIdAttribute(): string
     {
-        $id = $this->getDataByKey(
-            DescriptionResource::COLUMN_CONDITION_GRADE_ID
-        );
-
-        if ($id === null) {
-            throw new \RuntimeException('Condition Grade ID not found');
+        if (!$this->isConditionProfessionalGraderIdModeAttribute()) {
+            throw new \RuntimeException('Invalid Condition Professional Grader Mode');
         }
 
-        return (int)$id;
-    }
-
-    public function retrieveConditionGradeCertificationNumber(): ?string
-    {
-        return $this->getDataByKey(DescriptionResource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER);
-    }
-
-    public function getConditionGradeCardConditionId(): int
-    {
-        $id = $this->getDataByKey(
-            DescriptionResource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID
-        );
-
-        if ($id === null) {
-            throw new \RuntimeException('Grade Card Condition not found');
+        $attr = $this->getDataByKey(DescriptionResource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_ATTRIBUTE);
+        if ($attr === null) {
+            throw new \RuntimeException('Condition Professional Grader Attribute not found');
         }
 
-        return (int)$id;
+        return $attr;
+    }
+
+    public function isConditionProfessionalGraderIdModeEbay(): bool
+    {
+        return $this->getConditionProfessionalGraderIdMode() === self::CONDITION_DESCRIPTOR_MODE_EBAY;
+    }
+
+    public function getConditionProfessionalGraderIdValue(): int
+    {
+        if (!$this->isConditionProfessionalGraderIdModeEbay()) {
+            throw new \RuntimeException('Invalid Professional Graded ID mode');
+        }
+
+        $val = $this->getDataByKey(
+            DescriptionResource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_VALUE
+        );
+
+        if ($val === null) {
+            throw new \RuntimeException('Condition Professional Grader ID Value not found');
+        }
+
+        return (int)$val;
+    }
+
+    private function getConditionProfessionalGraderIdMode(): int
+    {
+        return (int)$this->getDataByKey(DescriptionResource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_MODE);
     }
 
     public static function getConditionalProfessionalGraderIdLabelMap(): array
@@ -501,6 +508,57 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         ];
     }
 
+    // ----------------------------------------
+
+    public function isConditionGradeIdModeAttribute(): bool
+    {
+        return $this->getConditionGradeIdMode() === self::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE;
+    }
+
+    public function getConditionGradeIdAttribute(): string
+    {
+        if (!$this->isConditionGradeIdModeAttribute()) {
+            throw new \RuntimeException('Invalid Condition Grade ID mode');
+        }
+
+        $attr = $this->getDataByKey(
+            DescriptionResource::COLUMN_CONDITION_GRADE_ID_ATTRIBUTE
+        );
+
+        if ($attr === null) {
+            throw new \RuntimeException('Condition Grade ID Attribute not found');
+        }
+
+        return $attr;
+    }
+
+    public function isConditionGradeIdModeEbay(): bool
+    {
+        return $this->getConditionGradeIdMode() === self::CONDITION_DESCRIPTOR_MODE_EBAY;
+    }
+
+    public function getConditionGradeIdValue(): int
+    {
+        if (!$this->isConditionGradeIdModeEbay()) {
+            throw new \RuntimeException('Invalid Condition Grade ID mode');
+        }
+
+        $val = $this->getDataByKey(
+            DescriptionResource::COLUMN_CONDITION_GRADE_ID_VALUE
+        );
+
+        if ($val === null) {
+            throw new \RuntimeException('Condition Grade ID Value not found');
+        }
+
+        return (int)$val;
+    }
+
+    private function getConditionGradeIdMode(): int
+    {
+        return (int)$this->getDataByKey(DescriptionResource::COLUMN_CONDITION_GRADE_ID_MODE);
+    }
+
     public static function getConditionalGradeIdLabelMap(): array
     {
         return [
@@ -530,7 +588,103 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         ];
     }
 
-    public static function getConditionalCardIdLabelMap(): array
+    // ----------------------------------------
+
+    public function isConditionGradeCertificationModeAttribute(): bool
+    {
+        return $this->getConditionGradeCertificationMode() === self::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE;
+    }
+
+    public function getConditionGradeCertificationAttribute(): string
+    {
+        if (!$this->isConditionGradeCertificationModeAttribute()) {
+            throw new \RuntimeException('Invalid Condition Grade Certification mode');
+        }
+
+        $attr = $this->getDataByKey(DescriptionResource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_ATTRIBUTE);
+        if ($attr === null) {
+            throw new \RuntimeException('Condition Grade Certification Attribute not found');
+        }
+
+        return $attr;
+    }
+
+    public function isConditionGradeCertificationModeCustom(): bool
+    {
+        return $this->getConditionGradeCertificationMode() === self::CONDITION_DESCRIPTOR_MODE_CUSTOM;
+    }
+
+    public function getConditionGradeCertificationCustomValue(): string
+    {
+        if (!$this->isConditionGradeCertificationModeCustom()) {
+            throw new \RuntimeException('Invalid Condition Grade Certification mode');
+        }
+
+        $val = $this->getDataByKey(DescriptionResource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_CUSTOM_VALUE);
+        if (empty($val)) {
+            throw new \RuntimeException('Condition Grade Certification Custom Value not found');
+        }
+
+        return $val;
+    }
+
+    private function getConditionGradeCertificationMode(): int
+    {
+        return (int)$this->getDataByKey(DescriptionResource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_MODE);
+    }
+
+    // ----------------------------------------
+
+    public function isConditionGradeCardConditionModeAttribute(): bool
+    {
+        return $this->getConditionGradeCardConditionMode() === self::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE;
+    }
+
+    public function getConditionGradeCardConditionIdAttribute(): string
+    {
+        if (!$this->isConditionGradeCardConditionModeAttribute()) {
+            throw new \RuntimeException('Invalid Condition Grade Card Condition Mode');
+        }
+
+        $attr = $this->getDataByKey(
+            DescriptionResource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_ATTRIBUTE
+        );
+
+        if ($attr === null) {
+            throw new \RuntimeException('Grade Card Condition not found');
+        }
+
+        return $attr;
+    }
+
+    public function isConditionGradeCardConditionEbay(): bool
+    {
+        return $this->getConditionGradeCardConditionMode() === self::CONDITION_DESCRIPTOR_MODE_EBAY;
+    }
+
+    public function getConditionGradeCardConditionIdValue(): int
+    {
+        if (!$this->isConditionGradeCardConditionEbay()) {
+            throw new \RuntimeException('Invalid Condition Grade Card Condition Mode');
+        }
+
+        $id = $this->getDataByKey(
+            DescriptionResource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_VALUE
+        );
+
+        if ($id === null) {
+            throw new \RuntimeException('Grade Card Condition Value not found');
+        }
+
+        return (int)$id;
+    }
+
+    private function getConditionGradeCardConditionMode(): int
+    {
+        return (int)$this->getDataByKey(DescriptionResource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_MODE);
+    }
+
+    public static function getConditionalCardConditionIdLabelMap(): array
     {
         return [
             400010 => 'Near Mint or Better',

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\ChangeTracker\Common\Helpers;
 
+use Ess\M2ePro\Model\ChangeTracker\Exceptions\ChangeTrackerException;
+
 class MagentoAttributes
 {
     private const ATTRIBUTE_BACKEND_TYPE = 'static';
@@ -54,9 +56,9 @@ class MagentoAttributes
         }
 
         if (!array_key_exists($attributeCode, $this->magentoAttributesData)) {
-            throw new \RuntimeException(
+            throw new ChangeTrackerException(
                 sprintf(
-                    'Not found attribute data by attribute code "%s"',
+                    'Not found attribute data for attribute code "%s"',
                     $attributeCode
                 )
             );

@@ -3,7 +3,7 @@
 namespace Ess\M2ePro\Model\Ebay\Template\Description;
 
 use Ess\M2ePro\Model\Ebay\Template\Description as Description;
-use Ess\M2ePro\Model\ResourceModel\Ebay\Template\Description as DescriptionResource;
+use Ess\M2ePro\Model\ResourceModel\Ebay\Template\Description as Resource;
 
 class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 {
@@ -65,30 +65,18 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
         }
 
         if (isset($this->rawData['condition_value'])) {
-            $data['condition_value'] = (int)$this->rawData['condition_value'];
+            $data[Resource::COLUMN_CONDITION_VALUE] = (int)$this->rawData['condition_value'];
         }
 
         if (isset($this->rawData['condition_attribute'])) {
             $data['condition_attribute'] = $this->rawData['condition_attribute'];
         }
 
-        if ((int)$data[DescriptionResource::COLUMN_CONDITION_MODE] === Description::CONDITION_MODE_EBAY) {
-            if ((int)$data[DescriptionResource::COLUMN_CONDITION_VALUE] === Description::CONDITION_EBAY_GRADED) {
-                $data[DescriptionResource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID] = (int)$this->getRequiredField(
-                    DescriptionResource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID
-                );
-                $data[DescriptionResource::COLUMN_CONDITION_GRADE_ID] = (int)$this->getRequiredField(
-                    DescriptionResource::COLUMN_CONDITION_GRADE_ID
-                );
-                $data[DescriptionResource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER] = $this->rawData[
-                    DescriptionResource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER
-                ];
-            }
-
-            if ((int)$data[DescriptionResource::COLUMN_CONDITION_VALUE] === Description::CONDITION_EBAY_UNGRADED) {
-                $data[DescriptionResource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID] = (int)$this->getRequiredField(
-                    DescriptionResource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID
-                );
+        if ((int)$this->rawData[Resource::COLUMN_CONDITION_MODE] === Description::CONDITION_MODE_EBAY) {
+            if ((int)$data[Resource::COLUMN_CONDITION_VALUE] === Description::CONDITION_EBAY_GRADED) {
+                $data = $this->prepareDescriptorsDataForGradedCondition($data, $this->rawData);
+            } elseif ((int)$data[Resource::COLUMN_CONDITION_VALUE] === Description::CONDITION_EBAY_UNGRADED) {
+                $data = $this->prepareDescriptorsDataForUngradedCondition($data, $this->rawData);
             }
         }
 
@@ -307,14 +295,138 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
         return $data;
     }
 
-    private function getRequiredField(string $key): string
-    {
-        if (empty($this->rawData[$key])) {
-            throw new \InvalidArgumentException("Required field '{$key}' is missing or empty.");
-        }
+    // region Prepare Descriptors Data For Graded Condition
 
-        return $this->rawData[$key];
+    private function prepareDescriptorsDataForGradedCondition(array $result, array $input): array
+    {
+        return array_merge(
+            $result,
+            $this->prepareProfessionalGraderData($input),
+            $this->prepareGradeIdData($input),
+            $this->prepareCertificationNumberData($input)
+        );
     }
+
+    private function prepareProfessionalGraderData(array $input): array
+    {
+        $modeFieldsMap = [
+            Description::CONDITION_DESCRIPTOR_MODE_NONE => [
+                'attr' => null,
+                'val' => null,
+            ],
+            Description::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE => [
+                'attr' => $input[Resource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_ATTRIBUTE],
+                'val' => null,
+            ],
+            Description::CONDITION_DESCRIPTOR_MODE_EBAY => [
+                'attr' => null,
+                'val' => (int)$input[Resource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_VALUE],
+            ],
+        ];
+
+        $profGraderMode = (int)$input[Resource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_MODE];
+        $profGrader = $modeFieldsMap[$profGraderMode];
+
+        return [
+            Resource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_MODE => $profGraderMode,
+            Resource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_ATTRIBUTE => $profGrader['attr'],
+            Resource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_VALUE => $profGrader['val'],
+        ];
+    }
+
+    private function prepareGradeIdData(array $input): array
+    {
+        $modeFieldsMap = [
+            Description::CONDITION_DESCRIPTOR_MODE_NONE => [
+                'attr' => null,
+                'val' => null,
+            ],
+            Description::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE => [
+                'attr' => $input[Resource::COLUMN_CONDITION_GRADE_ID_ATTRIBUTE],
+                'val' => null,
+            ],
+            Description::CONDITION_DESCRIPTOR_MODE_EBAY => [
+                'attr' => null,
+                'val' => (int)$input[Resource::COLUMN_CONDITION_GRADE_ID_VALUE],
+            ],
+        ];
+
+        $gradeMode = (int)$input[Resource::COLUMN_CONDITION_GRADE_ID_MODE];
+        $grades = $modeFieldsMap[$gradeMode];
+
+        return [
+            Resource::COLUMN_CONDITION_GRADE_ID_MODE => $gradeMode,
+            Resource::COLUMN_CONDITION_GRADE_ID_ATTRIBUTE => $grades['attr'],
+            Resource::COLUMN_CONDITION_GRADE_ID_VALUE => $grades['val'],
+        ];
+    }
+
+    private function prepareCertificationNumberData(array $input): array
+    {
+        $modeFieldsMap = [
+            Description::CONDITION_DESCRIPTOR_MODE_NONE => [
+                'attr' => null,
+                'cst_val' => null,
+            ],
+            Description::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE => [
+                'attr' => $input[Resource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_ATTRIBUTE],
+                'cst_val' => null,
+            ],
+            Description::CONDITION_DESCRIPTOR_MODE_CUSTOM => [
+                'attr' => null,
+                'cst_val' => $input[Resource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_CUSTOM_VALUE],
+            ],
+        ];
+
+        $certNumMode = (int)$input[Resource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_MODE];
+        $certNum = $modeFieldsMap[$certNumMode];
+
+        return [
+            Resource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_MODE => $certNumMode,
+            Resource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_ATTRIBUTE => $certNum['attr'],
+            Resource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_CUSTOM_VALUE => $certNum['cst_val'],
+        ];
+    }
+
+    // endregion
+    // region Prepare Descriptors Data For Ungraded Condition
+
+    private function prepareDescriptorsDataForUngradedCondition(array $result, array $input): array
+    {
+        return array_merge(
+            $result,
+            $this->prepareCardConditionData($input)
+        );
+    }
+
+    private function prepareCardConditionData(array $input): array
+    {
+        $modeFieldsMap = [
+            Description::CONDITION_DESCRIPTOR_MODE_NONE => [
+                'attr' => null,
+                'val' => null,
+            ],
+            Description::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE => [
+                'attr' => $input[Resource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_ATTRIBUTE],
+                'val' => null,
+            ],
+            Description::CONDITION_DESCRIPTOR_MODE_EBAY => [
+                'attr' => null,
+                'val' => (int)$input[Resource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_VALUE],
+            ],
+        ];
+
+        $cardCondMode = (int)$input[Resource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_MODE];
+        $cardCond = $modeFieldsMap[$cardCondMode];
+
+        return [
+            Resource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_MODE => $cardCondMode,
+            Resource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_ATTRIBUTE => $cardCond['attr'],
+            Resource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_VALUE => $cardCond['val'],
+        ];
+    }
+
+    // endregion
 
     public function getDefaultData()
     {
@@ -328,14 +440,25 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'description_mode' => '',
             'description_template' => '',
 
-            DescriptionResource::COLUMN_CONDITION_MODE => Description::CONDITION_MODE_EBAY,
-            DescriptionResource::COLUMN_CONDITION_VALUE => Description::CONDITION_EBAY_NEW,
-            DescriptionResource::COLUMN_CONDITION_ATTRIBUTE => '',
+            Resource::COLUMN_CONDITION_MODE => Description::CONDITION_MODE_EBAY,
+            Resource::COLUMN_CONDITION_VALUE => Description::CONDITION_EBAY_NEW,
+            Resource::COLUMN_CONDITION_ATTRIBUTE => '',
 
-            DescriptionResource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID => null,
-            DescriptionResource::COLUMN_CONDITION_GRADE_ID => null,
-            DescriptionResource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER => null,
-            DescriptionResource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID => null,
+            Resource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_MODE => Description::CONDITION_DESCRIPTOR_MODE_NONE,
+            Resource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_VALUE => null,
+            Resource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_ATTRIBUTE => null,
+
+            Resource::COLUMN_CONDITION_GRADE_ID_MODE => Description::CONDITION_DESCRIPTOR_MODE_NONE,
+            Resource::COLUMN_CONDITION_GRADE_ID_VALUE => null,
+            Resource::COLUMN_CONDITION_GRADE_ID_ATTRIBUTE => null,
+
+            Resource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_MODE => Description::CONDITION_DESCRIPTOR_MODE_NONE,
+            Resource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_CUSTOM_VALUE => '',
+            Resource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_ATTRIBUTE => null,
+
+            Resource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_MODE => Description::CONDITION_DESCRIPTOR_MODE_NONE,
+            Resource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_VALUE => null,
+            Resource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_ATTRIBUTE => null,
 
             'condition_note_mode' => Description::CONDITION_NOTE_MODE_NONE,
             'condition_note_template' => '',

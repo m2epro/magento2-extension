@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ess\M2ePro\Model\ChangeTracker\Common\PriceCondition;
 
 use Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder;
+use Ess\M2ePro\Model\ChangeTracker\Exceptions\ChangeTrackerException;
 use Ess\M2ePro\Model\Listing\Product\PriceRounder;
 
 abstract class AbstractPriceCondition
@@ -16,13 +17,15 @@ abstract class AbstractPriceCondition
     private string $channel;
     private \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\MagentoAttributes $magentoAttributes;
     private \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration;
+    private \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger $logger;
 
     public function __construct(
         string $channel,
         ProductAttributesQueryBuilder $attributesQueryBuilder,
         \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder $queryBuilder,
         \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\MagentoAttributes $magentoAttributes,
-        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
+        \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger $logger
     ) {
         $this->channel = $channel;
         $this->attributesQueryBuilder = $attributesQueryBuilder;
@@ -31,6 +34,7 @@ abstract class AbstractPriceCondition
         $this->moduleConfiguration = $moduleConfiguration;
 
         $this->sellingPolicyData = $this->loadSellingPolicyData();
+        $this->logger = $logger;
     }
 
     abstract protected function loadSellingPolicyData(): array;
@@ -39,19 +43,30 @@ abstract class AbstractPriceCondition
     {
         $queryData = [];
         foreach ($this->sellingPolicyData as $sellingPolicy) {
-            $priceColumn = $this->getPriceColumnCondition(
-                (int)$sellingPolicy['mode'],
-                $sellingPolicy['mode_attribute']
-            );
+            try {
+                $priceColumn = $this->getPriceColumnCondition(
+                    (int)$sellingPolicy['mode'],
+                    $sellingPolicy['mode_attribute']
+                );
 
-            $queryData[] = [
-                'when' => (int)$sellingPolicy['id'],
-                'then' => $this->buildThenCondition(
+                $thenCondition = $this->buildThenCondition(
                     $priceColumn,
                     $sellingPolicy['modifier'],
                     (float)$sellingPolicy['vat'],
                     (int)($sellingPolicy['price_rounding'] ?? PriceRounder::PRICE_ROUNDING_NONE)
-                ),
+                );
+            } catch (ChangeTrackerException $exception) {
+                $this->logger->warning($exception->getMessage(), [
+                    'selling_policy_data' => $sellingPolicy,
+                    'channel' => $this->channel,
+                ]);
+
+                continue;
+            }
+
+            $queryData[] = [
+                'when' => (int)$sellingPolicy['id'],
+                'then' => $thenCondition,
             ];
         }
 
@@ -108,7 +123,7 @@ abstract class AbstractPriceCondition
             return $condition;
         }
 
-        throw new \RuntimeException(
+        throw new ChangeTrackerException(
             sprintf(
                 'Wrong selling policy mode %s for channel %s',
                 $mode,

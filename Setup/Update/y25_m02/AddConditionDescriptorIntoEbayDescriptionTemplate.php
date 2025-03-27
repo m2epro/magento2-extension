@@ -12,31 +12,31 @@ class AddConditionDescriptorIntoEbayDescriptionTemplate extends \Ess\M2ePro\Mode
     {
         $this->getTableModifier(\Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_TEMPLATE_DESCRIPTION)
              ->addColumn(
-                 Description::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID,
+                 'condition_professional_grader_id',
                  'INT UNSIGNED',
                  'NULL',
                  Description::COLUMN_CONDITION_NOTE_TEMPLATE,
                  false,
                  false
              )->addColumn(
-                Description::COLUMN_CONDITION_GRADE_ID,
+                'condition_grade_id',
                 'INT UNSIGNED',
                 'NULL',
-                Description::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID,
+                'condition_professional_grader_id',
                 false,
                 false
             )->addColumn(
-                Description::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER,
+                'condition_grade_certification_number',
                 'VARCHAR(255)',
                 null,
-                Description::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID,
+                'condition_professional_grader_id',
                 false,
                 false
             )->addColumn(
-                Description::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID,
+                'condition_grade_card_condition_id',
                 'INT UNSIGNED',
                 'NULL',
-                Description::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER,
+                'condition_grade_certification_number',
                 false,
                 false
             )->commit();
