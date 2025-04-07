@@ -6,10 +6,10 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\InvoiceDat
 {
     /** @var \Ess\M2ePro\Model\Synchronization\Log $synchronizationLog */
     protected $synchronizationLog = null;
-    private \Ess\M2ePro\Model\Magento\Order\Updater $orderUpdater;
+    private \Ess\M2ePro\Model\Amazon\Magento\Order\UpdateAddressVatIdService $updateAddressVatIdService;
 
     public function __construct(
-        \Ess\M2ePro\Model\Magento\Order\Updater $orderUpdater,
+        \Ess\M2ePro\Model\Amazon\Magento\Order\UpdateAddressVatIdService $updateAddressVatIdService,
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
@@ -19,8 +19,6 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\InvoiceDat
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         array $params = []
     ) {
-        $this->orderUpdater = $orderUpdater;
-
         parent::__construct(
             $response,
             $helperFactory,
@@ -31,6 +29,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\InvoiceDat
             $activeRecordFactory,
             $params
         );
+        $this->updateAddressVatIdService = $updateAddressVatIdService;
     }
 
     protected function processResponseMessages(array $messages = []): void
@@ -112,14 +111,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\InvoiceDat
             if (!empty($buyerVatNumber)) {
                 if (empty($order->getChildObject()->getTaxRegistrationId())) {
                     $order->getChildObject()->setTaxRegistrationId($buyerVatNumber);
-
-                    $magentoOrder = $order->getMagentoOrder();
-                    if ($magentoOrder !== null) {
-                        $this->orderUpdater->setMagentoOrder($magentoOrder);
-                        $this->orderUpdater->updateShippingAddress(['vat_id' => $buyerVatNumber]);
-                        $this->orderUpdater->updateBillingAddress(['vat_id' => $buyerVatNumber]);
-                        $this->orderUpdater->finishUpdate();
-                    }
+                    $this->updateAddressVatIdService->execute($order, $buyerVatNumber);
                 }
             }
 

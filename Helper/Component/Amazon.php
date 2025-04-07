@@ -47,6 +47,18 @@ class Amazon
         'CH',
     ];
 
+    public const MARKETPLACES_WITH_COLLECT_TAXES = [
+        self::MARKETPLACE_UK,
+        self::MARKETPLACE_DE,
+        self::MARKETPLACE_FR,
+        self::MARKETPLACE_IT,
+        self::MARKETPLACE_ES,
+        self::MARKETPLACE_PL,
+        self::MARKETPLACE_SE,
+        self::MARKETPLACE_TR,
+        self::MARKETPLACE_BR,
+    ];
+
     /** @var \Magento\Directory\Model\ResourceModel\Country\CollectionFactory */
     private $countryCollectionFactory;
     /** @var \Magento\Directory\Model\ResourceModel\Region\Collection */

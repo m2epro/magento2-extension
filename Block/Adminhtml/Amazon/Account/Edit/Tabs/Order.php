@@ -91,11 +91,12 @@ in the Shipping Address of your Magento Order.'
     {
         $marketplaceId = $account->getChildObject()->getMarketplaceId();
 
-        if ($marketplaceId == \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_TR) {
-            return true;
-        }
-
-        if ($marketplaceId == \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_BR) {
+        if (
+            in_array(
+                $marketplaceId,
+                \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACES_WITH_COLLECT_TAXES
+            )
+        ) {
             return true;
         }
 
@@ -909,9 +910,7 @@ HTML
                 ],
                 'value' => $formData['magento_orders_settings']['tax']['amazon_collects'],
                 'after_element_html' => $this->getTooltipHtml(
-                    __(
-                        "Tax won't be included in orders shipped to the selected states."
-                    )
+                    __("Tax won't be included in orders shipped to the selected states.")
                 ) . $button->toHtml(),
             ]
         );
@@ -976,9 +975,7 @@ HTML
                 ],
                 'value' => $formData['magento_orders_settings']['tax']['amazon_collect_for_eea'],
                 'after_element_html' => $this->getTooltipHtml(
-                    __(
-                        "VAT won't be included in orders shipped to the selected countries."
-                    )
+                    __("VAT won't be included in orders shipped to the selected countries.")
                 ) . $button->toHtml(),
             ]
         );

@@ -921,6 +921,15 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return false;
     }
 
+    public function isEnabledImportTaxIdInMagentoOrder(): bool
+    {
+        return (bool)$this->getSetting(
+            'magento_orders_settings',
+            ['tax', 'import_tax_id_in_magento_order'],
+            false
+        );
+    }
+
     /**
      * @return bool
      */

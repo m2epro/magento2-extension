@@ -169,10 +169,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         parent::getAddressData();
 
         $amazonAccount = $this->order->getAmazonAccount();
-        $data = $amazonAccount->getData('magento_orders_settings');
-        $data = !empty($data) ? \Ess\M2ePro\Helper\Json::decode($data) : [];
-
-        if (!empty($data['tax']['import_tax_id_in_magento_order'])) {
+        if ($amazonAccount->isEnabledImportTaxIdInMagentoOrder()) {
             $this->addressData['vat_id'] = $this->order->getTaxRegistrationId();
         }
 

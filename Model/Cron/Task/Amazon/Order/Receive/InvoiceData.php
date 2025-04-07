@@ -10,16 +10,6 @@ class InvoiceData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     public const NICK = 'amazon/order/receive/invoice_data';
 
-    private const AVAILABLE_MARKETPLACE_IDS = [
-        \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_UK,
-        \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_DE,
-        \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_FR,
-        \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_IT,
-        \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_ES,
-        \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_PL,
-        \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_SE,
-    ];
-
     private const ORDER_LIMIT = 200;
     private const MERCHANT_RESEND_INTERVAL_IN_HOURS = 4;
 
@@ -124,14 +114,14 @@ class InvoiceData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     private function getPermittedAccounts(): array
     {
         $accountCollection = $this->accountCollectionFactory->createWithAmazonChildMode();
-        $accountCollection->addFieldToFilter(
-            'marketplace_id',
-            ['in' => self::AVAILABLE_MARKETPLACE_IDS]
-        );
 
         $accountsByMerchantId = [];
         /** @var \Ess\M2ePro\Model\Account $account */
         foreach ($accountCollection->getItems() as $account) {
+            if (!$account->getChildObject()->isEnabledImportTaxIdInMagentoOrder()) {
+                continue;
+            }
+
             $merchantId = $account->getChildObject()->getMerchantId();
             $accountsByMerchantId[$merchantId][] = $account;
         }
