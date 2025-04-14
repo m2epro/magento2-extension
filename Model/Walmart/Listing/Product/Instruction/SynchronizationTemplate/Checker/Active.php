@@ -457,13 +457,21 @@ class Active extends AbstractModel
 
     // ---------------------------------------
 
-    public function isMeetReviseDetailsRequirements()
+    public function isMeetReviseDetailsRequirements(): bool
     {
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
         $walmartListingProduct = $this->input->getListingProduct()->getChildObject();
 
         $walmartSynchronizationTemplate = $walmartListingProduct->getWalmartSynchronizationTemplate();
         if (!$walmartSynchronizationTemplate->isReviseUpdateDetails()) {
+            return false;
+        }
+
+        $walmartMarketplace = $walmartListingProduct->getWalmartMarketplace();
+        if (
+            $walmartMarketplace->isSupportedProductType()
+            && !$walmartListingProduct->isExistsProductType()
+        ) {
             return false;
         }
 

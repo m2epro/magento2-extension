@@ -93,6 +93,11 @@ JS
             if (array_key_exists('only_remap_product', $value) && $value['only_remap_product']) {
                 $additionalData = (array)\Ess\M2ePro\Helper\Json::decode($row->getData('additional_data'));
                 $style = isset($value['style']) ? $value['style'] : '';
+
+                if ($this->isNeedShowRemapActionForProduct($row)) {
+                    continue;
+                }
+
                 if (!isset($additionalData[Listing_Product::MOVING_LISTING_OTHER_SOURCE_KEY])) {
                     unset($actions[$columnName]);
                     $style = '';
@@ -121,7 +126,7 @@ JS
         }
 
         return <<<HTML
-<select class="admin__control-select" style="{$style}" onchange="M2eProVarienGridAction.execute(this, '{$itemId}');">
+<select class="admin__control-select" style="$style" onchange="M2eProVarienGridAction.execute(this, '$itemId');">
     <option value=""></option>
     {$this->renderOptions($actions, $row)}
 </select>
@@ -245,5 +250,32 @@ HTML;
     protected function getHelper($helper, array $arguments = [])
     {
         return $this->helperFactory->getObject($helper, $arguments);
+    }
+
+    private function isNeedShowRemapActionForProduct(\Magento\Framework\DataObject $row): bool
+    {
+        $component = $row->getData('component_mode');
+        if (
+            $component !== \Ess\M2ePro\Helper\Component\Amazon::NICK
+            && $component !== \Ess\M2ePro\Helper\Component\Walmart::NICK
+        ) {
+            return false;
+        }
+
+        if (
+            $row->getData('is_general_id_owner')
+            == \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_YES
+        ) {
+            return false;
+        }
+
+        if (
+            $row->hasData('is_variation_product')
+            && $row->getData('is_variation_product') != 0
+        ) {
+            return false;
+        }
+
+        return true;
     }
 }

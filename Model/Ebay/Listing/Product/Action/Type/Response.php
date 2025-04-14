@@ -692,9 +692,9 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             $data['online_video_id'] = $requestMetadata['other_data']['product_details']['video_id'];
         }
 
-        if (isset($requestMetadata['other_data']['compliance_documents'])) {
+        if (isset($requestMetadata['compliance_documents'])) {
             $data['online_compliance_documents'] = \Ess\M2ePro\Helper\Json::encode(
-                $requestMetadata['other_data']['compliance_documents']
+                $requestMetadata['compliance_documents']
             );
         }
 

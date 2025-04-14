@@ -113,6 +113,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'is_afn_channel' => 'is_afn_channel',
                 'is_general_id_owner' => 'is_general_id_owner',
                 'is_variation_parent' => 'is_variation_parent',
+                'is_variation_product' => 'is_variation_product',
                 'defected_messages' => 'defected_messages',
                 'variation_parent_afn_state' => 'variation_parent_afn_state',
                 'variation_parent_repricing_state' => 'variation_parent_repricing_state',

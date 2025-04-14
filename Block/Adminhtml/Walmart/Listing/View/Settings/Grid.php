@@ -90,6 +90,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'online_qty' => 'online_qty',
                 'online_price' => 'online_price',
                 'is_variation_parent' => 'is_variation_parent',
+                'is_variation_product' => 'is_variation_product',
                 'is_online_price_invalid' => 'is_online_price_invalid',
                 'online_start_date' => 'online_start_date',
                 'online_end_date' => 'online_end_date',

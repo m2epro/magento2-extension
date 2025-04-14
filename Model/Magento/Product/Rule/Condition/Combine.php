@@ -84,6 +84,20 @@ class Combine extends AbstractModel
             'value' => $this->getProductOptions(),
         ];
 
+        /** @var \Ess\M2ePro\Helper\Magento $magentoHelper */
+        $magentoHelper = $this->getHelper('Magento');
+        if ($magentoHelper->isMSISupportingVersion()) {
+            $conditions[] = [
+                'label' => __('MSI Source QTY'),
+                'value' => $this->getMsiSourceOptions()
+            ];
+
+            $conditions[] = [
+                'label' => __('MSI Stock QTY'),
+                'value' => $this->getMsiStockOptions()
+            ];
+        }
+
         return array_merge_recursive(parent::getNewChildSelectOptions(), $conditions);
     }
 
@@ -119,6 +133,28 @@ class Combine extends AbstractModel
 
         return !empty($attributes) ?
             $this->getOptions('Magento\Product\Rule\Condition\Product', $attributes)
+            : [];
+    }
+
+    protected function getMsiSourceOptions(): array
+    {
+        $attributes = $this->modelFactory
+            ->getObject('Magento_Product_Rule_Condition_MsiSource')
+            ->getAttributeOption();
+
+        return !empty($attributes) ?
+            $this->getOptions('Magento\Product\Rule\Condition\MsiSource', $attributes)
+            : [];
+    }
+
+    protected function getMsiStockOptions(): array
+    {
+        $attributes = $this->modelFactory
+            ->getObject('Magento_Product_Rule_Condition_MsiStock')
+            ->getAttributeOption();
+
+        return !empty($attributes) ?
+            $this->getOptions('Magento\Product\Rule\Condition\MsiStock', $attributes)
             : [];
     }
 

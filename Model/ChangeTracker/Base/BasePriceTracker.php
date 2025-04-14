@@ -91,7 +91,6 @@ abstract class BasePriceTracker implements TrackerInterface
             ->makeSubQuery()
             ->distinct()
             ->addSelect('listing_product_id', 'base.listing_product_id')
-            //->addSelect('additional_data', $this->makeAdditionalDataSelectQuery())
             ->from('base', $query);
 
         $mainQuery->andWhere('calculated_price IS NOT NULL')
@@ -404,26 +403,5 @@ abstract class BasePriceTracker implements TrackerInterface
         $sql .= ' END';
 
         return new \Zend_Db_Expr($sql);
-    }
-
-    protected function getAdditionalDataFields(): array
-    {
-        return [
-            'listing_product_id' => 'base.listing_product_id',
-            'product_id' => 'base.product_id',
-            'calculated_price' => 'base.calculated_price',
-            'online_price' => 'base.online_price',
-        ];
-    }
-
-    private function makeAdditionalDataSelectQuery(): \Zend_Db_Expr
-    {
-        $additionalDataSql = '';
-        foreach ($this->getAdditionalDataFields() as $fieldName => $fieldValue) {
-            $additionalDataSql .= "'$fieldName', $fieldValue, ";
-        }
-        $additionalDataSql = rtrim($additionalDataSql, ' ,');
-
-        return new \Zend_Db_Expr("JSON_OBJECT($additionalDataSql)");
     }
 }

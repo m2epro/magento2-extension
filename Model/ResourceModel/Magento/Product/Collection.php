@@ -741,4 +741,9 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         return $this;
     }
+
+    public function hasJoinField(string $fieldName): bool
+    {
+        return isset($this->_joinFields[$fieldName]);
+    }
 }
