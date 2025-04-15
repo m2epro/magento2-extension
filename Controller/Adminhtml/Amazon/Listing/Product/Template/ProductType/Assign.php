@@ -77,12 +77,16 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Tem
         $responseType = 'success';
         $messages = [];
 
-        $filteredProductsIdsByType = $this->variationHelper->filterProductsByMagentoProductType($productsIds);
+        $filteredProductsIdsByType = $this->variationHelper->filterProductsByMagentoProductType(
+            $productsIds,
+            true
+        );
+
         if (count($productsIds) !== count($filteredProductsIdsByType)) {
             $responseType = 'warning';
-            $text = $this->__(
-                'Product Type cannot be assigned because %count% Items are Simple
-                 with Custom Options or Bundle Magento Products.',
+            $text = __(
+                'Cannot assign Product Type because %count% items are Bundle Magento Products,'
+                . ' this actions is not eligible for this type of Magento Products.',
                 count($productsIds) - count($filteredProductsIdsByType)
             );
 

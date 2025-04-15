@@ -75,20 +75,24 @@ class ValidateProductsForAssign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\
         if (count($productsIds) !== count($productsIdsLocked)) {
             $messages[] = [
                 'type' => 'warning',
-                'text' => $this->__(
-                    'Product Type cannot be assigned because the Products are in Action.'
+                'text' => __(
+                    'Unable to assign Product Type. The selected action could not be completed because'
+                    . ' one or more products are currently being processed.'
                 ),
             ];
         }
 
-        $filteredProductsIdsByType = $this->variationHelper->filterProductsByMagentoProductType($productsIdsLocked);
+        $filteredProductsIdsByType = $this->variationHelper->filterProductsByMagentoProductType(
+            $productsIdsLocked,
+            true
+        );
 
         if (count($productsIdsLocked) !== count($filteredProductsIdsByType)) {
             $messages[] = [
                 'type' => 'warning',
-                'text' => $this->__(
-                    'Selected action was not completed for one or more Items. Product Type cannot be assigned
-                    to Simple with Custom Options, Bundle and Downloadable with Separated Links Magento Products.'
+                'text' => __(
+                    'Cannot assign Product Type to the following Magento product types:'
+                    . ' Bundle and Downloadable with Separated Links.'
                 ),
             ];
         }

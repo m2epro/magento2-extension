@@ -18,6 +18,11 @@ class ChangeStoreService
     private $walmartListingProductResource;
     /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction */
     private $instruction;
+    /** @var \Ess\M2ePro\Helper\Module\Log */
+    private $log;
+    /** @var \Ess\M2ePro\Model\Listing\Log */
+    private $logService;
+    private \Magento\Store\Model\StoreManagerInterface $storeManager;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Listing $listingResource,
@@ -25,7 +30,10 @@ class ChangeStoreService
         \Ess\M2ePro\Model\ResourceModel\Walmart\Item $walmartItemResource,
         \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product $walmartListingProductResource,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
-        \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction $instruction
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction $instruction,
+        \Ess\M2ePro\Helper\Module\Log $log,
+        \Ess\M2ePro\Model\Listing\Log $logService,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
         $this->instruction = $instruction;
         $this->listingResource = $listingResource;
@@ -33,19 +41,23 @@ class ChangeStoreService
         $this->walmartListingProductResource = $walmartListingProductResource;
         $this->walmartItemResource = $walmartItemResource;
         $this->resourceConnection = $resourceConnection;
+        $this->log = $log;
+        $this->logService = $logService;
+        $this->storeManager = $storeManager;
     }
 
     public function change(\Ess\M2ePro\Model\Listing $listing, int $storeId): void
     {
         $connection = $this->resourceConnection->getConnection();
         $connection->beginTransaction();
+        $prevStoreId = $listing->getStoreId();
 
         try {
             $this->updateStoreViewInItem($storeId, (int)$listing->getId(), $listing->getComponentMode());
             $this->updateStoreViewInListing($listing, $storeId);
 
             $this->addInstruction((int)$listing->getId(), $listing->getComponentMode());
-
+            $this->addChangeLog($listing, $prevStoreId, $storeId);
             $connection->commit();
         } catch (\Throwable $e) {
             $connection->rollBack();
@@ -123,5 +135,36 @@ class ChangeStoreService
         foreach ($batches as $batch) {
             $this->instruction->add($batch);
         }
+    }
+
+    private function addChangeLog(\Ess\M2ePro\Model\Listing $listing, int $prevStoreId, int $storeId): void
+    {
+        $this->logService->setComponentMode(\Ess\M2ePro\Helper\Component\Walmart::NICK);
+        $this->logService->addListingMessage(
+            $listing->getId(),
+            \Ess\M2ePro\Helper\Data::INITIATOR_USER,
+            null,
+            \Ess\M2ePro\Model\Listing\Log::ACTION_EDIT_LISTING_SETTINGS,
+            $this->log->encodeDescription(
+                'The Store View for this M2E Listing was updated from ‘%from%’ to ‘%to%’.',
+                [
+                    '!from' => $this->getLogStoreName($prevStoreId),
+                    '!to' => $this->getLogStoreName($storeId)
+                ]
+            ),
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
+        );
+    }
+
+    private function getLogStoreName(int $storeId): string
+    {
+        try {
+            $store = $this->storeManager->getStore($storeId);
+            $result = $store->getName();
+        } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
+            $result = __('Unknown Store (ID: %1)', $storeId);
+        }
+
+        return (string)$result;
     }
 }

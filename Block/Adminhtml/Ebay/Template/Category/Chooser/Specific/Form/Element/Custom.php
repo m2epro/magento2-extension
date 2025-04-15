@@ -222,10 +222,9 @@ HTML;
 
     public function getValueCustomValueHtml($index, $specific)
     {
-        if (empty($specific['value_custom_value'])) {
-            $customValues = [''];
-        } else {
-            $customValues = \Ess\M2ePro\Helper\Json::decode($specific['value_custom_value']);
+        $customValue = '';
+        if (!empty($specific['value_custom_value'])) {
+            $customValue = \Ess\M2ePro\Helper\Json::decode($specific['value_custom_value'])[0] ?? '';
         }
 
         $display = 'display: none;';
@@ -241,7 +240,7 @@ HTML;
             'data' => [
                 'name' => 'specific[custom_' . $index . '][value_custom_value][]',
                 'class' => 'M2ePro-required-when-visible item-specific',
-                'value' => $customValues[0],
+                'value' => $customValue,
                 'disabled' => isset($specific['__template__']),
             ],
         ]);

@@ -118,8 +118,15 @@ class Variation
         return $productsIds;
     }
 
-    public function filterProductsByMagentoProductType($listingProductsIds)
-    {
+    /**
+     * @param bool $skipSimpleWithCustomOptions Whether to skip simple products with custom options
+     *
+     * @return string|int[]
+     */
+    public function filterProductsByMagentoProductType(
+        array $listingProductsIds,
+        bool $skipSimpleWithCustomOptions = false
+    ): array {
         $connRead = $this->resourceConnection->getConnection();
         $tableListingProduct = $this->databaseStructure->getTableNameWithPrefix('m2epro_listing_product');
         $tableProductEntity = $this->databaseStructure->getTableNameWithPrefix('catalog_product_entity');
@@ -165,9 +172,10 @@ class Variation
                 }
 
                 if (
-                    $this->helperMagentoProduct->isSimpleType($product['type_id']) &&
-                    !empty($product['option_id']) && $product['option_is_require'] == 1 &&
-                    in_array($product['option_type'], ['drop_down', 'radio', 'multiple', 'checkbox'])
+                    !$skipSimpleWithCustomOptions
+                    && $this->helperMagentoProduct->isSimpleType($product['type_id'])
+                    && !empty($product['option_id']) && $product['option_is_require'] == 1
+                    && in_array($product['option_type'], ['drop_down', 'radio', 'multiple', 'checkbox'])
                 ) {
                     unset($productToListingProductIds[$product['entity_id']]);
                 }

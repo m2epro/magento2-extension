@@ -107,6 +107,7 @@ abstract class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\R
             return [];
         }
 
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Qty $dataBuilder */
         $dataBuilder = $this->getDataBuilder('qty');
 
         return $dataBuilder->getBuilderData();
@@ -126,6 +127,7 @@ abstract class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\R
             return [];
         }
 
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Price\Regular $dataBuilder */
         $dataBuilder = $this->getDataBuilder('price_regular');
 
         return $dataBuilder->getBuilderData();
@@ -149,6 +151,7 @@ abstract class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\R
             return [];
         }
 
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Price\Business $dataBuilder */
         $dataBuilder = $this->getDataBuilder('price_business');
 
         return $dataBuilder->getBuilderData();
@@ -164,6 +167,7 @@ abstract class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\R
             return [];
         }
 
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Details $dataBuilder */
         $dataBuilder = $this->getDataBuilder('details');
         $data = $dataBuilder->getBuilderData();
 

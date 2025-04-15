@@ -112,6 +112,9 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
     public const ACTION_COMPLIANCE_DOCUMENTS = 41;
     public const _ACTION_COMPLIANCE_DOCUMENTS = 'Upload Compliance Documents on Channel';
 
+    public const ACTION_EDIT_LISTING_SETTINGS = 42;
+    public const _ACTION_EDIT_LISTING_SETTINGS = 'Edit Listing Settings';
+
     protected function _construct(): void
     {
         parent::_construct();

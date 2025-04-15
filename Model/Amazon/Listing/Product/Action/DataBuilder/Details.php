@@ -33,7 +33,7 @@ class Details extends AbstractModel
         $listingProduct = $this->getListingProduct();
         $amazonListingProduct = $listingProduct->getChildObject();
 
-        $data = $this->getListPrice();
+        $data = [];
 
         if ($amazonListingProduct->isGeneralIdOwner()) {
             $variationManager = $amazonListingProduct->getVariationManager();
@@ -301,33 +301,5 @@ class Details extends AbstractModel
         }
 
         return true;
-    }
-
-    private function getListPrice(): array
-    {
-        if ($this->getAmazonListingProduct()->isGeneralIdOwner()) {
-            return [];
-        }
-
-        $variationManager = $this->getAmazonListingProduct()->getVariationManager();
-        if ($variationManager->isVariationParent()) {
-            return [];
-        }
-
-        $productTypeTemplate = $this->getAmazonListingProduct()->getProductTypeTemplate();
-        if (
-            $productTypeTemplate !== null
-            && $productTypeTemplate->getNick()
-                !== \Ess\M2ePro\Model\Amazon\Template\ProductType::GENERAL_PRODUCT_TYPE_NICK
-        ) {
-            return [];
-        }
-
-        $regularListPrice = $this->getAmazonListingProduct()->getRegularListPrice();
-        if ($regularListPrice <= 0) {
-            return [];
-        }
-
-        return ['list_price' => $regularListPrice];
     }
 }
