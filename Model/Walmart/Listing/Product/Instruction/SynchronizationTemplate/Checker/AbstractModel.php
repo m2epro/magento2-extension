@@ -113,6 +113,7 @@ abstract class AbstractModel extends BaseAbstractModel
     protected function getReviseDetailsInstructionTypes(): array
     {
         return [
+            \Ess\M2ePro\Model\Walmart\Listing\ChangeProcessor::INSTRUCTION_TYPE_CONDITION_DATA_CHANGED,
             SynchronizationChangeProcessor::INSTRUCTION_TYPE_REVISE_DETAILS_ENABLED,
             SynchronizationChangeProcessor::INSTRUCTION_TYPE_REVISE_DETAILS_DISABLED,
             \Ess\M2ePro\Model\Walmart\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,

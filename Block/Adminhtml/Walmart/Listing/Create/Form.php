@@ -4,14 +4,18 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Create;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Block\Adminhtml\StoreSwitcher;
+use Ess\M2ePro\Model\Walmart\Listing as WalmartListing;
+use Ess\M2ePro\Model\ResourceModel\Walmart\Listing as WalmartListingResource;
 
 class Form extends AbstractForm
 {
+    private \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper;
     private \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory;
     private \Ess\M2ePro\Helper\Data $dataHelper;
     private \Ess\M2ePro\Model\Walmart\Marketplace\Repository $marketplaceRepository;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Model\Walmart\Marketplace\Repository $marketplaceRepository,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
@@ -20,14 +24,13 @@ class Form extends AbstractForm
         \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
         $this->walmartFactory = $walmartFactory;
         $this->dataHelper = $dataHelper;
         $this->marketplaceRepository = $marketplaceRepository;
 
         parent::__construct($context, $registry, $formFactory, $data);
     }
-
-    // ---------------------------------------
 
     protected function _prepareForm()
     {
@@ -427,6 +430,8 @@ HTML
             ]
         );
 
+        $this->addConditionFieldset($form, $formData);
+
         $form->setUseContainer(true);
         $this->setForm($form);
 
@@ -435,12 +440,107 @@ HTML
 
     // ---------------------------------------
 
+    private function addConditionFieldset(\Magento\Framework\Data\Form $form, array $formData): void
+    {
+        $fieldset = $form->addFieldset(
+            'condition_settings_fieldset',
+            [
+                'legend' => __('Condition Settings'),
+            ]
+        );
+
+        $fieldset->addField(
+            'condition_custom_attribute',
+            'hidden',
+            [
+                'name' => 'condition_custom_attribute',
+                'value' => $formData['condition_custom_attribute'],
+            ]
+        );
+
+        $fieldset->addField(
+            'condition_value',
+            'hidden',
+            [
+                'name' => 'condition_value',
+                'value' => $formData['condition_value'],
+            ]
+        );
+
+        $preparedAttributes = [];
+        $magentoSelectTextAttrs = $this->magentoAttributeHelper->filterByInputTypes(
+            $this->magentoAttributeHelper->getAll(),
+            ['text', 'select']
+        );
+        foreach ($magentoSelectTextAttrs as $attribute) {
+            $attrs = ['attribute_code' => $attribute['code']];
+            if (
+                $formData['condition_mode'] == \Ess\M2ePro\Model\Walmart\Listing::CONDITION_MODE_CUSTOM_ATTRIBUTE
+                && $attribute['code'] == $formData['condition_custom_attribute']
+            ) {
+                $attrs['selected'] = 'selected';
+            }
+            $preparedAttributes[] = [
+                'attrs' => $attrs,
+                'value' => \Ess\M2ePro\Model\Walmart\Listing::CONDITION_MODE_CUSTOM_ATTRIBUTE,
+                'label' => $attribute['label'],
+            ];
+        }
+
+        $fieldset->addField(
+            'condition_mode',
+            self::SELECT,
+            [
+                'name' => 'condition_mode',
+                'label' => __('Condition'),
+                'values' => [
+                    [
+                        'label' => __('Recommended Value'),
+                        'value' => $this->getRecommendedConditionValues($formData),
+                    ],
+                    [
+                        'label' => __('Magento Attributes'),
+                        'value' => $preparedAttributes,
+                        'attrs' => [
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
+                ],
+                'tooltip' => __('Specify the condition that best describes the current state of your product.'),
+                'create_magento_attribute' => true,
+            ]
+        )->addCustomAttribute('allowed_attribute_types', 'text,select');
+    }
+
+    private function getRecommendedConditionValues(array $formData): array
+    {
+        $values = [];
+        foreach (\Ess\M2ePro\Model\Walmart\Listing::CONDITION_RECOMMENDED_VALUES as $condition) {
+            $value = [
+                'attrs' => ['attribute_code' => $condition],
+                'value' => \Ess\M2ePro\Model\Walmart\Listing::CONDITION_MODE_RECOMMENDED,
+                'label' => __($condition),
+            ];
+
+            if ($condition === $formData[\Ess\M2ePro\Model\ResourceModel\Walmart\Listing::COLUMN_CONDITION_VALUE]) {
+                $value['attrs']['selected'] = 'selected';
+            }
+
+            $values[] = $value;
+        }
+
+        return $values;
+    }
+
+    // ---------------------------------------
+
     protected function _prepareLayout()
     {
-        $this->jsPhp->addConstants(
-            $this->dataHelper
-                ->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart::class)
-        );
+        $this->jsPhp->addConstants($this->dataHelper->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart::class))
+                    ->addConstants([
+                        '\Ess\M2ePro\Model\Walmart\Listing::CONDITION_MODE_RECOMMENDED'
+                        => \Ess\M2ePro\Model\Walmart\Listing::CONDITION_MODE_RECOMMENDED,
+                    ]);
 
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Walmart\Account'));
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Walmart\Marketplace'));
@@ -648,7 +748,7 @@ JS
 
     // ---------------------------------------
 
-    public function getDefaultFieldsValues()
+    public function getDefaultFieldsValues(): array
     {
         return [
             'title' => $this->walmartFactory->getObject('Listing')->getCollection()
@@ -659,6 +759,10 @@ JS
             'template_selling_format_id' => '',
             'template_description_id' => '',
             'template_synchronization_id' => '',
+
+            WalmartListingResource::COLUMN_CONDITION_MODE => WalmartListing::CONDITION_MODE_NONE,
+            WalmartListingResource::COLUMN_CONDITION_VALUE => '',
+            WalmartListingResource::COLUMN_CONDITION_CUSTOM_ATTRIBUTE => '',
         ];
     }
 

@@ -412,6 +412,9 @@ class Config extends AbstractConfig
                 'DeleteTemplateDescriptionIdColumnFromAmazonListingProductTable',
                 'AddCustomAttributeForConditionDescriptorIntoEbayDescriptionTemplate',
             ],
+            'y25_m04' => [
+                'AddConditionColumnsIntoWalmartListingTable',
+            ],
         ];
     }
 
@@ -506,6 +509,8 @@ class Config extends AbstractConfig
             \Ess\M2ePro\Setup\Update\y25_m02\AddConditionDescriptorIntoEbayDescriptionTemplate::class,
 
             \Ess\M2ePro\Setup\Update\y25_m03\AddCustomAttributeForConditionDescriptorIntoEbayDescriptionTemplate::class,
+
+            \Ess\M2ePro\Setup\Update\y25_m04\AddConditionColumnsIntoWalmartListingTable::class,
         ];
     }
 

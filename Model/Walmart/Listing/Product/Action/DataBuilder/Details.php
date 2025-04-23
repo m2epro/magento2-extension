@@ -8,9 +8,11 @@ use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Par
 class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\AbstractModel
 {
     private \Ess\M2ePro\Model\Walmart\ProductType\AttributeSetting\Provider $attributeSettingProvider;
+    private \Ess\M2ePro\Model\Walmart\Listing\Product\ProviderFactory $listingProviderFactory;
 
     public function __construct(
         \Ess\M2ePro\Model\Walmart\ProductType\AttributeSetting\Provider $attributeSettingProvider,
+        \Ess\M2ePro\Model\Walmart\Listing\Product\ProviderFactory $listingProviderFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
@@ -18,12 +20,16 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
         parent::__construct($helperFactory, $modelFactory, $data);
 
         $this->attributeSettingProvider = $attributeSettingProvider;
+        $this->listingProviderFactory = $listingProviderFactory;
     }
 
     public function getBuilderData()
     {
-        $sellingFormatTemplateSource = $this->getWalmartListingProduct()->getSellingFormatTemplateSource();
         $walmartListingProduct = $this->getWalmartListingProduct();
+        $sellingFormatTemplateSource = $walmartListingProduct->getSellingFormatTemplateSource();
+        $walmartListingProductProvider = $this->listingProviderFactory->create(
+            $walmartListingProduct
+        );
 
         $data = [
             'product_id_data' => $this->getProductIdData(),
@@ -38,6 +44,11 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
                 $walmartListingProduct->getProductType(),
                 $walmartListingProduct->getActualMagentoProduct()
             );
+        }
+
+        $condition = $this->retrieveCondition($walmartListingProductProvider);
+        if ($condition !== null) {
+            $data['condition'] = $condition;
         }
 
         if ($this->getWalmartListingProduct()->getWpid()) {
@@ -97,6 +108,24 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
         }
 
         return $data;
+    }
+
+    private function retrieveCondition(\Ess\M2ePro\Model\Walmart\Listing\Product\Provider $provider): ?string
+    {
+        $this->searchNotFoundAttributes();
+        $condition = $provider->retrieveCondition();
+
+        if ($condition === null) {
+            return null;
+        }
+
+        if ($condition->isNotFoundMagentoAttribute) {
+            $this->processNotFoundAttributes('Condition');
+
+            return null;
+        }
+
+        return $condition->value;
     }
 
     /**

@@ -216,10 +216,6 @@ class Checker
      */
     public function isNeedReviseForPrice(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
     {
-        if ($ebayListingProduct->isProductInPromotion()) {
-            return false;
-        }
-
         if (!$this->isPriceReviseEnabled($ebayListingProduct)) {
             return false;
         }

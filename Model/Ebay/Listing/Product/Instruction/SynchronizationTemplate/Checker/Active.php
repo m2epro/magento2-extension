@@ -633,10 +633,6 @@ class Active extends AbstractModel
         /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
         $ebayListingProduct = $this->input->getListingProduct()->getChildObject();
 
-        if ($ebayListingProduct->isProductInPromotion()) {
-            return false;
-        }
-
         if (!$ebayListingProduct->getEbaySynchronizationTemplate()->isReviseUpdatePrice()) {
             return false;
         }

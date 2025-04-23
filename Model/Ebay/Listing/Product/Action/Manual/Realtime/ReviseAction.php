@@ -40,19 +40,6 @@ class ReviseAction extends AbstractRealtime
                 continue;
             }
 
-            if (
-                $checkerResult->getConfigurator()->isPriceAllowed()
-                && $product->getChildObject()->isProductInPromotion()
-            ) {
-                $checkerResult->getConfigurator()->disallowPrice();
-
-                $this->writeLog(
-                    $product,
-                    'Price was not revised because this Item is currently on promotion.',
-                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING
-                );
-            }
-
             $product->setActionConfigurator($checkerResult->getConfigurator());
 
             $result[] = $product;

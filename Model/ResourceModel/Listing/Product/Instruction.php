@@ -4,6 +4,9 @@ namespace Ess\M2ePro\Model\ResourceModel\Listing\Product;
 
 class Instruction extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
+    public const COLUMN_TYPE = 'type';
+    public const COLUMN_PRIORITY = 'priority';
+
     /** @var \Ess\M2ePro\Model\ResourceModel\Tag */
     private $tagResource;
     /** @var \Ess\M2ePro\Model\Tag\ListingProduct\Relation */

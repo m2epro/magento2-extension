@@ -208,17 +208,6 @@ class Repository
         );
     }
 
-    public function isProductInPromotion(int $listingProductId): bool
-    {
-        $collectionListingProduct = $this->listingProductPromotionCollectionFactory->create();
-        $collectionListingProduct->addFieldToFilter(
-            EbayListingProductPromotionResource::COLUMN_LISTING_PRODUCT_ID,
-            $listingProductId
-        );
-
-        return (bool)$collectionListingProduct->getSize();
-    }
-
     public function hasProductPromotionByAccountAndMarketplace(
         int $accountId,
         int $marketplaceId

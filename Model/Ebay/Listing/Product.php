@@ -1454,11 +1454,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     // ----------------------------------------
 
-    public function isProductInPromotion(): bool
-    {
-        return $this->promotionRepository->isProductInPromotion($this->getId());
-    }
-
     public function getOnlineComplianceDocuments(): array
     {
         $documents = $this->getData(EbayProductResource::COLUMN_ONLINE_COMPLIANCE_DOCUMENTS);

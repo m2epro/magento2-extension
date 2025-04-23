@@ -12497,10 +12497,28 @@ class Installer
             ['unsigned' => true, 'nullable' => false]
         );
         $walmartListingTable->addColumn(
-            'template_synchronization_id',
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing::COLUMN_TEMPLATE_SYNCHRONIZATION_ID,
             Table::TYPE_INTEGER,
             null,
             ['unsigned' => true, 'nullable' => false]
+        );
+        $walmartListingTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing::COLUMN_CONDITION_MODE,
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'default' => 0]
+        );
+        $walmartListingTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing::COLUMN_CONDITION_CUSTOM_ATTRIBUTE,
+            Table::TYPE_TEXT,
+            255,
+            ['default' => null]
+        );
+        $walmartListingTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing::COLUMN_CONDITION_VALUE,
+            Table::TYPE_TEXT,
+            255,
+            ['default' => null]
         );
         $walmartListingTable->addIndex(
             \Ess\M2ePro\Model\ResourceModel\Walmart\Listing::COLUMN_AUTO_GLOBAL_ADDING_PRODUCT_TYPE_ID,

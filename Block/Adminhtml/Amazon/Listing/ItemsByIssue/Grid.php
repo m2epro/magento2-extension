@@ -95,7 +95,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         if ($accountId !== null || $marketplaceId !== null) {
             $collection->join(
                 ['l' => $this->listingResource->getMainTable()],
-                'lp.listing_id = l.id'
+                'lp.listing_id = l.id',
+                []
             );
         }
 
