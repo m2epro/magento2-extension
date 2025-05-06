@@ -13,13 +13,14 @@ $element = $this->getElement();
         <table class="documents-table border data-grid data-grid-not-hovered">
             <colgroup>
                 <col style="width: 30%">
+                <col style="width: 20%">
                 <col style="width: 30%">
                 <col style="width: 20%">
-                <col style="width: 10%">
             </colgroup>
             <thead>
                 <tr>
                     <th class="data-grid-th"><span><?= __('Type') ?></span></th>
+                    <th class="data-grid-th"><span><?= __('Mode') ?></span></th>
                     <th class="data-grid-th">
                         <span><?= __('Document URL') ?></span>
                         <?= $element->getTooltipHtml(__('Choose an Attribute containing a valid URL ' .
@@ -34,9 +35,14 @@ $element = $this->getElement();
             </thead>
             <tbody>
             <?php foreach ($element->getSavedComplianceDocuments() as $index => $document) : ?>
+            <?php $mode = (int)$document['document_mode']?>
             <tr>
                 <td><?= $element->renderTypesDropdown($index, $document['document_type']) ?></td>
-                <td><?= $element->renderAttributesDropdown($index, $document['document_attribute']) ?></td>
+                <td><?= $element->renderModeDropdown($index, $mode) ?></td>
+                <td>
+                    <?= $element->renderAttributesDropdown($index, $document['document_attribute'], $mode) ?>
+                    <?= $element->renderCustomValueInput($index, $document['document_custom_value'] ?? '', $mode) ?>
+                </td>
                 <td><?= $element->renderLanguagesDropdown($index, $document['document_languages'] ?? []) ?></td>
                 <td><?= $element->renderRemoveRowButton($index) ?></td>
             </tr>
@@ -48,7 +54,6 @@ $element = $this->getElement();
             </tr>
             </tfoot>
         </table>
-
     </div>
 </div>
 

@@ -1002,6 +1002,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
         $descriptionTemplate = $this->getEbayDescriptionTemplate();
 
+        if ($descriptionTemplate->isVideoModeCustomValue()) {
+            return $descriptionTemplate->getVideoCustomValue();
+        }
+
         $magentoVideoAttribute = $descriptionTemplate->getVideoAttribute();
         $videoUrl = $this->getMagentoProduct()->getAttributeValue($magentoVideoAttribute);
 
@@ -1016,7 +1020,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     {
         $descriptionTemplate = $this->getEbayDescriptionTemplate();
 
-        return $descriptionTemplate->isVideoModeAttribute();
+        return !$descriptionTemplate->isVideoModeNone();
     }
 
     // ---------------------------------------

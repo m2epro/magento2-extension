@@ -97,9 +97,6 @@ CSS
     <input id="product_type_id" name="product_type_id" value="" type="hidden" />
     <input id="products_ids" name="products_ids" type="hidden" value="">
 </div>
-<label style="margin: 0 52px; display: none;" class="mage-error" id="same_product_type_error" >
-    {$this->__('Please select Product Type.')}
-</label>
 HTML
             ,
             ]
@@ -236,10 +233,6 @@ HTML
 
         categoryTemplateModeFormSubmit = function()
         {
-            if ($('mode1same').checked && $('product_type_id').value == '') {
-                $('same_product_type_error').show();
-                return;
-            }
             $('edit_form').submit();
         };
 
@@ -248,7 +241,6 @@ HTML
             $('product_type_id').value = templateId;
             $('products_ids').value = '{$productsIds}';
             $('product_type_title').innerHTML = el.up('tr').down('td').down('a').innerHTML;
-            $('same_product_type_error').hide();
             popup.modal('closeModal');
         };
 

@@ -251,7 +251,7 @@ class Installer
                                   ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($moduleConfigTable);
 
-        $listingTable = $this->getConnection()->newTable($this->getFullTableName('listing'))
+        $listingTable = $this->getConnection()->newTable($this->getFullTableName(TablesHelper::TABLE_LISTING))
                              ->addColumn(
                                  'id',
                                  Table::TYPE_INTEGER,
@@ -6245,6 +6245,12 @@ class Installer
         );
         $ebayTemplateDescriptionTable->addColumn(
             EbayTemplateDescription::COLUMN_VIDEO_ATTRIBUTE,
+            Table::TYPE_TEXT,
+            255,
+            ['default' => null]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            EbayTemplateDescription::COLUMN_VIDEO_CUSTOM_VALUE,
             Table::TYPE_TEXT,
             255,
             ['default' => null]
@@ -12862,6 +12868,12 @@ class Installer
             Table::TYPE_DATETIME,
             null,
             ['nullable' => true]
+        );
+        $walmartListingProductTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_IS_NOT_MAPPED_TO_EXISTING_CHANNEL_ITEM,
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
         );
         $walmartListingProductTable->addIndex('is_variation_product_matched', 'is_variation_product_matched');
         $walmartListingProductTable->addIndex('is_variation_channel_matched', 'is_variation_channel_matched');

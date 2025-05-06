@@ -37,7 +37,7 @@ class ViewGrid extends Main
         $mapToTemplateJsFn = $this->getRequest()->getParam('map_to_template_js_fn');
         $createNewTemplateJsFn = $this->getRequest()->getParam('create_new_template_js_fn');
 
-        $marketplaceId = $this->listingProductRepository->findFistsByIds($listingProductsIds)
+        $marketplaceId = $this->listingProductRepository->findFirstByIds($listingProductsIds)
                                                         ->getListing()
                                                         ->getMarketplaceId();
         $grid = $this->gridFactory->create(

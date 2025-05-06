@@ -50,7 +50,7 @@ class MsiSource extends AbstractModel
             return $this;
         }
 
-        $tableAlias = sprintf('si_%s', $this->getAttribute());
+        $tableAlias = $this->getTableAlias();
 
         $productCollection->joinTable(
             [$tableAlias => $this->sourceItemResource->getMainTable()],
@@ -76,8 +76,19 @@ class MsiSource extends AbstractModel
         return 'numeric';
     }
 
+    private function getTableAlias(): string
+    {
+        return sprintf(
+            'si_%s',
+            $this->helperData->md5String($this->getAttribute())
+        );
+    }
+
     private function getFieldName(): string
     {
-        return sprintf('source_inventory_%s_qty', $this->getAttribute());
+        return sprintf(
+            'si_%s_qty',
+            $this->helperData->md5String($this->getAttribute())
+        );
     }
 }

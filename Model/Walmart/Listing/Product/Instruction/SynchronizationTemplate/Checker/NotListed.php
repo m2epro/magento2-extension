@@ -1,20 +1,9 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Instruction\SynchronizationTemplate\Checker;
 
-/**
- * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Instruction\SynchronizationTemplate\Checker\NotListed
- */
 class NotListed extends AbstractModel
 {
-    //########################################
-
     public function isAllowed()
     {
         if (!parent::isAllowed()) {
@@ -29,6 +18,16 @@ class NotListed extends AbstractModel
 
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
         $walmartListingProduct = $listingProduct->getChildObject();
+
+        if (
+            $walmartListingProduct->getWalmartMarketplace()
+                                  ->isSupportedProductType()
+            && !$walmartListingProduct->isExistsProductType()
+            && !$walmartListingProduct->isAvailableMappingToExistingChannelItem()
+        ) {
+            return false;
+        }
+
         $variationManager = $walmartListingProduct->getVariationManager();
 
         if ($variationManager->isVariationProduct()) {
@@ -46,8 +45,6 @@ class NotListed extends AbstractModel
 
         return true;
     }
-
-    //########################################
 
     public function process(array $params = [])
     {
@@ -84,8 +81,6 @@ class NotListed extends AbstractModel
         }
     }
 
-    //########################################
-
     public function isMeetListRequirements()
     {
         $listingProduct = $this->input->getListingProduct();
@@ -97,15 +92,6 @@ class NotListed extends AbstractModel
         $walmartSynchronizationTemplate = $walmartListingProduct->getWalmartSynchronizationTemplate();
 
         if (!$walmartSynchronizationTemplate->isListMode()) {
-            return false;
-        }
-
-        if (
-            $walmartListingProduct
-                ->getWalmartMarketplace()
-                ->isSupportedProductType()
-            && !$walmartListingProduct->isExistsProductType()
-        ) {
             return false;
         }
 
@@ -235,6 +221,4 @@ class NotListed extends AbstractModel
 
         return true;
     }
-
-    //########################################
 }

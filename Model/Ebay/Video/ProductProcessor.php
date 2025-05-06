@@ -46,7 +46,10 @@ class ProductProcessor
                 $this->createInstruction($listingProduct);
             }
 
-            $message = (string)__('Product Video URL was not found in the selected Magento Attribute.');
+            $message = (string)__('Product video URL was not found in the selected Magento Attribute.');
+            if ($ebayListingProduct->getEbayDescriptionTemplate()->isVideoModeCustomValue()) {
+                $message = (string)__('The product video URL could not be found in the custom value field.');
+            }
             $this->addLogToListingProduct($listingProduct, $message);
 
             return Result::createFail($message);
@@ -55,8 +58,15 @@ class ProductProcessor
         if (!$this->isValidUrl($videoUrl)) {
             $message = (string)__(
                 'Product Video was not uploaded on eBay: invalid video URL value in attribute "%label"',
-                ['label' => $this->getLabel($listingProduct)]
+                ['label' => $this->getLabel($ebayListingProduct)]
             );
+
+            if ($ebayListingProduct->getEbayDescriptionTemplate()->isVideoModeCustomValue()) {
+                $message = (string)__(
+                    'Product Video was not uploaded on eBay: invalid video URL value in custom value field.'
+                );
+            }
+
             $this->addLogToListingProduct($listingProduct, $message);
 
             return Result::createFail($message);
@@ -104,7 +114,7 @@ class ProductProcessor
 
     private function getLabel($listingProduct): string
     {
-        $magentoVideoAttribute = $listingProduct->getEbayDescriptionTemplate()->getVideoAttribute();
+        $magentoVideoAttribute = $listingProduct->findVideoUrlByPolicy();
 
         return $this->magentoAttributeHelper->getAttributeLabel($magentoVideoAttribute);
     }

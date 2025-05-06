@@ -6,6 +6,7 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 {
     public const COLUMN_LISTING_PRODUCT_ID = 'listing_product_id';
     public const COLUMN_PRODUCT_TYPE_ID = 'product_type_id';
+    public const COLUMN_IS_NOT_MAPPED_TO_EXISTING_CHANNEL_ITEM = 'is_not_mapped_to_existing_channel_item';
 
     private \Ess\M2ePro\Model\ResourceModel\Listing\Product $listingProductResource;
     protected $_isPkAutoIncrement = false;

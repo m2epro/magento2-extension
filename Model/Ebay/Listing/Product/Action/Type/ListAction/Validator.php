@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\ListAction;
 
 class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Validator
@@ -18,6 +12,7 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
     private $componentEbayConfiguration;
 
     public function __construct(
+        \Ess\M2ePro\Model\Connector\Connection\Response\MessageFactory $messageFactory,
         \Ess\M2ePro\Helper\Component\Ebay\Configuration $componentEbayConfiguration,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -32,6 +27,7 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
             $modelFactory,
             $variationCollectionFactory,
             $variationOptionResource,
+            $messageFactory,
             $data
         );
 
@@ -40,12 +36,10 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
         $this->componentEbayConfiguration = $componentEbayConfiguration;
     }
 
-    //########################################
-
     public function validate()
     {
         if (!$this->getListingProduct()->isListable()) {
-            $this->addMessage('Item is Listed or not available');
+            $this->addMessage('Item is Listed or not available', \Ess\M2ePro\Model\Tag\ValidatorIssues::NOT_USER_ERROR);
 
             return false;
         }
@@ -53,7 +47,8 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
         if ($this->getListingProduct()->isHidden()) {
             $this->addMessage(
                 'The List action cannot be executed for this Item as it has a Listed (Hidden) status.
-                You have to stop Item manually first to run the List action for it.'
+                You have to stop Item manually first to run the List action for it.',
+                \Ess\M2ePro\Model\Tag\ValidatorIssues::ERROR_HIDDEN_STATUS
             );
 
             return false;
@@ -144,7 +139,8 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
                     '!listing_title' => $theSameListingProduct->getListing()->getTitle(),
                     '!listing_id' => $theSameListingProduct->getListing()->getId(),
                 ]
-            )
+            ),
+            \Ess\M2ePro\Model\Tag\ValidatorIssues::ERROR_DUPLICATE_PRODUCT_LISTING
         );
 
         return false;
@@ -158,6 +154,4 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
 
         return $this;
     }
-
-    //########################################
 }

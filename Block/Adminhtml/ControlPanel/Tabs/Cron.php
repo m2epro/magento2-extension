@@ -1,21 +1,12 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Cron
- */
 class Cron extends AbstractForm
 {
-    //########################################
+    public array $tasks = [];
 
     public function _construct()
     {
@@ -24,8 +15,6 @@ class Cron extends AbstractForm
         $this->setId('controlPanelCron');
         $this->setTemplate('control_panel/tabs/cron.phtml');
     }
-
-    //########################################
 
     protected function _beforeToHtml()
     {
@@ -59,5 +48,20 @@ class Cron extends AbstractForm
         return parent::_beforeToHtml();
     }
 
-    //########################################
+    public function getRunAllUrl(): string
+    {
+        return $this->getTaskUrl('');
+    }
+
+    public function getTaskUrl(string $taskCode): string
+    {
+        return $this->getUrl(
+            '*/controlPanel_cron/run',
+            [
+                '_query' => [
+                    'task_code' => $taskCode,
+                ],
+            ]
+        );
+    }
 }

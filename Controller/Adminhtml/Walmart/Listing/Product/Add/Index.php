@@ -86,7 +86,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Abs
                 $this->processStep3($listing->getMarketplace());
                 break;
             case 4:
-                $this->review($listing->getMarketplace());
+                $this->review();
                 break;
             default:
                 return $this->_redirect('*/*/index', ['_current' => true, 'step' => 1]);
@@ -256,12 +256,17 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Abs
 
     private function processStep3(\Ess\M2ePro\Model\Marketplace $marketplace): void
     {
+        $productTypeParam = $this->getRequest()->getParam('product_type_id');
+        $isProductTypeUnfilled = $productTypeParam !== null
+            && empty($productTypeParam);
+
         if (
-            $this->isMovedFromOther($this->getListing())
+            $isProductTypeUnfilled
+            || $this->isMovedFromOther($this->getListing())
             || !$marketplace->getChildObject()
                             ->isSupportedProductType()
         ) {
-            $this->review($marketplace);
+            $this->review();
 
             return;
         }
@@ -303,7 +308,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Abs
         return $listingProductsIds;
     }
 
-    private function review(\Ess\M2ePro\Model\Marketplace $marketplace): void
+    private function review(): void
     {
         $listingId = $this->getRequest()->getParam('id');
         $additionalData = $this->getListing()->getSettings('additional_data');
@@ -314,16 +319,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Abs
             return;
         }
 
-        $isMovedFromOther = $this->isMovedFromOther($this->getListing());
-        if (
-            !$isMovedFromOther
-            && $marketplace->getChildObject()->isSupportedProductType()
-        ) {
-            $this->removeProductsWithoutProductTypes($additionalData['adding_listing_products_ids']);
-        }
-
         //-- Remove successfully moved Unmanaged items
-        if ($isMovedFromOther) {
+        if ($this->isMovedFromOther($this->getListing())) {
             $this->deleteListingOthers();
         }
         //--
@@ -359,24 +356,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Abs
         $source = $listing->getSettings('additional_data')['source'] ?? null;
 
         return $source === SourceModeBlock::MODE_OTHER;
-    }
-
-    private function removeProductsWithoutProductTypes(array $addingListingProductsIds): void
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
-        $collection = $this->listingProductCollectionFactory
-            ->create(['childMode' => \Ess\M2ePro\Helper\Component\Walmart::NICK]);
-        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
-        $collection->getSelect()->columns([
-            'id' => 'main_table.id',
-        ]);
-        $collection->getSelect()->where(
-            "`main_table`.`id` IN (?) AND `second_table`.`product_type_id` IS NULL",
-            $addingListingProductsIds
-        );
-
-        $failedProductsIds = $collection->getColumnValues('id');
-        $this->deleteListingProducts($failedProductsIds);
     }
 
     private function deleteListingOthers()

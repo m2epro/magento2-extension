@@ -11,24 +11,15 @@ class Result
     private const STATUS_IN_PROGRESS = 'in_progress';
 
     private string $status;
-    private string $type;
-    private string $attributeCode;
-    private ?string $url;
     private ?string $ebayDocumentId;
     private ?string $failMessage;
 
     private function __construct(
         string $status,
-        string $type,
-        string $attributeCode,
-        ?string $url = null,
         ?string $ebayDocumentId = null,
         ?string $failMessage = null
     ) {
         $this->status = $status;
-        $this->type = $type;
-        $this->attributeCode = $attributeCode;
-        $this->url = $url;
         $this->ebayDocumentId = $ebayDocumentId;
         $this->failMessage = $failMessage;
     }
@@ -56,28 +47,20 @@ class Result
     // ----------------------------------------
 
     public static function createSuccess(
-        string $type,
-        string $attributeCode,
-        string $url,
         string $ebayDocumentId
     ): self {
-        return new self(self::STATUS_SUCCESS, $type, $attributeCode, $url, $ebayDocumentId);
+        return new self(self::STATUS_SUCCESS, $ebayDocumentId);
     }
 
     public static function createInProgress(
-        string $type,
-        string $attributeCode,
-        string $url,
         ?string $ebayDocumentId = null
     ): self {
-        return new self(self::STATUS_IN_PROGRESS, $type, $attributeCode, $url, $ebayDocumentId);
+        return new self(self::STATUS_IN_PROGRESS, $ebayDocumentId);
     }
 
     public static function createFail(
-        string $type,
-        string $attributeCode,
         string $failMessage
     ): self {
-        return new self(self::STATUS_FAIL, $type, $attributeCode, null, null, $failMessage);
+        return new self(self::STATUS_FAIL, null, $failMessage);
     }
 }

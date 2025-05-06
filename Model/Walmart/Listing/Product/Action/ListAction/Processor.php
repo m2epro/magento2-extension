@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\ListAction;
 
 use Ess\M2ePro\Model\Walmart\Listing\Product\Action\ListAction\ProcessingRunner as ProcessingRunner;
@@ -16,9 +10,6 @@ use Ess\M2ePro\Model\Connector\Connection\Response\Message as ResponseMessage;
 use Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\Action\Processing\Collection as ProcessingCollection;
 use Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\Action\ProcessingList as ProcessingListResourceModel;
 
-/**
- * Class Ess\M2ePro\Model\Walmart\Listing\Product\Action\ListAction\Processor
- */
 class Processor extends \Ess\M2ePro\Model\AbstractModel
 {
     public const LIST_PRIORITY = 25;
@@ -26,6 +17,11 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     public const PENDING_REQUEST_MAX_LIFE_TIME = 86400;
 
     public const FIRST_CONNECTION_ERROR_DATE_REGISTRY_KEY = '/walmart/listing/product/action/first_connection_error/date/';
+
+    private const MESSAGE_CODE_PRODUCT_NOT_MAPPED_TO_EXISTING_CHANNEL_ITEM = 6404;
+
+    private \Ess\M2ePro\Model\Connector\Connection\Response\MessageFactory $messageFactory;
+    private \Ess\M2ePro\Model\Walmart\Listing\Product\Repository $walmartListingProductRepository;
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
@@ -43,6 +39,8 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     protected $helperData;
 
     public function __construct(
+        \Ess\M2ePro\Model\Connector\Connection\Response\MessageFactory $messageFactory,
+        \Ess\M2ePro\Model\Walmart\Listing\Product\Repository $walmartListingProductRepository,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -54,6 +52,8 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     ) {
         parent::__construct($helperFactory, $modelFactory, $data);
 
+        $this->messageFactory = $messageFactory;
+        $this->walmartListingProductRepository = $walmartListingProductRepository;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->walmartFactory = $walmartFactory;
         $this->resourceConnection = $resourceConnection;
@@ -61,14 +61,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $this->helperData = $helperData;
     }
 
-    //########################################
-
-    /**
-     * @throws \Ess\M2ePro\Model\Exception
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Zend_Db_Statement_Exception
-     */
     public function process()
     {
         $this->executeReadyForList();
@@ -77,8 +69,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $this->executeReadyForRelist();
         $this->executeCheckRelistResults();
     }
-
-    //########################################
 
     /**
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -268,6 +258,10 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                     $resultActionData['errors'] = [];
                 }
 
+                if ($this->isProductNotMappedToExistingChannelItem($resultActionData['errors'])) {
+                    $this->saveProductMarkedAsNotMappedToExistingChannelItem($listingProduct);
+                }
+
                 if (!empty($resultMessages)) {
                     // @codingStandardsIgnoreLine
                     $resultActionData['errors'] = array_merge($resultActionData['errors'], $resultMessages);
@@ -310,6 +304,42 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
             $requestPendingSingle->delete();
         }
+    }
+
+    // ---------------------------------------
+
+    private function isProductNotMappedToExistingChannelItem(array $rawProductResponseMessages): bool
+    {
+        foreach ($rawProductResponseMessages as $rawMessage) {
+            $message = $this->messageFactory->createByResponseData($rawMessage);
+            if (
+                $message->isError()
+                && $message->isSenderComponent()
+                && $message->getCode() === self::MESSAGE_CODE_PRODUCT_NOT_MAPPED_TO_EXISTING_CHANNEL_ITEM
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function saveProductMarkedAsNotMappedToExistingChannelItem(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct
+    ): void {
+        /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
+        $walmartListingProduct = $listingProduct->getChildObject();
+        $walmartListingProduct->markAsNotMappedToExistingChannelItem();
+        $this->walmartListingProductRepository->save($walmartListingProduct);
+    }
+
+    private function saveProductUnmarkedNotMappedToExistingChannelItem(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct
+    ): void {
+        /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
+        $walmartListingProduct = $listingProduct->getChildObject();
+        $walmartListingProduct->unmarkAsNotMappedToExistingChannelItem();
+        $this->walmartListingProductRepository->save($walmartListingProduct);
     }
 
     // ---------------------------------------
@@ -724,8 +754,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     {
         $throttlingManager = $this->modelFactory->getObject('Walmart_ThrottlingManager');
 
-        $canCreateNewPacks = true;
-
         while ($scheduledActionData = $scheduledActionsDataStatement->fetch()) {
             $availableRequestsCount = $throttlingManager->getAvailableRequestsCount(
                 $scheduledActionData['account_id'],
@@ -738,10 +766,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
             if ($this->canAddToLastExistedPack($feedsPacks, $scheduledActionData['account_id'])) {
                 $this->addToLastExistedPack($feedsPacks, $scheduledActionData);
-                continue;
-            }
-
-            if (!$canCreateNewPacks) {
                 continue;
             }
 
@@ -914,6 +938,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             $listingProduct = $listingsProductsCollection->getItemById($listingProductId);
 
+            /** @var ProcessingRunner $processingRunner */
             $processingRunner = $this->modelFactory
                 ->getObject('Walmart_Listing_Product_Action_ListAction_ProcessingRunner');
             $processingRunner->setListingProduct($listingProduct);
@@ -999,6 +1024,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
             $processingParams = $processing->getParams();
 
+            /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator $configurator */
             $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
             $configurator->setUnserializedData($processingParams['configurator']);
 
@@ -1007,6 +1033,15 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             $params = [];
             if (isset($processingParams['requester_params'])) {
                 $params = $processingParams['requester_params'];
+            }
+
+            if (
+                $processingParams['action_type'] === \Ess\M2ePro\Model\Listing\Product::ACTION_LIST
+                && $params['status_changer'] === \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER
+                && $listingProduct->getChildObject()
+                                  ->hasFlagIsNotMappedToExistingChannelItem()
+            ) {
+                $this->saveProductUnmarkedNotMappedToExistingChannelItem($listingProduct);
             }
 
             $dispatcher->process($processingParams['action_type'], $listingProduct, $params);
@@ -1039,17 +1074,10 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     }
 
     /**
-     * @param array $processingActions
-     * @param array $serverCommand
-     *
-     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @param \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Processing[] $processingActions
      */
-    protected function processGroupedProcessingActions(array $processingActions, array $serverCommand)
+    private function processGroupedProcessingActions(array $processingActions, array $serverCommand): void
     {
-        if (empty($processingActions)) {
-            return;
-        }
-
         $account = reset($processingActions)->getListingProduct()->getListing()->getAccount();
 
         $itemsRequestData = [];
@@ -1146,7 +1174,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             ->getResource()->markAsInProgress($actionsIds, $requestPendingSingle);
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @param \Ess\M2ePro\Model\Account $account

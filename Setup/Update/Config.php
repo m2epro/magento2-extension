@@ -414,6 +414,8 @@ class Config extends AbstractConfig
             ],
             'y25_m04' => [
                 'AddConditionColumnsIntoWalmartListingTable',
+                'AddCustomValueToEbayVideoAndDocuments',
+                'AddIntoWalmartProductIsNotMappedToExistingChannelItemColumn',
             ],
         ];
     }
@@ -510,7 +512,7 @@ class Config extends AbstractConfig
 
             \Ess\M2ePro\Setup\Update\y25_m03\AddCustomAttributeForConditionDescriptorIntoEbayDescriptionTemplate::class,
 
-            \Ess\M2ePro\Setup\Update\y25_m04\AddConditionColumnsIntoWalmartListingTable::class,
+            \Ess\M2ePro\Setup\Update\y25_m04\AddCustomValueToEbayVideoAndDocuments::class,
         ];
     }
 

@@ -80,11 +80,7 @@ class ProductProcessor
         \Ess\M2ePro\Model\Listing\Product $listingProduct
     ): ProcessResult {
         if ($findUrlResult->isFail()) {
-            return ProcessResult::createFail(
-                $findUrlResult->getType(),
-                $findUrlResult->getAttributeCode(),
-                $findUrlResult->getFailMessage()
-            );
+            return ProcessResult::createFail($findUrlResult->getFailMessage());
         }
 
         $savedComplianceDocument = $this->complianceDocumentsRepository->findByAccountIdAndTypeAndUrl(
@@ -108,31 +104,17 @@ class ProductProcessor
             $savedComplianceDocument->isStatusPending()
             || $savedComplianceDocument->isStatusUploading()
         ) {
-            return ProcessResult::createInProgress(
-                $findUrlResult->getType(),
-                $findUrlResult->getAttributeCode(),
-                $findUrlResult->getUrl(),
-                $savedComplianceDocument->getEbayDocumentId()
-            );
+            return ProcessResult::createInProgress($savedComplianceDocument->getEbayDocumentId());
         }
 
         if ($savedComplianceDocument->isStatusFailed()) {
             $failMessage = 'The compliance document was not uploaded to eBay: Document file URL is ' .
                 'missing or has an invalid format.';
 
-            return ProcessResult::createFail(
-                $savedComplianceDocument->getType(),
-                $findUrlResult->getAttributeCode(),
-                $failMessage
-            );
+            return ProcessResult::createFail($failMessage);
         }
 
-        return ProcessResult::createSuccess(
-            $savedComplianceDocument->getType(),
-            $findUrlResult->getAttributeCode(),
-            $savedComplianceDocument->getUrl(),
-            $savedComplianceDocument->getEbayDocumentId()
-        );
+        return ProcessResult::createSuccess($savedComplianceDocument->getEbayDocumentId());
     }
 
     private function createAndSaveDocument(

@@ -16,6 +16,8 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
     public const DEFAULT_REQUEST_TIMEOUT = 300;
     public const TIMEOUT_INCREMENT_FOR_ONE_IMAGE = 30;
 
+    private \Ess\M2ePro\Model\Ebay\Listing\Product\Action\TagManager $tagManager;
+
     /** @var \Ess\M2ePro\Model\Listing\Product */
     protected $listingProduct = null;
 
@@ -36,10 +38,22 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
 
     /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message[] */
     protected $storedLogMessages = [];
-
     protected $isRealTime = false;
 
     //########################################
+
+    public function __construct(
+        \Ess\M2ePro\Model\Ebay\Listing\Product\Action\TagManager $tagManager,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\Marketplace $marketplace = null,
+        \Ess\M2ePro\Model\Account $account = null,
+        array $params = []
+    ) {
+        parent::__construct($helperFactory, $modelFactory, $marketplace, $account, $params);
+
+        $this->tagManager = $tagManager;
+    }
 
     public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
     {
@@ -234,17 +248,15 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
 
         $validationResult = $validator->validate();
 
-        foreach ($validator->getMessages() as $messageData) {
-            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
-            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
-            $message->initFromPreparedData($messageData['text'], $messageData['type']);
-
+        foreach ($validator->getMessages() as $message) {
             $this->storeLogMessage($message);
         }
 
         if ($validationResult) {
             return true;
         }
+
+        $this->tagManager->addErrorTags($this->listingProduct, $validator->getMessages());
 
         $this->unlockListingProduct();
 
@@ -553,6 +565,4 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
             );
         }
     }
-
-    //########################################
 }

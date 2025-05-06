@@ -686,6 +686,7 @@ class Data extends AbstractForm
                 'name' => 'description[video_mode]',
                 'values' => [
                     Description::VIDEO_MODE_NONE => __('None'),
+                    Description::VIDEO_MODE_CUSTOM_VALUE => __('Custom Value'),
                     [
                         'label' => __('Magento Attributes'),
                         'value' => $preparedAttributes,
@@ -709,6 +710,18 @@ class Data extends AbstractForm
             [
                 'name' => 'description[video_attribute]',
                 'value' => $formData['video_attribute'],
+            ]
+        );
+
+        $videoFieldset->addField(
+            'video_custom_value',
+            'text',
+            [
+                'container_id' => 'video_custom_value_tr',
+                'label' => __('Video URL'),
+                'name' => 'description[video_custom_value]',
+                'value' => $formData['video_custom_value'],
+                'required' => true,
             ]
         );
 
@@ -1331,6 +1344,7 @@ HTML
             [
                 'attributes' => $allAttributesByTypes['text_textarea'],
                 'saved_compliance_documents' => $formData['compliance_documents'],
+                'label' => null
             ]
         )->setRenderer($this->getLayout()->createBlock(ComplianceDocuments\FormElementRender::class));
 

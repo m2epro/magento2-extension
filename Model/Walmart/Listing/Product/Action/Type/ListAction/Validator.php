@@ -1,19 +1,12 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction;
 
 use Ess\M2ePro\Helper\Component\Walmart\Configuration;
 
 class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Validator
 {
-    /** @var \Ess\M2ePro\Helper\Component\Walmart\Configuration */
-    private $walmartConfigurationHelper;
+    private \Ess\M2ePro\Helper\Component\Walmart\Configuration $walmartConfigurationHelper;
 
     public function __construct(
         Configuration $walmartConfigurationHelper,
@@ -23,13 +16,11 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
-        $this->walmartConfigurationHelper = $walmartConfigurationHelper;
         parent::__construct($helperModuleLog, $helperData, $helperFactory, $modelFactory, $data);
+
+        $this->walmartConfigurationHelper = $walmartConfigurationHelper;
     }
 
-    /**
-     * @return bool
-     */
     public function validate(): bool
     {
         if (!$this->validateMagentoProductType()) {
@@ -49,7 +40,12 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
             return false;
         }
 
-        if (!$this->validateWalmartProductType()) {
+        $walmartListingProduct = $this->getWalmartListingProduct();
+        if (
+            $this->getWalmartMarketplace()->isSupportedProductType()
+            && !$walmartListingProduct->isExistsProductType()
+            && !$this->validateMappingToExistingChannelItem($walmartListingProduct)
+        ) {
             return false;
         }
 
@@ -86,21 +82,24 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
         return true;
     }
 
-    private function validateWalmartProductType(): bool
-    {
-        if (
-            $this->getWalmartMarketplace()->isSupportedProductType()
-            && !$this->getWalmartListingProduct()->isExistsProductType()
-        ) {
-            $this->addMessage('Product Type are not set.');
-
-            return false;
+    private function validateMappingToExistingChannelItem(
+        \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct
+    ): bool {
+        if ($walmartListingProduct->isAvailableMappingToExistingChannelItem()) {
+            return true;
         }
 
-        return true;
-    }
+        if (
+            $walmartListingProduct->getVariationManager()
+                                  ->isVariationProduct()
+        ) {
+            $this->addMessage(
+                'To list a Product with variations on Walmart, a relevant Product Type must be assigned first.'
+            );
+        }
 
-    //########################################
+        return false;
+    }
 
     private function getSku()
     {
@@ -115,8 +114,6 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
 
         return $params['sku'];
     }
-
-    //########################################
 
     protected function getIdentifierFromConfiguration()
     {

@@ -5,9 +5,11 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type;
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 use Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator;
 use Ess\M2ePro\Model\Factory;
+use Ess\M2ePro\Model\Tag\ValidatorIssues;
 
 abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 {
+    private \Ess\M2ePro\Model\Connector\Connection\Response\MessageFactory $messageFactory;
     /** @var array */
     protected $params = [];
     /** @var Configurator $configurator */
@@ -22,10 +24,12 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         Factory $modelFactory,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\CollectionFactory $variationCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\Option $variationOptionResource,
+        \Ess\M2ePro\Model\Connector\Connection\Response\MessageFactory $messageFactory,
         array $data = []
     ) {
         parent::__construct($helperFactory, $modelFactory, $data);
 
+        $this->messageFactory = $messageFactory;
         $this->variationCollectionFactory = $variationCollectionFactory;
         $this->variationOptionResource = $variationOptionResource;
     }
@@ -96,22 +100,25 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    protected function addMessage($message, $type = Message::TYPE_ERROR)
-    {
-        $this->messages[] = [
-            'text' => $message,
-            'type' => $type,
-        ];
-    }
-
-    // ---------------------------------------
-
     /**
-     * @return array
+     * @return \Ess\M2ePro\Model\Connector\Connection\Response\Message[]
      */
-    public function getMessages()
+    public function getMessages(): array
     {
         return $this->messages;
+    }
+
+    protected function addMessage(string $text, string $errorCode, string $type = Message::TYPE_ERROR): void
+    {
+        $message = $this->messageFactory->create();
+        $message->initFromPreparedData(
+            $text,
+            $type,
+            \Ess\M2ePro\Model\Connector\Connection\Response\Message::SENDER_COMPONENT,
+            $errorCode
+        );
+
+        $this->messages[] = $message;
     }
 
     //########################################
@@ -191,7 +198,10 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     protected function validateCategory()
     {
         if (!$this->getEbayListingProduct()->isSetCategoryTemplate()) {
-            $this->addMessage('Categories Settings are not set');
+            $this->addMessage(
+                'Categories Settings are not set',
+                ValidatorIssues::ERROR_CATEGORY_SETTINGS_NOT_SET
+            );
 
             return false;
         }
@@ -249,7 +259,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
             $message = 'You’re submitting an item with QTY contradicting the QTY settings in your Selling Policy.
             Please check Minimum Quantity to Be Listed and Quantity Percentage options.';
 
-            $this->addMessage($message);
+            $this->addMessage($message, ValidatorIssues::ERROR_QUANTITY_POLICY_CONTRADICTION);
 
             return false;
         }
@@ -265,7 +275,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
                     $message .= ' Please apply the Stop Action instead.';
                 }
 
-                $this->addMessage($message);
+                $this->addMessage($message, ValidatorIssues::ERROR_CODE_ZERO_QTY);
             } else {
                 $message = 'Cannot submit an Item with zero quantity. It contradicts eBay requirements.
                             This action has been generated automatically based on your Synchronization Rule settings. ';
@@ -276,7 +286,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
                 $message .= 'Please review your settings.';
 
-                $this->addMessage($message);
+                $this->addMessage($message, ValidatorIssues::ERROR_CODE_ZERO_QTY_AUTO);
             }
 
             return false;
@@ -299,7 +309,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
             $supportLink = 'https://help.m2epro.com/support/solutions/articles/9000223366';
             $msg = "Unable to list the product(s) because product variations are assigned incorrectly
                 or missing for the selected Store View. <a href=\"$supportLink\" target=\"_blank\">Learn more...</a>";
-            $this->addMessage($msg);
+            $this->addMessage($msg, ValidatorIssues::ERROR_INVALID_VARIATIONS);
 
             return false;
         }
@@ -332,7 +342,8 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
                         'Variations of this Magento Product are out of the eBay Variational Item limits.
                         Its number of Variational Attributes is more than 5.
                         That is why, this Product cannot be updated on eBay.
-                        Please, decrease the number of Attributes to solve this issue.'
+                        Please, decrease the number of Attributes to solve this issue.',
+                        ValidatorIssues::ERROR_EXCEEDED_VARIATION_ATTRIBUTES
                     );
 
                     return false;
@@ -348,7 +359,8 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
                         'Variations of this Magento Product are out of the eBay Variational Item limits.
                         Its number of Options for some Variational Attribute(s) is more than 60.
                         That is why, this Product cannot be updated on eBay.
-                        Please, decrease the number of Options to solve this issue.'
+                        Please, decrease the number of Options to solve this issue.',
+                        ValidatorIssues::ERROR_EXCEEDED_OPTIONS_PER_ATTRIBUTE
                     );
 
                     return false;
@@ -367,7 +379,8 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
                 $this->addMessage(
                     'Variations of this Magento Product are out of the eBay Variational Item limits.
                     The Number of Variations is more than 250. That is why, this Product cannot be updated on eBay.
-                    Please, decrease the number of Variations to solve this issue.'
+                    Please, decrease the number of Variations to solve this issue.',
+                    ValidatorIssues::ERROR_EXCEEDED_VARIATIONS
                 );
 
                 return false;
@@ -380,7 +393,8 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
                 Changing of the Item type from Variational to Non-Variational during Revise/Relist
                 actions is restricted by eBay.
                 At the moment this Product is considered as Simple without any Variations,
-                that does not allow updating eBay Variational Item.'
+                that does not allow updating eBay Variational Item.',
+                ValidatorIssues::ERROR_CHANGE_ITEM_TYPE
             );
 
             return false;
@@ -406,7 +420,8 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
                         sprintf(
                             '"%s" option used for Product variation title is missing a value(s)',
                             $option->getAttribute()
-                        )
+                        ),
+                        ValidatorIssues::ERROR_BUNDLE_OPTION_VALUE_MISSING
                     );
 
                     return false;
@@ -423,7 +438,10 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
             $tmpUniqueKey = implode('#', $tmpOptions);
 
             if (isset($uniqueOptions[$tmpUniqueKey])) {
-                $this->addMessage('Product variation options contain duplicate values.');
+                $this->addMessage(
+                    'Product variation options contain duplicate values.',
+                    ValidatorIssues::ERROR_DUPLICATE_OPTION_VALUES
+                );
 
                 return false;
             }
@@ -459,7 +477,8 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
             if ($variationPrice < 0.99) {
                 $this->addMessage(
-                    'The Fixed Price must be greater than 0.99. Please, check the Selling Policy and Product Settings.'
+                    'The Fixed Price must be greater than 0.99. Please, check the Selling Policy and Product Settings.',
+                    ValidatorIssues::ERROR_FIXED_PRICE_BELOW_MINIMUM
                 );
 
                 return false;
@@ -484,7 +503,8 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         $price = $this->getFixedPrice();
         if ($price < 0.99) {
             $this->addMessage(
-                'The Fixed Price must be greater than 0.99. Please, check the Selling Policy and Product Settings.'
+                'The Fixed Price must be greater than 0.99. Please, check the Selling Policy and Product Settings.',
+                ValidatorIssues::ERROR_FIXED_PRICE_BELOW_MINIMUM
             );
 
             return false;
@@ -504,7 +524,8 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         $price = $this->getStartPrice();
         if ($price < 0.99) {
             $this->addMessage(
-                'The Start Price must be greater than 0.99. Please, check the Selling Policy and Product Settings.'
+                'The Start Price must be greater than 0.99. Please, check the Selling Policy and Product Settings.',
+                ValidatorIssues::ERROR_START_PRICE_BELOW_MINIMUM
             );
 
             return false;
@@ -528,7 +549,8 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         $price = $this->getReservePrice();
         if ($price < 0.99) {
             $this->addMessage(
-                'The Reserve Price must be greater than 0.99. Please, check the Selling Policy and Product Settings.'
+                'The Reserve Price must be greater than 0.99. Please, check the Selling Policy and Product Settings.',
+                ValidatorIssues::ERROR_RESERVE_PRICE_BELOW_MINIMUM
             );
 
             return false;
@@ -553,7 +575,8 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         if ($price < 0.99) {
             $this->addMessage(
                 'The Buy It Now Price must be greater than 0.99.
-                 Please, check the Selling Policy and Product Settings.'
+                 Please, check the Selling Policy and Product Settings.',
+                ValidatorIssues::ERROR_BUY_IT_NOW_PRICE_BELOW_MINIMUM
             );
 
             return false;
@@ -619,6 +642,4 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
         return $this->getEbayListingProduct()->getBuyItNowPrice();
     }
-
-    //########################################
 }

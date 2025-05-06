@@ -37,13 +37,21 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
             'shipping_weight' => $sellingFormatTemplateSource->getItemWeight(),
         ];
 
-        if ($walmartListingProduct->isExistsProductType()) {
-            $data['product_type_nick'] = $walmartListingProduct->getProductType()
-                                                               ->getNick();
-            $data['attributes'] = $this->getAttributes(
-                $walmartListingProduct->getProductType(),
-                $walmartListingProduct->getActualMagentoProduct()
-            );
+        if (
+            $this->getWalmartMarketplace()
+                 ->isSupportedProductType()
+        ) {
+            if ($walmartListingProduct->isExistsProductType()) {
+                $data['product_type_nick'] = $walmartListingProduct->getProductType()
+                                                                   ->getNick();
+                $data['attributes'] = $this->getAttributes(
+                    $walmartListingProduct->getProductType(),
+                    $walmartListingProduct->getActualMagentoProduct()
+                );
+            } else {
+                /** match with existing chanel item */
+                $data['matching_mode'] = true;
+            }
         }
 
         $condition = $this->retrieveCondition($walmartListingProductProvider);
@@ -379,6 +387,4 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
 
         return $result;
     }
-
-    //########################################
 }

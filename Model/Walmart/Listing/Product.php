@@ -216,9 +216,12 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         return (int)$this->getDataByKey(ListingProductResource::COLUMN_PRODUCT_TYPE_ID);
     }
 
-    public function setProductTypeId(int $productTypeId): void
+    public function setProductTypeId(int $productTypeId): self
     {
-        $this->setData(ListingProductResource::COLUMN_PRODUCT_TYPE_ID, $productTypeId);
+        $this->setData(ListingProductResource::COLUMN_PRODUCT_TYPE_ID, $productTypeId)
+             ->unmarkAsNotMappedToExistingChannelItem();
+
+        return $this;
     }
 
     public function unsetProductTypeId(): void
@@ -235,6 +238,42 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         return $this->productTypeRepository->get(
             (int)$this->getDataByKey(ListingProductResource::COLUMN_PRODUCT_TYPE_ID)
         );
+    }
+
+    // ---------------------------------------
+
+    public function isAvailableMappingToExistingChannelItem(): bool
+    {
+        return !$this->hasFlagIsNotMappedToExistingChannelItem()
+            && !$this->getVariationManager()
+                     ->isVariationProduct();
+    }
+
+    public function hasFlagIsNotMappedToExistingChannelItem(): bool
+    {
+        return (bool)$this->getDataByKey(
+            ListingProductResource::COLUMN_IS_NOT_MAPPED_TO_EXISTING_CHANNEL_ITEM
+        );
+    }
+
+    public function markAsNotMappedToExistingChannelItem(): self
+    {
+        $this->setData(
+            ListingProductResource::COLUMN_IS_NOT_MAPPED_TO_EXISTING_CHANNEL_ITEM,
+            true
+        );
+
+        return $this;
+    }
+
+    public function unmarkAsNotMappedToExistingChannelItem(): self
+    {
+        $this->setData(
+            ListingProductResource::COLUMN_IS_NOT_MAPPED_TO_EXISTING_CHANNEL_ITEM,
+            false
+        );
+
+        return $this;
     }
 
     // ---------------------------------------

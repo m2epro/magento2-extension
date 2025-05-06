@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Description\Edit\Form\ComplianceDocuments;
 
+use Ess\M2ePro\Model\Ebay\Template\Description;
+
 class FormElement extends \Magento\Framework\Data\Form\Element\AbstractElement
 {
     protected function getAttributes()
@@ -28,6 +30,7 @@ class FormElement extends \Magento\Framework\Data\Form\Element\AbstractElement
                 'document_type' => '',
                 'document_attribute' => '',
                 'document_languages' => [],
+                'document_mode' => Description::COMPLIANCE_DOCUMENTS_MODE_ATTRIBUTE
             ],
         ];
     }
@@ -54,6 +57,7 @@ class FormElement extends \Magento\Framework\Data\Form\Element\AbstractElement
             [
                 'data' => [
                     'name' => "description[compliance_documents][$index][document_type]",
+                    'class' => 'document-type',
                     'values' => $values,
                 ],
             ]
@@ -65,7 +69,37 @@ class FormElement extends \Magento\Framework\Data\Form\Element\AbstractElement
         return $select->toHtml();
     }
 
-    public function renderAttributesDropdown(int $index, string $selectedAttribute)
+    public function renderModeDropdown(int $index, int $documentMode)
+    {
+        $values = [
+            [
+                'value' => \Ess\M2ePro\Model\Ebay\Template\Description::COMPLIANCE_DOCUMENTS_MODE_ATTRIBUTE,
+                'label' => __('Magento Attribute')],
+            [
+                'value' => \Ess\M2ePro\Model\Ebay\Template\Description::COMPLIANCE_DOCUMENTS_MODE_CUSTOM_VALUE,
+                'label' => __('Custom Value')
+            ]
+        ];
+
+        $select = $this->_factoryElement->create(
+            \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select::class,
+            [
+                'data' => [
+                    'name' => "description[compliance_documents][$index][document_mode]",
+                    'class' => 'document-mode',
+                    'values' => $values,
+                    'value' => $documentMode
+                ],
+            ]
+        );
+
+        $select->setId('document-mode-' . $index);
+        $select->setForm($this->getForm());
+
+        return $select->toHtml();
+    }
+
+    public function renderAttributesDropdown(int $index, string $selectedAttribute, int $mode)
     {
         $preparedAttributes = [];
         foreach ($this->getAttributes() as $attribute) {
@@ -81,22 +115,16 @@ class FormElement extends \Magento\Framework\Data\Form\Element\AbstractElement
             $preparedAttributes[] = $preparedAttribute;
         }
 
-        $values = [
-            '' => __('None'),
-            [
-                'label' => __('Magento Attributes'),
-                'value' => $preparedAttributes,
-                'attrs' => [
-                    'is_magento_attribute' => true,
-                ],
-            ],
-        ];
+        $isHide = $mode !== \Ess\M2ePro\Model\Ebay\Template\Description::COMPLIANCE_DOCUMENTS_MODE_ATTRIBUTE;
+
         $select = $this->_factoryElement->create(
             \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select::class,
             [
                 'data' => [
                     'name' => "description[compliance_documents][$index][document_attribute]",
-                    'values' => $values,
+                    'class' => 'document-magento-attribute',
+                    'style' => $isHide ? 'display: none' : '',
+                    'values' => $preparedAttributes,
                     'create_magento_attribute' => true,
                 ],
             ]
@@ -140,6 +168,28 @@ class FormElement extends \Magento\Framework\Data\Form\Element\AbstractElement
         return $select->toHtml();
     }
 
+    public function renderCustomValueInput(int $index, $customValue, $mode)
+    {
+        $isHide = $mode !== \Ess\M2ePro\Model\Ebay\Template\Description::COMPLIANCE_DOCUMENTS_MODE_CUSTOM_VALUE;
+
+        $input = $this->_factoryElement->create(
+            'text',
+            [
+                'data' => [
+                    'name' => "description[compliance_documents][$index][document_custom_value]",
+                    'value' => $customValue,
+                    'style' => 'width: 100%;' . ($isHide ? ' display:none;' : ''),
+                    'class' => 'document-custom-value'
+                ],
+            ]
+        );
+
+        $input->setId('document-custom-value-' . $index);
+        $input->setForm($this->getForm());
+
+        return $input->toHtml();
+    }
+
     public function renderRemoveRowButton(int $index): string
     {
         $style = '';
@@ -166,8 +216,6 @@ class FormElement extends \Magento\Framework\Data\Form\Element\AbstractElement
 
     public function getTooltipHtml(string $text): string
     {
-        $content = __('Choose an Attribute containing a valid URL for the selected Document Type');
-
         return <<<HTML
 <div class="m2epro-field-tooltip admin__field-tooltip">
     <a class="admin__field-tooltip-action" href="javascript://"></a>

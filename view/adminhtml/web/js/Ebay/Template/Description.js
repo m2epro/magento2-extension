@@ -155,6 +155,8 @@ define([
 
             this.initCustomInsertsPopup();
             this.initPreviewPopup();
+
+            this.initDocumentsFieldObservers();
         },
 
         // ---------------------------------------
@@ -608,9 +610,13 @@ define([
 
         video_change: function() {
             var self = EbayTemplateDescriptionObj;
+            $('video_custom_value_tr').hide()
 
             if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::VIDEO_MODE_ATTRIBUTE')) {
                 self.updateHiddenValue(this, $('video_attribute'));
+            } else if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::VIDEO_MODE_CUSTOM_VALUE')) {
+                $('video_custom_value_tr').show()
+                $('video_attribute').value = '';
             } else {
                 $('video_attribute').value = '';
             }
@@ -956,6 +962,89 @@ define([
                 element.value += value;
                 element.focus();
             }
+        },
+
+        initDocumentsFieldObservers: function () {
+            const tableWrapper = jQuery('#documents_table_wrapper');
+
+            const addRowButtonSelector = '.add_row';
+            const removeRowButtonSelector = '.remove_row';
+
+            const documentTypeDropdownSelector = '.document-type'
+            const changeModeDropdownSelector = '.document-mode';
+            const magentoAttributeDropdownSelector = '.document-magento-attribute';
+            const customValueInputSelector = '.document-custom-value';
+
+            const validateRowCount = function () {
+                tableWrapper.find(addRowButtonSelector).attr('disabled', function () {
+                    return tableWrapper.find('tbody tr').length >= 10
+                });
+            };
+
+            const addRow = function () {
+                let clonedRow = tableWrapper.find('tbody tr:last').clone();
+
+                const incrementCallback = (index, name) => name.replace(/(\d+)/, ($0, $1) => ++$1)
+
+                clonedRow.find(documentTypeDropdownSelector)
+                        .prop('selectedIndex', 0)
+                        .attr('name', incrementCallback)
+                        .attr('id', incrementCallback)
+
+                clonedRow.find(changeModeDropdownSelector)
+                        .prop('selectedIndex', 0)
+                        .attr('name', incrementCallback)
+                        .attr('id', incrementCallback)
+
+                clonedRow.find(magentoAttributeDropdownSelector)
+                        .prop('selectedIndex', 0)
+                        .removeAttr('option_injected')
+                        .attr('name', incrementCallback)
+                        .attr('id', incrementCallback)
+                        .show()
+                        .find('option[value="new-one-attribute"]').remove()
+
+                clonedRow.find(customValueInputSelector)
+                        .attr('name', incrementCallback)
+                        .attr('id', incrementCallback)
+                        .val('')
+                        .hide()
+
+                clonedRow.find(removeRowButtonSelector).show();
+
+                tableWrapper.find('tbody').append(clonedRow)
+
+                validateRowCount();
+
+                window.initializationCustomAttributeInputs();
+            };
+
+            const removeRow = function (e) {
+                jQuery(e.target.closest('tr')).remove();
+                validateRowCount();
+            }
+
+            const changeMode = function (e) {
+                const select = jQuery(e.currentTarget);
+                const currentRow = jQuery(e.target.closest('tr'));
+
+                const attributesDropdown = currentRow.find(magentoAttributeDropdownSelector);
+                const customValueInput = currentRow.find(customValueInputSelector);
+
+                if (select.val() == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::COMPLIANCE_DOCUMENTS_MODE_CUSTOM_VALUE')) {
+                    attributesDropdown.hide();
+                    customValueInput.show();
+                }
+
+                if (select.val() == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::COMPLIANCE_DOCUMENTS_MODE_ATTRIBUTE')) {
+                    attributesDropdown.show();
+                    customValueInput.hide();
+                }
+            }
+
+            tableWrapper.on('click', addRowButtonSelector, addRow);
+            tableWrapper.on('click', removeRowButtonSelector, removeRow);
+            tableWrapper.on('change', changeModeDropdownSelector, changeMode);
         }
 
         // ---------------------------------------

@@ -16,7 +16,7 @@ class MagentoRuleGetNewConditionHtml extends \Ess\M2ePro\Controller\Adminhtml\Ge
         $prefix = $this->getRequest()->getParam('prefix');
         $storeId = $this->getRequest()->getParam('store', 0);
 
-        $typeArr = explode('|', str_replace('-', '/', $this->getRequest()->getParam('type')));
+        $typeArr = explode('|', $this->getRequest()->getParam('type'));
         $type = $typeArr[0];
 
         $ruleModelPrefix = '';

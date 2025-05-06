@@ -11,7 +11,6 @@ class Result
 
     private string $status;
     private string $type;
-    private string $attributeCode;
     private string $url;
     private string $failMessage;
     private array $languages;
@@ -19,14 +18,12 @@ class Result
     private function __construct(
         string $status,
         string $type,
-        string $attributeCode,
         array $languages,
         string $url,
         string $failMessage
     ) {
         $this->status = $status;
         $this->type = $type;
-        $this->attributeCode = $attributeCode;
         $this->url = $url;
         $this->failMessage = $failMessage;
         $this->languages = $languages;
@@ -57,11 +54,6 @@ class Result
         return $this->url;
     }
 
-    public function getAttributeCode(): string
-    {
-        return $this->attributeCode;
-    }
-
     public function getLanguages(): array
     {
         return $this->languages;
@@ -69,13 +61,13 @@ class Result
 
     // ----------------------------------------
 
-    public static function createSuccess(string $type, string $attributeCode, array $languages, string $url): self
+    public static function createSuccess(string $type, array $languages, string $url): self
     {
-        return new self(self::STATUS_SUCCESS, $type, $attributeCode, $languages, $url, '');
+        return new self(self::STATUS_SUCCESS, $type, $languages, $url, '');
     }
 
-    public static function createFail(string $type, string $attributeCode, array $languages, string $failMessage): self
+    public static function createFail(string $type, array $languages, string $failMessage): self
     {
-        return new self(self::STATUS_FAIL, $type, $attributeCode, $languages, '', $failMessage);
+        return new self(self::STATUS_FAIL, $type, $languages, '', $failMessage);
     }
 }

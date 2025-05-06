@@ -116,21 +116,9 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
         }
 
         if (isset($this->rawData['compliance_documents'])) {
-            $data['compliance_documents'] = $this->rawData['compliance_documents'];
-
-            if (is_array($data['compliance_documents'])) {
-                $documentsToSave = [];
-                foreach ($data['compliance_documents'] as $document) {
-                    if (empty($document['document_type']) || empty($document['document_attribute'])) {
-                        continue;
-                    }
-
-                    $hash = $this->dataHelper->md5String($document['document_type'] . $document['document_attribute']);
-                    $documentsToSave[$hash] = $document;
-                }
-
-                $data['compliance_documents'] = \Ess\M2ePro\Helper\Json::encode(array_values($documentsToSave));
-            }
+            $data['compliance_documents'] = $this->prepareComplianceDocuments(
+                $this->rawData['compliance_documents']
+            );
         }
 
         if (isset($this->rawData['gallery_type'])) {
@@ -198,7 +186,19 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
         }
 
         if (isset($this->rawData['video_attribute'])) {
-            $data['video_attribute'] = $this->rawData['video_attribute'];
+            if ((int)$data['video_mode'] === Description::VIDEO_MODE_ATTRIBUTE) {
+                $data['video_attribute'] = $this->rawData['video_attribute'];
+            } else {
+                $data['video_attribute'] = '';
+            }
+        }
+
+        if (isset($this->rawData['video_custom_value'])) {
+            if ((int)$data['video_mode'] === Description::VIDEO_MODE_CUSTOM_VALUE) {
+                $data['video_custom_value'] = $this->rawData['video_custom_value'];
+            } else {
+                $data['video_custom_value'] = '';
+            }
         }
 
         // ---------------------------------------
@@ -490,6 +490,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 
             'video_mode' => Description::VIDEO_MODE_NONE,
             'video_attribute' => '',
+            'video_custom_value' => '',
 
             'variation_configurable_images' => \Ess\M2ePro\Helper\Json::encode([]),
             'use_supersize_images' => Description::USE_SUPERSIZE_IMAGES_NO,
@@ -512,5 +513,60 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'watermark_image' => null,
             'compliance_documents' => \Ess\M2ePro\Helper\Json::encode([]),
         ];
+    }
+
+    private function prepareComplianceDocuments(array $complianceDocuments): ?string
+    {
+        $documentsToSave = [];
+
+        foreach ($complianceDocuments as $document) {
+            $documentMode = (int)($document['document_mode'] ?? null);
+            $documentType = $document['document_type'] ?? null;
+            $documentAttribute = $document['document_attribute'] ?? null;
+            $documentCustomValue = $document['document_custom_value'] ?? null;
+            $documentLanguages = $document['document_languages'] ?? null;
+
+            $availableModes = [
+                Description::COMPLIANCE_DOCUMENTS_MODE_ATTRIBUTE,
+                Description::COMPLIANCE_DOCUMENTS_MODE_CUSTOM_VALUE
+            ];
+
+            if (
+                empty($documentType)
+                || !in_array($documentMode, $availableModes)
+            ) {
+                continue;
+            }
+
+            $isModeAttribute = $documentMode === Description::COMPLIANCE_DOCUMENTS_MODE_ATTRIBUTE;
+            $isModeCustomValue = $documentMode === Description::COMPLIANCE_DOCUMENTS_MODE_CUSTOM_VALUE;
+
+            if (
+                ($isModeAttribute && empty($documentAttribute))
+                || ($isModeCustomValue && empty($documentCustomValue))
+            ) {
+                continue;
+            }
+
+            $hashKey = $documentType;
+            if ($isModeAttribute) {
+                $hashKey .= $documentAttribute;
+            }
+
+            if ($isModeCustomValue) {
+                $hashKey .= $documentCustomValue;
+            }
+
+            $hashKey = $this->dataHelper->md5String($hashKey);
+            $documentsToSave[$hashKey] = [
+                'document_mode' => $documentMode,
+                'document_type' => $documentType,
+                'document_attribute' => $isModeAttribute ? $documentAttribute : '',
+                'document_custom_value' => $isModeCustomValue ? $documentCustomValue : '',
+                'document_languages' => $documentLanguages,
+            ];
+        }
+
+        return \Ess\M2ePro\Helper\Json::encode(array_values($documentsToSave));
     }
 }
