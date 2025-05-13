@@ -4482,6 +4482,12 @@ class Installer
                                           ['default' => null]
                                       )
                                       ->addColumn(
+                                          'online_variations',
+                                          Table::TYPE_TEXT,
+                                          self::LONG_COLUMN_SIZE,
+                                          ['default' => null]
+                                      )
+                                      ->addColumn(
                                           'start_date',
                                           Table::TYPE_DATETIME,
                                           null,
@@ -8670,6 +8676,7 @@ class Installer
      */
     private function installAmazonSchema()
     {
+        # region account
         $amazonAccountTable = $this->getConnection()->newTable($this->getFullTableName('amazon_account'))
                                    ->addColumn(
                                        'account_id',
@@ -8778,6 +8785,7 @@ class Installer
                                    ->setOption('collate', 'utf8_general_ci')
                                    ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonAccountTable);
+        # endregion
 
         #region amazon_account_merchant_setting
         $amazonAccountMerchantSettingTableName = $this->getFullTableName(
@@ -8823,6 +8831,7 @@ class Installer
         $this->getConnection()->createTable($amazonAccountMerchantSettingTable);
         #endregion
 
+        # region amazon_account_repricing
         $amazonAccountRepricingTable = $this->getConnection()->newTable(
             $this->getFullTableName('amazon_account_repricing')
         )
@@ -8987,7 +8996,9 @@ class Installer
                                             ->setOption('collate', 'utf8_general_ci')
                                             ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonAccountRepricingTable);
+        # endregion
 
+        # region amazon_shipping_map
         $shippingMethodsTable = $this->getConnection()->newTable(
             $this->getFullTableName('amazon_shipping_map')
         )
@@ -9038,6 +9049,7 @@ class Installer
                                           ->setOption('row_format', 'dynamic');
 
         $this->getConnection()->createTable($shippingMethodsTable);
+        # endregion
 
         # region amazon_dictionary_marketplace
         $amazonDictionaryMarketplaceTable = $this->getConnection()->newTable(
@@ -9158,6 +9170,7 @@ class Installer
         $this->getConnection()->createTable($amazonDictionaryProductTypeTable);
         # endregion
 
+        #region amazon_inventory_sku
         $amazonInventorySkuTable = $this->getConnection()->newTable($this->getFullTableName('amazon_inventory_sku'))
                                         ->addColumn(
                                             'id',
@@ -9192,7 +9205,9 @@ class Installer
                                         ->setOption('collate', 'utf8_general_ci')
                                         ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonInventorySkuTable);
+        # endregion
 
+        #region amazon_item
         $amazonItemTable = $this->getConnection()->newTable($this->getFullTableName('amazon_item'))
                                 ->addColumn(
                                     'id',
@@ -9275,6 +9290,7 @@ class Installer
                                 ->setOption('collate', 'utf8_general_ci')
                                 ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonItemTable);
+        # endregion
 
         #region amazon_listing
         $amazonListingTable = $this->getConnection()->newTable(
@@ -9479,6 +9495,7 @@ class Installer
         $this->getConnection()->createTable($amazonListingTable);
         #endregion
 
+        # region amazon_listing_auto_category_group
         $amazonListingAutoCategoryGroupTable = $this->getConnection()->newTable(
             $this->getFullTableName('amazon_listing_auto_category_group')
         )
@@ -9503,7 +9520,9 @@ class Installer
                                                     ->setOption('collate', 'utf8_general_ci')
                                                     ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonListingAutoCategoryGroupTable);
+        # endregion
 
+        # region amazon_listing_other
         $amazonListingOtherTable = $this->getConnection()->newTable($this->getFullTableName('amazon_listing_other'))
                                         ->addColumn(
                                             'listing_other_id',
@@ -9592,6 +9611,7 @@ class Installer
                                         ->setOption('collate', 'utf8_general_ci')
                                         ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonListingOtherTable);
+        # endregion
 
         #region amazon_listing_product
         $amazonListingProductTableName = $this->getFullTableName(
@@ -9850,6 +9870,7 @@ class Installer
         $this->getConnection()->createTable($amazonListingProductTable);
         #endregion
 
+        # region amazon_listing_product_repricing
         $amazonListingProductRepricingTable = $this->getConnection()->newTable(
             $this->getFullTableName('amazon_listing_product_repricing')
         )
@@ -9945,7 +9966,9 @@ class Installer
                                                    ->setOption('collate', 'utf8_general_ci')
                                                    ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonListingProductRepricingTable);
+        # endregion
 
+        # region amazon_listing_product_variation
         $amazonListingProductVariationTable = $this->getConnection()->newTable(
             $this->getFullTableName('amazon_listing_product_variation')
         )
@@ -9960,7 +9983,9 @@ class Installer
                                                    ->setOption('collate', 'utf8_general_ci')
                                                    ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonListingProductVariationTable);
+        # endregion
 
+        # region amazon_listing_product_variation_option
         $amazonListingProductVariationOptionTable = $this->getConnection()->newTable(
             $this->getFullTableName('amazon_listing_product_variation_option')
         )
@@ -9979,7 +10004,9 @@ class Installer
                                                          ->setOption('collate', 'utf8_general_ci')
                                                          ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonListingProductVariationOptionTable);
+        # endregion
 
+        # region amazon_listing_product_indexer_variation_parent
         $amazonIndexerListingProductVariationParentTable = $this->getConnection()->newTable(
             $this->getFullTableName('amazon_listing_product_indexer_variation_parent')
         )
@@ -10035,7 +10062,9 @@ class Installer
                                                                 ->setOption('collate', 'utf8_general_ci')
                                                                 ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonIndexerListingProductVariationParentTable);
+        # endregion
 
+        # region amazon_marketplace
         $amazonMarketplaceTable = $this->getConnection()->newTable(
             $this->getFullTableName(TablesHelper::TABLE_AMAZON_MARKETPLACE)
         )
@@ -10093,6 +10122,7 @@ class Installer
                                        ->setOption('collate', 'utf8_general_ci')
                                        ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonMarketplaceTable);
+        # endregion
 
         #region amazon_order
         $amazonOrderTable = $this->getConnection()->newTable(
@@ -10366,6 +10396,7 @@ class Installer
         $this->getConnection()->createTable($amazonOrderTable);
         #endregion
 
+        # region amazon_order_item
         $amazonOrderItemTable = $this->getConnection()->newTable($this->getFullTableName('amazon_order_item'))
                                      ->addColumn(
                                          'order_item_id',
@@ -10475,6 +10506,12 @@ class Installer
                                          null,
                                          ['unsigned' => true, 'nullable' => false, 'default' => 0]
                                      )
+                                     ->addColumn(
+                                         AmazonOrderItem::COLUMN_CUSTOMIZATION_DETAILS,
+                                         Table::TYPE_TEXT,
+                                         self::LONG_COLUMN_SIZE,
+                                         ['default' => null]
+                                     )
                                      ->addIndex('general_id', 'general_id')
                                      ->addIndex('sku', 'sku')
                                      ->addIndex('title', 'title')
@@ -10483,6 +10520,7 @@ class Installer
                                      ->setOption('collate', 'utf8_general_ci')
                                      ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonOrderItemTable);
+        # endregion
 
         $amazonProductTypeAttributeMapping = $this
             ->getConnection()
@@ -11521,6 +11559,7 @@ class Installer
         $moduleConfig->insert('/amazon/configuration/', 'worldwide_id_custom_attribute');
         $moduleConfig->insert('/amazon/configuration/', 'general_id_mode', '0');
         $moduleConfig->insert('/amazon/configuration/', 'general_id_custom_attribute');
+        $moduleConfig->insert('/amazon/configuration/', 'is_need_parse_buyer_customized_data', '0');
 
         $this->getConnection()->insertMultiple(
             $this->getFullTableName(TablesHelper::TABLE_MARKETPLACE),

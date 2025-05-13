@@ -109,6 +109,7 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
                 'end_date' => (string)$this->helperData
                     ->createGmtDateTime($receivedItem['endTime'])
                     ->format('Y-m-d H:i:s'),
+                'online_variations' => json_encode($receivedItem['variations'] ?? [], JSON_THROW_ON_ERROR)
             ];
 
             if (!empty($receivedItem['categories'])) {
@@ -198,6 +199,7 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
             $existObject->save();
 
             if (!$existsId && $isMappingEnabled) {
+                /** Map magento product_id to unmanaged and create eBay Item if that not exists */
                 $mappingModel->autoMapOtherListingProduct($existObject);
             }
         }
@@ -250,21 +252,18 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
 
         foreach (array_chunk($receivedItemsIds, 500, true) as $partReceivedItemsIds) {
             $collection = $this->ebayFactory->getObject('Listing\Product')->getCollection();
-            $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
+            $collection->getSelect()
+                       ->reset(\Magento\Framework\DB\Select::COLUMNS)
+                       ->columns(['second_table.ebay_item_id']);
 
             $collection->getSelect()->join(
                 ['l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],
                 'main_table.listing_id = l.id',
                 []
             );
-            $collection->getSelect()->where('l.account_id = ?', (int)$this->getAccount()->getId());
-
-            $collection->getSelect()->join(
-                ['eit' => $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable()],
-                'main_table.product_id = eit.product_id AND eit.account_id = ' . (int)$this->getAccount()->getId(),
-                ['item_id']
-            );
-            $collection->getSelect()->where('eit.item_id IN (?)', $partReceivedItemsIds);
+            $collection->getSelect()
+                       ->where('l.account_id = ?', (int)$this->getAccount()->getId())
+                       ->where('second_table.ebay_item_id IN (?)', $partReceivedItemsIds);
 
             $queryStmt = $connection->query($collection->getSelect()->__toString());
 

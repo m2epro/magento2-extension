@@ -335,6 +335,14 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         return $this->itemsCollection;
     }
 
+    /**
+     * @return Order\Item[]
+     */
+    public function getItems(): array
+    {
+        return $this->getItemsCollection()->getItems();
+    }
+
     // ---------------------------------------
 
     /**
@@ -361,11 +369,11 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
      * Get instances of the channel items (Ebay\Item, Amazon\Item etc)
      * @return array
      */
-    public function getChannelItems()
+    public function getChannelItems(): array
     {
         $channelItems = [];
 
-        foreach ($this->getItemsCollection()->getItems() as $item) {
+        foreach ($this->getItems() as $item) {
             $channelItem = $item->getChildObject()->getChannelItem();
 
             if ($channelItem === null) {

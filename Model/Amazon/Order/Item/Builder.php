@@ -1,14 +1,9 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon\Order\Item;
 
 use Ess\M2ePro\Model\AbstractModel;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Order\Item as OrderItemresource;
 
 /**
  * Class \Ess\M2ePro\Model\Amazon\Order\Item\Builder
@@ -45,6 +40,12 @@ class Builder extends AbstractModel
         $this->setData('gift_type', trim($data['gift_type']));
         $this->setData('gift_message', trim($data['gift_message']));
         $this->setData('buyer_customized_info', $data['buyer_customized_info']);
+        $this->setData(
+            OrderItemresource::COLUMN_CUSTOMIZATION_DETAILS,
+            $data['buyer_customized_data'] !== null
+                ? json_encode($data['buyer_customized_data'], JSON_THROW_ON_ERROR)
+                : null
+        );
         $this->setData('is_shipping_pallet_delivery', $data['is_shipping_pallet_delivery']);
         // ---------------------------------------
 

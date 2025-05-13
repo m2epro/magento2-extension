@@ -1,21 +1,18 @@
 <?php
 
 /**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
-/**
  * @method \Ess\M2ePro\Model\Order\Item getParentObject()
  */
 
 namespace Ess\M2ePro\Model\Amazon\Order;
 
+use Ess\M2ePro\Model\Amazon\Order\Item\CustomizationDetails\TextPrintingCustomization;
 use Ess\M2ePro\Model\Order\Exception\ProductCreationDisabled;
 
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
+    public const CUSTOMIZATION_DETAILS_TYPE_TEXT_PRINTING = 'text_printing';
+
     /** @var \Ess\M2ePro\Model\Magento\Product\BuilderFactory */
     private $productBuilderFactory;
     /** @var \Magento\Catalog\Model\ProductFactory */
@@ -526,5 +523,38 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
         }
 
         return $this->getQtyPurchased();
+    }
+
+    public function hasCustomizationDetailsWithTextPrintingType(): bool
+    {
+        return !empty($this->getCustomizationDetailsWithTextPrintingType());
+    }
+
+    /**
+     * @return TextPrintingCustomization[]
+     */
+    public function getCustomizationDetailsWithTextPrintingType(): array
+    {
+        $result = [];
+        foreach ($this->getCustomizationDetails()[self::CUSTOMIZATION_DETAILS_TYPE_TEXT_PRINTING] ?? [] as $data) {
+            $result[] = new TextPrintingCustomization($data['label'], $data['value']);
+        }
+
+        return $result;
+    }
+
+    public function hasCustomizationDetails(): bool
+    {
+        return !empty($this->getCustomizationDetails());
+    }
+
+    private function getCustomizationDetails(): array
+    {
+        $value = $this->getData(\Ess\M2ePro\Model\ResourceModel\Amazon\Order\Item::COLUMN_CUSTOMIZATION_DETAILS);
+        if (empty($value)) {
+            return [];
+        }
+
+        return json_decode($value, true);
     }
 }

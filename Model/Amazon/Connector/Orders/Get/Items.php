@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon\Connector\Orders\Get;
 
 class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
@@ -21,6 +15,7 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
     private $configManager;
     /** @var \Ess\M2ePro\Model\Registry\Manager */
     private $registryManager;
+    private \Ess\M2ePro\Helper\Component\Amazon\Configuration $amazonConfiguration;
 
     /**
      * @param \Ess\M2ePro\Model\Config\Manager $configManager
@@ -31,6 +26,7 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
      * @param array $params
      */
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Configuration $amazonConfiguration,
         \Ess\M2ePro\Model\Config\Manager $configManager,
         \Ess\M2ePro\Model\Registry\Manager $registryManager,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -46,6 +42,7 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
         );
         $this->configManager = $configManager;
         $this->registryManager = $registryManager;
+        $this->amazonConfiguration = $amazonConfiguration;
     }
 
     /**
@@ -68,6 +65,8 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
 
         $data = [
             'accounts' => $accountsAccessTokens,
+            'is_need_parse_buyer_customized_data' =>
+                (bool)$this->amazonConfiguration->getIsNeedParseBuyerCustomizedData(),
         ];
 
         if (
@@ -245,6 +244,9 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
                         'buyer_customized_info' => !empty($item['buyer']['customized_info'])
                             ? trim($item['buyer']['customized_info'])
                             : null,
+                        'buyer_customized_data' => $this->prepareBuyerCustomizedData(
+                            $item['buyer']['customized_data'] ?? []
+                        ),
                         'is_shipping_pallet_delivery' => (int)($item['shipping_pallet_delivery'] ?? 0),
                     ];
                 }
@@ -268,6 +270,35 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
         if (!empty($responseData['job_token'])) {
             $this->responseData['job_token'] = $responseData['job_token'];
         }
+    }
+
+    private function prepareBuyerCustomizedData(array $data): ?array
+    {
+        if (empty($data)) {
+            return null;
+        }
+
+        $allowedCustomizeTypes = [
+            \Ess\M2ePro\Model\Amazon\Order\Item::CUSTOMIZATION_DETAILS_TYPE_TEXT_PRINTING,
+        ];
+
+        $result = [];
+        foreach ($data as $type => $typeData) {
+            if (!in_array($type, $allowedCustomizeTypes)) {
+                continue;
+            }
+
+            if ($type === \Ess\M2ePro\Model\Amazon\Order\Item::CUSTOMIZATION_DETAILS_TYPE_TEXT_PRINTING) {
+                foreach ($typeData as $row) {
+                    $result[$type][] = [
+                        'label' => $row['label'],
+                        'value' => $row['value'],
+                    ];
+                }
+            }
+        }
+
+        return $result;
     }
 
     // ----------------------------------------

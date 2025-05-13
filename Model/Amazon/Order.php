@@ -50,6 +50,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     private \Magento\Sales\Model\Order\CreditmemoFactory $creditmemoFactory;
     /** @var \Magento\Sales\Model\Service\CreditmemoService */
     private $creditmemoService;
+    private Magento\Order\Item\UpdateCustomizationDetails $updateCustomizationDetails;
 
     public function __construct(
         \Ess\M2ePro\Model\Amazon\Order\Tax\PriceTaxRateFactory $priceTaxRateFactory,
@@ -60,6 +61,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender,
         \Magento\Sales\Model\Order\Email\Sender\InvoiceSender $invoiceSender,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Amazon\Magento\Order\Item\UpdateCustomizationDetails $updateCustomizationDetails,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -94,6 +96,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         $this->listingOtherResourceModel = $listingOtherResourceModel;
         $this->creditmemoFactory = $creditmemoFactory;
         $this->creditmemoService = $creditmemoService;
+        $this->updateCustomizationDetails = $updateCustomizationDetails;
     }
 
     public function _construct()
@@ -618,7 +621,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return true;
     }
 
-    public function beforeCreateMagentoOrder()
+    public function beforeCreateMagentoOrder(): void
     {
         if ($this->isPending() || $this->isCanceled()) {
             throw new \Ess\M2ePro\Model\Exception(
@@ -627,7 +630,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         }
     }
 
-    public function afterCreateMagentoOrder()
+    public function afterCreateMagentoOrder(): void
     {
         if ($this->getAmazonAccount()->isMagentoOrdersCustomerNewNotifyWhenOrderCreated()) {
             $this->orderSender->send($this->getParentObject()->getMagentoOrder());
@@ -638,6 +641,8 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
                 'magento_order' => $this->getParentObject()->getMagentoOrder(),
             ]);
         }
+
+        $this->updateCustomizationDetails->process($this);
     }
 
     /**

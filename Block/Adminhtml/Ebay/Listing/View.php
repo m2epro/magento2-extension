@@ -228,7 +228,7 @@ class View extends AbstractContainer
                 <<<JS
     define('EbayListingAutoActionInstantiation', [
         'M2ePro/Ebay/Listing/AutoAction',
-        'extjs/ext-tree-checkbox'
+        'jstree'
     ], function(){
 
         window.ListingAutoActionObj = new EbayListingAutoAction();

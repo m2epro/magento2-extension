@@ -50,6 +50,16 @@ class Configuration
 
     // ----------------------------------------
 
+    public function getIsNeedParseBuyerCustomizedData(): int
+    {
+        return (int)$this->config->getGroupValue(
+            self::CONFIG_GROUP,
+            'is_need_parse_buyer_customized_data'
+        );
+    }
+
+    // ----------------------------------------
+
     /**
      * @return int
      */
@@ -143,6 +153,7 @@ class Configuration
             'worldwide_id_custom_attribute',
             'general_id_mode',
             'general_id_custom_attribute',
+            'is_need_parse_buyer_customized_data'
         ];
 
         foreach ($allowedConfigKeys as $configKey) {

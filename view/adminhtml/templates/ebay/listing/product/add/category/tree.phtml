@@ -35,87 +35,73 @@
 
     require([
         'Magento_Ui/js/modal/modal',
-        'extjs/ext-tree-checkbox'
-    ], function (modal) {
+        'jquery',
+        'jstree'
+    ], function (modal, $) {
 
-        var tree,
-            treeInfo = <?php echo $block->getInfoJson() ?>;
+        let tree;
+        let treeInfo = <?= $block->getInfoJson() ?>;
 
-        createNodeByConfig = function (config)
-        {
-            var node = Object.clone(config);
-
-            if (node.children && !node.children.length) {
-                delete(node.children);
-                node = new Ext.tree.AsyncTreeNode(node);
-            } else {
-                node = new Ext.tree.TreeNode(node);
-            }
-
-            return node;
+        createNodeByConfig = function (config) {
+            return {
+                id: config.id,
+                parent: config.parentId || '#',
+                text: config.text,
+                children: config.children || []
+            };
         };
 
-        buildCategoryTree = function (parent, config)
-        {
+        buildCategoryTree = function (data, config) {
             if (!config) return;
 
-            if (parent && config && config.length) {
-                for (var i = 0; i < config.length; i++) {
+            config.forEach(function (item) {
+                const node = createNodeByConfig(item);
+                data.push(node);
 
-                    var node = createNodeByConfig(config[i]);
-
-                    parent.appendChild(node);
-                    node.loader = node.getOwnerTree().loader;
-
-                    if (config[i].children) {
-                        buildCategoryTree(node, config[i].children);
-                    }
+                if (item.children) {
+                    buildCategoryTree(data, item.children);
                 }
-            }
+            });
         };
 
-        categoryClick = function (node, event)
-        {
-            var gridObj = window['<?php echo $block->getGridId() ?>JsObject'];
+        categoryClick = function (node, event) {
+            const gridObj = window['<?= $block->getGridId() ?>JsObject'];
 
             saveSelectedProducts(function (transport) {
-
                 gridObj.reloadParams['category_change'] = 1;
                 gridObj.reloadParams['current_category_id'] = node.id;
                 gridObj.reload();
-
             });
         };
 
-        updateInfo = function ()
-        {
-            $$('span[category_id]').each(function (element) {
-                element.update('(' + treeInfo['category_products'][element.readAttribute('category_id')]);
+        updateInfo = function () {
+            $('span[category_id]').each(function () {
+                const categoryId = $(this).attr('category_id');
+                $(this).text('(' + treeInfo['category_products'][categoryId] + ')');
             });
 
-            $('total_products_count').update(treeInfo['total_products_count']);
-            $('total_categories_count').update(treeInfo['total_categories_count']);
+            $('#total_products_count').text(treeInfo['total_products_count']);
+            $('#total_categories_count').text(treeInfo['total_categories_count']);
 
             if (treeInfo['total_categories_count'] > 0) {
-                $('view_categories_summary').show();
+                $('#view_categories_summary').show();
             } else {
-                $('view_categories_summary').hide();
+                $('#view_categories_summary').hide();
             }
-
         };
 
-        saveSelectedProducts = function (callback)
-        {
-            var gridObj = window['<?php echo $block->getGridId() ?>JsObject'];
-            var massGridObj = window['<?php echo $block->getGridId() ?>_massactionJsObject'];
+        saveSelectedProducts = function (callback) {
+            const gridObj = window['<?php echo $block->getGridId() ?>JsObject'];
+            const massGridObj = window['<?php echo $block->getGridId() ?>_massactionJsObject'];
 
-            var checkedString = massGridObj['checkedString'];
-            var initialCheckedString = massGridObj['initialCheckedString'];
+            const checkedString = massGridObj['checkedString'];
+            const initialCheckedString = massGridObj['initialCheckedString'];
 
             massGridObj['checkedString'] = '';
             massGridObj['initialCheckedString'] = '';
 
-            new Ajax.Request('<?php echo $block->getUrl('*/*/saveProductsToSessionAndGetInfo', ['_current' => true]) ?>', {
+            new Ajax.Request('<?php echo $block->getUrl('*/*/saveProductsToSessionAndGetInfo', ['_current' => true]
+            ) ?>', {
                 method: 'post',
                 parameters: {
                     checked_ids: checkedString,
@@ -130,35 +116,33 @@
             });
         };
 
-        showCategoriesSummary = function ()
-        {
-            var gridObj = window['<?php echo $block->getGridId() ?>JsObject'];
-            var massGridObj = window['<?php echo $block->getGridId() ?>_massactionJsObject'];
+        showCategoriesSummary = function () {
+            const gridObj = window['<?php echo $block->getGridId() ?>JsObject'];
+            const massGridObj = window['<?php echo $block->getGridId() ?>_massactionJsObject'];
 
-            new Ajax.Request('<?php echo $block->getUrl('*/*/getCategoriesSummaryHtml', ['_current' => true]); ?>', {
-                method: 'get',
-                parameters: {
+            $.ajax({
+                url: '<?= $block->getUrl('*/*/getCategoriesSummaryHtml', ['_current' => true]) ?>',
+                method: 'GET',
+                data: {
                     categories_ids: getExpandedCategoriesIds().join(',')
                 },
-                onSuccess: function (transport) {
-                    if (!$('m2epro-popup')) {
-                        $('html-body').insert({bottom: '<div id="m2epro-popup"></div>'});
+                success: function (response) {
+                    if (!$('#m2epro-popup').length) {
+                        $('body').append('<div id="m2epro-popup"></div>');
                     }
 
-                    $('m2epro-popup').update();
-                    $('m2epro-popup').insert(transport.responseText);
+                    const popup = $('#m2epro-popup');
+                    popup.html(response);
 
-                    var popup = jQuery('#m2epro-popup');
-
-                    modal({
-                        title: '<?php echo $block->__('Categories of selected Magento Products') ?>',
+                    const modalOptions = {
+                        title: '<?= $block->escapeHtml(__('Categories of selected Magento Products')) ?>',
                         type: 'slide',
-                        closed: function(){
-                            var url = '<?php echo $block->getUrl('*/*/getTreeInfo', ['_current' => true]); ?>';
-                            new Ajax.Request(url, {
-                                method: 'get',
-                                onSuccess: function (transport) {
-                                    treeInfo = transport.responseText.evalJSON();
+                        closed: function () {
+                            $.ajax({
+                                url: '<?= $block->getUrl('*/*/getTreeInfo', ['_current' => true]) ?>',
+                                method: 'GET',
+                                success: function (data) {
+                                    treeInfo = JSON.parse(data);
                                     updateInfo();
                                     massGridObj.unselectAll();
                                     gridObj.reloadParams['category_change'] = 1;
@@ -168,74 +152,43 @@
                             });
                         },
                         buttons: []
-                    }, popup);
+                    };
 
+                    modal(modalOptions, popup);
                     popup.modal('openModal');
                 }
             });
-
         };
 
-        closeCategoriesPopup = function()
-        {
-            jQuery('#m2epro-popup').modal('closeModal')
+        closeCategoriesPopup = function () {
+            $('#m2epro-popup').modal('closeModal');
         };
 
         getExpandedCategoriesIds = function () {
-            var categoriesIds = [];
-            for (var categoryId in tree.nodeHash) {
-                categoriesIds.push(categoryId);
-            }
-            return categoriesIds;
+            return $('#tree-div').jstree('get_selected');
         };
 
-        Ext.EventManager.onDocumentReady(function () {
+        $(document).ready(function () {
+            const categoryData = <?= $block->getTreeJson() ?>;
 
-            var categoryLoader = new Ext.tree.TreeLoader({
-                dataUrl: '<?php echo $block->getLoadTreeUrl(); ?>',
-                createNode: createNodeByConfig,
-                requestMethod: 'GET'
+            $('#tree-div').jstree({
+                'core': {
+                    'data': categoryData,
+                    'themes': {
+                        'name': 'default',
+                        'responsive': true
+                    }
+                }
             });
 
-            categoryLoader.on("beforeload", function (treeLoader, node) {
-                treeLoader.baseParams.category = node.attributes.id;
+            $('#tree-div').on("select_node.jstree", function (e, data) {
+                categoryClick(data.node, e);
             });
-
-            categoryLoader.on("load", function (treeLoader, node, config) {
-                updateInfo();
-                varienWindowOnload();
-            });
-
-            tree = new Ext.tree.TreePanel('tree-div', {
-                animate: true,
-                loader: categoryLoader,
-                enableDD: false,
-                containerScroll: true,
-                rootVisible: false
-            });
-
-            tree.on('click', categoryClick.bind(tree));
-
-            // set the root node
-            var root = new Ext.tree.TreeNode({
-                text: 'root',
-                draggable: false,
-                id: <?php echo $block->getRoot()->getId() ?>
-            });
-
-            tree.setRootNode(root);
-
-            buildCategoryTree(root, <?php echo $block->getTreeJson() ?>);
-
-            // render the tree
-            tree.render();
-            root.expand();
-
-            var currentNode = tree.getNodeById('<?php echo $block->getCurrentNodeId(); ?>') || root.firstChild;
-
-            tree.selectPath(currentNode.getPath());
 
             updateInfo();
         });
+
     });
 </script>
+
+

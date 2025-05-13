@@ -1,7 +1,7 @@
 define([
     'Magento_Ui/js/modal/modal',
     'M2ePro/Common',
-    'extjs/ext-tree-checkbox',
+    'jstree',
     'mage/adminhtml/form',
     'mage/calendar'
 ], function(modal) {
@@ -339,61 +339,59 @@ define([
         },
 
         ebayStoreInitExtTree: function(categoriesTreeArray) {
-            var tree = new Ext.tree.TreePanel('tree-div', {
-                animate: true,
-                enableDD: false,
-                containerScroll: true,
-                rootUIProvider: Ext.tree.CheckboxNodeUI,
-                rootVisible: false
-            });
-
-            tree.on('check', function(node, checked) {
-                varienElementMethods.setHasChanges(node.getUI().checkbox);
-                tree.getRootNode().cascade(function(n) {
-                    var ui = n.getUI();
-                    if (node !== n && ui.checkbox !== undefined) {
-                        ui.checkbox.checked = false;
-                    }
+            const convertToJsTreeData = function(data) {
+                return data.map(function(item) {
+                    return {
+                        id: item.id,
+                        text: item.text,
+                        state: {
+                            opened: true,
+                            selected: false
+                        },
+                        children: item.children ? convertToJsTreeData(item.children) : []
+                    };
                 });
-                EbayAccountObj.ebayStoreSelectCategory(node.attributes.id);
-            }, tree);
-
-            var root = new Ext.tree.TreeNode({
-                text: 'root',
-                draggable: false,
-                checked: 'false',
-                id: '__root__',
-                uiProvider: Ext.tree.CheckboxNodeUI
-            });
-
-            tree.setRootNode(root);
-
-            var buildCategoryTree = function(parent, config) {
-                if (!config) {
-                    return null;
-                }
-
-                if (parent && config && config.length) {
-
-                    for (var i = 0; i < config.length; i++) {
-                        config[i].uiProvider = Ext.tree.CheckboxNodeUI;
-                        var node = new Ext.tree.TreeNode(config[i]);
-                        parent.appendChild(node);
-                        if (config[i].children) {
-                            buildCategoryTree(node, config[i].children);
-                        }
-                    }
-                }
             };
 
-            buildCategoryTree(root, categoriesTreeArray);
+            const treeDiv = jQuery('#tree-div');
 
-            tree.addListener('click', function(node) {
-                node.getUI().check(!node.getUI().checked());
+            try {
+                treeDiv.jstree('destroy');
+            } catch (e) {}
+
+            treeDiv.jstree({
+                core: {
+                    data: convertToJsTreeData(categoriesTreeArray),
+                    multiple: false
+                },
+                checkbox: {
+                    keep_selected_style: false,
+                    three_state: false,
+                    cascade: 'none'
+                },
+                plugins: ['checkbox']
             });
 
-            tree.render();
-            root.expand();
+            treeDiv.on('changed.jstree', function(e, data) {
+                if (!data || !data.selected.length) {
+                    return;
+                }
+
+                const selectedNode = data.instance.get_node(data.selected[0]);
+
+                data.instance.get_json('#', { flat: true }).forEach(function(node) {
+                    if (node.id !== selectedNode.id) {
+                        data.instance.deselect_node(node.id);
+                    }
+                });
+
+                const checkbox = jQuery('#' + selectedNode.id + '_anchor .jstree-checkbox')[0];
+                if (checkbox) {
+                    varienElementMethods.setHasChanges(checkbox);
+                }
+
+                EbayAccountObj.ebayStoreSelectCategory(selectedNode.id);
+            });
         },
 
         // ---------------------------------------

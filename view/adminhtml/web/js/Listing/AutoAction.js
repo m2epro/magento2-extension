@@ -416,7 +416,7 @@ define([
                         return true;
                     },
                     cancel: function() {
-                        tree.getNodeById(latestCategory).ui.check(false);
+                        tree.jstree(true).uncheck_node(latestCategory);
                     }
                 },
                 buttons: [{

@@ -123,6 +123,7 @@ class Unmanaged extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContain
             'categorySettings' => $this->getUrl('*/ebay_listing_wizard/index'),
             'removingProducts' => $this->getUrl('*/ebay_listing_unmanaged/removing'),
             'unmappingProducts' => $this->getUrl('*/listing_other_mapping/unmapping'),
+            'createProductAndMap' => $this->getUrl('*/ebay_listing_unmanaged/createProductAndMap'),
 
         ]);
 
@@ -167,6 +168,7 @@ class Unmanaged extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContain
                 'loa' => 'M2ePro/Listing/Other/AutoMapping',
                 'lor' => 'M2ePro/Listing/Other/Removing',
                 'lou' => 'M2ePro/Listing/Other/Unmapping',
+                'lopcl' => 'M2ePro/Listing/Other/CreateProduct',
 
                 'elog' => 'M2ePro/Ebay/Listing/Other/Grid',
                 'ebayMoving' => 'M2ePro/Ebay/Listing/Moving'
@@ -178,12 +180,16 @@ class Unmanaged extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContain
 
         window.EbayListingOtherGridObj = new EbayListingOtherGrid('ebayListingUnmanagedGrid');
         window.ListingOtherMappingObj = new ListingMapping(EbayListingOtherGridObj,'ebay');
+        window.ListingOtherCreateProductObj = new ListingOtherCreateProduct(EbayListingOtherGridObj,'ebay');
 
         EbayListingOtherGridObj.movingHandler.setProgressBar('listing_other_progress_bar');
         EbayListingOtherGridObj.movingHandler.setGridWrapper('listing_other_content_container');
 
         EbayListingOtherGridObj.autoMappingHandler.setProgressBar('listing_other_progress_bar');
         EbayListingOtherGridObj.autoMappingHandler.setGridWrapper('listing_other_content_container');
+
+        EbayListingOtherGridObj.createProductHandler.setProgressBar('listing_other_progress_bar');
+        EbayListingOtherGridObj.createProductHandler.setGridWrapper('listing_other_content_container');
 
         jQuery(function() {
             EbayListingOtherGridObj.afterInitPage();

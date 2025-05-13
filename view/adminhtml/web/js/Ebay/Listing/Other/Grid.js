@@ -4,6 +4,13 @@ define([
 ], function () {
     window.EbayListingOtherGrid = Class.create(ListingOtherGrid, {
 
+        prepareActions: function ($super) {
+            $super();
+            this.createProductHandler = new ListingOtherCreateProduct(this);
+
+            this.actions['createProductAction'] = this.createProductHandler.run.bind(this.createProductHandler)
+        },
+
         // ---------------------------------------
 
         afterPrepareAction: function()

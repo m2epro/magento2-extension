@@ -22,7 +22,7 @@ define([
                 movingAction: this.movingHandler.run.bind(this.movingHandler),
                 autoMappingAction: this.autoMappingHandler.run.bind(this.autoMappingHandler),
                 removingAction: this.removingHandler.run.bind(this.removingHandler),
-                unmappingAction: this.unmappingHandler.run.bind(this.unmappingHandler)
+                unmappingAction: this.unmappingHandler.run.bind(this.unmappingHandler),
             };
         },
 

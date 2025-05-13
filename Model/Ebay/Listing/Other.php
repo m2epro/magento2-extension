@@ -118,6 +118,16 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return $this->getSettings('online_categories_data');
     }
 
+    public function getOnlineVariations(): array
+    {
+        $data = $this->getData('online_variations');
+        if (empty($data)) {
+            return [];
+        }
+
+        return json_decode($data, true);
+    }
+
     public function getStartDate()
     {
         return $this->getData('start_date');

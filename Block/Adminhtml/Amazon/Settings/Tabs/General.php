@@ -225,6 +225,8 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
+        $this->appendCustomizationDetailsFieldset($form);
+
         $form->setUseContainer(true);
         $this->setForm($form);
 
@@ -284,5 +286,30 @@ JS
     protected function getGlobalNotice()
     {
         return '';
+    }
+
+    private function appendCustomizationDetailsFieldset(\Magento\Framework\Data\Form $form): void
+    {
+        $fieldset = $form->addFieldset(
+            'amazon_customization_details_fieldset',
+            [
+                'legend' => $this->__('Amazon Custom'),
+                'collapsable' => false,
+            ]
+        );
+
+        $fieldset->addField(
+            'is_need_parse_buyer_customized_data',
+            self::SELECT,
+            [
+                'name' => 'is_need_parse_buyer_customized_data',
+                'label' => $this->__('Import Customization Details to Magento Order'),
+                'values' => [
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
+                ],
+                'value' => $this->config->getIsNeedParseBuyerCustomizedData(),
+            ]
+        );
     }
 }

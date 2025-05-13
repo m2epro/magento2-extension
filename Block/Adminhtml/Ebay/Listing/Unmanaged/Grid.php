@@ -241,6 +241,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'url' => '',
         ], 'mapping');
 
+        $this->getMassactionBlock()->addItem('createProduct', [
+            'label' => $this->__('Create Magento Product And Link Item(s)'),
+            'url' => '',
+        ], 'mapping');
+
         $this->getMassactionBlock()->addItem('moving', [
             'label' => $this->__('Move Item(s) to Listing'),
             'url' => '',
