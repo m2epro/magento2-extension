@@ -121,8 +121,8 @@ class ItemSynchronization
             $this->createListingProductPromotion($promotion, $listingProduct);
 
             $message = (string)__(
-                'Item was added to Promotion "%promotion_name"',
-                ['promotion_name' => $promotion->getName()]
+                'Item was added to Discount "%discount_name"',
+                ['discount_name' => $promotion->getName()]
             );
             $this->writeLog($listingProduct, $message);
         }
@@ -162,8 +162,8 @@ class ItemSynchronization
         $listingProduct = $this->loadListingProduct($listingProductPromotion->getListingProductId());
 
         $message = (string)__(
-            'Item was removed from Promotion "%promotion_name"',
-            ['promotion_name' => $promotion->getName()]
+            'Item was removed from Discount "%discount_name"',
+            ['discount_name' => $promotion->getName()]
         );
         $this->writeLog($listingProduct, $message);
     }

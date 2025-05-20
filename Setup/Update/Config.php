@@ -419,6 +419,9 @@ class Config extends AbstractConfig
                 'AddVariationsToEbayUnmanagedProduct',
                 'AddCustomizationDetailsToAmazonOrderItem',
             ],
+            'y25_m05' => [
+                'AddAmazonOnlineQtyLastUpdateDate',
+            ],
         ];
     }
 
@@ -517,6 +520,8 @@ class Config extends AbstractConfig
             \Ess\M2ePro\Setup\Update\y25_m04\AddCustomValueToEbayVideoAndDocuments::class,
             \Ess\M2ePro\Setup\Update\y25_m04\AddVariationsToEbayUnmanagedProduct::class,
             \Ess\M2ePro\Setup\Update\y25_m04\AddCustomizationDetailsToAmazonOrderItem::class,
+
+            \Ess\M2ePro\Setup\Update\y25_m05\AddAmazonOnlineQtyLastUpdateDate::class,
         ];
     }
 

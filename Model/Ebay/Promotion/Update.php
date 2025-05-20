@@ -119,14 +119,14 @@ class Update
                     $this->repository->removeListingProductPromotion($existListingProductPromotions[$listingProductId]);
 
                     $message = (string)__(
-                        'Item was removed from Promotion "%promotion_name"',
-                        ['promotion_name' => $promotion->getName()]
+                        'Item was removed from Discount "%discount_name"',
+                        ['discount_name' => $promotion->getName()]
                     );
                     $this->writeLog($listingProduct, $message, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS);
                 } else {
                     $message = (string)__(
-                        'Item was not added to Promotion "%promotion_name"',
-                        ['promotion_name' => $promotion->getName()]
+                        'Item was not added to Discount "%discount_name"',
+                        ['discount_name' => $promotion->getName()]
                     );
                     $this->writeLog($listingProduct, $message, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING);
                 }
@@ -141,8 +141,8 @@ class Update
             $this->createListingProductPromotion($promotion, $listingProduct);
 
             $message = (string)__(
-                'Item was added to Promotion "%promotion_name"',
-                ['promotion_name' => $promotion->getName()]
+                'Item was added to Discount "%discount_name"',
+                ['discount_name' => $promotion->getName()]
             );
             $this->writeLog($listingProduct, $message, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS);
         }
@@ -235,8 +235,8 @@ class Update
         $listingProduct = $this->loadListingProduct($listingProductPromotion->getListingProductId());
 
         $message = (string)__(
-            'Item was removed from Promotion "%promotion_name"',
-            ['promotion_name' => $promotion->getName()]
+            'Item was removed from Discount "%discount_name"',
+            ['discount_name' => $promotion->getName()]
         );
         $this->writeLog($listingProduct, $message, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS);
     }

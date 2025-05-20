@@ -17,9 +17,9 @@ class Builder extends AbstractModel
     public const UPDATE_B2B_VAT_REVERSE_CHARGE = 'b2b_vat_reverse_charge';
     public const UPDATE_REPLACEMENT_ORDER_ID = 'replacement_order_id';
 
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
 
     /** @var \Ess\M2ePro\Model\Account $order */
@@ -27,16 +27,17 @@ class Builder extends AbstractModel
 
     /** @var \Ess\M2ePro\Model\Order $order */
     protected $order = null;
-    /** @var int  */
+    /** @var int */
     protected $status = self::STATUS_NOT_MODIFIED;
-    /** @var array  */
+    /** @var array */
     protected $items = [];
-    /** @var array  */
+    /** @var array */
     protected $updates = [];
     /** @var \Ess\M2ePro\Model\Order\Note\Repository */
     private $noteRepository;
     /** @var \Ess\M2ePro\Model\Amazon\Order\UkTaxService */
     private $ukTaxService;
+    private \DateTime $systemOrderRequestDate;
 
     public function __construct(
         \Ess\M2ePro\Model\Amazon\Order\UkTaxService $ukTaxService,
@@ -69,6 +70,8 @@ class Builder extends AbstractModel
 
     protected function initializeData(array $data = [])
     {
+        $this->systemOrderRequestDate = \M2E\Core\Helper\Date::createDateGmt($data['system_order_request_date']);
+
         // Init general data
         // ---------------------------------------
         $this->setData('account_id', $this->account->getId());
@@ -535,7 +538,7 @@ class Builder extends AbstractModel
 
     private function createReplacementOrderNote(string $replacedAmazonOrderId)
     {
-        $noteText = (string) __('Original order ID %1', $replacedAmazonOrderId);
+        $noteText = (string)__('Original order ID %1', $replacedAmazonOrderId);
         $this->noteRepository->create($this->order->getData('id'), $noteText);
     }
 
@@ -792,38 +795,40 @@ class Builder extends AbstractModel
                 );
                 $instruction->save();
 
-                if ($currentOnlineQty > $orderItem['qty_purchased']) {
-                    $listingProduct->getChildObject()->setData(
-                        'online_qty',
-                        $currentOnlineQty - $orderItem['qty_purchased']
+                if ($amazonListingProduct->getOnlineQty() > $orderItem['qty_purchased']) {
+                    $isQtyDecreased = $amazonListingProduct->decreaseOnlineQty(
+                        $orderItem['qty_purchased'],
+                        $this->systemOrderRequestDate
                     );
 
-                    $tempLogMessage = $this->helperFactory->getObject('Module\Translation')->__(
-                        'Item QTY was changed from %from% to %to% .',
-                        $currentOnlineQty,
-                        ($currentOnlineQty - $orderItem['qty_purchased'])
-                    );
-
-                    $logger->addProductMessage(
-                        $listingProduct->getListingId(),
-                        $listingProduct->getProductId(),
-                        $listingProduct->getId(),
-                        \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
-                        $logsActionId,
-                        \Ess\M2ePro\Model\Listing\Log::ACTION_CHANNEL_CHANGE,
-                        $tempLogMessage,
-                        \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS
-                    );
+                    if ($isQtyDecreased) {
+                        $logger->addProductMessage(
+                            $listingProduct->getListingId(),
+                            $listingProduct->getProductId(),
+                            $listingProduct->getId(),
+                            \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
+                            $logsActionId,
+                            \Ess\M2ePro\Model\Listing\Log::ACTION_CHANNEL_CHANGE,
+                            (string)__(
+                                'Item QTY was changed from %from to %to.',
+                                [
+                                    'from' => $currentOnlineQty,
+                                    'to' => $currentOnlineQty - $orderItem['qty_purchased'],
+                                ]
+                            ),
+                            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS
+                        );
+                    }
 
                     $listingProduct->save();
 
                     continue;
                 }
 
-                $listingProduct->getChildObject()->setData('online_qty', 0);
+                $isSetOnlineQty = $amazonListingProduct->setOnlineQty(0, $this->systemOrderRequestDate);
 
                 $tempLogMessages = [];
-                if ($currentOnlineQty !== 0) {
+                if ($currentOnlineQty !== 0 && $isSetOnlineQty) {
                     $tempLogMessages[] = (string)__(
                         'Item QTY was changed from %from to 0.',
                         ['from' => $currentOnlineQty]
@@ -831,16 +836,17 @@ class Builder extends AbstractModel
                 }
 
                 if (!$listingProduct->isInactive()) {
-                    $statusChangedFrom = $this->getHelper('Component\Amazon')
-                                              ->getHumanTitleByListingProductStatus($listingProduct->getStatus());
-                    $statusChangedTo = $this->getHelper('Component\Amazon')
-                                            ->getHumanTitleByListingProductStatus(
-                                                \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE
-                                            );
+                    /** @var \Ess\M2ePro\Helper\Component\Amazon $amazonComponentHelper */
+                    $amazonComponentHelper = $this->getHelper('Component\Amazon');
+
+                    $statusChangedFrom = $amazonComponentHelper
+                        ->getHumanTitleByListingProductStatus($listingProduct->getStatus());
+                    $statusChangedTo = $amazonComponentHelper
+                        ->getHumanTitleByListingProductStatus(\Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE);
 
                     if (!empty($statusChangedFrom) && !empty($statusChangedTo)) {
-                        $tempLogMessages[] = $this->helperFactory->getObject('Module\Translation')->__(
-                            'Item Status was changed from "%from%" to "%to%" .',
+                        $tempLogMessages[] = __(
+                            'Item Status was changed from "%from" to "%to" .',
                             $statusChangedFrom,
                             $statusChangedTo
                         );

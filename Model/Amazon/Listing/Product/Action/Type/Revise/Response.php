@@ -8,6 +8,7 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Revise;
 
+use Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product as AmazonListingProductResource;
 use Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Qty as DataBuilderQty;
 
 /**
@@ -22,6 +23,8 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
      */
     public function processSuccess(array $params = []): void
     {
+        $updateRequestDate = $this->getUpdateRequestDate($params);
+
         $data = [];
 
         if ($this->getConfigurator()->isDetailsAllowed()) {
@@ -29,7 +32,7 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         }
 
         $data = $this->appendStatusChangerValue($data);
-        $data = $this->appendQtyValues($data);
+        $data = $this->appendQtyValues($data, $updateRequestDate);
         $data = $this->appendRegularPriceValues($data);
         $data = $this->appendBusinessPriceValues($data);
         $data = $this->appendGiftSettingsStatus($data);
@@ -40,7 +43,6 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         }
 
         $this->getListingProduct()->addData($data);
-
         $this->getAmazonListingProduct()->addData($data);
         $this->getAmazonListingProduct()->setIsStoppedManually(false);
 
@@ -53,13 +55,13 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
 
     //########################################
 
-    protected function appendQtyValues($data)
+    protected function appendQtyValues($data, ?\DateTime $updateRequestDate)
     {
         $params = $this->getParams();
 
         if (!empty($params['switch_to']) && $params['switch_to'] === DataBuilderQty::FULFILLMENT_MODE_AFN) {
             $data['is_afn_channel'] = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_AFN_CHANNEL_YES;
-            $data['online_qty'] = null;
+            $data[AmazonListingProductResource::COLUMN_ONLINE_QTY] = null;
             $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN;
 
             return $data;
@@ -70,7 +72,7 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
             $data['online_afn_qty'] = null;
         }
 
-        return parent::appendQtyValues($data);
+        return parent::appendQtyValues($data, $updateRequestDate);
     }
 
     // ---------------------------------------

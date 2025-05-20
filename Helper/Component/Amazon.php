@@ -129,11 +129,11 @@ class Amazon
     }
 
     /**
-     * @param string $status
+     * @param int|string $status
      *
      * @return string|null
      */
-    public function getHumanTitleByListingProductStatus(string $status): ?string
+    public function getHumanTitleByListingProductStatus($status): ?string
     {
         $statuses = [
             ListingProduct::STATUS_UNKNOWN    => $this->moduleTranslation->__('Unknown'),

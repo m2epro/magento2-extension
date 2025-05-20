@@ -13,6 +13,7 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Product;
  */
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {
+    private \Ess\M2ePro\Model\Tag\ListingProduct\Buffer $tagBuffer;
     /** @var null  */
     private $logsActionId = null;
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
@@ -23,11 +24,13 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\Tag\ListingProduct\Buffer $tagBuffer,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
+        $this->tagBuffer = $tagBuffer;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->amazonFactory = $amazonFactory;
         parent::__construct($helperFactory, $modelFactory);
@@ -113,6 +116,9 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcher */
             $dispatcher = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
             $connectorName = 'Amazon\Connector\Product\\' . $this->getActionNick($action) . '\Requester';
+
+            $this->tagBuffer->removeAllTags($product);
+            $this->tagBuffer->flush();
 
             /** @var \Ess\M2ePro\Model\Amazon\Connector\Product\Requester $connector */
             $connector = $dispatcher->getCustomConnector($connectorName, $params);

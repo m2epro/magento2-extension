@@ -103,7 +103,7 @@ class SynchronizePromotions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                     $this->timingManager->setLastProcessed($account->getId(), $marketplace->getId());
                 } catch (\Throwable $exception) {
                     $message = (string)__(
-                        'The "SynchronizePromotion" Action for eBay Account "%account" and Marketplace "%marketplace"'
+                        'The "SynchronizeDiscount" Action for eBay Account "%account" and Marketplace "%marketplace"'
                         . ' was completed with error.',
                         [
                             'account' => $account->getTitle(),

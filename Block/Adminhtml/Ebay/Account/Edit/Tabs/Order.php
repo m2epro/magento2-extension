@@ -565,29 +565,6 @@ HTML
             ]
         );
 
-        $fieldset->addField(
-            'magento_orders_customer_billing_address_mode',
-            'select',
-            [
-                'name' => 'magento_orders_settings[customer][billing_address_mode]',
-                'label' => $this->__('Billing Address Usage'),
-                'values' => [
-                    Account::USE_SHIPPING_ADDRESS_AS_BILLING_ALWAYS => $this->__(
-                        'Always'
-                    ),
-                    Account::USE_SHIPPING_ADDRESS_AS_BILLING_IF_SAME_CUSTOMER_AND_RECIPIENT => $this->__(
-                        'Buyer & Recipient have the same name'
-                    ),
-                ],
-                'value' => $formData['magento_orders_settings']['customer']['billing_address_mode'],
-                'note' => $this->__('When to use shipping address as billing.'),
-                'tooltip' => $this->__(
-                    'Choose if you want to use your customer’s shipping address as the billing one regularly
-                    or only if the buyer and recipient have the same names.'
-                ),
-            ]
-        );
-
         $fieldset = $form->addFieldset(
             'magento_block_ebay_accounts_magento_orders_rules',
             [

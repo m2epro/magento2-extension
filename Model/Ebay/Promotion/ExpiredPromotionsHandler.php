@@ -80,8 +80,8 @@ class ExpiredPromotionsHandler
             null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_PROMOTION,
             (string)__(
-                'Promotion "%promotion_name" has ended. The Item is no longer being promoted',
-                ['promotion_name' => $promotion->getName()]
+                'Discount "%discount_name" has ended. The Item is no longer being promoted',
+                ['discount_name' => $promotion->getName()]
             ),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
         );

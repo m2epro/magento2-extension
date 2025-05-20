@@ -111,6 +111,10 @@ class ProcessActionsResults extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $data['asins'] = $responseData['asins'][$listingProductId . '-id'];
         }
 
+        if (!empty($responseData['system']['items_update_request_date'])) {
+            $data['system_items_update_request_date'] = $responseData['system']['items_update_request_date'];
+        }
+
         return $data;
     }
 

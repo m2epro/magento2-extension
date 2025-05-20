@@ -108,7 +108,7 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
         return in_array($dataType, $this->allowedDataTypes);
     }
 
-    public function allow($dataType)
+    public function allow($dataType): self
     {
         $this->validateDataType($dataType);
 

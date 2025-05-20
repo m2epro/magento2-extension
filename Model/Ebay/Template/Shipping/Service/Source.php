@@ -71,7 +71,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     /**
-     * @param null $storeForConvertingAttributeTypePrice
+     * @param int|string|null $storeForConvertingAttributeTypePrice
      *
      * @return float
      */
@@ -100,7 +100,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     }
 
     /**
-     * @param null $storeForConvertingAttributeTypePrice
+     * @param int|string|null $storeForConvertingAttributeTypePrice
      *
      * @return float
      */

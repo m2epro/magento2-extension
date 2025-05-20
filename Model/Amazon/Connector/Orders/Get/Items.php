@@ -170,6 +170,8 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
             foreach ($ordersData as $orderData) {
                 $order = [];
 
+                $order['system_order_request_date'] = $orderData['system']['order_request_date'];
+
                 $order['amazon_order_id'] = trim((string)$orderData['id']);
                 $order['status'] = trim((string)$orderData['status']);
 

@@ -3,6 +3,7 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type;
 
 use Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract as ChangeProcessor;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product as AmazonListingProductResource;
 
 abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 {
@@ -208,12 +209,30 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 
     // ---------------------------------------
 
-    protected function appendQtyValues($data)
+    protected function appendQtyValues($data, ?\DateTime $updateRequestDate)
     {
         if ($this->getRequestData()->hasQty()) {
-            $data['online_qty'] = (int)$this->getRequestData()->getQty();
+            $data[AmazonListingProductResource::COLUMN_ONLINE_QTY] = (int)$this->getRequestData()->getQty();
+        }
 
-            if ((int)$data['online_qty'] > 0) {
+        $data[AmazonListingProductResource::COLUMN_ONLINE_QTY_LAST_UPDATE_DATE] = null;
+        if ($updateRequestDate !== null) {
+            $data[AmazonListingProductResource::COLUMN_ONLINE_QTY_LAST_UPDATE_DATE] =
+                $updateRequestDate->format('Y-m-d H:i:s');
+        }
+
+        $onlineQtyLastUpdateDate = $this->getAmazonListingProduct()->getOnlineQtyLastUpdateDate();
+        if (
+            $onlineQtyLastUpdateDate !== null
+            && $updateRequestDate !== null
+            && $onlineQtyLastUpdateDate > $updateRequestDate
+        ) {
+            unset($data[AmazonListingProductResource::COLUMN_ONLINE_QTY]);
+            unset($data[AmazonListingProductResource::COLUMN_ONLINE_QTY_LAST_UPDATE_DATE]);
+        }
+
+        if (isset($data[AmazonListingProductResource::COLUMN_ONLINE_QTY])) {
+            if ((int)$data[AmazonListingProductResource::COLUMN_ONLINE_QTY] > 0) {
                 $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
             } else {
                 $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE;
@@ -253,9 +272,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             }
         }
 
-        $data[
-            \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product::COLUMN_ONLINE_REGULAR_MAP_PRICE
-        ] = $this->requestData->getMapPrice();
+        $data[AmazonListingProductResource::COLUMN_ONLINE_REGULAR_MAP_PRICE] = $this->requestData->getMapPrice();
 
         return $data;
     }
@@ -373,5 +390,14 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getResource()->add($instructions);
+    }
+
+    protected function getUpdateRequestDate(array $params): ?\DateTime
+    {
+        if (isset($params['system_items_update_request_date'])) {
+            return \Ess\M2ePro\Helper\Date::createDateGmt($params['system_items_update_request_date']);
+        }
+
+        return null;
     }
 }

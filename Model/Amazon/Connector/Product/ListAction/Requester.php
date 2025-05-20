@@ -90,11 +90,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 
         $validationResult = $validator->validate();
 
-        foreach ($validator->getMessages() as $messageData) {
-            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
-            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
-            $message->initFromPreparedData($messageData['text'], $messageData['type']);
-
+        foreach ($validator->getMessages() as $message) {
             $this->storeLogMessage($message);
         }
 
@@ -103,6 +99,8 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 
             return true;
         }
+
+        $this->tagManager->addErrorTags($this->listingProduct, $validator->getMessages());
 
         return false;
     }
@@ -113,11 +111,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 
         $validationResult = $validator->validate();
 
-        foreach ($validator->getMessages() as $messageData) {
-            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
-            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
-            $message->initFromPreparedData($messageData['text'], $messageData['type']);
-
+        foreach ($validator->getMessages() as $message) {
             $this->storeLogMessage($message);
         }
 
@@ -126,6 +120,8 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 
             return true;
         }
+
+        $this->tagManager->addErrorTags($this->listingProduct, $validator->getMessages());
 
         return false;
     }
@@ -136,11 +132,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 
         $validationResult = $validator->validate();
 
-        foreach ($validator->getMessages() as $messageData) {
-            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
-            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
-            $message->initFromPreparedData($messageData['text'], $messageData['type']);
-
+        foreach ($validator->getMessages() as $message) {
             $this->storeLogMessage($message);
         }
 
@@ -149,6 +141,8 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 
             return true;
         }
+
+        $this->tagManager->addErrorTags($this->listingProduct, $validator->getMessages());
 
         return false;
     }
@@ -215,11 +209,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 
         $validationResult = $validator->validate();
 
-        foreach ($validator->getMessages() as $messageData) {
-            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
-            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
-            $message->initFromPreparedData($messageData['text'], $messageData['type']);
-
+        foreach ($validator->getMessages() as $message) {
             $this->storeLogMessage($message);
         }
 
@@ -228,6 +218,8 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 
             return true;
         }
+
+        $this->tagManager->addErrorTags($this->listingProduct, $validator->getMessages());
 
         return false;
     }
@@ -238,11 +230,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 
         $validationResult = $validator->validate();
 
-        foreach ($validator->getMessages() as $messageData) {
-            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
-            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
-            $message->initFromPreparedData($messageData['text'], $messageData['type']);
-
+        foreach ($validator->getMessages() as $message) {
             $this->storeLogMessage($message);
         }
 
@@ -251,6 +239,8 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 
             return true;
         }
+
+        $this->tagManager->addErrorTags($this->listingProduct, $validator->getMessages());
 
         return false;
     }

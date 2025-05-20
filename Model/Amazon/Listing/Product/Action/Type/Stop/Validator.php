@@ -37,13 +37,17 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
 
         if ($this->getAmazonListingProduct()->isAfnChannel()) {
             if (!empty($params['remove'])) {
-                $this->addMessage('Stop Action for FBA Items is impossible as their Quantity is unknown.');
+                $this->addMessage(
+                    'Stop Action for FBA Items is impossible as their Quantity is unknown.',
+                    self::ERROR_FBA_ITEM_STOP
+                );
                 $this->getListingProduct()->delete();
                 $this->getListingProduct()->isDeleted(true);
             } else {
                 $this->addMessage(
                     'AFN Items cannot be Stopped through M2E Pro as their Quantity is managed by Amazon.
-                    You may run Revise to update the Product detail, but the Quantity update will be ignored.'
+                    You may run Revise to update the Product detail, but the Quantity update will be ignored.',
+                    self::ERROR_FBA_ITEM_STOP
                 );
             }
 
@@ -52,7 +56,10 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
 
         if (!$this->getListingProduct()->isListed() || !$this->getListingProduct()->isStoppable()) {
             if (empty($params['remove'])) {
-                $this->addMessage('Item is not active or not available');
+                $this->addMessage(
+                    'Item is not active or not available',
+                    \Ess\M2ePro\Model\Tag\ValidatorIssues::NOT_USER_ERROR
+                );
             } else {
                 /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\RemoveHandler $removeHandler */
                 $removeHandler = $this->modelFactory->getObject('Amazon_Listing_Product_RemoveHandler');

@@ -51,6 +51,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
             $this->getPriceData(),
             $this->getCategoriesData(),
             $this->getPartsData(),
+            $this->getShippingData(),
             $this->getVariationsData(),
             $this->getConditionData()
         );

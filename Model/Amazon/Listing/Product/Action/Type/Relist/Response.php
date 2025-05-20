@@ -25,6 +25,7 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
      */
     public function processSuccess(array $params = []): void
     {
+        $updateRequestDate = $this->getUpdateRequestDate($params);
         $data = [];
 
         if ($this->getConfigurator()->isDetailsAllowed()) {
@@ -32,7 +33,7 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         }
 
         $data = $this->appendStatusChangerValue($data);
-        $data = $this->appendQtyValues($data);
+        $data = $this->appendQtyValues($data, $updateRequestDate);
         $data = $this->appendRegularPriceValues($data);
         $data = $this->appendBusinessPriceValues($data);
 
@@ -43,7 +44,6 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         }
 
         $this->getListingProduct()->addData($data);
-
         $this->getAmazonListingProduct()->addData($data);
         $this->getAmazonListingProduct()->setIsStoppedManually(false);
 

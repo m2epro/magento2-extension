@@ -449,14 +449,41 @@ class Checker
 
         $listingProduct = $ebayListingProduct->getParentObject();
 
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Shipping $actionDataBuilder */
         $actionDataBuilder = $this->shippingDataBuilderFactory->create();
         $actionDataBuilder->setListingProduct($listingProduct);
 
-        $hashReturnData = $this->helperData->md5String(
+        $hashedShippingData = $this->helperData->md5String(
             \Ess\M2ePro\Helper\Json::encode($actionDataBuilder->getBuilderData())
         );
 
-        return $hashReturnData !== $ebayListingProduct->getOnlineShippingData();
+        if ($hashedShippingData !== $ebayListingProduct->getOnlineShippingData()) {
+            return true;
+        }
+
+        $itemBecameMultiQtyFromSingleOnline = $ebayListingProduct->getOnlineQty() <= 1
+            && $ebayListingProduct->getQty() > 1;
+
+        if (
+            $itemBecameMultiQtyFromSingleOnline
+            && $this->hasAnyShippingServiceAdditionalCost($ebayListingProduct)
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function hasAnyShippingServiceAdditionalCost(
+        \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct
+    ): bool {
+        $magentoProduct = $ebayListingProduct->getMagentoProduct();
+        $storeId = $ebayListingProduct->getListing()
+                                      ->getStoreId();
+
+        return $ebayListingProduct->getShippingTemplate()
+                                  ->getSource($magentoProduct)
+                                  ->hasAnyShippingServiceAdditionalCost($storeId);
     }
 
     /**

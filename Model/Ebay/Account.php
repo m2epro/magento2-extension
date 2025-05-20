@@ -51,9 +51,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public const MAGENTO_ORDERS_CUSTOMER_MODE_PREDEFINED = 1;
     public const MAGENTO_ORDERS_CUSTOMER_MODE_NEW = 2;
 
-    public const USE_SHIPPING_ADDRESS_AS_BILLING_ALWAYS = 0;
-    public const USE_SHIPPING_ADDRESS_AS_BILLING_IF_SAME_CUSTOMER_AND_RECIPIENT = 1;
-
     public const MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT = 0;
     public const MAGENTO_ORDERS_STATUS_MAPPING_MODE_CUSTOM = 1;
 
@@ -904,34 +901,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $setting = $this->getSetting('magento_orders_settings', ['customer', 'group_id']);
 
         return (int)$setting;
-    }
-
-    /**
-     * @return bool
-     */
-    public function useMagentoOrdersShippingAddressAsBillingAlways()
-    {
-        return $this->getBillingAddressMode() == self::USE_SHIPPING_ADDRESS_AS_BILLING_ALWAYS;
-    }
-
-    /**
-     * @return bool
-     */
-    public function useMagentoOrdersShippingAddressAsBillingIfSameCustomerAndRecipient()
-    {
-        return $this->getBillingAddressMode() == self::USE_SHIPPING_ADDRESS_AS_BILLING_IF_SAME_CUSTOMER_AND_RECIPIENT;
-    }
-
-    /**
-     * @return int
-     */
-    private function getBillingAddressMode()
-    {
-        return (int)$this->getSetting(
-            'magento_orders_settings',
-            ['customer', 'billing_address_mode'],
-            self::USE_SHIPPING_ADDRESS_AS_BILLING_IF_SAME_CUSTOMER_AND_RECIPIENT
-        );
     }
 
     /**

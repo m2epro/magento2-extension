@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub;
 
 use Ess\M2ePro\Model\Amazon\Listing\Product;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product as AmazonListingProductResource;
 
 /**
  * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub\Selling
@@ -111,7 +112,7 @@ class Selling extends AbstractModel
         ($totalOnRepricing == $totalCount) && $repricingState = Product::VARIATION_PARENT_IS_REPRICING_STATE_ALL_YES;
 
         $this->getProcessor()->getListingProduct()->getChildObject()->addData([
-            'online_qty' => $qty,
+            AmazonListingProductResource::COLUMN_ONLINE_QTY => $qty,
             'online_regular_price' => $regularPrice,
             'online_business_price' => $businessPrice,
             'is_afn_channel' => $isAfn,

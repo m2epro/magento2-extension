@@ -439,7 +439,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         }
 
         $this->getMassactionBlock()->addItem('managePromotion', [
-            'label' => __('Manage Promotions'),
+            'label' => __('Manage Discounts'),
             'url' => '',
         ], 'other');
 
@@ -1116,12 +1116,12 @@ JS
             'task_completed_warning_message' => $this->__($taskCompletedWarningMessage),
             'task_completed_error_message' => $this->__($taskCompletedErrorMessage),
             'Add New Listing' => $this->__('Add New Listing'),
-            'Manage Promotions' => __('Manage Promotions'),
+            'Manage Discounts' => __('Manage Discounts'),
             'Assign' => __('Assign'),
-            'Refresh Promotions' => __('Refresh Promotions'),
+            'Refresh Discounts' => __('Refresh Discounts'),
             'Select Discount' => __('Select Discount'),
             'Manage Discount' => __('Manage Discount'),
-            'Create New Promotion' => __('Create New Promotion'),
+            'Create New Discount' => __('Create New Discount'),
         ]);
 
         $temp = $this->sessionDataHelper->getValue('products_ids_for_list', true);

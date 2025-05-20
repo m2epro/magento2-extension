@@ -8,9 +8,11 @@
 
 namespace Ess\M2ePro\Model\Listing\SynchronizeInventory\Amazon;
 
+use Ess\M2ePro\Helper\Date as DateHelper;
 use Ess\M2ePro\Model\Listing\SynchronizeInventory\AbstractExistingProductsHandler;
 use Ess\M2ePro\Model\Cron\Task\Amazon\Listing\SynchronizeInventory\Responser;
 use Ess\M2ePro\Model\Amazon\Listing\Product;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product as AmazonListingProductResource;
 
 /**
  * Class \Ess\M2ePro\Model\Listing\SynchronizeInventory\Amazon\ListingProductsHandler
@@ -72,6 +74,8 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                     'is_afn_channel' => (bool)$existingItem['is_afn_channel'],
                     'is_isbn_general_id' => (bool)$existingItem['is_isbn_general_id'],
                     'status' => (int)$existingItem['status'],
+                    'online_qty_last_update_date' =>
+                        $existingItem[AmazonListingProductResource::COLUMN_ONLINE_QTY_LAST_UPDATE_DATE]
                 ];
 
                 $newData = [
@@ -80,17 +84,21 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                     'online_qty' => (int)$receivedItem['qty'],
                     'is_afn_channel' => (bool)$receivedItem['channel']['is_afn'],
                     'is_isbn_general_id' => (bool)$receivedItem['identifiers']['is_isbn'],
+                    'online_qty_last_update_date' => $receivedItem['system']['item_request_date']
                 ];
 
                 if ($newData['is_afn_channel']) {
                     $newData['online_qty'] = null;
-                    $newData['status'] = $existingData['is_afn_channel'] ?
-                        $existingData['status'] : \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN;
-                } else {
-                    if ($existingItem['online_afn_qty'] !== null) {
-                        $newData['online_afn_qty'] = null;
-                    }
+                    $newData['status'] = $existingData['is_afn_channel']
+                        ? $existingData['status']
+                        : \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN;
+                }
 
+                if (!$newData['is_afn_channel'] && $existingItem['online_afn_qty'] !== null) {
+                    $newData['online_afn_qty'] = null;
+                }
+
+                if (!$newData['is_afn_channel'] && isset($newData['online_qty'])) {
                     if ($newData['online_qty'] > 0) {
                         $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
                     } else {
@@ -132,6 +140,24 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                     unset($newData['online_regular_price'], $existingData['online_regular_price']);
                 }
 
+                if (!empty($existingData['online_qty_last_update_date'])) {
+                    $lastQtyUpdateDate = DateHelper::createDateGmt($existingData['online_qty_last_update_date']);
+                    $itemRequestDate = DateHelper::createDateGmt($newData['online_qty_last_update_date']);
+
+                    if ($lastQtyUpdateDate > $itemRequestDate) {
+                        unset(
+                            $newData['online_qty'],
+                            $newData['status'],
+                            $newData['online_qty_last_update_date']
+                        );
+                        unset(
+                            $existingData['online_qty'],
+                            $existingData['status'],
+                            $existingData['online_qty_last_update_date']
+                        );
+                    }
+                }
+
                 if ($newData == $existingData) {
                     continue;
                 }
@@ -159,7 +185,10 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                         );
                     }
 
-                    if (!empty($existingItem['is_variation_product']) && !empty($existingItem['variation_parent_id'])) {
+                    if (
+                        !empty($existingItem['is_variation_product'])
+                        && !empty($existingItem['variation_parent_id'])
+                    ) {
                         $parentIdsForProcessing[] = (int)$existingItem['variation_parent_id'];
                     }
                 }
@@ -182,8 +211,8 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                         );
 
                         if (
-                            !empty($existingItem['is_variation_product']) &&
-                            !empty($existingItem['variation_parent_id'])
+                            !empty($existingItem['is_variation_product'])
+                            && !empty($existingItem['variation_parent_id'])
                         ) {
                             $parentIdsForProcessing[] = (int)$existingItem['variation_parent_id'];
                         }
@@ -204,7 +233,10 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                         (float)$newData['online_regular_price']
                     );
 
-                    if (!empty($existingItem['is_variation_product']) && !empty($existingItem['variation_parent_id'])) {
+                    if (
+                        !empty($existingItem['is_variation_product'])
+                        && !empty($existingItem['variation_parent_id'])
+                    ) {
                         $parentIdsForProcessing[] = (int)$existingItem['variation_parent_id'];
                     }
                 }
@@ -282,6 +314,10 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                 'second_table.is_variation_product',
                 'second_table.variation_parent_id',
                 'second_table.is_repricing',
+                sprintf(
+                    'second_table.%s',
+                    AmazonListingProductResource::COLUMN_ONLINE_QTY_LAST_UPDATE_DATE
+                ),
                 'repricing.is_online_disabled',
                 'repricing.is_online_inactive',
             ]

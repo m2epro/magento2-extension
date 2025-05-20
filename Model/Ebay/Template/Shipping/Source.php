@@ -123,7 +123,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         return $src['value'];
     }
 
-    //########################################
+    // ---------------------------------------
 
     /**
      * @return string
@@ -139,5 +139,20 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         return $src['value'];
     }
 
-    //########################################
+    public function hasAnyShippingServiceAdditionalCost(int $storeId): bool
+    {
+        $services = $this->getShippingTemplate()
+                         ->getServices(true);
+
+        foreach ($services as $service) {
+            if (
+                $service->getSource($this->getMagentoProduct())
+                        ->getCostAdditional($storeId) > 0
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

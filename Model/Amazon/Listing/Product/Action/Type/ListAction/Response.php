@@ -55,7 +55,7 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         if (!$variationManager->isRelationParentType()) {
             $data['is_afn_channel'] = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_AFN_CHANNEL_NO;
 
-            $data = $this->appendQtyValues($data);
+            $data = $this->appendQtyValues($data, null);
             $data = $this->appendRegularPriceValues($data);
             $data = $this->appendBusinessPriceValues($data);
             $data = $this->appendGiftSettingsStatus($data);
@@ -66,7 +66,6 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         }
 
         $this->getListingProduct()->addData($data);
-
         $this->getAmazonListingProduct()->addData($data);
         $this->getAmazonListingProduct()->setIsStoppedManually(false);
 

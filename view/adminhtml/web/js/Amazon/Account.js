@@ -639,8 +639,6 @@ define([
 
                 $('magento_block_amazon_accounts_magento_orders_tax-wrapper').hide();
                 $('magento_orders_tax_mode').value = M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Account::MAGENTO_ORDERS_TAX_MODE_MIXED');
-
-                $('magento_orders_customer_billing_address_mode').value = M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Account::USE_SHIPPING_ADDRESS_AS_BILLING_IF_SAME_CUSTOMER_AND_RECIPIENT');
             } else {
                 $('magento_block_amazon_accounts_magento_orders_number-wrapper').show();
                 $('magento_block_amazon_accounts_magento_orders_fba-wrapper').show();

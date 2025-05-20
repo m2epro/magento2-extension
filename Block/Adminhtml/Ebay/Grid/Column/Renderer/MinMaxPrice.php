@@ -77,7 +77,7 @@ class MinMaxPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Num
         <div class="m2epro-field-tooltip admin__field-tooltip">
         <a class="admin__field-tooltip-action" href="javascript://"></a>
         <div class="admin__field-tooltip-content">
-            This Product is added to a promotion.
+            This Product is added to a discount.
         </div>
     </div>
 </div>

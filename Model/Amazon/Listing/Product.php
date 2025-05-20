@@ -2,11 +2,11 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing;
 
-use Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product as AmazonProductResource;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product as AmazonListingProductResource;
 
 /**
  * @method \Ess\M2ePro\Model\Listing\Product getParentObject()
- * @method AmazonProductResource getResource()
+ * @method AmazonListingProductResource getResource()
  */
 class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
@@ -101,7 +101,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function _construct(): void
     {
         parent::_construct();
-        $this->_init(AmazonProductResource::class);
+        $this->_init(AmazonListingProductResource::class);
     }
 
     public function getListingProductId(): int
@@ -583,7 +583,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getTemplateProductTypeId(): int
     {
-        return (int)$this->getData(AmazonProductResource::COLUMN_TEMPLATE_PRODUCT_TYPE_ID);
+        return (int)$this->getData(AmazonListingProductResource::COLUMN_TEMPLATE_PRODUCT_TYPE_ID);
     }
 
     /**
@@ -593,7 +593,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function setTemplateProductTypeId($productType)
     {
-        $this->setData(AmazonProductResource::COLUMN_TEMPLATE_PRODUCT_TYPE_ID, $productType);
+        $this->setData(AmazonListingProductResource::COLUMN_TEMPLATE_PRODUCT_TYPE_ID, $productType);
     }
 
     /**
@@ -647,11 +647,62 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     // ---------------------------------------
 
     /**
-     * @return int
+     * @return bool - `true` if QTY decreased, `false` if not decreased.
      */
-    public function getOnlineQty()
+    public function decreaseOnlineQty(int $decreaseValue, \DateTime $updateDate): bool
     {
-        return (int)$this->getData('online_qty');
+        $newOnlineQty = $this->getOnlineQty() - $decreaseValue;
+
+        return $this->setOnlineQty($newOnlineQty, $updateDate);
+    }
+
+    /**
+     * @return bool - `true` if QTY set, `false` if not set.
+     */
+    public function setOnlineQty(int $qty, \DateTime $updateDate): bool
+    {
+        $lastUpdateDate = $this->getOnlineQtyLastUpdateDate();
+        if ($qty === $this->getOnlineQty()) {
+            if (
+                $lastUpdateDate === null
+                || $updateDate > $lastUpdateDate
+            ) {
+                $this->setData(AmazonListingProductResource::COLUMN_ONLINE_QTY_LAST_UPDATE_DATE, $updateDate);
+            }
+
+            return false;
+        }
+
+        if ($lastUpdateDate === null) {
+            $this->setData(AmazonListingProductResource::COLUMN_ONLINE_QTY, $qty);
+            $this->setData(AmazonListingProductResource::COLUMN_ONLINE_QTY_LAST_UPDATE_DATE, $updateDate);
+
+            return true;
+        }
+
+        if ($lastUpdateDate > $updateDate) {
+            return false;
+        }
+
+        $this->setData(AmazonListingProductResource::COLUMN_ONLINE_QTY_LAST_UPDATE_DATE, $updateDate);
+        $this->setData(AmazonListingProductResource::COLUMN_ONLINE_QTY, $qty);
+
+        return true;
+    }
+
+    public function getOnlineQty(): int
+    {
+        return (int)$this->getData(AmazonListingProductResource::COLUMN_ONLINE_QTY);
+    }
+
+    public function getOnlineQtyLastUpdateDate(): ?\DateTime
+    {
+        $date = $this->getData(AmazonListingProductResource::COLUMN_ONLINE_QTY_LAST_UPDATE_DATE);
+        if (empty($date)) {
+            return null;
+        }
+
+        return \Ess\M2ePro\Helper\Date::createDateGmt($date);
     }
 
     public function getOnlineAfnQty(): ?int
@@ -690,12 +741,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function isGeneralIdOwner()
     {
-        return (int)$this->getData(AmazonProductResource::COLUMN_IS_GENERAL_ID_OWNER) == self::IS_GENERAL_ID_OWNER_YES;
+        return (int)$this->getData(AmazonListingProductResource::COLUMN_IS_GENERAL_ID_OWNER)
+            == self::IS_GENERAL_ID_OWNER_YES;
     }
 
     public function setIsGeneralIdOwner($isGeneralId): void
     {
-        $this->setData(AmazonProductResource::COLUMN_IS_GENERAL_ID_OWNER, (int)$isGeneralId);
+        $this->setData(AmazonListingProductResource::COLUMN_IS_GENERAL_ID_OWNER, (int)$isGeneralId);
     }
 
     // ---------------------------------------
@@ -992,7 +1044,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getOnlineRegularMapPrice(): float
     {
         $onlineRegularMapPrice = $this->getDataByKey(
-            AmazonProductResource::COLUMN_ONLINE_REGULAR_MAP_PRICE
+            AmazonListingProductResource::COLUMN_ONLINE_REGULAR_MAP_PRICE
         );
 
         if (empty($onlineRegularMapPrice)) {

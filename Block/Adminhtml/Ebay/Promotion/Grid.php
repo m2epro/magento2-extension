@@ -159,8 +159,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $method = $row->getData('type') === \Ess\M2ePro\Model\Ebay\Promotion::TYPE_MARKDOWN_SALE
             ? 'openDiscountPopup' : 'updateItemPromotion';
 
-        $addText = __('Add items to Promotion');
-        $replaceText = __('Replace items in Promotion');
+        $addText = __('Add items to Discount');
+        $replaceText = __('Replace items in Discount');
 
         return <<<HTML
 <div style="padding: 5px;">
@@ -202,12 +202,12 @@ HTML;
         }
 
         $content = __(
-            '<p>In this section, you can manage your eBay promotions. Browse your active and scheduled promotions,'
-            . ' apply them to your listings, or remove any that are no longer needed. To create a new promotion or'
+            '<p>In this section, you can manage your eBay discounts. Browse your active and scheduled discounts,'
+            . ' apply them to your listings, or remove any that are no longer needed. To create a new discount or'
             . ' modify existing ones, you can do so easily through your eBay Seller Hub'
             . ' (<a href="%url" target="_blank" class="external-link">link</a>).</p><br>'
-            . ' <p><strong>Important</strong>: Please be aware that adding new items to an existing promotion will'
-            . ' overwrite any items that were previously included. Due to eBay API restrictions, each promotion can'
+            . ' <p><strong>Important</strong>: Please be aware that adding new items to an existing discount will'
+            . ' overwrite any items that were previously included. Due to eBay API restrictions, each discount can'
             . ' include a maximum of 500 items.</p>',
             ['url' => $this->dashboardUrlGenerator->generate($this->marketplaceId)]
         );

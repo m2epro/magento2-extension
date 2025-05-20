@@ -472,8 +472,6 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                         'invoice_created' => false,
                         'order_created' => false,
                     ],
-                    'billing_address_mode' =>
-                        Account::USE_SHIPPING_ADDRESS_AS_BILLING_IF_SAME_CUSTOMER_AND_RECIPIENT,
                     'import_buyer_company_name' => 1,
                 ],
                 'status_mapping' => [

@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Delete;
 
+use Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product as AmazonListingProductResource;
+
 /**
  * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Delete\Response
  */
@@ -25,11 +27,11 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
             'general_id' => null,
             'is_general_id_owner' => \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_NO,
             'template_product_type_id' => null,
-            'online_qty' => 0,
+            AmazonListingProductResource::COLUMN_ONLINE_QTY => 0,
+            AmazonListingProductResource::COLUMN_ONLINE_QTY_LAST_UPDATE_DATE => null,
         ];
 
         $data = $this->appendStatusChangerValue($data);
-
         $this->getListingProduct()->addData($data);
 
         $this->getAmazonListingProduct()->setIsStoppedManually(false);

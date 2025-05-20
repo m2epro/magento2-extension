@@ -14,6 +14,8 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     public const COLUMN_ONLINE_AFN_QTY = 'online_afn_qty';
     public const COLUMN_GENERAL_ID = 'general_id';
     public const COLUMN_IS_GENERAL_ID_OWNER = 'is_general_id_owner';
+    public const COLUMN_ONLINE_QTY = 'online_qty';
+    public const COLUMN_ONLINE_QTY_LAST_UPDATE_DATE = 'online_qty_last_update_date';
 
     /** @var bool  */
     protected $_isPkAutoIncrement = false;

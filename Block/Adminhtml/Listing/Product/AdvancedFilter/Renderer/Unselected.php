@@ -6,6 +6,8 @@ namespace Ess\M2ePro\Block\Adminhtml\Listing\Product\AdvancedFilter\Renderer;
 
 class Unselected extends \Ess\M2ePro\Block\Adminhtml\Listing\Product\AdvancedFilter\AbstractRenderer
 {
+    use PrepareSelectTrait;
+
     /** @var string */
     private $ruleModelNick;
     /** @var \Ess\M2ePro\Model\Listing\Product\AdvancedFilter\Repository */
@@ -51,10 +53,7 @@ JS
     {
         $entities = $this->repository->findItemsByModelNick($this->ruleModelNick);
 
-        $values = [''];
-        foreach ($entities as $entity) {
-            $values[$entity->getId()] = $entity->getTitle();
-        }
+        $values = $this->createSelect($entities);
 
         $addNew = __('Add New');
 

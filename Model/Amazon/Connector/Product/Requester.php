@@ -13,6 +13,8 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Product;
  */
 abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Requester
 {
+    public \Ess\M2ePro\Model\Amazon\Listing\Product\Action\TagManager $tagManager;
+
     /**
      * @var \Ess\M2ePro\Model\Listing\Product
      */
@@ -62,6 +64,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
      * @throws \Ess\M2ePro\Model\Exception
      */
     public function __construct(
+        \Ess\M2ePro\Model\Amazon\Listing\Product\Action\TagManager $tagManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -73,6 +76,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
             throw new \Ess\M2ePro\Model\Exception('Product Connector has not received some params');
         }
 
+        $this->tagManager = $tagManager;
         $this->amazonFactory = $amazonFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory, $account, $params);
@@ -179,12 +183,12 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
 
         $validationResult = $validator->validate();
 
-        foreach ($validator->getMessages() as $messageData) {
-            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
-            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
-            $message->initFromPreparedData($messageData['text'], $messageData['type']);
-
+        foreach ($validator->getMessages() as $message) {
             $this->storeLogMessage($message);
+        }
+
+        if (!empty($validator->getMessages())) {
+            $this->tagManager->addErrorTags($this->listingProduct, $validator->getMessages());
         }
 
         return $validationResult;

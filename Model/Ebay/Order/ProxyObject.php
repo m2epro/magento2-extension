@@ -224,57 +224,25 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         return $addressData;
     }
 
-    /**
-     * @return array
-     */
-    public function getBillingAddressData()
+    public function getBillingAddressData(): array
     {
-        if ($this->order->getEbayAccount()->useMagentoOrdersShippingAddressAsBillingAlways()) {
-            return parent::getAddressData();
+        $billingAddress = parent::getBillingAddressData();
+
+        $rawAddressData = $this->order->getShippingAddress()
+                                      ->getRawData();
+        if (!empty($rawAddressData['buyer_name'])) {
+            $buyerUserInfo = $this->createUserInfoFromRawName(
+                $rawAddressData['buyer_name']
+            );
+
+            $billingAddress['prefix'] = $buyerUserInfo->getPrefix();
+            $billingAddress['firstname'] = $buyerUserInfo->getFirstName();
+            $billingAddress['middlename'] = $buyerUserInfo->getMiddleName();
+            $billingAddress['lastname'] = $buyerUserInfo->getLastName();
+            $billingAddress['suffix'] = $buyerUserInfo->getSuffix();
         }
 
-        if (
-            $this->order->getEbayAccount()->useMagentoOrdersShippingAddressAsBillingIfSameCustomerAndRecipient() &&
-            $this->order->getShippingAddress()->hasSameBuyerAndRecipient()
-        ) {
-            return parent::getAddressData();
-        }
-
-        $customerUserInfo = $this->createUserInfoFromRawName($this->order->getBuyerName());
-
-        return [
-            'prefix' => $customerUserInfo->getPrefix(),
-            'firstname' => $customerUserInfo->getFirstName(),
-            'middlename' => $customerUserInfo->getMiddleName(),
-            'lastname' => $customerUserInfo->getLastName(),
-            'suffix' => $customerUserInfo->getSuffix(),
-            'country_id' => '',
-            'region' => '',
-            'region_id' => '',
-            'city' => 'eBay does not supply the complete billing Buyer information.',
-            'postcode' => '',
-            'street' => [],
-            'company' => '',
-        ];
-    }
-
-    /**
-     * @return bool
-     */
-    public function shouldIgnoreBillingAddressValidation()
-    {
-        if ($this->order->getEbayAccount()->useMagentoOrdersShippingAddressAsBillingAlways()) {
-            return false;
-        }
-
-        if (
-            $this->order->getEbayAccount()->useMagentoOrdersShippingAddressAsBillingIfSameCustomerAndRecipient() &&
-            $this->order->getShippingAddress()->hasSameBuyerAndRecipient()
-        ) {
-            return false;
-        }
-
-        return true;
+        return $billingAddress;
     }
 
     /**

@@ -59,7 +59,7 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
             return true;
         }
 
-        $this->addMessage('SKU generating is not successful.');
+        $this->addMessage('SKU generating is not successful.', \Ess\M2ePro\Model\Tag\ValidatorIssues::NOT_USER_ERROR);
 
         return false;
     }
@@ -113,7 +113,8 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
         if ($this->isAlreadyInProcessing($sku)) {
             $addMessages && $this->addMessage(
                 'Another Product with the same SKU is being Listed simultaneously
-                                with this one. Please change the SKU or enable the Option Generate Merchant SKU.'
+                                with this one. Please change the SKU or enable the Option Generate Merchant SKU.',
+                self::ERROR_SKU_ALREADY_PROCESSING
             );
 
             return true;
@@ -122,7 +123,8 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
         if ($this->isExistInM2eProListings($sku)) {
             $addMessages && $this->addMessage(
                 'Product with the same SKU is found in other M2E Pro Listing that is created
-                 from the same Merchant ID for the same Marketplace.'
+                 from the same Merchant ID for the same Marketplace.',
+                self::ERROR_DUPLICATE_SKU_LISTING
             );
 
             return true;
@@ -131,7 +133,8 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
         if ($this->isExistInOtherListings($sku)) {
             $addMessages && $this->addMessage(
                 'Product with the same SKU is found in M2E Pro Unmanaged Listing.
-                                            Please change the SKU or enable the Option Generate Merchant SKU.'
+                                            Please change the SKU or enable the Option Generate Merchant SKU.',
+                self::ERROR_DUPLICATE_SKU_UNMANAGED
             );
 
             return true;

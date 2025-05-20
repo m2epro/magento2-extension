@@ -9763,6 +9763,12 @@ class Installer
             ['unsigned' => true, 'default' => null]
         );
         $amazonListingProductTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product::COLUMN_ONLINE_QTY_LAST_UPDATE_DATE,
+            Table::TYPE_DATETIME,
+            null,
+            ['default' => null]
+        );
+        $amazonListingProductTable->addColumn(
             'online_afn_qty',
             Table::TYPE_INTEGER,
             null,

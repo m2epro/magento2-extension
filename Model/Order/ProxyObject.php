@@ -343,11 +343,10 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
     }
 
     /**
-     * @return array
      * @throws \Ess\M2ePro\Model\Exception
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getBillingAddressData()
+    public function getBillingAddressData(): array
     {
         return $this->getAddressData();
     }

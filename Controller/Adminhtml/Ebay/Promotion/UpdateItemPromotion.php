@@ -56,7 +56,7 @@ class UpdateItemPromotion extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
         $listingProducts = $this->filterListingProducts($listingProductIds);
 
         if (empty($listingProducts)) {
-            $this->messageManager->addNoticeMessage(__('None of the selected products are eligible for promotion.
+            $this->messageManager->addNoticeMessage(__('None of the selected products are eligible for discount.
             Please ensure that products are in ‘Listed’ status'));
 
             return $this->_redirect($this->redirect->getRefererUrl());
@@ -69,11 +69,11 @@ class UpdateItemPromotion extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
                 $this->promotionUpdate->replace($promotion, $listingProducts);
             }
 
-            $this->messageManager->addSuccessMessage(__('Promotion was updated.'));
+            $this->messageManager->addSuccessMessage(__('Discount was updated.'));
         } catch (\Exception $exception) {
             $this->messageManager->addErrorMessage(
                 __(
-                    "Promotion was not updated. Reason: %reason.",
+                    "Discount was not updated. Reason: %reason.",
                     [
                         'reason' => $exception->getMessage(),
                     ]

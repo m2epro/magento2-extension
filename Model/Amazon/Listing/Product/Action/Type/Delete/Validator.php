@@ -1,20 +1,9 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Delete;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Delete\Validator
- */
 class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Validator
 {
-    //########################################
-
     /**
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception
@@ -37,7 +26,10 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
 
         if ($this->getListingProduct()->isNotListed()) {
             if (empty($params['remove'])) {
-                $this->addMessage('Item is not Listed or not available');
+                $this->addMessage(
+                    'Item is not Listed or not available',
+                    \Ess\M2ePro\Model\Tag\ValidatorIssues::NOT_USER_ERROR
+                );
             } else {
                 /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\RemoveHandler $removeHandler */
                 $removeHandler = $this->modelFactory->getObject('Amazon_Listing_Product_RemoveHandler');
@@ -54,6 +46,4 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
 
         return true;
     }
-
-    //########################################
 }

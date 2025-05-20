@@ -231,7 +231,7 @@ class Promotion extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         if (!in_array($status, $allowed)) {
             throw new \Ess\M2ePro\Model\Exception\Logic(
-                sprintf('Promotion status %s not valid', $status),
+                sprintf('Discount status %s not valid', $status),
             );
         }
     }

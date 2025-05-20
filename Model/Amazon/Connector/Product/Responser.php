@@ -88,9 +88,6 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
     private function handleTags(): void
     {
-        $this->tagBuffer->removeAllTags($this->listingProduct);
-        $this->tagBuffer->flush();
-
         $allowedCodesOfWarnings = [];
         $tags = [];
 

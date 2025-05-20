@@ -3,6 +3,7 @@
 namespace Ess\M2ePro\Model\Amazon;
 
 use Ess\M2ePro\Model\ResourceModel\Amazon\Listing as ResourceAmazonList;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product as AmazonListingProductResource;
 
 /**
  * @method \Ess\M2ePro\Model\Listing getParentObject()
@@ -921,7 +922,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             'general_id' => $amazonListingOther->getGeneralId(),
             'sku' => $amazonListingOther->getSku(),
             'online_regular_price' => $amazonListingOther->getOnlinePrice(),
-            'online_qty' => $amazonListingOther->getOnlineQty(),
+            AmazonListingProductResource::COLUMN_ONLINE_QTY => $amazonListingOther->getOnlineQty(),
             'is_repricing' => (int)$amazonListingOther->isRepricing(),
             'is_afn_channel' => (int)$amazonListingOther->isAfnChannel(),
             'is_isbn_general_id' => (int)$amazonListingOther->isIsbnGeneralId(),

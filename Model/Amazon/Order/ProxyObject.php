@@ -15,7 +15,6 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
     protected $helper;
     /** @var \Ess\M2ePro\Model\Amazon\Order\UkTaxService */
     private $ukTaxService;
-    private \Magento\Customer\Model\ResourceModel\AddressRepository $addressRepository;
 
     public function __construct(
         \Ess\M2ePro\Model\Amazon\Order\UkTaxService $ukTaxService,
@@ -28,8 +27,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\Order\UserInfoFactory $userInfoFactory,
-        \Ess\M2ePro\Helper\Component\Amazon $helper,
-        \Magento\Customer\Model\ResourceModel\AddressRepository $addressRepository
+        \Ess\M2ePro\Helper\Component\Amazon $helper
     ) {
         parent::__construct(
             $currency,
@@ -44,7 +42,6 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         $this->helper = $helper;
         $this->priceTaxRateFactory = $priceTaxRateFactory;
         $this->ukTaxService = $ukTaxService;
-        $this->addressRepository = $addressRepository;
     }
 
     /**
@@ -100,64 +97,29 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 
     public function getBillingAddressData(): array
     {
-        if ($this->order->getAmazonAccount()->useMagentoOrdersShippingAddressAsBillingAlways()) {
-            $billingAddress = parent::getBillingAddressData();
-
-            if ($this->order->getAmazonAccount()->isImportBuyerCompanyName()) {
-                $billingAddress = $this->appendCompanyToBillingAddressData($billingAddress);
-            }
-
-            return $billingAddress;
-        }
-
+        $billingAddress = parent::getBillingAddressData();
         if (
-            $this->order->getAmazonAccount()->useMagentoOrdersShippingAddressAsBillingIfSameCustomerAndRecipient() &&
-            $this->order->getShippingAddress()->hasSameBuyerAndRecipient()
+            $this->order->getAmazonAccount()
+                        ->isImportBuyerCompanyName()
         ) {
-            $billingAddress = parent::getBillingAddressData();
-
-            if ($this->order->getAmazonAccount()->isImportBuyerCompanyName()) {
-                $billingAddress = $this->appendCompanyToBillingAddressData($billingAddress);
-            }
-
-            return $billingAddress;
+            $billingAddress = $this->appendCompanyToBillingAddressData($billingAddress);
         }
 
-        $customerUserInfo = $this->createUserInfoFromRawName($this->order->getBuyerName());
+        $rawAddressData = $this->order->getShippingAddress()
+                                      ->getRawData();
+        if (!$rawAddressData['buyer_name']) {
+            $buyerUserInfo = $this->createUserInfoFromRawName(
+                $rawAddressData['buyer_name']
+            );
 
-        return [
-            'prefix' => $customerUserInfo->getPrefix(),
-            'firstname' => $customerUserInfo->getFirstName(),
-            'middlename' => $customerUserInfo->getMiddleName(),
-            'lastname' => $customerUserInfo->getLastName(),
-            'suffix' => $customerUserInfo->getSuffix(),
-            'country_id' => '',
-            'region' => '',
-            'region_id' => '',
-            'city' => 'Amazon does not supply the complete billing Buyer information.',
-            'postcode' => '',
-            'street' => '',
-            'company' => '',
-        ];
-    }
-
-    /**
-     * @return bool
-     */
-    public function shouldIgnoreBillingAddressValidation()
-    {
-        if ($this->order->getAmazonAccount()->useMagentoOrdersShippingAddressAsBillingAlways()) {
-            return false;
+            $billingAddress['prefix'] = $buyerUserInfo->getPrefix();
+            $billingAddress['firstname'] = $buyerUserInfo->getFirstName();
+            $billingAddress['middlename'] = $buyerUserInfo->getMiddleName();
+            $billingAddress['lastname'] = $buyerUserInfo->getLastName();
+            $billingAddress['suffix'] = $buyerUserInfo->getSuffix();
         }
 
-        if (
-            $this->order->getAmazonAccount()->useMagentoOrdersShippingAddressAsBillingIfSameCustomerAndRecipient() &&
-            $this->order->getShippingAddress()->hasSameBuyerAndRecipient()
-        ) {
-            return false;
-        }
-
-        return true;
+        return $billingAddress;
     }
 
     /**

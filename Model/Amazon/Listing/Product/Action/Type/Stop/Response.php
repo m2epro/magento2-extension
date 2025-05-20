@@ -20,10 +20,9 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         $data = [];
 
         $data = $this->appendStatusChangerValue($data);
-        $data = $this->appendQtyValues($data);
+        $data = $this->appendQtyValues($data, null);
 
         $this->getListingProduct()->addData($data);
-
         $this->getAmazonListingProduct()->addData($data);
 
         $isStatusChangerUser = $this->getListingProduct()->getStatusChanger()

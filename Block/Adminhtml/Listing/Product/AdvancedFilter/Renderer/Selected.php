@@ -6,6 +6,8 @@ namespace Ess\M2ePro\Block\Adminhtml\Listing\Product\AdvancedFilter\Renderer;
 
 class Selected extends \Ess\M2ePro\Block\Adminhtml\Listing\Product\AdvancedFilter\AbstractRenderer
 {
+    use PrepareSelectTrait;
+
     /** @var int */
     private $selectedRuleId;
     /** @var bool */
@@ -73,10 +75,7 @@ JS
         $ruleEntity = $this->repository->getAdvancedFilter($this->selectedRuleId);
         $entities = $this->repository->findItemsByModelNick($ruleEntity->getModelNick());
 
-        $values = [''];
-        foreach ($entities as $entity) {
-            $values[$entity->getId()] = $entity->getTitle();
-        }
+        $values = $this->createSelect($entities);
 
         $view = __('View');
         $edit = __('Edit');

@@ -82,10 +82,7 @@ class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
         return $this->isAllowed(self::DATA_TYPE_QTY);
     }
 
-    /**
-     * @return \Ess\M2ePro\Model\Listing\Product\Action\Configurator
-     */
-    public function allowQty()
+    public function allowQty(): self
     {
         return $this->allow(self::DATA_TYPE_QTY);
     }
@@ -371,7 +368,7 @@ class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
     /**
      * @return $this
      */
-    public function allowVariations()
+    public function allowVariations(): self
     {
         return $this->allow(self::DATA_TYPE_VARIATIONS);
     }

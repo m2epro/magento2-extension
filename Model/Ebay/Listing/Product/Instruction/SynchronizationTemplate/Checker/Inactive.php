@@ -101,19 +101,17 @@ class Inactive extends AbstractModel
         $ebayListingProduct = $this->input->getListingProduct()->getChildObject();
         $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
 
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator $configurator */
         $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
-        $configurator->disableAll()->allowQty()->allowVariations();
+        $configurator->disableAll()
+                     ->allowQty()
+                     ->allowVariations();
 
         $tags = ['qty'];
 
         if ($ebaySynchronizationTemplate->isReviseUpdatePrice()) {
             $configurator->allowPrice();
             $tags[] = 'price';
-        }
-
-        $scheduledAction = $this->input->getScheduledAction();
-        if ($scheduledAction === null) {
-            $scheduledAction = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction');
         }
 
         $actionType = \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST;
@@ -123,6 +121,16 @@ class Inactive extends AbstractModel
             $params['replaced_action'] = \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST;
         }
 
+        if ($actionType === \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST) {
+            $configurator->allowShipping();
+            $tags[] = 'shipping';
+        }
+
+        /** @var \Ess\M2ePro\Model\Listing\Product\ScheduledAction $scheduledAction */
+        $scheduledAction = $this->input->getScheduledAction();
+        if ($scheduledAction === null) {
+            $scheduledAction = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction');
+        }
         $scheduledAction->addData(
             [
                 'listing_product_id' => $this->input->getListingProduct()->getId(),

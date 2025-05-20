@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Connector\Product\Revise;
 
 use Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Qty as DataBuilderQty;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product as AmazonListingProductResource;
 
 /**
  * @method \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Revise\Response getResponseObject()
@@ -190,7 +191,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
             );
         }
 
-        $qtyFrom = $amazonListingProduct->getOrigData('online_qty');
+        $qtyFrom = $amazonListingProduct->getOrigData(AmazonListingProductResource::COLUMN_ONLINE_QTY);
         $qtyTo = $amazonListingProduct->getOnlineQty();
         if ($qtyFrom != $qtyTo) {
             $this->logSuccessMessage(sprintf('QTY was revised from %s to %s', $qtyFrom, $qtyTo));
@@ -208,4 +209,16 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
     }
 
     //########################################
+
+    protected function getSuccessfulParams(): array
+    {
+        $successfulParams = [];
+        $responseData = $this->getPreparedResponseData();
+
+        if (!empty($responseData['system_items_update_request_date'])) {
+            $successfulParams['system_items_update_request_date'] = $responseData['system_items_update_request_date'];
+        }
+
+        return $successfulParams;
+    }
 }

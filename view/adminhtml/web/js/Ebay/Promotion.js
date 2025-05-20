@@ -39,19 +39,19 @@ define([
             const gridHtml = transport.responseText;
             const buttons = this.getPopupButtons();
 
-            this.createOrUpdateModal('modal_promotion', 'Manage Promotions', gridHtml, buttons);
+            this.createOrUpdateModal('modal_promotion', 'Manage Discounts', gridHtml, buttons);
         },
 
         getPopupButtons: function () {
             return [{
                 class: 'action-primary action-accept',
-                text: M2ePro.translator.translate('Create New Promotion'),
+                text: M2ePro.translator.translate('Create New Discount'),
                 click: function (event) {
                     window.open(this.promoDashboardUrl, '_blank');
                 }.bind(this)
             }, {
                 class: 'action-primary action-accept',
-                text: M2ePro.translator.translate('Refresh Promotions'),
+                text: M2ePro.translator.translate('Refresh Discounts'),
                 click: function () {
                     this.refreshPromotions();
                 }.bind(this)

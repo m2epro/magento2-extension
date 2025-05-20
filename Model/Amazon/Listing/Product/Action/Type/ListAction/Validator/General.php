@@ -1,20 +1,9 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\General
- */
 class General extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Validator
 {
-    //########################################
-
     /**
      * @return bool
      */
@@ -27,14 +16,18 @@ class General extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valid
         if ($this->getAmazonListingProduct()->isAfnChannel()) {
             $this->addMessage(
                 'List Action for FBA Items is impossible as their Quantity is unknown. You can run Revise
-            Action for such Items, but the Quantity value will be ignored.'
+            Action for such Items, but the Quantity value will be ignored.',
+                self::ERROR_FBA_ITEM_LIST
             );
 
             return false;
         }
 
         if (!$this->getListingProduct()->isNotListed() || !$this->getListingProduct()->isListable()) {
-            $this->addMessage('Item is already on Amazon, or not available.');
+            $this->addMessage(
+                'Item is already on Amazon, or not available.',
+                \Ess\M2ePro\Model\Tag\ValidatorIssues::NOT_USER_ERROR
+            );
 
             return false;
         }
@@ -60,7 +53,8 @@ class General extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valid
             ) {
                 $this->addMessage(
                     "To list a new ASIN/ISBN on Amazon, please assign a valid Product Type. "
-                    . "Product Type 'General' cannot be used."
+                    . "Product Type 'General' cannot be used.",
+                    self::PRODUCT_TYPE_INVALID
                 );
                 return false;
             }
@@ -68,8 +62,11 @@ class General extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valid
 
         $condition = $this->getAmazonListingProduct()->getListingSource()->getCondition();
         if (empty($condition)) {
-            $this->addMessage('You cannot list this Product because the Item Condition is not specified.
-                               You can set the Condition in the Selling Settings of the Listing.');
+            $this->addMessage(
+                'You cannot list this Product because the Item Condition is not specified.
+                               You can set the Condition in the Selling Settings of the Listing.',
+                self::ITEM_CONDITION_NOT_SPECIFIED
+            );
             return false;
         }
 
@@ -98,7 +95,8 @@ class General extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valid
             $this->addMessage(
                 'You cannot list this Product because for managing Child Products,
                               the respective Parent Product needs to be connected to Amazon Parent Product.
-                              Please link your Magento Parent Product to Amazon Parent Product and try again.'
+                              Please link your Magento Parent Product to Amazon Parent Product and try again.',
+                self::PARENT_NOT_LINKED
             );
 
             return false;
@@ -110,7 +108,8 @@ class General extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valid
         ) {
             $this->addMessage(
                 'You cannot list this Product because it has to be whether linked to
-                              existing Amazon Product or to be ready for creation of the new ASIN/ISBN.'
+                              existing Amazon Product or to be ready for creation of the new ASIN/ISBN.',
+                self::PRODUCT_MISSING_LINK_OR_NEW_IDENTIFIER
             );
 
             return false;
@@ -118,6 +117,4 @@ class General extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valid
 
         return true;
     }
-
-    //########################################
 }

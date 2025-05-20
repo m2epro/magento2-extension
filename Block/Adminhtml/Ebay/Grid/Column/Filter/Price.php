@@ -26,7 +26,7 @@ class Price extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Range
             );
         }
 
-        $textOnPromotion = __('On Promotion');
+        $textOnPromotion = __('On Discount');
 
         $html = <<<HTML
 <div class="range">

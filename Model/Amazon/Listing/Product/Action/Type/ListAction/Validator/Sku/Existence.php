@@ -1,16 +1,7 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku\Existence
- */
 class Existence extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Validator
 {
     /** @var array  */
@@ -42,7 +33,8 @@ class Existence extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
         if (empty($this->existenceResult['info'])) {
             $this->addMessage(
                 'There is an unexpected error appeared during the process of linking Magento Product
-                 to Amazon Product. The data was not sent back from Amazon.'
+                 to Amazon Product. The data was not sent back from Amazon.',
+                \Ess\M2ePro\Model\Tag\ValidatorIssues::NOT_USER_ERROR
             );
 
             return false;
@@ -77,7 +69,8 @@ class Existence extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
                      is assigned to the Parent Product (ASIN/ISBN: "%asin%") while you are trying to List a Child or
                      Simple Product. Please check the Settings and try again.',
                     ['!sku' => $this->getData('sku'), '!asin' => $asin]
-                )
+                ),
+                self::ERROR_SKU_ASSIGN_PARENT_CHILD_EXPECTED
             );
 
             return;
@@ -92,7 +85,8 @@ class Existence extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
                     'Product cannot be Listed because in your Inventory the provided SKU "%sku%" is assigned
                      to the Product with different ASIN/ISBN (%asin%). Please check the Settings and try again.',
                     ['!sku' => $this->getData('sku'), '!asin' => $asin]
-                )
+                ),
+                self::ERROR_SKU_ASSIGNED_TO_DIFFERENT_ASIN
             );
 
             return;
@@ -113,7 +107,8 @@ class Existence extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
                      to the Child or Simple Product (ASIN/ISBN: "%asin%") while you want to list Parent Product.
                      Please check the Settings and try again.',
                     ['!sku' => $this->getData('sku'), '!asin' => $asin]
-                )
+                ),
+                self::ERROR_SKU_ASSIGN_CHILD_PARENT_EXPECTED
             );
 
             return;
@@ -125,7 +120,8 @@ class Existence extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
                     'Product cannot be Listed because working with Amazon Parent Product (ASIN/ISBN: "%asin%")
                      found by SKU "%sku%" is limited due to Amazon API restrictions.',
                     ['!sku' => $this->getData('sku'), '!asin' => $asin]
-                )
+                ),
+                self::ERROR_PARENT_LISTING_API_RESTRICTION
             );
 
             return;
@@ -140,7 +136,8 @@ class Existence extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
                      the Amazon Parent Product (ASIN/ISBN: "%asin%") found by SKU "%sku%" does not match the number of
                      Variation Attributes of the Magento Parent Product.',
                     ['!sku' => $this->getData('sku'), '!asin' => $asin]
-                )
+                ),
+                self::ERROR_VARIATION_ATTRIBUTES_MISMATCH_BY_SKU
             );
 
             return;
@@ -160,7 +157,8 @@ class Existence extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
                     'Product cannot be Listed because Product found on Amazon (ASIN/ISBN: "%asin%") by SKU "%sku%"
                      is not a Child Product.',
                     ['!sku' => $this->getData('sku'), '!asin' => $asin]
-                )
+                ),
+                self::ERROR_NOT_CHILD_BY_SKU
             );
 
             return;
@@ -173,7 +171,8 @@ class Existence extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
                      is a Child Product of the Parent Product (ASIN/ISBN: "%parent_asin%")
                      access to which limited by Amazon API restriction.',
                     ['!sku' => $this->getData('sku'), '!asin' => $asin, '!parent_asin' => $info['parent_asin']]
-                )
+                ),
+                self::ERROR_CHILD_PARENT_API_RESTRICTION
             );
 
             return;
@@ -192,7 +191,8 @@ class Existence extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
                      to the Amazon Child Product (ASIN/ISBN: "%asin%") related to the Amazon Parent Product
                      (ASIN/ISBN: "%parent_asin%") with different ASIN/ISBN. Please check the Settings and try again.',
                     ['!sku' => $this->getData('sku'), '!asin' => $asin, '!parent_asin' => $info['parent_asin']]
-                )
+                ),
+                self::ERROR_SKU_RELATED_TO_ANOTHER_PARENT_IDENTIFIER
             );
 
             return;
@@ -207,7 +207,8 @@ class Existence extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
                     assigned to the Amazon Product (ASIN/ISBN: "%asin%") with different ASIN/ISBN.
                     Please check the Settings and try again.',
                     ['!sku' => $this->getData('sku'), '!asin' => $asin]
-                )
+                ),
+                self::ERROR_SKU_RELATED_TO_ANOTHER_IDENTIFIER
             );
 
             return;
@@ -220,7 +221,8 @@ class Existence extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
         if (!isset($parentChannelVariations[$asin])) {
             $this->addMessage(
                 'Product cannot be Listed because the respective Parent has no Child Product
-                 with required combination of the Variation Attributes values.'
+                 with required combination of the Variation Attributes values.',
+                self::ERROR_NO_CHILD_WITH_ATTRIBUTES_MATCH
             );
 
             return;
@@ -241,7 +243,8 @@ class Existence extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
                     'Product cannot be Listed because ASIN/ISBN "%asin%" found on Amazon by SKU "%sku%" has already been
                      used by you to link another Magento Product to Amazon Product.',
                     ['!sku' => $this->getData('sku'), '!asin' => $asin]
-                )
+                ),
+                self::ERROR_IDENTIFIER_ALREADY_USED_FOR_ANOTHER_PRODUCT
             );
 
             return;
@@ -266,6 +269,7 @@ class Existence extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
                     'Product has been found by SKU "%sku%" in your Inventory and linked.',
                     ['!sku' => $sku]
                 ),
+                null,
                 \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_SUCCESS
             );
 
@@ -277,9 +281,8 @@ class Existence extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
                 'Unexpected error during process of linking by SKU "%sku%".
                  The required SKU has been found but the data is not sent back. Please try again.',
                 ['!sku' => $sku]
-            )
+            ),
+            \Ess\M2ePro\Model\Tag\ValidatorIssues::NOT_USER_ERROR
         );
     }
-
-    //########################################
 }
