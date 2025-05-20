@@ -421,6 +421,7 @@ class Config extends AbstractConfig
             ],
             'y25_m05' => [
                 'AddAmazonOnlineQtyLastUpdateDate',
+                'DeleteEbayUnmanagedDuplicatesByListingProducts',
             ],
         ];
     }

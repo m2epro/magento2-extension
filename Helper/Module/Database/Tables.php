@@ -24,6 +24,7 @@ class Tables
     public const TABLE_LISTING_PRODUCT_INSTRUCTION = self::PREFIX . 'listing_product_instruction';
     public const TABLE_LISTING_AUTO_CATEGORY = self::PREFIX . 'listing_auto_category';
     public const TABLE_LISTING_AUTO_CATEGORY_GROUP = self::PREFIX . 'listing_auto_category_group';
+    public const TABLE_LISTING_OTHER = self::PREFIX . 'listing_other';
 
     public const TABLE_ORDER = self::PREFIX . 'order';
 
@@ -32,6 +33,7 @@ class Tables
     public const TABLE_EBAY_LISTING = self::PREFIX . 'ebay_listing';
     public const TABLE_EBAY_LISTING_PRODUCT = self::PREFIX . 'ebay_listing_product';
     public const TABLE_EBAY_LISTING_PRODUCT_PROMOTION = self::PREFIX . 'ebay_listing_product_promotion';
+    public const TABLE_EBAY_LISTING_OTHER = self::PREFIX . 'ebay_listing_other';
     public const TABLE_EBAY_TEMPLATE_SYNCHRONIZATION = self::PREFIX . 'ebay_template_synchronization';
     public const TABLE_EBAY_TEMPLATE_SELLING_FORMAT = self::PREFIX . 'ebay_template_selling_format';
     public const TABLE_EBAY_TEMPLATE_DESCRIPTION = self::PREFIX . 'ebay_template_description';
