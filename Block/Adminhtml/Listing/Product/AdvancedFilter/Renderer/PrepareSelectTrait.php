@@ -22,8 +22,6 @@ trait PrepareSelectTrait
 
         asort($byId);
 
-        array_push($result, ...$byId);
-
-        return $result;
+        return $result + $byId;
     }
 }
