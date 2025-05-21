@@ -70,7 +70,7 @@ class Builder extends AbstractModel
 
     protected function initializeData(array $data = [])
     {
-        $this->systemOrderRequestDate = \M2E\Core\Helper\Date::createDateGmt($data['system_order_request_date']);
+        $this->systemOrderRequestDate = \Ess\M2ePro\Helper\Date::createDateGmt($data['system_order_request_date']);
 
         // Init general data
         // ---------------------------------------
