@@ -8,23 +8,34 @@ class MsiSource extends AbstractModel
 {
     private \Magento\InventoryApi\Api\SourceRepositoryInterface $sourceRepository;
     private \Magento\Inventory\Model\ResourceModel\SourceItem $sourceItemResource;
+    private \Ess\M2ePro\Helper\Magento $magentoHelper;
 
     public function __construct(
-        \Magento\InventoryApi\Api\SourceRepositoryInterface $sourceRepository,
-        \Magento\Inventory\Model\ResourceModel\SourceItem $sourceItemResource,
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
+        \Magento\Framework\ObjectManagerInterface $objectManager,
         \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Magento\Rule\Model\Condition\Context $context,
         array $data = []
     ) {
-        $this->sourceRepository = $sourceRepository;
-        $this->sourceItemResource = $sourceItemResource;
+        $this->magentoHelper = $magentoHelper;
+        if ($this->magentoHelper->isMSISupportingVersion()) {
+            $this->sourceRepository = $objectManager
+                ->get(\Magento\InventoryApi\Api\SourceRepositoryInterface::class);
+            $this->sourceItemResource = $objectManager
+                ->get(\Magento\Inventory\Model\ResourceModel\SourceItem::class);
+        }
+
         parent::__construct($helperData, $helperFactory, $modelFactory, $context, $data);
     }
 
     public function loadAttributeOptions(): self
     {
+        if (!$this->magentoHelper->isMSISupportingVersion()) {
+            return parent::loadAttributeOptions();
+        }
+
         $result = $this->sourceRepository->getList();
         $attributes = [];
         foreach ($result->getItems() as $item) {

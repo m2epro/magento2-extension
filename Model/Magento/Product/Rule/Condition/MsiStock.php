@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\Magento\Product\Rule\Condition;
 
-use Magento\InventoryIndexer\Model\StockIndexTableNameResolverInterface;
-
 class MsiStock extends AbstractModel
 {
     private \Magento\InventoryApi\Api\StockRepositoryInterface $stockRepository;
-    /** @var \Magento\InventoryIndexer\Model\StockIndexTableNameResolverInterface */
-    private $indexNameResolver;
+    private \Magento\InventoryIndexer\Model\StockIndexTableNameResolverInterface $indexNameResolver;
+    private \Ess\M2ePro\Helper\Magento $magentoHelper;
 
     public function __construct(
-        \Magento\InventoryApi\Api\StockRepositoryInterface $stockRepository,
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -21,13 +19,23 @@ class MsiStock extends AbstractModel
         \Magento\Rule\Model\Condition\Context $context,
         array $data = []
     ) {
-        $this->indexNameResolver = $objectManager->get(StockIndexTableNameResolverInterface::class);
-        $this->stockRepository = $stockRepository;
+        $this->magentoHelper = $magentoHelper;
+        if ($magentoHelper->isMSISupportingVersion()) {
+            $this->indexNameResolver = $objectManager
+                ->get(\Magento\InventoryIndexer\Model\StockIndexTableNameResolverInterface::class);
+            $this->stockRepository = $objectManager
+                ->get(\Magento\InventoryApi\Api\StockRepositoryInterface::class);
+        }
+
         parent::__construct($helperData, $helperFactory, $modelFactory, $context, $data);
     }
 
     public function loadAttributeOptions(): self
     {
+        if (!$this->magentoHelper->isMSISupportingVersion()) {
+            return parent::loadAttributeOptions();
+        }
+
         $attributes = [];
         $result = $this->stockRepository->getList();
         foreach ($result->getItems() as $item) {
