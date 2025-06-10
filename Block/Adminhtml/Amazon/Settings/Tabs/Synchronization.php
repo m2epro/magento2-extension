@@ -1,67 +1,30 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs;
 
 class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    /** @var \Ess\M2ePro\Helper\Module\Configuration */
-    private $moduleConfiguration;
+    private \Ess\M2ePro\Helper\Data $dataHelper;
+    private \Ess\M2ePro\Model\Config\ListingSynchronization $listingSynchronizationConfig;
 
-    /** @var int */
-    private $inspectorMode;
-
-    /** @var \Ess\M2ePro\Model\Config\Manager */
-    private $config;
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-
-    /**
-     * @param \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration
-     * @param \Ess\M2ePro\Model\Config\Manager $config
-     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
-     * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Framework\Data\FormFactory $formFactory
-     * @param \Ess\M2ePro\Helper\Data $dataHelper
-     * @param array $data
-     */
     public function __construct(
-        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
-        \Ess\M2ePro\Model\Config\Manager $config,
+        \Ess\M2ePro\Model\Config\ListingSynchronization $listingSynchronizationConfig,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
-        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        $this->moduleConfiguration = $moduleConfiguration;
-        $this->config = $config;
+        $this->listingSynchronizationConfig = $listingSynchronizationConfig;
         $this->dataHelper = $dataHelper;
+
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
-    // ----------------------------------------
-
     protected function _prepareForm()
     {
-        // ---------------------------------------
-        $instructionsMode = $this->config->getGroupValue(
-            '/cron/task/amazon/listing/product/process_instructions/',
-            'mode'
-        );
-        // ---------------------------------------
-
-        // ---------------------------------------
-        $this->inspectorMode = $this->moduleConfiguration->isEnableListingProductInspectorMode();
-        // ---------------------------------------
-
         $form = $this->_formFactory->create(
             [
                 'data' => [
@@ -89,7 +52,9 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractF
                     0 => __('No'),
                     1 => __('Yes'),
                 ],
-                'value' => $instructionsMode,
+                'value' => $this->listingSynchronizationConfig->getComponentMode(
+                    \Ess\M2ePro\Helper\Component\Amazon::NICK
+                ),
                 'tooltip' => __(
                     '<p>This synchronization includes import of changes made on Amazon channel as well
                     as the ability to enable/disable the data synchronization managed by the
@@ -102,8 +67,10 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractF
 
         $sectionUrl = $this
             ->_urlBuilder
-            ->getUrl('adminhtml/system_config/edit/section/'
-                . \Ess\M2ePro\Block\Adminhtml\System\Config\Sections::SECTION_ID_INTERFACE_AND_MAGENTO_INVENTORY);
+            ->getUrl(
+                'adminhtml/system_config/edit/section/'
+                . \Ess\M2ePro\Block\Adminhtml\System\Config\Sections::SECTION_ID_INTERFACE_AND_MAGENTO_INVENTORY
+            );
 
         $text = __(
             'You can enable the Product QTY and Price tracker <a target="_blank" href="%url">here</a>.',
@@ -117,9 +84,9 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractF
                 'messages' => [
                     [
                         'type' => \Magento\Framework\Message\MessageInterface::TYPE_NOTICE,
-                        'content' => $text
+                        'content' => $text,
                     ],
-                ]
+                ],
             ]
         );
 
@@ -159,12 +126,8 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractF
         return parent::_toHtml();
     }
 
-    //########################################
-
     protected function getGlobalNotice()
     {
         return '';
     }
-
-    //########################################
 }

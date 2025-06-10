@@ -23,6 +23,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
     private $enterpriseChecker;
     private int $listingProductIdFrom;
     private int $listingProductIdTo;
+    private array $magentoProductIds;
 
     public function __construct(
         string $channel,
@@ -68,6 +69,32 @@ abstract class BaseInventoryTracker implements TrackerInterface
     public function getListingProductIdTo(): int
     {
         return $this->listingProductIdTo;
+    }
+
+    public function getMagentoProductIds(): array
+    {
+        if (!isset($this->magentoProductIds)) {
+            $this->magentoProductIds = $this->loadMagentoProductIds();
+        }
+
+        return $this->magentoProductIds;
+    }
+
+    private function loadMagentoProductIds(): array
+    {
+        $queryResult = $this->queryBuilder
+            ->makeSubQuery()
+            ->distinct()
+            ->addSelect('product_id', 'product.product_id')
+            ->from('product', $this->productSubQuery())
+            ->fetchAll();
+
+        $result = [];
+        foreach ($queryResult as $data) {
+            $result[] = (int)$data['product_id'];
+        }
+
+        return $result;
     }
 
     /**
@@ -161,7 +188,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
             'query' => (string)$mainQuery->getQuery(),
             'type' => $this->getType(),
             'channel' => $this->getChannel(),
-            'tracker' => $this
+            'tracker' => $this,
         ]);
 
         return $mainQuery->getQuery();
@@ -391,8 +418,8 @@ abstract class BaseInventoryTracker implements TrackerInterface
             ->from('product', $this->productSubQuery())
             ->innerJoin(
                 'stock',
-                $this->inventoryStock->getInventoryStockTableName($this),
-                'product.product_id = stock.product_id'
+                $this->inventoryStock->getInventoryStockQuery($this),
+                'product.product_id = stock.product_id AND product.store_id = stock.store_id'
             )
             ->leftJoin(
                 'selling_policy',

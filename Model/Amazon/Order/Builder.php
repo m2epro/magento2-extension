@@ -782,18 +782,18 @@ class Builder extends AbstractModel
                     $parentsForProcessing[$parentListingProduct->getId()] = $parentListingProduct;
                 }
 
-                /** @var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
-                $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
-                $instruction->setData(
-                    [
-                        'listing_product_id' => $listingProduct->getId(),
-                        'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-                        'type' => \Ess\M2ePro\Model\Amazon\Listing\Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
-                        'initiator' => self::INSTRUCTION_INITIATOR,
-                        'priority' => 80,
-                    ]
-                );
-                $instruction->save();
+                $this->activeRecordFactory
+                    ->getObject('Listing_Product_Instruction')
+                    ->getResource()
+                    ->addForComponent(
+                        [
+                            'listing_product_id' => $listingProduct->getId(),
+                            'type' => \Ess\M2ePro\Model\Amazon\Listing\Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
+                            'initiator' => self::INSTRUCTION_INITIATOR,
+                            'priority' => 80,
+                        ],
+                        \Ess\M2ePro\Helper\Component\Amazon::NICK
+                    );
 
                 if ($amazonListingProduct->getOnlineQty() > $orderItem['qty_purchased']) {
                     $isQtyDecreased = $amazonListingProduct->decreaseOnlineQty(
@@ -845,10 +845,12 @@ class Builder extends AbstractModel
                         ->getHumanTitleByListingProductStatus(\Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE);
 
                     if (!empty($statusChangedFrom) && !empty($statusChangedTo)) {
-                        $tempLogMessages[] = __(
+                        $tempLogMessages[] = (string)__(
                             'Item Status was changed from "%from" to "%to" .',
-                            $statusChangedFrom,
-                            $statusChangedTo
+                            [
+                                'from' => $statusChangedFrom,
+                                'to' => $statusChangedTo
+                            ]
                         );
                     }
 

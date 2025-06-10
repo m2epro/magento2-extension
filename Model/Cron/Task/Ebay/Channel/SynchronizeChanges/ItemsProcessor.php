@@ -811,19 +811,19 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
         $priority,
         ?\DateTime $skipUntil = null
     ) {
-        /** @var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
-        $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
-        $instruction->setData(
-            [
-                'listing_product_id' => $listingProduct->getId(),
-                'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-                'type' => $type,
-                'initiator' => self::INSTRUCTION_INITIATOR,
-                'priority' => $priority,
-                'skip_until' => $skipUntil ? $skipUntil->format('Y-m-d H:i:s') : null
-            ]
-        );
-        $instruction->save();
+        $this->activeRecordFactory
+            ->getObject('Listing_Product_Instruction')
+            ->getResource()
+            ->addForComponent(
+                [
+                    'listing_product_id' => $listingProduct->getId(),
+                    'type' => $type,
+                    'initiator' => self::INSTRUCTION_INITIATOR,
+                    'priority' => $priority,
+                    'skip_until' => $skipUntil ? $skipUntil->format('Y-m-d H:i:s') : null
+                ],
+                \Ess\M2ePro\Helper\Component\Ebay::NICK
+            );
     }
 
     protected function logReportChange(\Ess\M2ePro\Model\Listing\Product $listingProduct, $logMessage)

@@ -195,8 +195,6 @@ class Save extends \Ess\M2ePro\Plugin\AbstractPlugin
 
     private function addListingProductInstructions($affectedProducts)
     {
-        $synchronizationInstructionsData = [];
-
         foreach ($affectedProducts as $listingProduct) {
             /** @var \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel $changeProcessor */
             $changeProcessor = $this->modelFactory->getObject(
@@ -210,11 +208,5 @@ class Save extends \Ess\M2ePro\Plugin\AbstractPlugin
             );
             $changeProcessor->process();
         }
-
-        $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getResource()->add(
-            $synchronizationInstructionsData
-        );
     }
-
-    //########################################
 }

@@ -1228,6 +1228,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
             'channel_order_id' => $this->getEbayOrderId(),
             'cancelReason' => self::CANCEL_REASON_BUYER_ASK,
             'adjustment_fee' => $adjustmentFee,
+            'total_refund_amount' => $creditMemo->getGrandTotal(),
         ];
 
         $this->activeRecordFactory->getObject('Order\Change')->create(

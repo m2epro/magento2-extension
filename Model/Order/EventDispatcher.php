@@ -6,6 +6,9 @@ namespace Ess\M2ePro\Model\Order;
 
 class EventDispatcher
 {
+    private const CHANNEL_EBAY = 'ebay';
+    private const CHANNEL_WALMART = 'walmart';
+
     private const REGION_AMERICA = 'america';
     private const REGION_EUROPE = 'europe';
     private const REGION_ASIA_PACIFIC = 'asia-pacific';
@@ -23,7 +26,7 @@ class EventDispatcher
 
         $marketplace = $order->getMarketplace();
         $this->eventManager->dispatch('ess_magento_order_created', [
-            'channel' => $order->getComponentMode(),
+            'channel' => $this->getChannel($order),
             'channel_order_id' => (int)$order->getId(),
             'channel_external_order_id' => $this->findChannelExternalOrderId($order),
             'magento_order_id' => (int)$order->getMagentoOrderId(),
@@ -38,6 +41,29 @@ class EventDispatcher
         ]);
     }
 
+    public function dispatchEventInvoiceCreated(\Ess\M2ePro\Model\Order $order): void
+    {
+        $this->eventManager->dispatch('ess_order_invoice_created', [
+            'channel' => $this->getChannel($order),
+            'channel_order_id' => (int)$order->getId(),
+        ]);
+    }
+
+    // ----------------------------------------
+
+    private function getChannel(\Ess\M2ePro\Model\Order $order): string
+    {
+        if ($order->isComponentModeEbay()) {
+            return self::CHANNEL_EBAY;
+        }
+
+        if ($order->isComponentModeWalmart()) {
+            return self::CHANNEL_WALMART;
+        }
+
+        return '';
+    }
+
     private function findChannelExternalOrderId(\Ess\M2ePro\Model\Order $order): ?string
     {
         if ($order->isComponentModeEbay()) {
@@ -47,14 +73,33 @@ class EventDispatcher
             return $ebayOrder->getEbayOrderId();
         }
 
+        if ($order->isComponentModeWalmart()) {
+            /** @var \Ess\M2ePro\Model\Walmart\Order $walmartOrder */
+            $walmartOrder = $order->getChildObject();
+
+            return $walmartOrder->getWalmartOrderId();
+        }
+
         return null;
     }
 
     private function findPurchaseDate(\Ess\M2ePro\Model\Order $order): ?\DateTime
     {
         if ($order->isComponentModeEbay()) {
+            /** @var \Ess\M2ePro\Model\Ebay\Order $ebayOrder */
+            $ebayOrder = $order->getChildObject();
+
             return \Ess\M2ePro\Helper\Date::createDateGmt(
-                $order->getChildObject()->getPurchaseCreateDate()
+                $ebayOrder->getPurchaseCreateDate()
+            );
+        }
+
+        if ($order->isComponentModeWalmart()) {
+            /** @var \Ess\M2ePro\Model\Walmart\Order $walmartOrder */
+            $walmartOrder = $order->getChildObject();
+
+            return \Ess\M2ePro\Helper\Date::createDateGmt(
+                $walmartOrder->getPurchaseCreateDate()
             );
         }
 
@@ -72,15 +117,5 @@ class EventDispatcher
         }
 
         return self::REGION_ASIA_PACIFIC;
-    }
-
-    // ----------------------------------------
-
-    public function dispatchEventInvoiceCreated(\Ess\M2ePro\Model\Order $order): void
-    {
-        $this->eventManager->dispatch('ess_order_invoice_created', [
-            'channel' => $order->getComponentMode(),
-            'channel_order_id' => (int)$order->getId(),
-        ]);
     }
 }

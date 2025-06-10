@@ -293,6 +293,12 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
 
     protected function initializeVariations()
     {
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
+        $ebayListingProduct = $this->listingProduct->getChildObject();
+        if (!$ebayListingProduct->isVariationMode()) {
+            return null;
+        }
+
         /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\VariationService $variationService */
         $variationService = \Magento\Framework\App\ObjectManager::getInstance()->get(
             \Ess\M2ePro\Model\Ebay\Listing\Product\VariationService::class

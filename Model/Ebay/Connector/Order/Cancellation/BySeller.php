@@ -23,6 +23,8 @@ class BySeller extends AbstractModel
             'channel_order_id' => $this->params['channel_order_id'],
             'cancelReason' => $this->params['cancel_reason'],
             'adjustment_fee' => $this->params['adjustment_fee'],
+            'total_refund_amount' => $this->params['total_refund_amount'],
+            'currency' => $this->params['currency'],
         ];
     }
 

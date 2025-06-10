@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\Listing\Product\AdvancedFilter;
 
-use Ess\M2ePro\Model\ResourceModel\Listing\Product\AdvancedFilter as Resource;
+use Ess\M2ePro\Model\ResourceModel\Listing\Product\AdvancedFilter as ResourceModel;
 
 class Repository
 {
@@ -24,7 +24,7 @@ class Repository
     public function getAdvancedFilter(int $id): \Ess\M2ePro\Model\Listing\Product\AdvancedFilter
     {
         $collection = $this->collectionFactory->create();
-        $collection->addFilter(Resource::COLUMN_ID, $id);
+        $collection->addFilter(ResourceModel::COLUMN_ID, $id);
         $collection->getSelect()->limit(1);
 
         /** @var \Ess\M2ePro\Model\Listing\Product\AdvancedFilter $advancedFilter */
@@ -42,7 +42,7 @@ class Repository
     public function findItemsByModelNick(string $modelNick): array
     {
         $collection = $this->collectionFactory->create();
-        $collection->addFilter(Resource::COLUMN_MODEL_NICK, $modelNick);
+        $collection->addFilter(ResourceModel::COLUMN_MODEL_NICK, $modelNick);
 
         return array_values($collection->getItems());
     }
@@ -50,7 +50,7 @@ class Repository
     public function isExistItemsWithModelNick(string $modelNick): bool
     {
         $collection = $this->collectionFactory->create();
-        $collection->addFilter(Resource::COLUMN_MODEL_NICK, $modelNick);
+        $collection->addFilter(ResourceModel::COLUMN_MODEL_NICK, $modelNick);
 
         return (bool)$collection->getSize();
     }

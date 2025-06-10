@@ -38,7 +38,10 @@ class RemoveOption extends Main
         }
 
         if (!is_array($productOptionsGroup)) {
-            $productOptionsGroup = htmlspecialchars_decode($productOptionsGroup);
+            $productOptionsGroup = htmlspecialchars_decode(
+                $productOptionsGroup,
+                ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401
+            );
             $productOptionsGroup = \Ess\M2ePro\Helper\Json::decode($productOptionsGroup);
         }
 

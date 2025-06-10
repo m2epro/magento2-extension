@@ -442,18 +442,18 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                     $parentsForProcessing[$parentListingProduct->getId()] = $parentListingProduct;
                 }
 
-                /** @var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
-                $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
-                $instruction->setData(
-                    [
-                        'listing_product_id' => $listingProduct->getId(),
-                        'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-                        'type' => \Ess\M2ePro\Model\Walmart\Listing\Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
-                        'initiator' => self::INSTRUCTION_INITIATOR,
-                        'priority' => 80,
-                    ]
-                );
-                $instruction->save();
+                $this->activeRecordFactory
+                    ->getObject('Listing_Product_Instruction')
+                    ->getResource()
+                    ->addForComponent(
+                        [
+                            'listing_product_id' => $listingProduct->getId(),
+                            'type' => \Ess\M2ePro\Model\Walmart\Listing\Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
+                            'initiator' => self::INSTRUCTION_INITIATOR,
+                            'priority' => 80,
+                        ],
+                        \Ess\M2ePro\Helper\Component\Walmart::NICK
+                    );
 
                 if ($currentOnlineQty > $orderItem['qty']) {
                     $walmartListingProduct->setData('online_qty', $currentOnlineQty - $orderItem['qty']);

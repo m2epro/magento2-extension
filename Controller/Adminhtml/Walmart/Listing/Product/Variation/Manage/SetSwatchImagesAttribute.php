@@ -36,20 +36,20 @@ class SetSwatchImagesAttribute extends Main
 
         /** @var ParentRelation $parentTypeModel */
         $typeModel = $walmartListingProduct->getVariationManager()->getTypeModel();
-
+        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction $instructionResource */
+        $instructionResource = $this->activeRecordFactory
+            ->getObject('Listing_Product_Instruction')
+            ->getResource();
         foreach ($typeModel->getChildListingsProducts() as $childListingProduct) {
-            /** @var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
-            $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
-            $instruction->setData(
+            $instructionResource->addForComponent(
                 [
                     'listing_product_id' => $childListingProduct->getId(),
-                    'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
                     'type' => ChangeProcessorAbstract::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
                     'initiator' => ChangeProcessor::INSTRUCTION_INITIATOR,
                     'priority' => 10,
-                ]
+                ],
+                \Ess\M2ePro\Helper\Component\Walmart::NICK
             );
-            $instruction->save();
         }
 
         $this->setJsonContent([

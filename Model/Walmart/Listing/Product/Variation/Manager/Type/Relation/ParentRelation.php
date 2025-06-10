@@ -650,19 +650,19 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
         $childListingProduct = $this->walmartFactory->getObject('Listing\Product')->setData($data);
         $childListingProduct->save();
 
-        /** @var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
-        $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
-        $instruction->setData(
-            [
-                'listing_product_id' => $childListingProduct->getId(),
-                'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-                'type' => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_ADDED,
-                'initiator' => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_ADDING_PRODUCT,
-                'priority' => 70,
+        $this->activeRecordFactory
+            ->getObject('Listing_Product_Instruction')
+            ->getResource()
+            ->addForComponent(
+                [
+                    'listing_product_id' => $childListingProduct->getId(),
+                    'type' => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_ADDED,
+                    'initiator' => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_ADDING_PRODUCT,
+                    'priority' => 70,
 
-            ]
-        );
-        $instruction->save();
+                ],
+                \Ess\M2ePro\Helper\Component\Walmart::NICK
+            );
 
         if ($this->isCacheEnabled()) {
             $this->childListingsProducts[$childListingProduct->getId()] = $childListingProduct;

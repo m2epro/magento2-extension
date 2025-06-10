@@ -319,7 +319,7 @@ class Data
                 $data[$key] = self::normalizeToUtf($value);
             }
         } elseif (is_string($data)) {
-            return utf8_encode($data);
+            return mb_convert_encoding($data, 'UTF-8');
         }
 
         return $data;

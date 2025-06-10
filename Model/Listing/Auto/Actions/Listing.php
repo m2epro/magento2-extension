@@ -70,18 +70,18 @@ abstract class Listing
                     $instructionType = self::INSTRUCTION_TYPE_STOP_AND_REMOVE;
                 }
 
-                /** @var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
-                $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
-                $instruction->setData(
-                    [
-                        'listing_product_id' => $listingProduct->getId(),
-                        'component' => $listingProduct->getComponentMode(),
-                        'type' => $instructionType,
-                        'initiator' => self::INSTRUCTION_INITIATOR,
-                        'priority' => $listingProduct->isStoppable() ? 60 : 0,
-                    ]
-                );
-                $instruction->save();
+                $this->activeRecordFactory
+                    ->getObject('Listing_Product_Instruction')
+                    ->getResource()
+                    ->addForComponent(
+                        [
+                            'listing_product_id' => $listingProduct->getId(),
+                            'type' => $instructionType,
+                            'initiator' => self::INSTRUCTION_INITIATOR,
+                            'priority' => $listingProduct->isStoppable() ? 60 : 0,
+                        ],
+                        $listingProduct->getComponentMode()
+                    );
             } catch (\Exception $exception) {
                 $this->exceptionHelper->process($exception);
             }

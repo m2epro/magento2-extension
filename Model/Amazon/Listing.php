@@ -981,18 +981,18 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             $listingProductRepricing->save();
         }
 
-        /** @var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
-        $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
-        $instruction->setData(
-            [
-                'listing_product_id' => $listingProduct->getId(),
-                'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-                'type' => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
-                'initiator' => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_MOVING_PRODUCT_FROM_OTHER,
-                'priority' => 20,
-            ]
-        );
-        $instruction->save();
+        $this->activeRecordFactory
+            ->getObject('Listing_Product_Instruction')
+            ->getResource()
+            ->addForComponent(
+                [
+                    'listing_product_id' => $listingProduct->getId(),
+                    'type' => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
+                    'initiator' => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_MOVING_PRODUCT_FROM_OTHER,
+                    'priority' => 20,
+                ],
+                \Ess\M2ePro\Helper\Component\Amazon::NICK
+            );
 
         return $listingProduct;
     }

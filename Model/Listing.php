@@ -546,18 +546,18 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         );
         // ---------------------------------------
 
-        /** @var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
-        $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
-        $instruction->setData(
-            [
-                'listing_product_id' => $listingProductTemp->getId(),
-                'component' => $this->getComponentMode(),
-                'type' => self::INSTRUCTION_TYPE_PRODUCT_ADDED,
-                'initiator' => self::INSTRUCTION_INITIATOR_ADDING_PRODUCT,
-                'priority' => 70,
-            ]
-        );
-        $instruction->save();
+        $this->activeRecordFactory
+            ->getObject('Listing_Product_Instruction')
+            ->getResource()
+            ->addForComponent(
+                [
+                    'listing_product_id' => $listingProductTemp->getId(),
+                    'type' => self::INSTRUCTION_TYPE_PRODUCT_ADDED,
+                    'initiator' => self::INSTRUCTION_INITIATOR_ADDING_PRODUCT,
+                    'priority' => 70,
+                ],
+                $this->getComponentMode()
+            );
 
         return $listingProductTemp;
     }
@@ -709,19 +709,18 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         // ---------------------------------------
 
         // ---------------------------------------
-        /** @var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
-        $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
-        $instruction->setData(
-            [
-                'listing_product_id' => $listingProduct->getId(),
-                'component' => $this->getComponentMode(),
-                'type' => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING,
-                'initiator' => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_MOVING_PRODUCT_FROM_LISTING,
-                'priority' => 20,
-            ]
-        );
-        $instruction->save();
-
+        $this->activeRecordFactory
+            ->getObject('Listing_Product_Instruction')
+            ->getResource()
+            ->addForComponent(
+                [
+                    'listing_product_id' => $listingProduct->getId(),
+                    'type' => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING,
+                    'initiator' => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_MOVING_PRODUCT_FROM_LISTING,
+                    'priority' => 20,
+                ],
+                $this->getComponentMode()
+            );
         // ---------------------------------------
 
         return true;

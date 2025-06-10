@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Tag;
 
-use Ess\M2ePro\Model\ResourceModel\Tag as Resource;
+use Ess\M2ePro\Model\ResourceModel\Tag as ResourceModel;
 
 class Entity extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
@@ -20,32 +20,32 @@ class Entity extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     public function getErrorCode(): string
     {
-        return $this->getDataByKey(Resource::ERROR_CODE_FIELD);
+        return $this->getDataByKey(ResourceModel::ERROR_CODE_FIELD);
     }
 
     public function setErrorCode(string $errorCode): void
     {
-        $this->setData(Resource::ERROR_CODE_FIELD, $errorCode);
+        $this->setData(ResourceModel::ERROR_CODE_FIELD, $errorCode);
     }
 
     public function getText(): string
     {
-        return $this->getDataByKey(Resource::TEXT_FIELD);
+        return $this->getDataByKey(ResourceModel::TEXT_FIELD);
     }
 
     public function setText(string $text): void
     {
-        $this->setData(Resource::TEXT_FIELD, $text);
+        $this->setData(ResourceModel::TEXT_FIELD, $text);
     }
 
     public function getCreateDate(): \DateTime
     {
-        if (empty($this->getData(Resource::CREATE_DATE_FIELD))) {
-            throw new \Ess\M2ePro\Model\Exception\Logic(sprintf("Field '%s' must be set", Resource::CREATE_DATE_FIELD));
+        if (empty($this->getData(ResourceModel::CREATE_DATE_FIELD))) {
+            throw new \Ess\M2ePro\Model\Exception\Logic(sprintf("Field '%s' must be set", ResourceModel::CREATE_DATE_FIELD));
         }
 
         return \Ess\M2ePro\Helper\Date::createDateGmt(
-            $this->getData(Resource::CREATE_DATE_FIELD)
+            $this->getData(ResourceModel::CREATE_DATE_FIELD)
         );
     }
 
@@ -53,6 +53,6 @@ class Entity extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     {
         $timeZone = new \DateTimeZone(\Ess\M2ePro\Helper\Date::getTimezone()->getDefaultTimezone());
         $createDate->setTimezone($timeZone);
-        $this->setData(Resource::CREATE_DATE_FIELD, $createDate->format('Y-m-d H:i:s'));
+        $this->setData(ResourceModel::CREATE_DATE_FIELD, $createDate->format('Y-m-d H:i:s'));
     }
 }

@@ -10,18 +10,14 @@ use Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder;
 
 abstract class BasePriceTracker implements TrackerInterface
 {
-    /** @var string */
-    private $channel;
-    /** @var \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder */
-    protected $queryBuilder;
-    /** @var \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger */
-    protected $logger;
-    /** @var \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder */
-    protected $attributesQueryBuilder;
-    /** @var \Ess\M2ePro\Model\ChangeTracker\Common\PriceCondition\AbstractPriceCondition */
-    private $priceConditionBuilder;
+    private string $channel;
+    protected SelectQueryBuilder $queryBuilder;
+    protected TrackerLogger $logger;
+    protected ProductAttributesQueryBuilder $attributesQueryBuilder;
+    private \Ess\M2ePro\Model\ChangeTracker\Common\PriceCondition\AbstractPriceCondition $priceConditionBuilder;
     private int $listingProductIdFrom;
     private int $listingProductIdTo;
+    private array $magentoProductIds;
 
     public function __construct(
         string $channel,
@@ -65,6 +61,32 @@ abstract class BasePriceTracker implements TrackerInterface
     public function getListingProductIdTo(): int
     {
         return $this->listingProductIdTo;
+    }
+
+    public function getMagentoProductIds(): array
+    {
+        if (!isset($this->magentoProductIds)) {
+            $this->magentoProductIds = $this->loadMagentoProductIds();
+        }
+
+        return $this->magentoProductIds;
+    }
+
+    private function loadMagentoProductIds(): array
+    {
+        $queryResult = $this->queryBuilder
+            ->makeSubQuery()
+            ->distinct()
+            ->addSelect('product_id', 'product.product_id')
+            ->from('product', $this->productSubQuery())
+            ->fetchAll();
+
+        $result = [];
+        foreach ($queryResult as $data) {
+            $result[] = (int)$data['product_id'];
+        }
+
+        return $result;
     }
 
     /**

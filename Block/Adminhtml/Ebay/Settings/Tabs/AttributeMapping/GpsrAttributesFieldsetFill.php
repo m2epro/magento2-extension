@@ -118,7 +118,7 @@ class GpsrAttributesFieldsetFill
         $id = str_replace(' ', '_', $pair->channelAttributeCode) . '_custom_value';
         $attributes = [
             'type' => 'text',
-            'style' => '',
+            'style' => 'width:60%;',
             'id' => $id,
             'name' => sprintf('gpsr_attributes[%s][value]', $pair->channelAttributeCode),
             'value' => $pair->isValueModeCustom() ? $pair->value : '',
@@ -153,7 +153,11 @@ class GpsrAttributesFieldsetFill
     {
         $optionsHtml = '';
 
-        $style = $pair->isValueModeAttribute() ? '' : 'display:none;';
+        $style = 'width:60%;';
+        if (!$pair->isValueModeAttribute()) {
+            $style .= 'display:none;';
+        }
+
         $disabled = $pair->isValueModeAttribute() ? '' : 'disabled';
 
         foreach ($preparedAttributes as $attribute) {

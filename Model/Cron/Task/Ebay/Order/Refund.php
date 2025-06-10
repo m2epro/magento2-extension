@@ -133,6 +133,8 @@ class Refund extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 'order_id' => $change->getOrderId(),
                 'change_id' => $change->getId(),
                 'adjustment_fee' => $changeParams['adjustment_fee'] ?? null,
+                'total_refund_amount' => (float)$changeParams['total_refund_amount'] ?? null,
+                'currency' => $order->getChildObject()->getCurrency(),
                 'channel_order_id' => $changeParams['channel_order_id'],
                 'cancel_reason' => $changeParams['cancelReason'],
             ];
@@ -155,7 +157,10 @@ class Refund extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 continue;
             }
 
-            if (isset($cancelResponseData['is_return']) && $cancelResponseData['is_return']) {
+            if (
+                (isset($cancelResponseData['is_return']) && $cancelResponseData['is_return'])
+                || (isset($cancelResponseData['is_partial_refund']) && $cancelResponseData['is_partial_refund'])
+            ) {
                 $change->delete();
                 continue;
             }

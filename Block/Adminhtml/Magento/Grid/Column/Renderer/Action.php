@@ -190,7 +190,7 @@ HTML;
 
         if (isset($action['confirm'])) {
             $action['onclick'] = 'CommonObj.confirm({
-                content: \'' . addslashes(htmlspecialchars($this->escapeHtml($action['confirm']))) . '\',
+                content: \'' . addslashes(htmlspecialchars($this->escapeHtml($action['confirm']), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401)) . '\',
                 actions: {
                     confirm: function () {
                         setLocation(this.href);

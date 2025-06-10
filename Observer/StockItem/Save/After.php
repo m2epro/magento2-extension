@@ -110,7 +110,7 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
         }
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function getProductId()
     {
@@ -119,8 +119,6 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
 
     protected function addListingProductInstructions()
     {
-        $synchronizationInstructionsData = [];
-
         $listingProducts = array_merge(
             $this->getAffectedListingsProducts(),
             $this->getAffectedListingsParentProducts()
@@ -139,13 +137,9 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
             );
             $changeProcessor->process();
         }
-
-        $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getResource()->add(
-            $synchronizationInstructionsData
-        );
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function areThereAffectedItems()
     {
@@ -189,7 +183,7 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
         return $this->affectedListingsParentProducts = $affectedListingsParentProducts;
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function logListingProductMessage(
         \Ess\M2ePro\Model\Listing\Product $listingProduct,
@@ -216,7 +210,7 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
         );
     }
 
-    //########################################
+    // ----------------------------------------
 
     private function getStoredStockItem()
     {
@@ -225,5 +219,5 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
         return $this->getRegistry()->registry($key);
     }
 
-    //########################################
+    // ----------------------------------------
 }

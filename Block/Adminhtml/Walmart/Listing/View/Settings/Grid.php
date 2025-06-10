@@ -141,7 +141,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         ]);
 
         $this->addColumn('sku', [
-            'header' => __('SKU'),
+            'header' => __('Channel SKU'),
             'align' => 'left',
             'width' => '150px',
             'type' => 'text',

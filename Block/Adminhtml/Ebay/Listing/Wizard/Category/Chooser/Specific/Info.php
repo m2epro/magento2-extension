@@ -7,7 +7,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Wizard\Category\Chooser\Specif
 use Ess\M2ePro\Model\MarketplaceFactory;
 use Ess\M2ePro\Model\ResourceModel\Marketplace as MarketplaceResource;
 use Ess\M2ePro\Helper\Component\Ebay\Category\Ebay;
-use Ess\M2ePro\Helper\Magento\Attribute;
+use Ess\M2ePro\Helper\Magento\Attribute as MagentoAttributeHelper;
 use Magento\Framework\Math\Random;
 use Ess\M2ePro\Block\Adminhtml\Magento\Context\Template;
 
@@ -15,7 +15,7 @@ class Info extends \Ess\M2ePro\Block\Adminhtml\Widget\Info
 {
     private Ebay $componentEbayCategoryEbay;
 
-    private Attribute $magentoAttributeHelper;
+    private MagentoAttributeHelper $magentoAttributeHelper;
 
     private MarketplaceFactory $marketplaceModelFactory;
 
@@ -23,7 +23,7 @@ class Info extends \Ess\M2ePro\Block\Adminhtml\Widget\Info
 
     public function __construct(
         Ebay $componentEbayCategoryEbay,
-        Attribute $magentoAttributeHelper,
+        MagentoAttributeHelper $magentoAttributeHelper,
         MarketplaceResource $marketplaceResource,
         MarketplaceFactory $marketplaceModelFactory,
         Random $random,

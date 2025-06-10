@@ -11,8 +11,10 @@ class Instruction extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractM
     private $tagResource;
     /** @var \Ess\M2ePro\Model\Tag\ListingProduct\Relation */
     private $tagRelationResource;
+    private \Ess\M2ePro\Model\Config\ListingSynchronization $listingSynchronizationConfig;
 
     public function __construct(
+        \Ess\M2ePro\Model\Config\ListingSynchronization $listingSynchronizationConfig,
         \Ess\M2ePro\Model\ResourceModel\Tag $tagResource,
         \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation $tagRelationResource,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -28,8 +30,10 @@ class Instruction extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractM
             $context,
             $connectionName
         );
+
         $this->tagResource = $tagResource;
         $this->tagRelationResource = $tagRelationResource;
+        $this->listingSynchronizationConfig = $listingSynchronizationConfig;
     }
 
     public function _construct()
@@ -43,8 +47,7 @@ class Instruction extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractM
     /**
      * @param array<int, array{listing_product_id:int, type:string, initiator:string, priority:int}> $instructionsData
      *
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Exception
      */
     public function add(array $instructionsData): void
     {
@@ -82,11 +85,13 @@ class Instruction extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractM
             ->group(['main_table.id', 'main_table.component_mode'])
             ->order('main_table.id');
 
-        $dataHelper = $this->getHelper('Data');
         foreach ($instructionsData as $index => &$instructionData) {
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             $listingProduct = $listingsProductsCollection->getItemById($instructionData['listing_product_id']);
-            if ($listingProduct === null) {
+            if (
+                $listingProduct === null
+                || !$this->listingSynchronizationConfig->isEnabled($listingProduct->getComponentMode())
+            ) {
                 unset($instructionsData[$index]);
                 continue;
             }
@@ -100,7 +105,7 @@ class Instruction extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractM
             }
 
             $instructionData['component'] = $listingProduct->getComponentMode();
-            $instructionData['create_date'] = $dataHelper->getCurrentGmtDate();
+            $instructionData['create_date'] = \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s');
         }
 
         if (empty($instructionsData)) {
@@ -108,6 +113,26 @@ class Instruction extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractM
         }
 
         $this->getConnection()->insertMultiple($this->getMainTable(), $instructionsData);
+    }
+
+    /**
+     * @param array{listing_product_id:int, type:string, initiator:string, priority:int} $instructionData
+     *
+     * @throws \Exception
+     */
+    public function addForComponent(array $instructionData, string $component): void
+    {
+        if (
+            empty($instructionData)
+            || !$this->listingSynchronizationConfig->isEnabled($component)
+        ) {
+            return;
+        }
+
+        $instructionData['component'] = $component;
+        $instructionData['create_date'] = \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s');
+
+        $this->getConnection()->insert($this->getMainTable(), $instructionData);
     }
 
     /**

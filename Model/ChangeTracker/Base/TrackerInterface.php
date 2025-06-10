@@ -20,4 +20,6 @@ interface TrackerInterface
     public function getListingProductIdTo(): int;
 
     public function getDataQuery(): \Magento\Framework\DB\Select;
+
+    public function getMagentoProductIds(): array;
 }

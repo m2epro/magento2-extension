@@ -516,19 +516,18 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         $this->getChildObject()->addData($data)->save();
         $this->getChildObject()->mapChannelItemProduct();
 
-        /** @var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
-        $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
-        $instruction->setData(
-            [
-                'listing_product_id' => $this->getId(),
-                'component' => $this->getComponentMode(),
-                'type' => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_REMAP_FROM_LISTING,
-                'initiator' => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_REMAPING_PRODUCT_FROM_LISTING,
-                'priority' => 50,
-            ]
-        );
-
-        $instruction->save();
+        $this->activeRecordFactory
+            ->getObject('Listing_Product_Instruction')
+            ->getResource()
+            ->addForComponent(
+                [
+                    'listing_product_id' => $this->getId(),
+                    'type' => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_REMAP_FROM_LISTING,
+                    'initiator' => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_REMAPING_PRODUCT_FROM_LISTING,
+                    'priority' => 50,
+                ],
+                $this->getComponentMode()
+            );
 
         $this->logProductMessage(
             sprintf(

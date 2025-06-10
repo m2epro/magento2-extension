@@ -3,7 +3,7 @@
 namespace Ess\M2ePro\Model\Ebay\Template\Description;
 
 use Ess\M2ePro\Model\Ebay\Template\Description as Description;
-use Ess\M2ePro\Model\ResourceModel\Ebay\Template\Description as Resource;
+use Ess\M2ePro\Model\ResourceModel\Ebay\Template\Description as ResourceModel;
 
 class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 {
@@ -65,17 +65,17 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
         }
 
         if (isset($this->rawData['condition_value'])) {
-            $data[Resource::COLUMN_CONDITION_VALUE] = (int)$this->rawData['condition_value'];
+            $data[ResourceModel::COLUMN_CONDITION_VALUE] = (int)$this->rawData['condition_value'];
         }
 
         if (isset($this->rawData['condition_attribute'])) {
             $data['condition_attribute'] = $this->rawData['condition_attribute'];
         }
 
-        if ((int)$this->rawData[Resource::COLUMN_CONDITION_MODE] === Description::CONDITION_MODE_EBAY) {
-            if ((int)$data[Resource::COLUMN_CONDITION_VALUE] === Description::CONDITION_EBAY_GRADED) {
+        if ((int)$this->rawData[ResourceModel::COLUMN_CONDITION_MODE] === Description::CONDITION_MODE_EBAY) {
+            if ((int)$data[ResourceModel::COLUMN_CONDITION_VALUE] === Description::CONDITION_EBAY_GRADED) {
                 $data = $this->prepareDescriptorsDataForGradedCondition($data, $this->rawData);
-            } elseif ((int)$data[Resource::COLUMN_CONDITION_VALUE] === Description::CONDITION_EBAY_UNGRADED) {
+            } elseif ((int)$data[ResourceModel::COLUMN_CONDITION_VALUE] === Description::CONDITION_EBAY_UNGRADED) {
                 $data = $this->prepareDescriptorsDataForUngradedCondition($data, $this->rawData);
             }
         }
@@ -315,22 +315,22 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
                 'val' => null,
             ],
             Description::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE => [
-                'attr' => $input[Resource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_ATTRIBUTE],
+                'attr' => $input[ResourceModel::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_ATTRIBUTE],
                 'val' => null,
             ],
             Description::CONDITION_DESCRIPTOR_MODE_EBAY => [
                 'attr' => null,
-                'val' => (int)$input[Resource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_VALUE],
+                'val' => (int)$input[ResourceModel::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_VALUE],
             ],
         ];
 
-        $profGraderMode = (int)$input[Resource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_MODE];
+        $profGraderMode = (int)$input[ResourceModel::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_MODE];
         $profGrader = $modeFieldsMap[$profGraderMode];
 
         return [
-            Resource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_MODE => $profGraderMode,
-            Resource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_ATTRIBUTE => $profGrader['attr'],
-            Resource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_VALUE => $profGrader['val'],
+            ResourceModel::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_MODE => $profGraderMode,
+            ResourceModel::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_ATTRIBUTE => $profGrader['attr'],
+            ResourceModel::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_VALUE => $profGrader['val'],
         ];
     }
 
@@ -342,22 +342,22 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
                 'val' => null,
             ],
             Description::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE => [
-                'attr' => $input[Resource::COLUMN_CONDITION_GRADE_ID_ATTRIBUTE],
+                'attr' => $input[ResourceModel::COLUMN_CONDITION_GRADE_ID_ATTRIBUTE],
                 'val' => null,
             ],
             Description::CONDITION_DESCRIPTOR_MODE_EBAY => [
                 'attr' => null,
-                'val' => (int)$input[Resource::COLUMN_CONDITION_GRADE_ID_VALUE],
+                'val' => (int)$input[ResourceModel::COLUMN_CONDITION_GRADE_ID_VALUE],
             ],
         ];
 
-        $gradeMode = (int)$input[Resource::COLUMN_CONDITION_GRADE_ID_MODE];
+        $gradeMode = (int)$input[ResourceModel::COLUMN_CONDITION_GRADE_ID_MODE];
         $grades = $modeFieldsMap[$gradeMode];
 
         return [
-            Resource::COLUMN_CONDITION_GRADE_ID_MODE => $gradeMode,
-            Resource::COLUMN_CONDITION_GRADE_ID_ATTRIBUTE => $grades['attr'],
-            Resource::COLUMN_CONDITION_GRADE_ID_VALUE => $grades['val'],
+            ResourceModel::COLUMN_CONDITION_GRADE_ID_MODE => $gradeMode,
+            ResourceModel::COLUMN_CONDITION_GRADE_ID_ATTRIBUTE => $grades['attr'],
+            ResourceModel::COLUMN_CONDITION_GRADE_ID_VALUE => $grades['val'],
         ];
     }
 
@@ -369,22 +369,22 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
                 'cst_val' => null,
             ],
             Description::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE => [
-                'attr' => $input[Resource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_ATTRIBUTE],
+                'attr' => $input[ResourceModel::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_ATTRIBUTE],
                 'cst_val' => null,
             ],
             Description::CONDITION_DESCRIPTOR_MODE_CUSTOM => [
                 'attr' => null,
-                'cst_val' => $input[Resource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_CUSTOM_VALUE],
+                'cst_val' => $input[ResourceModel::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_CUSTOM_VALUE],
             ],
         ];
 
-        $certNumMode = (int)$input[Resource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_MODE];
+        $certNumMode = (int)$input[ResourceModel::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_MODE];
         $certNum = $modeFieldsMap[$certNumMode];
 
         return [
-            Resource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_MODE => $certNumMode,
-            Resource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_ATTRIBUTE => $certNum['attr'],
-            Resource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_CUSTOM_VALUE => $certNum['cst_val'],
+            ResourceModel::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_MODE => $certNumMode,
+            ResourceModel::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_ATTRIBUTE => $certNum['attr'],
+            ResourceModel::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_CUSTOM_VALUE => $certNum['cst_val'],
         ];
     }
 
@@ -407,22 +407,22 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
                 'val' => null,
             ],
             Description::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE => [
-                'attr' => $input[Resource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_ATTRIBUTE],
+                'attr' => $input[ResourceModel::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_ATTRIBUTE],
                 'val' => null,
             ],
             Description::CONDITION_DESCRIPTOR_MODE_EBAY => [
                 'attr' => null,
-                'val' => (int)$input[Resource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_VALUE],
+                'val' => (int)$input[ResourceModel::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_VALUE],
             ],
         ];
 
-        $cardCondMode = (int)$input[Resource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_MODE];
+        $cardCondMode = (int)$input[ResourceModel::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_MODE];
         $cardCond = $modeFieldsMap[$cardCondMode];
 
         return [
-            Resource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_MODE => $cardCondMode,
-            Resource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_ATTRIBUTE => $cardCond['attr'],
-            Resource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_VALUE => $cardCond['val'],
+            ResourceModel::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_MODE => $cardCondMode,
+            ResourceModel::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_ATTRIBUTE => $cardCond['attr'],
+            ResourceModel::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_VALUE => $cardCond['val'],
         ];
     }
 
@@ -440,25 +440,25 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'description_mode' => '',
             'description_template' => '',
 
-            Resource::COLUMN_CONDITION_MODE => Description::CONDITION_MODE_EBAY,
-            Resource::COLUMN_CONDITION_VALUE => Description::CONDITION_EBAY_NEW,
-            Resource::COLUMN_CONDITION_ATTRIBUTE => '',
+            ResourceModel::COLUMN_CONDITION_MODE => Description::CONDITION_MODE_EBAY,
+            ResourceModel::COLUMN_CONDITION_VALUE => Description::CONDITION_EBAY_NEW,
+            ResourceModel::COLUMN_CONDITION_ATTRIBUTE => '',
 
-            Resource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_MODE => Description::CONDITION_DESCRIPTOR_MODE_NONE,
-            Resource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_VALUE => null,
-            Resource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_ATTRIBUTE => null,
+            ResourceModel::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_MODE => Description::CONDITION_DESCRIPTOR_MODE_NONE,
+            ResourceModel::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_VALUE => null,
+            ResourceModel::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_ATTRIBUTE => null,
 
-            Resource::COLUMN_CONDITION_GRADE_ID_MODE => Description::CONDITION_DESCRIPTOR_MODE_NONE,
-            Resource::COLUMN_CONDITION_GRADE_ID_VALUE => null,
-            Resource::COLUMN_CONDITION_GRADE_ID_ATTRIBUTE => null,
+            ResourceModel::COLUMN_CONDITION_GRADE_ID_MODE => Description::CONDITION_DESCRIPTOR_MODE_NONE,
+            ResourceModel::COLUMN_CONDITION_GRADE_ID_VALUE => null,
+            ResourceModel::COLUMN_CONDITION_GRADE_ID_ATTRIBUTE => null,
 
-            Resource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_MODE => Description::CONDITION_DESCRIPTOR_MODE_NONE,
-            Resource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_CUSTOM_VALUE => '',
-            Resource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_ATTRIBUTE => null,
+            ResourceModel::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_MODE => Description::CONDITION_DESCRIPTOR_MODE_NONE,
+            ResourceModel::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_CUSTOM_VALUE => '',
+            ResourceModel::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_ATTRIBUTE => null,
 
-            Resource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_MODE => Description::CONDITION_DESCRIPTOR_MODE_NONE,
-            Resource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_VALUE => null,
-            Resource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_ATTRIBUTE => null,
+            ResourceModel::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_MODE => Description::CONDITION_DESCRIPTOR_MODE_NONE,
+            ResourceModel::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_VALUE => null,
+            ResourceModel::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_ATTRIBUTE => null,
 
             'condition_note_mode' => Description::CONDITION_NOTE_MODE_NONE,
             'condition_note_template' => '',

@@ -150,6 +150,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
                 'online_current_price' => 'online_current_price',
                 'online_reserve_price' => 'online_reserve_price',
                 'online_buyitnow_price' => 'online_buyitnow_price',
+                'online_main_category' => 'online_main_category',
 
                 'end_date' => 'end_date',
                 'start_date' => 'start_date',

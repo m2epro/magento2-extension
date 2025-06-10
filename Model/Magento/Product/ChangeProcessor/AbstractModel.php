@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Magento\Product\ChangeProcessor;
 
 use Ess\M2ePro\Model\Listing\Product;
@@ -34,7 +28,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
 
-    //########################################
+    // ----------------------------------------
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -46,7 +40,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         $this->activeRecordFactory = $activeRecordFactory;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function setListingProduct(Product $listingProduct)
     {
@@ -62,11 +56,11 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         return $this;
     }
 
-    //########################################
+    // ----------------------------------------
 
     abstract public function getTrackingAttributes();
 
-    //########################################
+    // ----------------------------------------
 
     public function process($changedAttributes = [])
     {
@@ -94,16 +88,14 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
                                   ->add($listingProductInstructionsData);
     }
 
-    //########################################
+    // ----------------------------------------
 
     abstract protected function getInstructionsDataByAttributes(array $attributes);
 
-    //########################################
+    // ----------------------------------------
 
     protected function getListingProduct()
     {
         return $this->listingProduct;
     }
-
-    //########################################
 }
