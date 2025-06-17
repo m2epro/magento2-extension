@@ -214,8 +214,9 @@ SQL
                 return null;
             }
 
-            if ($this->ebayMarketplacesCache[$marketplaceId]['is_epid'] &&
-                $this->ebayMarketplacesCache[$marketplaceId]['is_ktype']
+            if (
+                $this->ebayMarketplacesCache[$marketplaceId]['is_epid']
+                && $this->ebayMarketplacesCache[$marketplaceId]['is_ktype']
             ) {
                 return $partsCompatibilityMode === \Ess\M2ePro\Model\Ebay\Listing::PARTS_COMPATIBILITY_MODE_EPIDS ?
                     $this->ebayMarketplacesCache[$marketplaceId]['origin_country'] . '_epids_attribute'

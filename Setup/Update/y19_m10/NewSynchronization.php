@@ -1,9 +1,5 @@
 <?php
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+
 // @codingStandardsIgnoreFile
 
 namespace Ess\M2ePro\Setup\Update\y19_m10;
@@ -432,8 +428,9 @@ class NewSynchronization extends AbstractFeature
 
         // ---------------------------------------
 
-        if ($this->installer->tableExists($this->getFullTableName('amazon_processing_action_list_sku')) &&
-            !$this->installer->tableExists($this->getFullTableName('amazon_listing_product_action_processing_list_sku'))
+        if (
+            $this->installer->tableExists($this->getFullTableName('amazon_processing_action_list_sku'))
+            && !$this->installer->tableExists($this->getFullTableName('amazon_listing_product_action_processing_list_sku'))
         ) {
             $this->renameTable(
                 'amazon_processing_action_list_sku',
@@ -443,8 +440,9 @@ class NewSynchronization extends AbstractFeature
 
         // ---------------------------------------
 
-        if ($this->installer->tableExists($this->getFullTableName('amazon_processing_action')) &&
-            !$this->installer->tableExists($this->getFullTableName('amazon_listing_product_action_processing'))
+        if (
+            $this->installer->tableExists($this->getFullTableName('amazon_processing_action'))
+            && !$this->installer->tableExists($this->getFullTableName('amazon_listing_product_action_processing'))
         ) {
             $this->renameTable(
                 'amazon_processing_action',
@@ -518,8 +516,9 @@ SQL
 
         // ---------------------------------------
 
-        if ($this->installer->tableExists($this->getFullTableName('ebay_processing_action')) &&
-            !$this->installer->tableExists($this->getFullTableName('ebay_listing_product_action_processing'))
+        if (
+            $this->installer->tableExists($this->getFullTableName('ebay_processing_action'))
+            && !$this->installer->tableExists($this->getFullTableName('ebay_listing_product_action_processing'))
         ) {
             $this->renameTable(
                 'ebay_processing_action',
@@ -563,8 +562,9 @@ SQL
 
         // ---------------------------------------
 
-        if ($this->installer->tableExists($this->getFullTableName('walmart_processing_action_list_sku')) &&
-            !$this->installer->tableExists($this->getFullTableName('walmart_listing_product_action_processing_list'))
+        if (
+            $this->installer->tableExists($this->getFullTableName('walmart_processing_action_list_sku'))
+            && !$this->installer->tableExists($this->getFullTableName('walmart_listing_product_action_processing_list'))
         ) {
             $this->renameTable(
                 'walmart_processing_action_list_sku',
@@ -582,8 +582,9 @@ SQL
 
         // ---------------------------------------
 
-        if ($this->installer->tableExists($this->getFullTableName('walmart_processing_action')) &&
-            !$this->installer->tableExists($this->getFullTableName('walmart_listing_product_action_processing'))
+        if (
+            $this->installer->tableExists($this->getFullTableName('walmart_processing_action'))
+            && !$this->installer->tableExists($this->getFullTableName('walmart_listing_product_action_processing'))
         ) {
             $this->renameTable(
                 'walmart_processing_action',
@@ -673,8 +674,10 @@ SQL
 
             $params = json_decode($processing['params'], true);
 
-            if (isset($params['responser_model_name']) &&
-                isset($responserModelNameMap[$params['responser_model_name']])) {
+            if (
+                isset($params['responser_model_name'])
+                && isset($responserModelNameMap[$params['responser_model_name']])
+            ) {
                 $params['responser_model_name'] = $responserModelNameMap[$params['responser_model_name']];
                 $processing['params'] = json_encode($params);
                 $isUpdated = true;
@@ -696,8 +699,9 @@ SQL
 
     private function upgradeConnectorData()
     {
-        if ($this->installer->tableExists($this->getFullTableName('connector_pending_requester_single')) &&
-            !$this->installer->tableExists($this->getFullTableName('connector_command_pending_processing_single'))
+        if (
+            $this->installer->tableExists($this->getFullTableName('connector_pending_requester_single'))
+            && !$this->installer->tableExists($this->getFullTableName('connector_command_pending_processing_single'))
         ) {
             $this->renameTable(
                 'connector_pending_requester_single',
@@ -705,8 +709,9 @@ SQL
             );
         }
 
-        if ($this->installer->tableExists($this->getFullTableName('connector_pending_requester_partial')) &&
-            !$this->installer->tableExists($this->getFullTableName('connector_command_pending_processing_partial'))
+        if (
+            $this->installer->tableExists($this->getFullTableName('connector_pending_requester_partial'))
+            && !$this->installer->tableExists($this->getFullTableName('connector_command_pending_processing_partial'))
         ) {
             $this->renameTable(
                 'connector_pending_requester_partial',
@@ -723,7 +728,6 @@ SQL
         $productChangeTable = $this->getFullTableName('product_change');
 
         if ($this->installer->tableExists($productChangeTable)) {
-
             $changedProductsListingsProductsData = $this->getConnection()->query("
  SELECT `lp`.`id`, `lp`.`component_mode` FROM `{$listingProductTable}` AS `lp`
  LEFT JOIN `{$productChangeTable}` AS `pc` ON `pc`.`product_id` = `lp`.`product_id`
@@ -1010,7 +1014,6 @@ SQL
             ->commit();
 
         if ($this->getTableModifier('ebay_template_shipping')->isColumnExists('local_shipping_rate_table_mode')) {
-
             $tableName = $this->getFullTableName('ebay_account');
             $query = $this->getConnection()->query("SELECT account_id FROM {$tableName}");
             $accounts = $query->fetchAll(\PDO::FETCH_ASSOC);
@@ -1018,7 +1021,6 @@ SQL
             $enabledShippingRateTable = [];
             $disabledShippingRateTable = [];
             foreach ($accounts as $account) {
-
                 $enabledShippingRateTable[$account['account_id']] = [
                     "mode" => 1,
                     "value" => 1

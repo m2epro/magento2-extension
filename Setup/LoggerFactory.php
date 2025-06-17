@@ -40,8 +40,8 @@ class LoggerFactory
         $fileName = self::LOGFILE_NAME,
         array $data = []
     ) {
-        $logFilePath = $this->directoryList->getPath(DirectoryList::LOG) .DIRECTORY_SEPARATOR.
-                       'm2epro' .DIRECTORY_SEPARATOR. $fileName;
+        $logFilePath = $this->directoryList->getPath(DirectoryList::LOG) . DIRECTORY_SEPARATOR .
+                       'm2epro' . DIRECTORY_SEPARATOR . $fileName;
 
         $streamHandler = new \Monolog\Handler\StreamHandler($logFilePath);
         $streamHandler->setFormatter(new \Monolog\Formatter\LineFormatter());

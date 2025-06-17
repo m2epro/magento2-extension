@@ -13,7 +13,7 @@
 
 <div id="vocabulary_attributes_pupup" style="display: none;">
     <div style="margin-top: 10px;">
-        <?php echo $block->__('
+        <?php /* @noEscape */ echo $block->__('
         You have just specified an accordance between <strong>Magento Variational Attribute</strong> and
         <strong>Amazon Variational Attribute</strong> that was not defined earlier. M2E Pro can remember
         Attributes match below and use them in future automatically.<br/><br/>
@@ -29,7 +29,7 @@
             <input class="admin__control-checkbox" type="checkbox" id="vocabulary_attributes_remember_checkbox">
             &nbsp;&nbsp;
             <label for="vocabulary_attributes_remember_checkbox" class="admin__field-label">
-                <span><?php echo $block->__('Remember my choice') ?></span>
+                <span><?php /* @noEscape */ echo $block->__('Remember my choice') ?></span>
             </label>
         </div>
     </div>

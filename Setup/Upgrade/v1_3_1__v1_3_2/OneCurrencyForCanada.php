@@ -18,9 +18,10 @@ class OneCurrencyForCanada extends AbstractFeature
     {
         $mainTableName = $this->getFullTableName("ebay_marketplace");
 
-        $this->getConnection()->update($mainTableName,
-            array("currency" => "CAD"),
-            array("marketplace_id IN (?)" => array(2, 19))
+        $this->getConnection()->update(
+            $mainTableName,
+            ["currency" => "CAD"],
+            ["marketplace_id IN (?)" => [2, 19]]
         );
 
         $this->getConfigModifier("module")->delete("/ebay/selling/currency/");

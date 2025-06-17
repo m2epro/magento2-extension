@@ -173,8 +173,8 @@ class Runner
             return;
         }
 
-        foreach ($this->installer->getConnection()->getTables($oldTablesPrefix.'m2epro_%') as $oldTableName) {
-            $clearTableName = str_replace($oldTablesPrefix.'m2epro_', '', $oldTableName);
+        foreach ($this->installer->getConnection()->getTables($oldTablesPrefix . 'm2epro_%') as $oldTableName) {
+            $clearTableName = str_replace($oldTablesPrefix . 'm2epro_', '', $oldTableName);
             $this->installer->getConnection()->renameTable(
                 $oldTableName,
                 $this->helperFactory->getObject('Module_Database_Tables')->getFullName($clearTableName)
@@ -184,7 +184,7 @@ class Runner
 
     //########################################
 
-     /**
+    /**
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function createSetupRecord()

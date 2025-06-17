@@ -24,8 +24,7 @@ class AdditionalFieldsForListingProduct extends AbstractFeature
         $variationTableName = $this->getFullTableName("listing_product_variation");
         $optionTableName    = $this->getFullTableName("listing_product_variation_option");
 
-        for ($i = 0, $step = 1000 ;; $i++) {
-
+        for ($i = 0, $step = 1000;; $i++) {
             $offset = $step * $i;
 
             $stmt = $this->getConnection()->query(<<<SQL
@@ -48,9 +47,10 @@ SQL
                 break;
             }
 
-            $this->getConnection()->update($mainTableName,
-                array("online_is_variation" => 1),
-                array("listing_product_id IN (?)" => $itemsIdsWithVariations)
+            $this->getConnection()->update(
+                $mainTableName,
+                ["online_is_variation" => 1],
+                ["listing_product_id IN (?)" => $itemsIdsWithVariations]
             );
 
             if (count($itemsIdsWithVariations) < $step) {
@@ -63,8 +63,7 @@ SQL
         $this->getTableModifier("ebay_listing_product")
              ->addColumn("online_is_auction_type", "SMALLINT UNSIGNED", "NULL", "online_is_variation", true);
 
-        for ($i = 0, $step = 1000 ;; $i++) {
-
+        for ($i = 0, $step = 1000;; $i++) {
             $offset = $step * $i;
 
             $stmt = $this->getConnection()->query(<<<SQL
@@ -86,9 +85,10 @@ SQL
                 break;
             }
 
-            $this->getConnection()->update($mainTableName,
-                array("online_is_auction_type" => 1),
-                array("listing_product_id IN (?)" => $itemsIds)
+            $this->getConnection()->update(
+                $mainTableName,
+                ["online_is_auction_type" => 1],
+                ["listing_product_id IN (?)" => $itemsIds]
             );
 
             if (count($itemsIds) < $step) {

@@ -13,10 +13,10 @@
 
 <?php if ($websites = $block->getWebsites()) : ?>
     <select
-        id="<?php echo $block->getStoreSelectId(); ?>"
-        name="<?php echo $block->getStoreSelectName(); ?>"
+        id="<?php /* @noEscape */ echo $block->getStoreSelectId(); ?>"
+        name="<?php /* @noEscape */ echo $block->getStoreSelectName(); ?>"
         style="width: 250px;"
-        class="select admin__control-select <?php echo $block->getClass(); ?> <?php if ($block->isRequiredOption()) :
+        class="select admin__control-select <?php /* @noEscape */ echo $block->getClass(); ?> <?php if ($block->isRequiredOption()) :
             ?> M2ePro-store-switcher-validation<?php
                                             endif; ?>"
     >
@@ -26,7 +26,7 @@
         <?php endif; ?>
 
         <?php if ($block->hasDefaultOption() && $block->isDisplayDefaultStoreModeUp()) : ?>
-            <option value="<?php echo $block->getDefaultStoreId(); ?>"><?php echo $block->getDefaultStoreName(); ?></option>
+            <option value="<?php /* @noEscape */ echo $block->getDefaultStoreId(); ?>"><?php /* @noEscape */ echo $block->getDefaultStoreName(); ?></option>
         <?php endif; ?>
 
         <?php foreach ($websites as $website) : ?>
@@ -36,15 +36,15 @@
                 <?php foreach ($block->getStores($group) as $store) : ?>
                     <?php if ($showWebsite == false) : ?>
                         <?php $showWebsite = true; ?>
-                        <optgroup label="<?php echo $website->getName(); ?>"></optgroup>
+                        <optgroup label="<?php /* @noEscape */ echo $website->getName(); ?>"></optgroup>
                     <?php endif; ?>
                     <?php if ($showGroup == false) : ?>
                         <?php $showGroup = true; ?>
-                        <optgroup label="&nbsp;&nbsp;&nbsp;<?php echo $group->getName(); ?>">
+                        <optgroup label="&nbsp;&nbsp;&nbsp;<?php /* @noEscape */ echo $group->getName(); ?>">
                     <?php endif; ?>
-                    <option value="<?php echo $store->getId(); ?>"<?php if ($block->getStoreId() == $store->getId()) :
+                    <option value="<?php /* @noEscape */ echo $store->getId(); ?>"<?php if ($block->getStoreId() == $store->getId()) :
                         ?> selected="selected"<?php
-                                   endif; ?>>&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $store->getName(); ?></option>
+                                   endif; ?>>&nbsp;&nbsp;&nbsp;&nbsp;<?php /* @noEscape */ echo $store->getName(); ?></option>
                 <?php endforeach; ?>
                 <?php if ($showGroup) : ?>
                     </optgroup>
@@ -53,11 +53,11 @@
         <?php endforeach; ?>
 
         <?php if ($block->hasDefaultOption() && $block->isDisplayDefaultStoreModeDown()) : ?>
-            <option value="<?php echo $block->getDefaultStoreId(); ?>"
+            <option value="<?php /* @noEscape */ echo $block->getDefaultStoreId(); ?>"
                 <?php if ($block->isSelectedDefaultStore()) :
                     ?> selected="selected"<?php
                 endif; ?>
-            ><?php echo $block->getDefaultStoreName(); ?></option>
+            ><?php /* @noEscape */ echo $block->getDefaultStoreName(); ?></option>
         <?php endif; ?>
 
     </select>

@@ -1,9 +1,4 @@
 <?php
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
 
 namespace Ess\M2ePro\Setup\Upgrade\v1_0_0__v1_1_0;
 
@@ -28,9 +23,8 @@ class RenameServerGroup extends AbstractFeature
         $result = $this->getConnection()->fetchAll($query);
 
         foreach ($result as $row) {
-
             $key = (strpos($row['key'], 'baseurl') !== false) ? 'baseurl' : 'hostname';
-            $index = str_replace($key.'_', '', $row['key']);
+            $index = str_replace($key . '_', '', $row['key']);
             $group = "/server/location/{$index}/";
 
             $this->getConfigModifier('primary')->getEntity('/server/', $row['key'])

@@ -18,14 +18,14 @@
         } ?>
         <h3>Logs #<?= ++$logsIndex ?></h3>
         <?php foreach ($logs as $i => $log) : ?>
-            <div class="log-box <?= $i%2 === 0 ? 'even' : 'odd' ?>">
+            <div class="log-box <?= /* @noEscape */ $i%2 === 0 ? 'even' : 'odd' ?>">
                 <div>
-                    <span class="log-datetime"><?= $log['date'] ?></span>
-                    <span class="log-level">[<?= $log['level'] ?? '' ?>]</span>
-                    <span class="log-message"><?= $log['message'] ?></span>
+                    <span class="log-datetime"><?= /* @noEscape */ $log['date'] ?></span>
+                    <span class="log-level">[<?= /* @noEscape */ $log['level'] ?? '' ?>]</span>
+                    <span class="log-message"><?= /* @noEscape */ $log['message'] ?></span>
                 </div>
                 <?php if ($log['context'] !== '[]') : ?>
-                    <textarea rows="10" class="log-context"><?= $log['context'] ?></textarea>
+                    <textarea rows="10" class="log-context"><?= /* @noEscape */ $log['context'] ?></textarea>
                 <?php endif; ?>
             </div>
         <?php endforeach; ?>

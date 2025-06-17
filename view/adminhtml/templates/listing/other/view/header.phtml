@@ -59,30 +59,30 @@
         <li>
             <label>
                 <span class="label">
-                    <?php echo $block->__('Account'); ?>:&nbsp;
+                    <?php /* @noEscape */ echo $block->__('Account'); ?>:&nbsp;
                 </span>
                 <span class="value">
-                    <?php echo $block->getAccountTitle(); ?>
+                    <?php /* @noEscape */ echo $block->getAccountTitle(); ?>
                 </span>
             </label>
         </li>
         <li>
             <label>
                 <span class="label">
-                    <?php echo $block->__('Marketplace'); ?>:&nbsp;
+                    <?php /* @noEscape */ echo $block->__('Marketplace'); ?>:&nbsp;
                 </span>
                 <span class="value">
-                    <?php echo $block->getMarketplaceTitle(); ?>
+                    <?php /* @noEscape */ echo $block->getMarketplaceTitle(); ?>
                 </span>
             </label>
         </li>
         <li>
             <label>
                 <span class="label">
-                    <?php echo $block->__('Magento Store View'); ?>:&nbsp;
+                    <?php /* @noEscape */ echo $block->__('Magento Store View'); ?>:&nbsp;
                 </span>
                 <span class="value">
-                    <?php echo $block->getStoreViewBreadcrumb(); ?>
+                    <?php /* @noEscape */ echo $block->getStoreViewBreadcrumb(); ?>
                 </span>
             </label>
         </li>

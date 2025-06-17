@@ -19,15 +19,15 @@
 
     <table class="controlPanel-reflection-container">
         <tr>
-            <td class="group_number_td"><b><?php echo $index + 1; ?>.</b></td>
+            <td class="group_number_td"><b><?php /* @noEscape */ echo $index + 1; ?>.</b></td>
             <td class="group_separator">|</td>
             <td>
-                <?php echo $block->getCommandLauncherHtml($command); ?>
+                <?php /* @noEscape */ echo $block->getCommandLauncherHtml($command); ?>
 
                 <?php if (count($components) > 1) : ?>
                     <?php foreach ($block->enabledComponents as $key => $component) : ?>
-                        <?php echo $key == 0 ? '(' : ''; ?>
-                        <?php echo $block->getCommandLauncherHtml($command, $component); ?>
+                        <?php /* @noEscape */ echo $key == 0 ? '(' : ''; ?>
+                        <?php /* @noEscape */ echo $block->getCommandLauncherHtml($command, $component); ?>
                         <?php echo isset($block->enabledComponents[$key + 1]) ? ', ' : ')'; ?>
 
                     <?php endforeach; ?>

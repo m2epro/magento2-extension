@@ -12,15 +12,15 @@ $searchTooltip = __('Enter keywords in marketplace-specific language. Use plural
     <div id="chooser_container">
         <div id="selected_product_type_container">
             <div style="vertical-align: middle;">
-                <strong><?= __('Product Type'); ?></strong>
+                <strong><?= /* @noEscape */ __('Product Type'); ?></strong>
                 <span style="vertical-align: middle; padding-left: 5px">
                     <span id="search_popup_selected_product_type_title"></span>
-                    <span id="search_popup_product_type_not_selected" style="color: grey;"><?= __(
+                    <span id="search_popup_product_type_not_selected" style="color: grey;"><?= /* @noEscape */ __(
                             'Not Selected'
                         ) ?></span>
                 </span>
                 <a style="vertical-align: middle; padding-left: 5px" href="javascript:void(0)"
-                   id="product_type_reset_link"><?= __('Reset'); ?></a>
+                   id="product_type_reset_link"><?= /* @noEscape */ __('Reset'); ?></a>
             </div>
         </div>
     </div>
@@ -33,19 +33,19 @@ $searchTooltip = __('Enter keywords in marketplace-specific language. Use plural
                     aria-controls="productTypeChooserTabs_browse_content"
                     aria-labelledby="productTypeChooserTabs_browse" aria-selected="true" aria-expanded="true">
                     <a href="#productTypeChooserTabs_browse_content" id="productTypeChooserTabs_browse" title="<?=
-                    __('Browse'); ?>" onclick="WalmartProductTypeSearchObj.onClickPopupTab(this);"
+                    /* @noEscape */ __('Browse'); ?>" onclick="WalmartProductTypeSearchObj.onClickPopupTab(this);"
                        class="tab-item-link ui-tabs-anchor ui-tabs-active" data-tab-type="" role="presentation"
                        tabindex="-1">
-                        <span><?= __('Browse'); ?></span>
+                        <span><?= /* @noEscape */ __('Browse'); ?></span>
                     </a>
                 </li>
                 <li class="ui-state-default ui-corner-top" role="tab" tabindex="-1"
                     aria-controls="productTypeChooserTabs_search_content"
                     aria-labelledby="productTypeChooserTabs_search" aria-selected="false" aria-expanded="false">
                     <a href="#productTypeChooserTabs_search_content" id="productTypeChooserTabs_search" title="<?=
-                    __('Search'); ?>" onclick="WalmartProductTypeSearchObj.onClickPopupTab(this);"
+                    /* @noEscape */ __('Search'); ?>" onclick="WalmartProductTypeSearchObj.onClickPopupTab(this);"
                        class="tab-item-link ui-tabs-anchor" data-tab-type="" role="presentation" tabindex="-1">
-                        <span><?= __('Search'); ?></span>
+                        <span><?= /* @noEscape */ __('Search'); ?></span>
                     </a>
                 </li>
             </ul>
@@ -69,10 +69,10 @@ $searchTooltip = __('Enter keywords in marketplace-specific language. Use plural
              style="display: none;">
             <div class="chooser_input_container">
                 <input id="product_type_search_query" type="text" placeholder="<?=
-                __('Enter product type name'); ?>"
+                /* @noEscape */ __('Enter product type name'); ?>"
                        onkeyup="WalmartProductTypeSearchObj.applySearchFilter();">
                 <a onclick="WalmartProductTypeSearchObj.resetSearchFilter()" style="margin-left: 2rem;"><?=
-                    __('Reset'); ?></a>
+                    /* @noEscape */ __('Reset'); ?></a>
             </div>
             <div class="chooser_browser">
                 <select id="product_type_search_results" size="8"

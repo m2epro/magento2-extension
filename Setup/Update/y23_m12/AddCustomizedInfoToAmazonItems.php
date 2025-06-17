@@ -25,4 +25,3 @@ class AddCustomizedInfoToAmazonItems extends AbstractFeature
              ->commit();
     }
 }
-

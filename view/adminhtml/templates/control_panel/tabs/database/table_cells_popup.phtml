@@ -22,10 +22,10 @@
 <div id="controlPanel_tabs_database_table_cells_popup">
 
     <h4>
-        <?php echo  $block->__('Table `%table_name%`', $block->getTableName()); ?>
+        <?php /* @noEscape */ echo $block->__('Table `%table_name%`', $block->getTableName()); ?>
         <?php if ($block->isUpdateCellsMode()) : ?>
             <span style="color: grey; font-style: italic; font-weight: lighter;">
-                &nbsp;<?php echo $block->__('(%amount% records)', count($block->getIds())); ?>
+                &nbsp;<?php /* @noEscape */ echo $block->__('(%amount% records)', count($block->getIds())); ?>
             </span>
         <?php endif; ?>
     </h4>
@@ -33,7 +33,7 @@
     <form id="controlPanel_tabs_database_table_cells_popup_form">
 
         <?php if ($block->isUpdateCellsMode()) : ?>
-            <input type="hidden" name="ids" value="<?php echo implode(',', $block->getIds()); ?>" />
+            <input type="hidden" name="ids" value="<?php /* @noEscape */ echo implode(',', $block->getIds()); ?>" />
         <?php endif; ?>
 
         <table>
@@ -43,21 +43,21 @@
                     continue;
                 } ?>
 
-                <tr id="tr_column_id_<?php echo $column['name']; ?>">
-                    <td style="width: 350px; height: 23px;" title="<?php echo $column['type']; ?>">
+                <tr id="tr_column_id_<?php /* @noEscape */ echo $column['name']; ?>">
+                    <td style="width: 350px; height: 23px;" title="<?php /* @noEscape */ echo $column['type']; ?>">
                         <?php if ($column['is_parent']) :
                             ?><span style="color: orangered;">p:&nbsp;</span><?php
                         endif; ?>
                         <?php if ($column['is_child']) :
                             ?><span style="color: forestgreen;">ch:&nbsp;</span><?php
                         endif; ?>
-                        <?php echo $column['name']; ?>
+                        <?php /* @noEscape */ echo $column['name']; ?>
                     </td>
                     <td style="width: 25px;">
-                        <input id="switcher_column_id_<?php echo $column['name']; ?>" class="input_switcher" type="checkbox" name="cells[]" value="<?php echo $column['name']; ?>" />
+                        <input id="switcher_column_id_<?php /* @noEscape */ echo $column['name']; ?>" class="input_switcher" type="checkbox" name="cells[]" value="<?php /* @noEscape */ echo $column['name']; ?>" />
                     </td>
                     <td>
-                        <input id="input_column_id_<?php echo $column['name']; ?>" name="value_<?php echo $column['name']; ?>" type="text" size="37" disabled="disabled" />
+                        <input id="input_column_id_<?php /* @noEscape */ echo $column['name']; ?>" name="value_<?php /* @noEscape */ echo $column['name']; ?>" type="text" size="37" disabled="disabled" />
                     </td>
                 </tr>
 

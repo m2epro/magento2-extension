@@ -27,9 +27,10 @@ class AddInvoiceAndShipment extends AbstractFeature
 
     public function addColumnToEbayAccount()
     {
-        if (!$this->getTableModifier('ebay_account')->isColumnExists('create_magento_invoice') &&
-            !$this->getTableModifier('ebay_account')->isColumnExists('create_magento_shipment')) {
-
+        if (
+            !$this->getTableModifier('ebay_account')->isColumnExists('create_magento_invoice')
+            && !$this->getTableModifier('ebay_account')->isColumnExists('create_magento_shipment')
+        ) {
             $this->getTableModifier('ebay_account')
                 ->addColumn(
                     'create_magento_invoice',
@@ -82,9 +83,10 @@ class AddInvoiceAndShipment extends AbstractFeature
 
     public function addColumnToWalmartAccount()
     {
-        if (!$this->getTableModifier('walmart_account')->isColumnExists('create_magento_invoice') &&
-            !$this->getTableModifier('walmart_account')->isColumnExists('create_magento_shipment')) {
-
+        if (
+            !$this->getTableModifier('walmart_account')->isColumnExists('create_magento_invoice')
+            && !$this->getTableModifier('walmart_account')->isColumnExists('create_magento_shipment')
+        ) {
             $this->getTableModifier('walmart_account')
                 ->addColumn(
                     'create_magento_invoice',

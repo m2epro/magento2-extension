@@ -11,7 +11,7 @@
 
 ?>
 
-<?php echo $block->createBlock('HelpBlock')->setData([
+<?php /* @noEscape */ echo $block->createBlock('HelpBlock')->setData([
     'content' => $block->__('
         In this Block you can see the list of the saved Filters which are used to select
         the Compatible Vehicles. In case you do not want some of them to be used, you can
@@ -20,5 +20,5 @@
 ])->toHtml() ?>
 
 <div id="motors">
-    <?php echo $block->getChildHtml('view_filter_grid'); ?>
+    <?php /* @noEscape */ echo $block->getChildHtml('view_filter_grid'); ?>
 </div>

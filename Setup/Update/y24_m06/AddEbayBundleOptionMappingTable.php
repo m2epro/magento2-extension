@@ -55,5 +55,4 @@ class AddEbayBundleOptionMappingTable extends \Ess\M2ePro\Model\Setup\Upgrade\En
 
         $this->getConnection()->createTable($ebayBundleOptionsMappingTable);
     }
-
 }

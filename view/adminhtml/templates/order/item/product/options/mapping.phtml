@@ -26,19 +26,19 @@
 
 <div id="product_options_mapping_content" class="hor-scroll" style="">
 
-    <?php echo $block->getChildHtml('product_mapping_options_help_block'); ?>
+    <?php /* @noEscape */ echo $block->getChildHtml('product_mapping_options_help_block'); ?>
 
-    <input type="hidden" name="order_item_id" class="form-element" value="<?php echo $block->getHelper('Data\GlobalData')->getValue('order_item')->getId() ?>" />
+    <input type="hidden" name="order_item_id" class="form-element" value="<?php /* @noEscape */ echo $block->getHelper('Data\GlobalData')->getValue('order_item')->getId() ?>" />
 
     <br/>
 
-    <h4><?php echo $block->__('Channel Options') ?></h4>
+    <h4><?php /* @noEscape */ echo $block->__('Channel Options') ?></h4>
 
     <div style="border-bottom: 1px solid #E7E7E7; padding: 5px 5px;">
 
         <?php if (empty($block->getData('channel_options'))) : ?>
             <span style="font-style: italic;">
-                <?php echo $block->__('No Channel Options are available.'); ?>
+                <?php /* @noEscape */ echo $block->__('No Channel Options are available.'); ?>
             </span>
         <?php else : ?>
             <dl>
@@ -47,10 +47,10 @@
                 <dt>
                     <label>
                         <span style="font-weight: bold; font-style: italic;">
-                            <?php echo $block->getHelper('Data')->escapeHtml($channelOption['label']); ?>:
+                            <?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($channelOption['label']); ?>:
                         </span>
                         <span>
-                            &nbsp;<?php echo $block->getHelper('Data')->escapeHtml($channelOption['value']); ?>
+                            &nbsp;<?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($channelOption['value']); ?>
                         </span>
                     </label>
                 </dt>
@@ -64,7 +64,7 @@
 
     <br/>
 
-    <h4><?php echo $block->getHelper('Data')->escapeHtml($block->getProductTypeHeader()) ?></h4>
+    <h4><?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($block->getProductTypeHeader()) ?></h4>
 
     <div>
 
@@ -73,13 +73,13 @@
         <?php foreach ($block->getData('magento_options') as $option) : ?>
             <dt>
                 <label>
-                    <span style="color: #eb5202">*</span>&nbsp;<?php echo $block->getHelper('Data')->escapeHtml($option['label']); ?>
+                    <span style="color: #eb5202">*</span>&nbsp;<?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($option['label']); ?>
                 </label>
             </dt>
             <dd style="border-bottom: 1px solid #E7E7E7; margin: 5px 0 15px; padding: 0 0 12px;">
                 <div class="input-box">
                     <select name="option_id[<?php echo (int)$option['option_id']; ?>]" class="form-element select admin__control-select required-entry">
-                        <option value="" class="empty"><?php echo $block->__('Select Option...'); ?></option>
+                        <option value="" class="empty"><?php /* @noEscape */ echo $block->__('Select Option...'); ?></option>
                         <?php foreach ($option['values'] as $value) : ?>
                             <?php
                                 $optionValue = json_encode([
@@ -90,10 +90,10 @@
 
                                 $selected = $block->isMagentoOptionSelected($option, $value);
                             ?>
-                            <option value="<?php echo $block->getHelper('Data')->escapeHtml($optionValue); ?>" <?php if ($selected) :
+                            <option value="<?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($optionValue); ?>" <?php if ($selected) :
                                 ?>selected="selected"<?php
                                            endif; ?>>
-                                <?php echo $block->getHelper('Data')->escapeHtml($optionLabel); ?>
+                                <?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($optionLabel); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -106,7 +106,7 @@
     </div>
 
     <div id="selected_product_option_is_out_of_stock" style="display: none;">
-        <?php echo $block->getChildHtml('product_mapping_options_out_of_stock_message'); ?>
+        <?php /* @noEscape */ echo $block->getChildHtml('product_mapping_options_out_of_stock_message'); ?>
     </div>
 
     <?php if (!empty($block->getData('channel_options'))) : ?>
@@ -118,7 +118,7 @@
                 name="save_matching"
             >
             <label for="save_matching" class="admin__field-label">
-                <span><?php echo $block->__('Save selection for subsequent Orders'); ?></span>
+                <span><?php /* @noEscape */ echo $block->__('Save selection for subsequent Orders'); ?></span>
             </label>
         </div>
 

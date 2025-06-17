@@ -22,10 +22,10 @@ $callback = $block->getCallback();
 
 <div class="tree-actions" style="margin-bottom: 5px;">
     <a href="#" id="collapse-all"><?php
-        echo __('Collapse All'); ?></a>
+        /* @noEscape */ echo __('Collapse All'); ?></a>
     <span class="separator">|</span>
     <a href="#" id="expand-all"><?php
-        echo __('Expand All'); ?></a>
+        /* @noEscape */ echo __('Expand All'); ?></a>
 </div>
 <div class="categories-side-col">
     <div class="tree-holder">
@@ -45,15 +45,15 @@ $callback = $block->getCallback();
         window.lastCallbackParams = [];
 
         <?php foreach ($selectedCategories as $category) { ?>
-        categories_selected_items.push('<?php echo $category; ?>');
+        categories_selected_items.push('<?php /* @noEscape */ echo $category; ?>');
         initTreeSelectedNodes[initTreeSelectedNodes.length] = [];
-        initTreeSelectedNodes[initTreeSelectedNodes.length-1][0] = '<?php echo $category; ?>';
+        initTreeSelectedNodes[initTreeSelectedNodes.length-1][0] = '<?php /* @noEscape */ echo $category; ?>';
         initTreeSelectedNodes[initTreeSelectedNodes.length-1][1] = null;
         <?php } ?>
 
         <?php foreach ($highlightedCategories as $category) { ?>
         initTreeHighlightedNodes[initTreeHighlightedNodes.length] = [];
-        initTreeHighlightedNodes[initTreeHighlightedNodes.length-1][0] = '<?php echo $category; ?>';
+        initTreeHighlightedNodes[initTreeHighlightedNodes.length-1][0] = '<?php /* @noEscape */ echo $category; ?>';
         initTreeHighlightedNodes[initTreeHighlightedNodes.length-1][1] = null;
         <?php } ?>
 
@@ -62,7 +62,7 @@ $callback = $block->getCallback();
                 window.tree = $('#tree-div-auto-action').jstree({
                     'core': {
                         'themes': { 'responsive': false },
-                        'data': <?php echo $block->getTreeJson(); ?>,
+                        'data': <?php /* @noEscape */ echo $block->getTreeJson(); ?>,
                     },
                     'plugins': ['checkbox'],
                     'checkbox': {
@@ -94,7 +94,7 @@ $callback = $block->getCallback();
 
                 tree.on('select_node.jstree', function (e, data) {
                     <?php if (!empty($callback)) : ?>
-                    !ignoreTreeCallback && (<?php echo $callback ?>)([data.node.id]);
+                    !ignoreTreeCallback && (<?php /* @noEscape */ echo $callback ?>)([data.node.id]);
                     <?php endif; ?>
 
                     categories_selected_items.forEach(function (nodeId) {
@@ -112,7 +112,7 @@ $callback = $block->getCallback();
                     ListingCategoryTreeObj.tree_categoryAdd(data.node.id);
 
                     <?php if (!empty($callback)) : ?>
-                    !ignoreTreeCallback && (<?php echo $callback ?>)(categories_selected_items);
+                    !ignoreTreeCallback && (<?php /* @noEscape */ echo $callback ?>)(categories_selected_items);
                     <?php endif; ?>
                 });
 
@@ -124,7 +124,7 @@ $callback = $block->getCallback();
                     ListingCategoryTreeObj.tree_categoryRemove(data.node.id);
 
                     <?php if (!empty($callback)) : ?>
-                    !ignoreTreeCallback && (<?php echo $callback ?>)(categories_selected_items);
+                    !ignoreTreeCallback && (<?php /* @noEscape */ echo $callback ?>)(categories_selected_items);
                     <?php endif; ?>
                 });
             }

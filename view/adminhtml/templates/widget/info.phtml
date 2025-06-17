@@ -58,24 +58,24 @@
         vertical-align: top;
     }
     <?php foreach ($this->getInfo() as $index => $data) :?>
-    #<?php echo $this->getId() ?> ul li:nth-child(<?php echo $index+1; ?>) {
-       width: <?php echo $this->getInfoPartWidth($index); ?>;
-       text-align: <?php echo $this->getInfoPartAlign($index); ?>;
+    #<?php /* @noEscape */ echo $this->getId() ?> ul li:nth-child(<?php /* @noEscape */ echo $index+1; ?>) {
+       width: <?php /* @noEscape */ echo $this->getInfoPartWidth($index); ?>;
+       text-align: <?php /* @noEscape */ echo $this->getInfoPartAlign($index); ?>;
     }
     <?php endforeach; ?>
 
 </style>
 
-<div id="<?= $this->getId() ?>" class="m2epro-widget-info">
+<div id="<?= /* @noEscape */ $this->getId() ?>" class="m2epro-widget-info">
     <ul>
     <?php foreach ($block->getInfo() as $index => $data) :?>
         <li>
             <label>
                 <span class="label">
-                    <?= $data['label']; ?>:&nbsp;
+                    <?= /* @noEscape */ $data['label']; ?>:&nbsp;
                 </span>
                 <span class="value">
-                    <?= $data['value']; ?>
+                    <?= /* @noEscape */ $data['value']; ?>
                 </span>
             </label>
         </li>

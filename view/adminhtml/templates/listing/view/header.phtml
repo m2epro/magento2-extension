@@ -57,10 +57,10 @@
         <li>
             <label>
                 <span class="label">
-                    <?php echo $block->getHelper('Data')->escapeHtml($block->__('Listing')); ?>:&nbsp;
+                    <?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($block->__('Listing')); ?>:&nbsp;
                 </span>
                 <span class="value">
-                    <?php echo $block->getHelper('Data')->escapeHtml($block->getProfileTitle()); ?>
+                    <?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($block->getProfileTitle()); ?>
                 </span>
             </label>
         </li>
@@ -68,30 +68,30 @@
         <li>
             <label>
                 <span class="label">
-                    <?php echo $block->getHelper('Data')->escapeHtml($block->__('Account')); ?>:&nbsp;
+                    <?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($block->__('Account')); ?>:&nbsp;
                 </span>
                 <span class="value">
-                    <?php echo $block->getHelper('Data')->escapeHtml($block->getAccountTitle()); ?>
+                    <?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($block->getAccountTitle()); ?>
                 </span>
             </label>
         </li>
         <li>
             <label>
                 <span class="label">
-                    <?php echo $block->getHelper('Data')->escapeHtml($block->__('Marketplace')); ?>:&nbsp;
+                    <?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($block->__('Marketplace')); ?>:&nbsp;
                 </span>
                 <span class="value">
-                    <?php echo $block->getHelper('Data')->escapeHtml($block->getMarketplaceTitle()); ?>
+                    <?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($block->getMarketplaceTitle()); ?>
                 </span>
             </label>
         </li>
         <li>
             <label>
                 <span class="label">
-                    <?php echo $block->getHelper('Data')->escapeHtml($block->__('Magento Store View')); ?>:&nbsp;
+                    <?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($block->__('Magento Store View')); ?>:&nbsp;
                 </span>
                 <span class="value">
-                    <?php echo $block->getHelper('Data')->escapeHtml($block->getStoreViewBreadcrumb(false)); ?>
+                    <?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($block->getStoreViewBreadcrumb(false)); ?>
                 </span>
             </label>
         </li>

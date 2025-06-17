@@ -26,20 +26,20 @@
     <?php foreach ($block->getTablesInfo() as $category => $tables) : ?>
         <tr>
             <td class="label category" colspan="3">
-                <label><?php echo $category; ?>: </label>
+                <label><?php /* @noEscape */ echo $category; ?>: </label>
             </td>
         </tr>
 
         <?php foreach ($tables as $table => $data) : ?>
             <tr>
                 <td class="label" style="padding-right: 10px;">
-                    <?php echo $table; ?>
+                    <?php /* @noEscape */ echo $table; ?>
                 </td>
                 <td class="value">
-                    <?php echo $data['count']; ?>
+                    <?php /* @noEscape */ echo $data['count']; ?>
                 </td>
                 <td class="value edit-database">
-                    <a href="<?php echo $data['url']?>">Edit</a>
+                    <a href="<?php /* @noEscape */ echo $data['url']?>">Edit</a>
                 </td>
             </tr>
         <?php endforeach; ?>

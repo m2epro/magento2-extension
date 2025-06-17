@@ -34,8 +34,9 @@ class Prepared extends AbstractModel
     {
         $configTableName = $this->getOldTablesPrefix() . 'm2epro_config';
 
-        if (!$this->helperFactory->getObject('Module\Maintenance')->isEnabled() ||
-            !$this->getConnection()->isTableExists($configTableName)
+        if (
+            !$this->helperFactory->getObject('Module\Maintenance')->isEnabled()
+            || !$this->getConnection()->isTableExists($configTableName)
         ) {
             throw new \Exception(
                 $this->helperFactory->getObject('Module\Translation')->translate([
@@ -56,8 +57,9 @@ class Prepared extends AbstractModel
             $sourceParams[$paramRow['group']][$paramRow['key']] = $paramRow['value'];
         }
 
-        if (empty($sourceParams['/migrationtomagento2/source/']['is_prepared_for_migration']) ||
-            empty($sourceParams['/migrationtomagento2/source/m2epro/']['version'])
+        if (
+            empty($sourceParams['/migrationtomagento2/source/']['is_prepared_for_migration'])
+            || empty($sourceParams['/migrationtomagento2/source/m2epro/']['version'])
         ) {
             throw new \Exception(
                 $this->helperFactory->getObject('Module\Translation')->translate([

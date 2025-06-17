@@ -37,7 +37,6 @@ class DefaultValuesInSyncPolicy extends AbstractFeature
         }
 
         if ($addingMessage) {
-
             $now = new \DateTime('now', new \DateTimeZone('UTC'));
             $now->modify('+7 days');
 

@@ -14,13 +14,13 @@ $feeDetailsId = uniqid('fee-details-');
 $title = $block->getHelper('Data')->escapeHtml($block->__('Estimated Fee Details For Product: "%title%"', $block->getData('product_name')));
 ?>
 
-<div id="<?php echo $feeDetailsId ?>" style="display: none;">
-    <?php echo $block->getChildHtml('details'); ?>
+<div id="<?php /* @noEscape */ echo $feeDetailsId ?>" style="display: none;">
+    <?php /* @noEscape */ echo $block->getChildHtml('details'); ?>
 </div>
 <span>
-    <?php echo $block->getTotalFee() ?>&nbsp;<a
+    <?php /* @noEscape */ echo $block->getTotalFee() ?>&nbsp;<a
         href="javascript:void(0);"
         class="ebay-fee"
-        onclick="EbayListingViewEbayGridObj.openFeePopUp($('<?php echo $feeDetailsId ?>').innerHTML, '<?php echo $title ?>');"
-    ><?php echo $block->__('details') ?></a>
+        onclick="EbayListingViewEbayGridObj.openFeePopUp($('<?php /* @noEscape */ echo $feeDetailsId ?>').innerHTML, '<?php /* @noEscape */ echo $title ?>');"
+    ><?php /* @noEscape */ echo $block->__('details') ?></a>
 </span>

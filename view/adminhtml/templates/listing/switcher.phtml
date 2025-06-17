@@ -20,8 +20,8 @@
 <div id="listing-switcher-add-new" style="display: none;">
     <ul>
         <li style="background: #eaeaea;">
-            <a href="<?php echo $block->getUrl($block->getAddListingUrl()) ?>">
-                <span style="font-weight: bold; font-size: 12px; font-style: italic; color: #ea7601;">+ <?php echo $block->__('Add New Listing') ?></span>
+            <a href="<?php /* @noEscape */ echo $block->getUrl($block->getAddListingUrl()) ?>">
+                <span style="font-weight: bold; font-size: 12px; font-style: italic; color: #ea7601;">+ <?php /* @noEscape */ echo $block->__('Add New Listing') ?></span>
             </a>
         </li>
     </ul>

@@ -13,7 +13,7 @@
 
 <div id="add_custom_motors_record_data_container">
 
-    <?php echo $block->createBlock('HelpBlock')->setData([
+    <?php /* @noEscape */ echo $block->createBlock('HelpBlock')->setData([
         'content' => $block->__('
             In this Block you can <strong>Filter</strong> and <strong>Select</strong> Compatible Vehicles. Also, various
             Actions may be applied.<br/><br/>
@@ -37,21 +37,21 @@
             $idTitle = $block->isMotorsTypeEpid() ? $block->__('ePID(s)') : $block->__('kType(s)');
         ?>
 
-        <div style="font-weight: bold; padding: 7px; float: left;"><?php echo $block->__('Selected Items') ?>:</div>
+        <div style="font-weight: bold; padding: 7px; float: left;"><?php /* @noEscape */ echo $block->__('Selected Items') ?>:</div>
 
         <div id="selected_motors_data" style="padding: 7px; width: 640px; float: left;">
             <span id="motors_empty_text" style="color: grey;">
-                <?php echo $block->__('There are no %item_type%, Filter or Group selected for further their assigning to your Product(s)', $idTitle) ?>
+                <?php /* @noEscape */ echo $block->__('There are no %item_type%, Filter or Group selected for further their assigning to your Product(s)', $idTitle) ?>
             </span>
-            <span class="items" style="margin-left: 14%;display: none"><a href="javascript:void(0)" onclick="EbayListingViewSettingsMotorsObj.viewSelectedItemPopup()"><span class="count"></span> <?php echo $idTitle ?></a></span>
+            <span class="items" style="margin-left: 14%;display: none"><a href="javascript:void(0)" onclick="EbayListingViewSettingsMotorsObj.viewSelectedItemPopup()"><span class="count"></span> <?php /* @noEscape */ echo $idTitle ?></a></span>
             &nbsp;&nbsp;
-            <span class="filters" style="margin-left: 18%;display: none"><a href="javascript:void(0)" onclick="EbayListingViewSettingsMotorsObj.viewSelectedFilterPopup()"><span class="count"></span> <?php echo $block->__('Filter(s)') ?></a></span>
+            <span class="filters" style="margin-left: 18%;display: none"><a href="javascript:void(0)" onclick="EbayListingViewSettingsMotorsObj.viewSelectedFilterPopup()"><span class="count"></span> <?php /* @noEscape */ echo $block->__('Filter(s)') ?></a></span>
             &nbsp;&nbsp;
-            <span class="groups" style="margin-left: 18%;display: none"><a href="javascript:void(0)" onclick="EbayListingViewSettingsMotorsObj.viewSelectedGroupPopup()"><span class="count"></span> <?php echo $block->__('Group(s)') ?></a></span>
+            <span class="groups" style="margin-left: 18%;display: none"><a href="javascript:void(0)" onclick="EbayListingViewSettingsMotorsObj.viewSelectedGroupPopup()"><span class="count"></span> <?php /* @noEscape */ echo $block->__('Group(s)') ?></a></span>
         </div>
         <div style="float: right">
-            <?php echo $block->getChildHtml('motor_add_btn'); ?>
-            <?php echo $block->getChildHtml('motor_override_btn'); ?>
+            <?php /* @noEscape */ echo $block->getChildHtml('motor_add_btn'); ?>
+            <?php /* @noEscape */ echo $block->getChildHtml('motor_override_btn'); ?>
         </div>
         <div style="clear: both"></div>
     </div>
@@ -62,7 +62,7 @@
             <tbody>
             <tr>
                 <td class="label">
-                    <label><?php echo $block->__('Selected %identifier_title%', $idTitle) ?>:</label>
+                    <label><?php /* @noEscape */ echo $block->__('Selected %identifier_title%', $idTitle) ?>:</label>
                 </td>
                 <td class="value" style="width: 100%; padding-right: 10px;">
                     <input class="left-col-block input-text" style="width: 100%;" name="attribute_content" id="attribute_content" readonly>
@@ -74,7 +74,7 @@
     </div>
 
     <div id="motors">
-        <?php echo $block->getChildHtml('motor_add_tabs'); ?>
+        <?php /* @noEscape */ echo $block->getChildHtml('motor_add_tabs'); ?>
     </div>
 
 </div>

@@ -14,7 +14,7 @@ $variations = $block->getVariations();
 
 ?>
 
-<?php echo $block->createBlock('HelpBlock')->setData([
+<?php /* @noEscape */ echo $block->createBlock('HelpBlock')->setData([
     'title' => $block->__('eBay Item Preview'),
     'content' => $block->__('
         This Page is a <strong>stylized Template</strong> of the prospective eBay Page.<br/><br/>
@@ -65,8 +65,8 @@ $variations = $block->getVariations();
     </div>
     <?php $currentProduct = $block->getProductShortInfo(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Preview::CURRENT); ?>
     <div class="current_product_title">
-        <h2 title="<?php echo $currentProduct['title']; ?>">
-            <?php echo "{$block->truncate($currentProduct['title'], 40)} (ID: {$currentProduct['id']})"; ?>
+        <h2 title="<?php /* @noEscape */ echo $currentProduct['title']; ?>">
+            <?php /* @noEscape */ echo "{$block->truncate($currentProduct['title'], 40)} (ID: {$currentProduct['id']})"; ?>
         </h2>
     </div>
 </div>
@@ -83,14 +83,14 @@ $variations = $block->getVariations();
         }
 
         if (empty($imageGallery)) {
-            echo "<img id='product_image' src='{$block->getViewFileUrl('Ess_M2ePro::images/preview_no_images.png')}'>";
+            /* @noEscape */ echo "<img id='product_image' src='{$block->getViewFileUrl('Ess_M2ePro::images/preview_no_images.png')}'>";
         } else {
-            echo "<img id='product_image' src='{$imageGallery[0]}'>";
+            /* @noEscape */ echo "<img id='product_image' src='{$imageGallery[0]}'>";
             echo '<div class="gallery_container">';
 
             if (count($imageGallery) > 1) {
                 foreach ($imageGallery as $image) {
-                    echo "<img src='{$image}' onclick='EbayListingPreviewItemsObj.onClickGalleryImage(this)'>";
+                    /* @noEscape */ echo "<img src='{$image}' onclick='EbayListingPreviewItemsObj.onClickGalleryImage(this)'>";
                 }
             }
 
@@ -101,13 +101,13 @@ $variations = $block->getVariations();
 
     <div class="info_container">
         <div class="category_breadcrumbs">
-            <?php echo $block->getCategory(); ?>
+            <?php /* @noEscape */ echo $block->getCategory(); ?>
         </div>
         <div class="product_title">
-            <?php echo $block->getTitle(); ?>
+            <?php /* @noEscape */ echo $block->getTitle(); ?>
         </div>
         <div class="product_subtitle">
-            <?php echo $block->getSubtitle(); ?>
+            <?php /* @noEscape */ echo $block->getSubtitle(); ?>
         </div>
 
         <hr class="title_separator"/>
@@ -115,10 +115,10 @@ $variations = $block->getVariations();
         <table class="variation_table">
             <tr>
                 <td class="field_title">
-                    <?php echo $block->__('Item Condition'); ?>:
+                    <?php /* @noEscape */ echo $block->__('Item Condition'); ?>:
                 </td>
                 <td>
-                    <?php echo $block->getCondition(); ?>
+                    <?php /* @noEscape */ echo $block->getCondition(); ?>
                 </td>
             </tr>
 
@@ -129,10 +129,10 @@ $variations = $block->getVariations();
                 ?>
             <tr>
                 <td class="field_title">
-                    <?php echo $block->__('Seller Note'); ?>:
+                    <?php /* @noEscape */ echo $block->__('Seller Note'); ?>:
                 </td>
                 <td>
-                    <?php echo $conditionNote; ?>
+                    <?php /* @noEscape */ echo $conditionNote; ?>
                 </td>
             </tr>
             <?php endif; ?>
@@ -144,14 +144,14 @@ $variations = $block->getVariations();
                 ?>
                 <?php foreach ($variations['variation_sets'] as $attribute => $data) : ?>
                 <tr>
-                    <td class='field_title'><?php echo $attribute; ?>:</td>
+                    <td class='field_title'><?php /* @noEscape */ echo $attribute; ?>:</td>
                     <td>
-                        <select class='variation_select admin__control-select' name='<?php echo $block->getHelper('Data')->escapeHtml($attribute, null, ENT_QUOTES); ?>'
+                        <select class='variation_select admin__control-select' name='<?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($attribute, null, ENT_QUOTES); ?>'
                                 onchange='EbayListingPreviewItemsObj.onChangeVariationSelect(this)'>
-                            <option value="">- <?php echo $block->__('Select'); ?> -</option>
+                            <option value="">- <?php /* @noEscape */ echo $block->__('Select'); ?> -</option>
                             <?php foreach ($data as $option) : ?>
-                                <option value='<?php echo $block->getHelper('Data')->escapeHtml($option, null, ENT_QUOTES); ?>'>
-                                    <?php echo $block->getHelper('Data')->escapeHtml($option, null, ENT_QUOTES); ?>
+                                <option value='<?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($option, null, ENT_QUOTES); ?>'>
+                                    <?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($option, null, ENT_QUOTES); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -161,16 +161,16 @@ $variations = $block->getVariations();
             <?php endif; ?>
             <tr>
                 <td class="field_title">
-                    <?php echo $block->__('Quantity'); ?>:
+                    <?php /* @noEscape */ echo $block->__('Quantity'); ?>:
                 </td>
                 <td>
                     <?php if ($qty) : ?>
                     <span id="product_qty">
-                        <?php echo $qty; ?>
-                    </span> <?php echo $block->__('available'); ?>
+                        <?php /* @noEscape */ echo $qty; ?>
+                    </span> <?php /* @noEscape */ echo $block->__('available'); ?>
                     <?php else : ?>
                         <span id="product_qty">
-                            <?php echo $block->__('N/A'); ?>
+                            <?php /* @noEscape */ echo $block->__('N/A'); ?>
                         </span>
                     <?php endif; ?>
                 </td>
@@ -194,28 +194,28 @@ $variations = $block->getVariations();
                     <div id="product_discount_stp" class="price_discount" <?php if (!isset($price['price_stp'])) :
                         ?>style="display: none"<?php
                                                                           endif;?>>
-                        <?php echo $currency; ?><span id='product_price_stp'><?php if (isset($price['price_stp']) && $price['price_stp'] > $price['price']) {
-                            echo $price['price_stp'];
+                        <?php /* @noEscape */ echo $currency; ?><span id='product_price_stp'><?php if (isset($price['price_stp']) && $price['price_stp'] > $price['price']) {
+                                /* @noEscape */ echo $price['price_stp'];
                         } ?></span>
                     </div>
                     <div id="product_discount_map" class="price_discount" <?php if (!isset($price['price_map'])) :
                         ?>style="display: none"<?php
                                                                           endif;?>>
-                        <?php echo $currency; ?><span id='product_price_map'><?php if (isset($price['price_map']) && $price['price_map'] > $price['price']) {
-                            echo $price['price_map'];
+                        <?php /* @noEscape */ echo $currency; ?><span id='product_price_map'><?php if (isset($price['price_map']) && $price['price_map'] > $price['price']) {
+                                /* @noEscape */ echo $price['price_map'];
                         } ?></span>
                     </div>
                     <div class='price_currency'>
-                        <?php echo $currency; ?><span id='product_price'><?php echo $price['price']; ?></span>
+                        <?php /* @noEscape */ echo $currency; ?><span id='product_price'><?php /* @noEscape */ echo $price['price']; ?></span>
                     </div>
                 </td>
                 <td class="price_container_td">
                     <button class='buy_it_now' type='button'>
-                        <?php echo $block->__('Buy it now'); ?>
+                        <?php /* @noEscape */ echo $block->__('Buy it now'); ?>
                     </button>
                     <br/>
                     <button class='add_to_cart' type='button'>
-                        <?php echo $block->__('Add to cart'); ?>
+                        <?php /* @noEscape */ echo $block->__('Add to cart'); ?>
                     </button>
                 </td>
             </tr>
@@ -236,25 +236,25 @@ $variations = $block->getVariations();
     <ul class="tabs-horiz">
         <?php if (!empty($specifics)) : ?>
         <li data-tab="specifics" onclick="EbayListingPreviewItemsObj.onTabClick(this);">
-            <?php echo $block->__('Item Specifics'); ?>
+            <?php /* @noEscape */ echo $block->__('Item Specifics'); ?>
         </li>
         <?php endif; ?>
         <?php if ($description) : ?>
         <li data-tab="description" onclick="EbayListingPreviewItemsObj.onTabClick(this);">
-            <?php echo $block->__('Description'); ?>
+            <?php /* @noEscape */ echo $block->__('Description'); ?>
         </li>
         <?php endif; ?>
         <li data-tab="shipping" onclick="EbayListingPreviewItemsObj.onTabClick(this);">
-            <?php echo $block->__('Shipping'); ?>
+            <?php /* @noEscape */ echo $block->__('Shipping'); ?>
         </li>
         <?php if (!empty($return)) : ?>
         <li data-tab="return" onclick="EbayListingPreviewItemsObj.onTabClick(this);">
-            <?php echo $block->__('Return'); ?>
+            <?php /* @noEscape */ echo $block->__('Return'); ?>
         </li>
         <?php endif; ?>
         <?php if (!empty($otherCategories)) : ?>
         <li data-tab="other" onclick="EbayListingPreviewItemsObj.onTabClick(this);">
-            <?php echo $block->__('Other'); ?>
+            <?php /* @noEscape */ echo $block->__('Other'); ?>
         </li>
         <?php endif; ?>
     </ul>
@@ -262,7 +262,7 @@ $variations = $block->getVariations();
     <div class="description_container tab_container">
         <?php if ($description) : ?>
             <div>
-                <?php echo $description; ?>
+                <?php /* @noEscape */ echo $description; ?>
             </div>
         <?php endif; ?>
     </div>
@@ -273,15 +273,15 @@ $variations = $block->getVariations();
             <table class="field_table field_table_specifics">
                 <thead>
                 <tr>
-                    <td><?php echo $block->__('Name'); ?></td>
-                    <td><?php echo $block->__('Value'); ?></td>
+                    <td><?php /* @noEscape */ echo $block->__('Name'); ?></td>
+                    <td><?php /* @noEscape */ echo $block->__('Value'); ?></td>
                 </tr>
                 </thead>
                 <tbody>
                 <?php foreach ($specifics as $specific) : ?>
                  <tr>
-                     <td><?php echo $specific['name']; ?></td>
-                     <td><?php echo implode(', ', $specific['value']); ?></td>
+                     <td><?php /* @noEscape */ echo $specific['name']; ?></td>
+                     <td><?php /* @noEscape */ echo implode(', ', $specific['value']); ?></td>
                  </tr>
                 <?php endforeach; ?>
                 </tbody>
@@ -290,13 +290,13 @@ $variations = $block->getVariations();
     </div>
     <div class="shipping_container tab_container">
         <div>
-            <span class="field_title"><?php echo $block->__('Item Location'); ?>:</span>
-            <?php echo $block->getItemLocation(); ?>
+            <span class="field_title"><?php /* @noEscape */ echo $block->__('Item Location'); ?>:</span>
+            <?php /* @noEscape */ echo $block->getItemLocation(); ?>
         </div>
-        <div class="field_group"><?php echo $block->__('Domestic Shipping'); ?></div>
+        <div class="field_group"><?php /* @noEscape */ echo $block->__('Domestic Shipping'); ?></div>
         <div>
-            <span class="field_title"><?php echo $block->__('Type'); ?>:</span>
-            <?php echo $block->getShippingLocalType(); ?>
+            <span class="field_title"><?php /* @noEscape */ echo $block->__('Type'); ?>:</span>
+            <?php /* @noEscape */ echo $block->getShippingLocalType(); ?>
         </div>
 
         <?php
@@ -309,31 +309,31 @@ $variations = $block->getVariations();
                 <table class="field_table">
                     <thead>
                     <tr>
-                        <td class="field_table_service"><?php echo $block->__('Service'); ?></td>
-                        <td class="field_table_cost"><?php echo $block->__('Cost'); ?></td>
+                        <td class="field_table_service"><?php /* @noEscape */ echo $block->__('Service'); ?></td>
+                        <td class="field_table_cost"><?php /* @noEscape */ echo $block->__('Cost'); ?></td>
                         <?php if (!$block->isLocalShippingCalculated()) : ?>
-                            <td class="field_table_additional_cost"><?php echo $block->__('Additional Cost'); ?></td>
+                            <td class="field_table_additional_cost"><?php /* @noEscape */ echo $block->__('Additional Cost'); ?></td>
                         <?php endif; ?>
                     </tr>
                     </thead>
                     <tbody>
                     <?php foreach ($shippingLocalServices as $shippingLocalService) : ?>
                         <tr>
-                            <td><?php echo $shippingLocalService['service']; ?></td>
+                            <td><?php /* @noEscape */ echo $shippingLocalService['service']; ?></td>
                             <td>
                                 <?php
                                 if (isset($shippingLocalService['cost'])) {
                                     if ($shippingLocalService['cost'] == 0) {
-                                        echo $block->__('Free');
+                                        /* @noEscape */ echo $block->__('Free');
                                     } else {
-                                        echo $currency . $shippingLocalService['cost'];
+                                        /* @noEscape */ echo $currency . $shippingLocalService['cost'];
                                     }
                                 }
                                 if (isset($shippingLocalService['is_free'])) {
                                     if ($shippingLocalService['is_free']) {
-                                        echo $block->__('Free');
+                                        /* @noEscape */ echo $block->__('Free');
                                     } else {
-                                        echo $block->__('Calculated');
+                                        /* @noEscape */ echo $block->__('Calculated');
                                     }
                                 }
                                 ?>
@@ -343,9 +343,9 @@ $variations = $block->getVariations();
                                 <?php
                                 if (isset($shippingLocalService['cost_additional'])) {
                                     if ($shippingLocalService['cost_additional'] == 0) {
-                                        echo $block->__('Free');
+                                        /* @noEscape */ echo $block->__('Free');
                                     } else {
-                                        echo $currency . $shippingLocalService['cost_additional'];
+                                        /* @noEscape */ echo $currency . $shippingLocalService['cost_additional'];
                                     }
                                 }
                                 ?>
@@ -364,8 +364,8 @@ $variations = $block->getVariations();
         if ($dispatchTime !== null) :
             ?>
             <div>
-                <span class="field_title"><?php echo $block->__('Dispatch Time'); ?>:</span>
-                <?php echo $dispatchTime; ?>
+                <span class="field_title"><?php /* @noEscape */ echo $block->__('Dispatch Time'); ?>:</span>
+                <?php /* @noEscape */ echo $dispatchTime; ?>
             </div>
         <?php endif; ?>
 
@@ -376,8 +376,8 @@ $variations = $block->getVariations();
         if ($shippingLocalHandlingCost) :
             ?>
             <div>
-                <span class="field_title"><?php echo $block->__('Handling Cost'); ?>:</span>
-                <?php echo $currency . $shippingLocalHandlingCost; ?>
+                <span class="field_title"><?php /* @noEscape */ echo $block->__('Handling Cost'); ?>:</span>
+                <?php /* @noEscape */ echo $currency . $shippingLocalHandlingCost; ?>
             </div>
         <?php endif; ?>
 
@@ -387,20 +387,20 @@ $variations = $block->getVariations();
 
         if ($shippingInternationalType) : ?>
 
-            <div class="field_group"><?php echo $block->__('International Shipping'); ?></div>
+            <div class="field_group"><?php /* @noEscape */ echo $block->__('International Shipping'); ?></div>
 
             <?php if ($block->getShippingInternationalGlobalOffer()) : ?>
             <div>
                 <span class="field_title">
-                    <?php echo $block->__('Offer Global Shipping Program'); ?>:
+                    <?php /* @noEscape */ echo $block->__('Offer Global Shipping Program'); ?>:
                 </span>
-                <?php echo $block->__('Yes'); ?>
+                <?php /* @noEscape */ echo $block->__('Yes'); ?>
             </div>
             <?php endif; ?>
 
             <div>
-                <span class="field_title"><?php echo $block->__('Type'); ?>:</span>
-                <?php echo $shippingInternationalType ?>
+                <span class="field_title"><?php /* @noEscape */ echo $block->__('Type'); ?>:</span>
+                <?php /* @noEscape */ echo $shippingInternationalType ?>
             </div>
 
             <?php
@@ -414,12 +414,12 @@ $variations = $block->getVariations();
                     <table class="field_table">
                         <thead>
                         <tr>
-                            <td class="field_table_service"><?php echo $block->__('Service'); ?></td>
-                            <td class="field_table_cost"><?php echo $block->__('Cost'); ?></td>
+                            <td class="field_table_service"><?php /* @noEscape */ echo $block->__('Service'); ?></td>
+                            <td class="field_table_cost"><?php /* @noEscape */ echo $block->__('Cost'); ?></td>
                             <?php if (!$block->isInternationalShippingCalculated()) : ?>
-                                <td class="field_table_additional_cost"><?php echo $block->__('Additional Cost'); ?></td>
+                                <td class="field_table_additional_cost"><?php /* @noEscape */ echo $block->__('Additional Cost'); ?></td>
                             <?php endif; ?>
-                            <td class="field_table_locations"><?php echo $block->__('Locations'); ?></td>
+                            <td class="field_table_locations"><?php /* @noEscape */ echo $block->__('Locations'); ?></td>
                         </tr>
                         </thead>
                         <tbody>
@@ -428,9 +428,9 @@ $variations = $block->getVariations();
                                 <td>
                                     <?php
                                     if ($shippingInternationalService['service']) {
-                                        echo $shippingInternationalService['service'];
+                                        /* @noEscape */ echo $shippingInternationalService['service'];
                                     } else {
-                                        echo $block->__('Buyer Should Contact Seller');
+                                        /* @noEscape */ echo $block->__('Buyer Should Contact Seller');
                                     }
                                     ?>
                                 </td>
@@ -438,12 +438,12 @@ $variations = $block->getVariations();
                                     <?php
                                     if (isset($shippingInternationalService['cost'])) {
                                         if ($shippingInternationalService['cost'] == 0) {
-                                            echo $block->__('Free');
+                                            /* @noEscape */ echo $block->__('Free');
                                         } else {
-                                            echo $currency . $shippingInternationalService['cost'];
+                                            /* @noEscape */ echo $currency . $shippingInternationalService['cost'];
                                         }
                                     } else {
-                                        echo $block->__('Calculated');
+                                        /* @noEscape */ echo $block->__('Calculated');
                                     }
 
                                     ?>
@@ -453,15 +453,15 @@ $variations = $block->getVariations();
                                         <?php
                                         if (isset($shippingInternationalService['cost_additional'])) {
                                             if ($shippingInternationalService['cost_additional'] == 0) {
-                                                echo $block->__('Free');
+                                                /* @noEscape */ echo $block->__('Free');
                                             } else {
-                                                echo $currency . $shippingInternationalService['cost_additional'];
+                                                /* @noEscape */ echo $currency . $shippingInternationalService['cost_additional'];
                                             }
                                         }
                                         ?>
                                     </td>
                                 <?php endif; ?>
-                                    <td><?php echo $shippingInternationalService['locations']; ?></td>
+                                    <td><?php /* @noEscape */ echo $shippingInternationalService['locations']; ?></td>
                             </tr>
                         <?php endforeach; ?>
                         </tbody>
@@ -477,8 +477,8 @@ $variations = $block->getVariations();
         if ($shippingInternationalHandlingCost) :
             ?>
             <div>
-                <span class="field_title"><?php echo $block->__('Handling Cost'); ?>:</span>
-                <?php echo $currency . $shippingInternationalHandlingCost; ?>
+                <span class="field_title"><?php /* @noEscape */ echo $block->__('Handling Cost'); ?>:</span>
+                <?php /* @noEscape */ echo $currency . $shippingInternationalHandlingCost; ?>
             </div>
         <?php endif; ?>
 
@@ -489,11 +489,11 @@ $variations = $block->getVariations();
         if ($excludedLocations) :
             ?>
 
-            <div class="field_group"><?php echo $block->__('Excluded Locations'); ?></div>
+            <div class="field_group"><?php /* @noEscape */ echo $block->__('Excluded Locations'); ?></div>
 
             <div>
-                <span class="field_title"><?php echo $block->__('Locations'); ?>:</span>
-                <?php echo $excludedLocations; ?>
+                <span class="field_title"><?php /* @noEscape */ echo $block->__('Locations'); ?>:</span>
+                <?php /* @noEscape */ echo $excludedLocations; ?>
             </div>
         <?php endif; ?>
     </div>
@@ -501,12 +501,12 @@ $variations = $block->getVariations();
     <div class="return_container tab_container">
         <?php if (!empty($return)) : ?>
 
-            <div class="field_group"><?php echo $block->__('Domestic Returns'); ?></div>
+            <div class="field_group"><?php /* @noEscape */ echo $block->__('Domestic Returns'); ?></div>
 
             <?php if (!empty($return['returns_accepted'])): ?>
                 <div>
-                    <span class="field_title"><?php echo $block->__('Return Policy'); ?>:</span>
-                    <?php echo $return['returns_accepted']; ?>
+                    <span class="field_title"><?php /* @noEscape */ echo $block->__('Return Policy'); ?>:</span>
+                    <?php /* @noEscape */ echo $return['returns_accepted']; ?>
                 </div>
             <?php endif; ?>
 
@@ -514,22 +514,22 @@ $variations = $block->getVariations();
 
                 <?php if (!empty($return['refund'])): ?>
                     <div>
-                        <span class="field_title"><?php echo $block->__('Refund Will Be Given As'); ?>:</span>
-                        <?php echo $return['refund']; ?>
+                        <span class="field_title"><?php /* @noEscape */ echo $block->__('Refund Will Be Given As'); ?>:</span>
+                        <?php /* @noEscape */ echo $return['refund']; ?>
                     </div>
                 <?php endif; ?>
 
                 <?php if (!empty($return['returns_within'])): ?>
                     <div>
-                        <span class="field_title"><?php echo $block->__('Item Must Be Returned Within'); ?>:</span>
-                        <?php echo $return['returns_within']; ?>
+                        <span class="field_title"><?php /* @noEscape */ echo $block->__('Item Must Be Returned Within'); ?>:</span>
+                        <?php /* @noEscape */ echo $return['returns_within']; ?>
                     </div>
                 <?php endif; ?>
 
                 <?php if (!empty($return['shipping_cost_paid_by'])): ?>
                     <div>
-                        <span class="field_title"><?php echo $block->__('Return Shipping Will Be Paid By'); ?>:</span>
-                        <?php echo $return['shipping_cost_paid_by']; ?>
+                        <span class="field_title"><?php /* @noEscape */ echo $block->__('Return Shipping Will Be Paid By'); ?>:</span>
+                        <?php /* @noEscape */ echo $return['shipping_cost_paid_by']; ?>
                     </div>
                 <?php endif; ?>
 
@@ -537,12 +537,12 @@ $variations = $block->getVariations();
 
             <?php if ($this->isDomesticReturnsAccepted()) : ?>
 
-                <div class="field_group"><?php echo $block->__('International Returns'); ?></div>
+                <div class="field_group"><?php /* @noEscape */ echo $block->__('International Returns'); ?></div>
 
                 <?php if (!empty($return['international_returns_accepted'])): ?>
                     <div>
-                        <span class="field_title"><?php echo $block->__('Return  Policy'); ?>:</span>
-                        <?php echo $return['international_returns_accepted']; ?>
+                        <span class="field_title"><?php /* @noEscape */ echo $block->__('Return  Policy'); ?>:</span>
+                        <?php /* @noEscape */ echo $return['international_returns_accepted']; ?>
                     </div>
                 <?php endif; ?>
 
@@ -550,22 +550,22 @@ $variations = $block->getVariations();
 
                     <?php if (!empty($return['international_refund'])): ?>
                         <div>
-                            <span class="field_title"><?php echo $block->__('Refund Will Be Given As'); ?>:</span>
-                            <?php echo $return['international_refund']; ?>
+                            <span class="field_title"><?php /* @noEscape */ echo $block->__('Refund Will Be Given As'); ?>:</span>
+                            <?php /* @noEscape */ echo $return['international_refund']; ?>
                         </div>
                     <?php endif; ?>
 
                     <?php if (!empty($return['international_returns_within'])): ?>
                         <div>
-                            <span class="field_title"><?php echo $block->__('Item Must Be Returned Within'); ?>:</span>
-                            <?php echo $return['international_returns_within']; ?>
+                            <span class="field_title"><?php /* @noEscape */ echo $block->__('Item Must Be Returned Within'); ?>:</span>
+                            <?php /* @noEscape */ echo $return['international_returns_within']; ?>
                         </div>
                     <?php endif; ?>
 
                     <?php if (!empty($return['international_shipping_cost_paid_by'])): ?>
                         <div>
-                            <span class="field_title"><?php echo $block->__('Return Shipping Will Be Paid By'); ?>:</span>
-                            <?php echo $return['international_shipping_cost_paid_by']; ?>
+                            <span class="field_title"><?php /* @noEscape */ echo $block->__('Return Shipping Will Be Paid By'); ?>:</span>
+                            <?php /* @noEscape */ echo $return['international_shipping_cost_paid_by']; ?>
                         </div>
                     <?php endif; ?>
 
@@ -573,11 +573,11 @@ $variations = $block->getVariations();
 
                 <?php if(!empty($return['description'])): ?>
 
-                    <div class="field_group"><?php echo $block->__('Additional'); ?></div>
+                    <div class="field_group"><?php /* @noEscape */ echo $block->__('Additional'); ?></div>
 
                     <div>
-                        <span class="field_title"><?php echo $block->__('Description'); ?>:</span>
-                        <?php echo $return['description']; ?>
+                        <span class="field_title"><?php /* @noEscape */ echo $block->__('Description'); ?>:</span>
+                        <?php /* @noEscape */ echo $return['description']; ?>
                     </div>
 
                 <?php endif; ?>
@@ -590,30 +590,30 @@ $variations = $block->getVariations();
 
     <div class="other_container tab_container">
         <?php if (isset($otherCategories['secondary'])) : ?>
-            <div class="field_group"><?php echo $block->__('eBay Catalog Categories'); ?></div>
+            <div class="field_group"><?php /* @noEscape */ echo $block->__('eBay Catalog Categories'); ?></div>
             <div>
-                <span class="field_title"><?php echo $block->__('Secondary Category'); ?>:</span>
+                <span class="field_title"><?php /* @noEscape */ echo $block->__('Secondary Category'); ?>:</span>
                 <span class="category_breadcrumbs_black">
-                    <?php echo $otherCategories['secondary']; ?>
+                    <?php /* @noEscape */ echo $otherCategories['secondary']; ?>
                 </span>
             </div>
         <?php endif; ?>
         <?php if (isset($otherCategories['primary_store']) || isset($otherCategories['secondary_store'])) : ?>
-            <div class="field_group"><?php echo $block->__('Store Catalog'); ?></div>
+            <div class="field_group"><?php /* @noEscape */ echo $block->__('Store Catalog'); ?></div>
         <?php endif; ?>
         <?php if (isset($otherCategories['primary_store'])) : ?>
             <div>
-                <span class="field_title"><?php echo $block->__('Primary Category'); ?>:</span>
+                <span class="field_title"><?php /* @noEscape */ echo $block->__('Primary Category'); ?>:</span>
                 <span class="category_breadcrumbs_black">
-                    <?php echo $otherCategories['primary_store']; ?>
+                    <?php /* @noEscape */ echo $otherCategories['primary_store']; ?>
                 </span>
             </div>
         <?php endif; ?>
         <?php if (isset($otherCategories['secondary_store'])) : ?>
             <div>
-                <span class="field_title"><?php echo $block->__('Secondary Category'); ?>:</span>
+                <span class="field_title"><?php /* @noEscape */ echo $block->__('Secondary Category'); ?>:</span>
                 <span class="category_breadcrumbs_black">
-                    <?php echo $otherCategories['secondary_store']; ?>
+                    <?php /* @noEscape */ echo $otherCategories['secondary_store']; ?>
                 </span>
             </div>
         <?php endif; ?>

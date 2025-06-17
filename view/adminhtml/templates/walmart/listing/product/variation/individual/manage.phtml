@@ -13,7 +13,7 @@
 
 <div id="variation_individual_manage_popup">
 
-    <?php echo $block->createBlock('HelpBlock')->setData([
+    <?php /* @noEscape */ echo $block->createBlock('HelpBlock')->setData([
         'style' => 'margin-bottom: 15px',
         'content' => $block->__(
             'On this Tab the specific Magento Variation can be chosen for selling on %component% as an Individual Product.
@@ -30,9 +30,9 @@
 
     <div style="margin-bottom: 10px">
 
-        <?php echo $block->getChildHtml('variation_manage_generate_all'); ?>
+        <?php /* @noEscape */ echo $block->getChildHtml('variation_manage_generate_all'); ?>
         &nbsp;
-        <?php echo $block->getChildHtml('variation_manage_generate_unique'); ?>
+        <?php /* @noEscape */ echo $block->getChildHtml('variation_manage_generate_unique'); ?>
 
     </div>
 
@@ -44,8 +44,8 @@
                     <tr class="headings">
 
                         <?php foreach ($block->getMagentoVariationsSets() as $attribute => $values) { ?>
-                            <th class="data-grid-th" style="width: <?php echo round(97/count($block->getMagentoVariationsSets()));?>%" attribute="<?php echo $attribute; ?>">
-                                <?php echo $attribute; ?>
+                            <th class="data-grid-th" style="width: <?php /* @noEscape */ echo round(97/count($block->getMagentoVariationsSets()));?>%" attribute="<?php /* @noEscape */ echo $attribute; ?>">
+                                <?php /* @noEscape */ echo $attribute; ?>
                                 <span class="required">*</span>
                             </th>
 
@@ -60,7 +60,7 @@
                 <tfoot>
                     <tr>
                         <td colspan="<?php echo count($block->getMagentoVariationsSets()) + 1;?>" class="a-right">
-                            <?php echo $block->getChildHtml('add_more_variation_button'); ?>
+                            <?php /* @noEscape */ echo $block->getChildHtml('add_more_variation_button'); ?>
                         </td>
                     </tr>
                 </tfoot>
@@ -94,8 +94,8 @@
     <script type="text/javascript">
 
         WalmartListingProductVariationObj.setNeededVariationData(
-            <?php echo json_encode(array_keys($block->getMagentoVariationsSets())); ?>,
-            <?php echo json_encode($block->getMagentoVariationsTree()); ?>
+            <?php /* @noEscape */ echo json_encode(array_keys($block->getMagentoVariationsSets())); ?>,
+            <?php /* @noEscape */ echo json_encode($block->getMagentoVariationsTree()); ?>
         );
         WalmartListingProductVariationObj.managePopupInit();
 

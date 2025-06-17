@@ -19,9 +19,9 @@
         <?php if ($block->isChecked()) :
             ?>checked="checked"<?php
         endif; ?>
-        onclick="setLocation('<?php echo $block->getFilterUrl(); ?>');"
+        onclick="setLocation('<?php /* @noEscape */ echo $block->getFilterUrl(); ?>');"
     >
     <label for="switcher_invoice_creditmemo_filter" class="admin__field-label">
-        <span><?php echo $block->__('No Invoice/CreditMemo Sent'); ?></span>
+        <span><?php /* @noEscape */ echo $block->__('No Invoice/CreditMemo Sent'); ?></span>
     </label>
 </div>

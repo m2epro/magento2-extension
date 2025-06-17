@@ -9,23 +9,23 @@
 
     <tr>
         <td class="label">
-            <label><?= __('Current Version'); ?>:</label>
+            <label><?= /* @noEscape */ __('Current Version'); ?>:</label>
         </td>
-        <td class="value"><?= $block->currentVersion; ?></td>
+        <td class="value"><?= /* @noEscape */ $block->currentVersion; ?></td>
     </tr>
 
     <?php if ($block->latestPublicVersion) : ?>
     <tr>
         <td class="label">
-            <label><?= __('Latest Public Version'); ?>:</label>
+            <label><?= /* @noEscape */ __('Latest Public Version'); ?>:</label>
         </td>
         <td class="value">
-            <?= $block->latestPublicVersion; ?>
+            <?= /* @noEscape */ $block->latestPublicVersion; ?>
             <?php $releaseNotesUrl = $block
                 ->getHelper('Module_Support')
                 ->getDocumentationArticleUrl("help/m2/release-notes-policy")
             ?>
-            <a href="<?= $releaseNotesUrl; ?>" target="_blank"><?= __('[release notes]'); ?></a>
+            <a href="<?= /* @noEscape */ $releaseNotesUrl; ?>" target="_blank"><?= /* @noEscape */ __('[release notes]'); ?></a>
         </td>
     </tr>
     <?php endif; ?>
@@ -33,14 +33,14 @@
     <?php if (!$block->getData('is_support_mode')) : ?>
     <tr>
         <td class="label">
-            <label><?= __('History'); ?>:</label>
+            <label><?= /* @noEscape */ __('History'); ?>:</label>
         </td>
         <td class="value">
             <?php $showHistoryUrl = $block->getUrl(
                 '*/controlPanel_database/manageTable',
                 ['table' => 'm2epro_setup']
             ); ?>
-            <a target="_blank" href="<?= $showHistoryUrl; ?>"><?= __('show'); ?></a>
+            <a target="_blank" href="<?= /* @noEscape */ $showHistoryUrl; ?>"><?= /* @noEscape */ __('show'); ?></a>
         </td>
     </tr>
     <?php endif; ?>

@@ -14,10 +14,10 @@ class FixMistakenConfigs extends AbstractFeature
 {
     public function execute()
     {
-       $configKeys = ['is_disabled', 'environment'];
-       foreach ($configKeys as $configKey) {
-           $this->fixMistakenConfig($configKey);
-       }
+        $configKeys = ['is_disabled', 'environment'];
+        foreach ($configKeys as $configKey) {
+            $this->fixMistakenConfig($configKey);
+        }
     }
 
     private function fixMistakenConfig($configKey)

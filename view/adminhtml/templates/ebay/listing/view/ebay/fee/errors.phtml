@@ -27,9 +27,9 @@ foreach ($errors as $error) {
 
 <div class="entry-edit" style="padding-top: 10px;">
 
-    <div><?php echo $block->__('Fee cannot be estimated because of next error(s)') ?>:</div>
+    <div><?php /* @noEscape */ echo $block->__('Fee cannot be estimated because of next error(s)') ?>:</div>
 
     <div style="padding-top: 10px;">
-        <?php echo $messages->toHtml(); ?>
+        <?php /* @noEscape */ echo $messages->toHtml(); ?>
     </div>
 </div>

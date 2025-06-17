@@ -58,7 +58,6 @@ SQL
         $originalVariationsIds   = array(); // will be updated
 
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-
             $idsForRemove = explode(',', $row['duplicated_variations_ids']);
             $originalVariationsIds[] = array_shift($idsForRemove);
 
@@ -66,7 +65,6 @@ SQL
         }
 
         foreach (array_chunk($originalVariationsIds, 1000) as $originalVariationsIdsPart) {
-
             $originalVariationsIdsPart = implode(',', $originalVariationsIdsPart);
             $this->getConnection()->query(<<<SQL
 UPDATE `{$ebayListingProductVariation}`
@@ -77,7 +75,6 @@ SQL
         }
 
         foreach (array_chunk($duplicatedVariationsIds, 1000) as $duplicatedVariationsIdsPart) {
-
             $duplicatedVariationsIdsPart = implode(',', $duplicatedVariationsIdsPart);
             $this->getConnection()->query(<<<SQL
 DELETE `lpv`, `elpv`

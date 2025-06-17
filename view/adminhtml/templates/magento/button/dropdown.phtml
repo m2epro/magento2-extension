@@ -11,27 +11,27 @@
 /** @var $block \Magento\Backend\Block\Widget\Button\SplitButton */
 ?>
 
-<div <?php echo $block->getAttributesHtml(); ?>>
+<div <?php /* @noEscape */ echo $block->getAttributesHtml(); ?>>
     <?php if ($block->hasSplit()): ?>
-        <button <?php echo $block->getToggleAttributesHtml() ?> style="position: static; padding-left: 2rem;">
+        <button <?php /* @noEscape */ echo $block->getToggleAttributesHtml() ?> style="position: static; padding-left: 2rem;">
             <span style="position: static;
                          display: inline;
                          visibility: visible;">
-                <?php echo $block->escapeHtml($block->getLabel()); ?>
+                <?php /* @noEscape */ echo $block->escapeHtml($block->getLabel()); ?>
             </span>
         </button>
 
         <?php if (!$block->getDisabled()): ?>
-            <ul class="dropdown-menu" <?php /* @escapeNotVerified */ echo $block->getUiId("dropdown-menu"); ?>>
+            <ul class="dropdown-menu" <?php /* @noEscape */ echo $block->getUiId("dropdown-menu"); ?>>
                 <?php foreach ($block->getOptions() as $key => $option): ?>
                     <li>
-                    <span <?php echo $block->getOptionAttributesHtml($key, $option); ?>>
-                        <?php echo $block->escapeHtml($option['label']); ?>
+                    <span <?php /* @noEscape */ echo $block->getOptionAttributesHtml($key, $option); ?>>
+                        <?php /* @noEscape */ echo $block->escapeHtml($option['label']); ?>
                     </span>
                         <?php if (isset($option['hint'])): ?>
-                            <div class="tooltip" <?php /* @escapeNotVerified */ echo $block->getUiId('item', $key, 'tooltip'); ?>>
-                                <a href="<?php echo $block->escapeHtml($option['hint']['href']) ?>" class="help">
-                                    <?php echo $block->escapeHtml($option['hint']['label']) ?>
+                            <div class="tooltip" <?php /* @noEscape */ echo $block->getUiId('item', $key, 'tooltip'); ?>>
+                                <a href="<?php /* @noEscape */ echo $block->escapeHtml($option['hint']['href']) ?>" class="help">
+                                    <?php /* @noEscape */ echo $block->escapeHtml($option['hint']['label']) ?>
                                 </a>
                             </div>
                         <?php endif; ?>

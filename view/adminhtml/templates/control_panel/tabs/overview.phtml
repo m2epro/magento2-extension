@@ -22,12 +22,12 @@
     <div class="fieldset-wrapper" id="magento_block_control_panel_info_module">
 
         <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
-            <h4><?php echo $block->__('Information'); ?></h4>
+            <h4><?php /* @noEscape */ echo $block->__('Information'); ?></h4>
         </div>
 
         <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
             <div class="hor-scroll">
-                <?php echo $block->getChildHtml('actual_info') ?>
+                <?php /* @noEscape */ echo $block->getChildHtml('actual_info') ?>
             </div>
         </div>
 
@@ -36,12 +36,12 @@
     <div class="fieldset-wrapper" id="magento_block_control_panel_info_location">
 
         <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
-            <h4><?php echo $block->__('License'); ?></h4>
+            <h4><?php /* @noEscape */ echo $block->__('License'); ?></h4>
         </div>
 
         <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
             <div class="hor-scroll">
-                <?php echo $block->getChildHtml('license_info') ?>
+                <?php /* @noEscape */ echo $block->getChildHtml('license_info') ?>
             </div>
         </div>
 
@@ -52,12 +52,12 @@
     <div class="fieldset-wrapper" id="magento_block_control_panel_database_general">
 
         <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
-            <h4><?php echo $block->__('Database (general)'); ?></h4>
+            <h4><?php /* @noEscape */ echo $block->__('Database (general)'); ?></h4>
         </div>
 
         <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
             <div class="hor-scroll">
-                <?php echo $block->getChildHtml('database_general') ?>
+                <?php /* @noEscape */ echo $block->getChildHtml('database_general') ?>
             </div>
         </div>
 
@@ -69,12 +69,12 @@
     <div class="fieldset-wrapper" id="magento_block_control_panel_database_components">
 
         <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
-            <h4><?php echo $block->__('Database (components)'); ?></h4>
+            <h4><?php /* @noEscape */ echo $block->__('Database (components)'); ?></h4>
         </div>
 
         <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
             <div class="hor-scroll">
-                <?php echo $block->getChildHtml('database_components') ?>
+                <?php /* @noEscape */ echo $block->getChildHtml('database_components') ?>
             </div>
         </div>
 
@@ -87,12 +87,12 @@
     <div class="fieldset-wrapper" id="magento_block_control_panel_info_cron">
 
         <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
-            <h4><?php echo $block->__('Cron'); ?></h4>
+            <h4><?php /* @noEscape */ echo $block->__('Cron'); ?></h4>
         </div>
 
         <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
             <div class="hor-scroll">
-                <?php echo $block->getChildHtml('cron_info') ?>
+                <?php /* @noEscape */ echo $block->getChildHtml('cron_info') ?>
             </div>
         </div>
 
@@ -101,12 +101,12 @@
     <div class="fieldset-wrapper" id="magento_block_control_panel_info_cron">
 
         <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
-            <h4><?php echo $block->__('Version Info'); ?></h4>
+            <h4><?php /* @noEscape */ echo $block->__('Version Info'); ?></h4>
         </div>
 
         <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
             <div class="hor-scroll">
-                <?php echo $block->getChildHtml('version_info') ?>
+                <?php /* @noEscape */ echo $block->getChildHtml('version_info') ?>
             </div>
         </div>
 

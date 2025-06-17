@@ -12,8 +12,8 @@
 ?>
 
 <div id="mapping_pop_up_content">
-    <?php echo $block->getChildHtml('product_mapping_help_block'); ?>
+    <?php /* @noEscape */ echo $block->getChildHtml('product_mapping_help_block'); ?>
     <div id="help_grid" style="margin: 0 auto; padding-top: 10px;">
-        <?php echo $block->getChildHtml('product_mapping_grid') ?>
+        <?php /* @noEscape */ echo $block->getChildHtml('product_mapping_grid') ?>
     </div>
 </div>

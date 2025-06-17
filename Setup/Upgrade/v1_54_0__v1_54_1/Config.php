@@ -11,4 +11,3 @@ class Config extends AbstractConfig
         return [];
     }
 }
-

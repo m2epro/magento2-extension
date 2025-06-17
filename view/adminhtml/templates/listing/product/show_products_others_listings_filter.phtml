@@ -25,7 +25,7 @@
 
 <div class="switcher m2epro-box-style">
     <?php foreach ($block->getAllFilters() as $filter) : ?>
-        <?= $block->renderFilter($filter) ?>
+        <?= /* @noEscape */ $block->renderFilter($filter) ?>
     <?php endforeach; ?>
 </div>
 

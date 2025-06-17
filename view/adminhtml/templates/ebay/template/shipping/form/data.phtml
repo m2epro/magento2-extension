@@ -14,9 +14,9 @@ use Ess\M2ePro\Model\Ebay\Template\Shipping\Service;
 ?>
 
 <div class="entry-edit form-inline">
-    <?php echo $block->getFormHtml();?>
+    <?php /* @noEscape */ echo $block->getFormHtml();?>
 </div>
-<?php echo $block->getChildHtml('form_after');?>
+<?php /* @noEscape */ echo $block->getChildHtml('form_after');?>
 
 <table id="block_listing_template_shipping_table_row_template_table" style="display: none;">
 
@@ -30,10 +30,10 @@ use Ess\M2ePro\Model\Ebay\Template\Shipping\Service;
             <td style="text-align: center; padding-bottom: 3rem">
                 <input name="shipping[shipping_type][%i%]" value="%type%" type="hidden" />
                 <select style="width: 100%" name="shipping[cost_mode][%i%]" class="cost-mode select admin__control-select" onchange="EbayTemplateShippingObj.serviceCostModeChange.call(this)">
-                    <option value="<?php echo Service::COST_MODE_FREE ?>" class="shipping-mode-option-free"><?php echo $block->__('Free'); ?></option>
-                    <option value="<?php echo Service::COST_MODE_CUSTOM_VALUE ?>" class="shipping-mode-option-notcalc"><?php echo $block->__('Custom Value'); ?></option>
-                    <option value="<?php echo Service::COST_MODE_CUSTOM_ATTRIBUTE ?>" class="shipping-mode-option-notcalc"><?php echo $block->__('Custom Attribute'); ?></option>
-                    <option value="<?php echo Service::COST_MODE_CALCULATED ?>" class="shipping-mode-option-calc"><?php echo $block->__('Calculated'); ?></option>
+                    <option value="<?php /* @noEscape */ echo Service::COST_MODE_FREE ?>" class="shipping-mode-option-free"><?php /* @noEscape */ echo $block->__('Free'); ?></option>
+                    <option value="<?php /* @noEscape */ echo Service::COST_MODE_CUSTOM_VALUE ?>" class="shipping-mode-option-notcalc"><?php /* @noEscape */ echo $block->__('Custom Value'); ?></option>
+                    <option value="<?php /* @noEscape */ echo Service::COST_MODE_CUSTOM_ATTRIBUTE ?>" class="shipping-mode-option-notcalc"><?php /* @noEscape */ echo $block->__('Custom Attribute'); ?></option>
+                    <option value="<?php /* @noEscape */ echo Service::COST_MODE_CALCULATED ?>" class="shipping-mode-option-calc"><?php /* @noEscape */ echo $block->__('Calculated'); ?></option>
                 </select>
             </td>
             <td style="text-align: center; padding-bottom: 3rem">
@@ -49,13 +49,13 @@ use Ess\M2ePro\Model\Ebay\Template\Shipping\Service;
                 </span>
             </td>
             <td style="text-align: center; padding-bottom: 3rem">
-                <?php echo $block->marketplaceData['currency'] ?>
+                <?php /* @noEscape */ echo $block->marketplaceData['currency'] ?>
             </td>
             <td style="text-align: center; padding-bottom: 3rem">
                 <input name="shipping[shipping_priority][%i%]" type="text" class="shipping-priority input-text admin__control-text a-right" />
             </td>
             <td style="text-align: center; padding-bottom: 3rem">
-                <?php echo $block->getChildHtml('remove_shipping_method_button'); ?>
+                <?php /* @noEscape */ echo $block->getChildHtml('remove_shipping_method_button'); ?>
             </td>
         </tr>
 
@@ -87,12 +87,12 @@ use Ess\M2ePro\Model\Ebay\Template\Shipping\Service;
 
             <div id="excluded_locations_domestic">
                 <?php if (!empty($block->marketplaceData['locations_exclude']['domestic'])) : ?>
-                    <h4><?php echo $block->__('Domestic'); ?></h4>
+                    <h4><?php /* @noEscape */ echo $block->__('Domestic'); ?></h4>
 
                     <?php foreach ($block->marketplaceData['locations_exclude']['domestic'] as $locationCode => $locationTitle) : ?>
                         <div class="checkbox_container" style="width: 200px;">
-                            <input id="excluded_location_domestic_<?php echo $locationCode; ?>" class="excluded_location" type="checkbox" value="<?php echo $locationCode; ?>" location_type="domectic" />
-                            <label for="excluded_location_domestic_<?php echo $locationCode; ?>" class="admin__field-label"><span><?php echo $locationTitle; ?></span></label>
+                            <input id="excluded_location_domestic_<?php /* @noEscape */ echo $locationCode; ?>" class="excluded_location" type="checkbox" value="<?php /* @noEscape */ echo $locationCode; ?>" location_type="domectic" />
+                            <label for="excluded_location_domestic_<?php /* @noEscape */ echo $locationCode; ?>" class="admin__field-label"><span><?php /* @noEscape */ echo $locationTitle; ?></span></label>
                         </div>
                     <?php endforeach; ?>
 
@@ -102,13 +102,13 @@ use Ess\M2ePro\Model\Ebay\Template\Shipping\Service;
             <div id="excluded_locations_international">
                 <?php if (!empty($block->marketplaceData['locations_exclude']['international'])) : ?>
 
-                    <h4><?php echo $block->__('International'); ?></h4>
+                    <h4><?php /* @noEscape */ echo $block->__('International'); ?></h4>
 
                     <div id="excluded_locations_international_regions">
                         <?php foreach ($block->marketplaceData['locations_exclude']['international'] as $regionCode => $regionTitle) : ?>
-                            <div class="checkbox_container excluded_location_region_title_container" style="display: block;" region="<?php echo $regionCode; ?>">
-                                <input id="excluded_location_international_<?php echo $regionCode; ?>" class="excluded_location_region" type="checkbox" value="<?php echo $regionCode; ?>" location_type="international" />
-                                <label for="excluded_location_international_<?php echo $regionCode; ?>" class="admin__field-label"><span><?php echo $regionTitle; ?></span></label>
+                            <div class="checkbox_container excluded_location_region_title_container" style="display: block;" region="<?php /* @noEscape */ echo $regionCode; ?>">
+                                <input id="excluded_location_international_<?php /* @noEscape */ echo $regionCode; ?>" class="excluded_location_region" type="checkbox" value="<?php /* @noEscape */ echo $regionCode; ?>" location_type="international" />
+                                <label for="excluded_location_international_<?php /* @noEscape */ echo $regionCode; ?>" class="admin__field-label"><span><?php /* @noEscape */ echo $regionTitle; ?></span></label>
                                 <span style="display: none;">(selected)</span>
                             </div>
                         <?php endforeach; ?>
@@ -117,11 +117,11 @@ use Ess\M2ePro\Model\Ebay\Template\Shipping\Service;
                     <div id="excluded_locations_international_countries_container">
                         <?php foreach ($block->marketplaceData['locations_exclude']['international'] as $regionCode => $regionTitle) : ?>
                             <?php if (isset($block->marketplaceData['locations_exclude'][$regionCode])) : ?>
-                                <div class="excluded_location_region_container" id="excluded_location_region_container_<?php echo $regionCode; ?>" style="display: none;">
+                                <div class="excluded_location_region_container" id="excluded_location_region_container_<?php /* @noEscape */ echo $regionCode; ?>" style="display: none;">
                                     <?php foreach ($block->marketplaceData['locations_exclude'][$regionCode] as $locationCode => $locationTitle) : ?>
                                         <div class="checkbox_container" style="display: block;">
-                                            <input id="excluded_location_international_<?php echo $locationCode; ?>" class="excluded_location" type="checkbox" value="<?php echo $locationCode; ?>" region="<?php echo $regionCode; ?>" location_type="international" />
-                                            <label for="excluded_location_international_<?php echo $locationCode; ?>" class="admin__field-label"><span><?php echo $locationTitle; ?></span></label>
+                                            <input id="excluded_location_international_<?php /* @noEscape */ echo $locationCode; ?>" class="excluded_location" type="checkbox" value="<?php /* @noEscape */ echo $locationCode; ?>" region="<?php /* @noEscape */ echo $regionCode; ?>" location_type="international" />
+                                            <label for="excluded_location_international_<?php /* @noEscape */ echo $locationCode; ?>" class="admin__field-label"><span><?php /* @noEscape */ echo $locationTitle; ?></span></label>
                                         </div>
                                     <?php endforeach; ?>
                                 </div>
@@ -137,12 +137,12 @@ use Ess\M2ePro\Model\Ebay\Template\Shipping\Service;
             <div id="excluded_locations_additional">
                 <?php if (!empty($block->marketplaceData['locations_exclude']['additional'])) : ?>
 
-                    <h4><?php echo $block->__('Additional'); ?></h4>
+                    <h4><?php /* @noEscape */ echo $block->__('Additional'); ?></h4>
 
                     <?php foreach ($block->marketplaceData['locations_exclude']['additional'] as $locationCode => $locationTitle) : ?>
                         <div class="checkbox_container" style="width: 145px;">
-                            <input id="excluded_location_additional_<?php echo $locationCode; ?>" class="excluded_location" type="checkbox" value="<?php echo $locationCode; ?>" location_type="additional" />
-                            <label for="excluded_location_additional_<?php echo $locationCode; ?>" class="admin__field-label"><span><?php echo $locationTitle; ?></span></label>
+                            <input id="excluded_location_additional_<?php /* @noEscape */ echo $locationCode; ?>" class="excluded_location" type="checkbox" value="<?php /* @noEscape */ echo $locationCode; ?>" location_type="additional" />
+                            <label for="excluded_location_additional_<?php /* @noEscape */ echo $locationCode; ?>" class="admin__field-label"><span><?php /* @noEscape */ echo $locationTitle; ?></span></label>
                         </div>
                     <?php endforeach; ?>
 
@@ -153,7 +153,7 @@ use Ess\M2ePro\Model\Ebay\Template\Shipping\Service;
                 <p style="margin: 0;">
                     <span id="excluded_locations_popup_titles"></span>
                     <span id="excluded_locations_reset_link" style="display: none; float:right; padding-left: 10px;">
-                        <a href="javascript:void(0);" onclick="EbayTemplateShippingExcludedLocationsObj.resetPopup();"><?php echo $block->__('Reset'); ?></a>
+                        <a href="javascript:void(0);" onclick="EbayTemplateShippingExcludedLocationsObj.resetPopup();"><?php /* @noEscape */ echo $block->__('Reset'); ?></a>
                     </span>
                     <span style="display: block; clear: both;"></span>
                 </p>

@@ -31,14 +31,14 @@
 </style>
 
 <div class="admin__control-table-wrapper">
-    <input type="hidden" id="sample_magento_order_id" value="<?php echo $block->getSampleMagentoOrderId(); ?>" />
+    <input type="hidden" id="sample_magento_order_id" value="<?php /* @noEscape */ echo $block->getSampleMagentoOrderId(); ?>" />
     <input type="hidden" id="sample_walmart_order_id" value="141-4423723-6495633" />
-    <span class="prefix-label"><?php echo $block->__('Prefix for magento order number'); ?></span>
+    <span class="prefix-label"><?php /* @noEscape */ echo $block->__('Prefix for magento order number'); ?></span>
     <table class="admin__control-table">
         <thead>
         <tr>
-            <th class="label-wrapper"><?php echo $block->__('General'); ?></th>
-            <th class="label-wrapper"><?php echo $block->__('WFS'); ?></th>
+            <th class="label-wrapper"><?php /* @noEscape */ echo $block->__('General'); ?></th>
+            <th class="label-wrapper"><?php /* @noEscape */ echo $block->__('WFS'); ?></th>
         </tr>
         </thead>
         <tbody>
@@ -48,7 +48,7 @@
                     id="magento_orders_number_prefix_prefix"
                     class="input-text" type="text"
                     name="magento_orders_settings[number][prefix][prefix]"
-                    value="<?php echo $block->getMagentoOrderPrefix(); ?>" />
+                    value="<?php /* @noEscape */ echo $block->getMagentoOrderPrefix(); ?>" />
                 <div class="note admin__field-note">e.g. <span id="order_number_example_container_prefix"></span></div>
             </td>
             <td class="prefix-column-wrapper">
@@ -56,7 +56,7 @@
                     id="magento_orders_number_prefix_wfs"
                     class="input-text" type="text"
                     name="magento_orders_settings[number][prefix][wfs-prefix]"
-                    value="<?php echo $block->getMagentoOrderPrefixWFS(); ?>" />
+                    value="<?php /* @noEscape */ echo $block->getMagentoOrderPrefixWFS(); ?>" />
                 <div class="note admin__field-note">e.g. <span id="order_number_example_container_wfs"></span></div>
             </td>
         </tr>

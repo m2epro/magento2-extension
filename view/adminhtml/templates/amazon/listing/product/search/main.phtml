@@ -23,14 +23,14 @@
         </div>
 
         <div id="productSearch_form" style="float:none; margin-bottom:30px;" >
-            <label for="query"><?php echo $block->__('Enter ASIN, ISBN, UPC, or EAN'); ?></label>
+            <label for="query"><?php /* @noEscape */ echo $block->__('Enter ASIN, ISBN, UPC, or EAN'); ?></label>
             <input id="query" type="text" name="query" class="input-text admin__control-text" style="margin: 0 10px 0 10px; width: 300px" />
 
-            <?php echo $block->getChildHtml('productSearch_submit_button'); ?>&nbsp;&nbsp;
-            <a href="javascript:void(0)" id="productSearch_reset_button"><?php echo $block->__('Reset'); ?></a>
+            <?php /* @noEscape */ echo $block->getChildHtml('productSearch_submit_button'); ?>&nbsp;&nbsp;
+            <a href="javascript:void(0)" id="productSearch_reset_button"><?php /* @noEscape */ echo $block->__('Reset'); ?></a>
         </div>
         <div id="suggested_asin_grid_help_block" style="display: none">
-            <?php echo $block->createBlock('HelpBlock')->setData([
+            <?php /* @noEscape */ echo $block->createBlock('HelpBlock')->setData([
                 'style' => 'margin-bottom: 10px;',
                 'no_collapse' => true,
                 'no_hide' => true,

@@ -6,7 +6,7 @@
 
 <div class="wizard-note">
     <div>
-        <?= __("
+        <?= /* @noEscape */ __("
             This M2E Pro version introduces important changes related to Walmart’s new Item Spec 5.0.
             <br><br>
 
@@ -23,14 +23,13 @@
 
             Please note, that this step is crucial for the seamless operation of your Walmart listings. By pressing OK, the system will automatically update the necessary data.
             <br><br>
-        ")
-        ?>
+        ") ?>
     </div>
 
-    <button title="<?= __('Ok') ?>"
+    <button title="<?= /* @noEscape */ __('Ok') ?>"
             type="button"
             class="action-default scalable action primary"
-            onclick="setLocation('<?= $block->getSyncUrl() ?>')">
-        <span><?= __('OK') ?></span>
+            onclick="setLocation('<?= /* @noEscape */ $block->getSyncUrl() ?>')">
+        <span><?= /* @noEscape */ __('OK') ?></span>
     </button>
 </div>

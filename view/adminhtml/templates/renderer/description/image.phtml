@@ -14,24 +14,24 @@ $data = $block->getData();
 
 <style>
 
-    #m2e-description-image-<?php echo $block->getImageId(); ?> {
+    #m2e-description-image-<?php /* @noEscape */ echo $block->getImageId(); ?> {
         <?php if ($data['width'] != 0) :
-            echo "width: {$data['width']}px;";
+           /* @noEscape */ echo "width: {$data['width']}px;";
         endif; ?>
         <?php if ($data['height'] != 0) :
-            echo "height: {$data['height']}px;";
+           /* @noEscape */ echo "height: {$data['height']}px;";
         endif; ?>
         <?php if ($data['margin'] != 0) :
-            echo "margin-bottom: {$data['margin']}px; margin-right: {$data['margin']}px;";
+           /* @noEscape */ echo "margin-bottom: {$data['margin']}px; margin-right: {$data['margin']}px;";
         endif; ?>
     }
 
 </style>
 
-<img src="<?php echo $data['src']; ?>"
+<img src="<?php /* @noEscape */ echo $data['src']; ?>"
      border="0"
         <?php if ($data['watermark'] != 0) :
             echo ' m2e_watermark="1"';
         endif; ?>
-     id="m2e-description-image-<?php echo $block->getImageId(); ?>"
+     id="m2e-description-image-<?php /* @noEscape */ echo $block->getImageId(); ?>"
 />

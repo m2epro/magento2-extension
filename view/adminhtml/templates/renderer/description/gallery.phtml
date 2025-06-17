@@ -10,23 +10,23 @@ $data = $block->getData();
 <?php if ($block->isModeGallery()) : ?>
     <style>
 
-        #m2e-gallery-<?php echo $block->getGalleryId(); ?> {
+        #m2e-gallery-<?php /* @noEscape */ echo $block->getGalleryId(); ?> {
             display: block;
             text-align: center;
         <?php if ($data['width'] != 0) :
-            echo "width: {$data['width']}px;";
+           /* @noEscape */ echo "width: {$data['width']}px;";
         endif; ?>
         <?php if ($data['height'] != 0) :
-            echo "height: {$data['height']}px;";
+           /* @noEscape */ echo "height: {$data['height']}px;";
         endif; ?>
         }
 
-        #m2e-gallery-<?php echo $block->getGalleryId(); ?> .full-image {
+        #m2e-gallery-<?php /* @noEscape */ echo $block->getGalleryId(); ?> .full-image {
         <?php if ($data['width'] != 0) :
-            echo "width: {$data['width']}px;";
+           /* @noEscape */ echo "width: {$data['width']}px;";
         endif; ?>
         <?php if ($data['height'] != 0) :
-            echo "height: {$data['height']}px;";
+           /* @noEscape */ echo "height: {$data['height']}px;";
         endif; ?>
             display: none;
         }
@@ -50,7 +50,7 @@ $data = $block->getData();
             cursor: pointer;
             opacity: 0.3;
         }
-        #m2e-gallery-<?php echo $block->getGalleryId(); ?> .current > input:checked + img {
+        #m2e-gallery-<?php /* @noEscape */ echo $block->getGalleryId(); ?> .current > input:checked + img {
             display: inline-block;
         }
         .m2e-gallery .current {
@@ -82,33 +82,33 @@ $data = $block->getData();
 
     <?php $galleryClass = $block->isLayoutColumnMode() ? 'vertical' : ''; ?>
 
-    <div class="m2e-gallery" id="m2e-gallery-<?php echo $block->getGalleryId(); ?>">
+    <div class="m2e-gallery" id="m2e-gallery-<?php /* @noEscape */ echo $block->getGalleryId(); ?>">
 
-        <div class="current <?php echo $galleryClass; ?>">
+        <div class="current <?php /* @noEscape */ echo $galleryClass; ?>">
 
             <?php foreach ($block->getGalleryImages() as $imageIndex => $imageUrl) : ?>
                 <input type="radio"
-                       name="image-gallery-<?php echo $block->getGalleryId(); ?>"
+                       name="image-gallery-<?php /* @noEscape */ echo $block->getGalleryId(); ?>"
                     <?php $imageIndex == 0 && print ' checked="checked" '; ?>
-                       id="image-gallery-<?php echo $block->getGalleryId(); ?>-<?php echo $imageIndex; ?>"
+                       id="image-gallery-<?php /* @noEscape */ echo $block->getGalleryId(); ?>-<?php /* @noEscape */ echo $imageIndex; ?>"
                 />
-                <img class="full-image" src="<?php echo $imageUrl; ?>" <?php if ($data['watermark'] != 0) :
+                <img class="full-image" src="<?php /* @noEscape */ echo $imageUrl; ?>" <?php if ($data['watermark'] != 0) :
                     echo ' m2e_watermark="1"';
                                              endif; ?> />
             <?php endforeach; ?>
 
             <div class="hint">
                 <span>
-                    <?php echo $block->getHelper('Data')->escapeHtml($data['gallery_hint']); ?>
+                    <?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($data['gallery_hint']); ?>
                 </span>
             </div>
 
         </div>
 
-        <div class="preview-container <?php echo $galleryClass; ?>">
+        <div class="preview-container <?php /* @noEscape */ echo $galleryClass; ?>">
             <?php foreach ($block->getGalleryImages() as $imageIndex => $imageUrl) : ?>
-                <label class="preview" for="image-gallery-<?php echo $block->getGalleryId(); ?>-<?php echo $imageIndex; ?>">
-                    <img src="<?php echo $imageUrl; ?>" />
+                <label class="preview" for="image-gallery-<?php /* @noEscape */ echo $block->getGalleryId(); ?>-<?php /* @noEscape */ echo $imageIndex; ?>">
+                    <img src="<?php /* @noEscape */ echo $imageUrl; ?>" />
                 </label>
             <?php endforeach; ?>
         </div>
@@ -120,24 +120,24 @@ $data = $block->getData();
 <?php else : ?>
     <style>
 
-        #m2e-gallery-list-<?php echo $block->getGalleryId(); ?> img {
+        #m2e-gallery-list-<?php /* @noEscape */ echo $block->getGalleryId(); ?> img {
         <?php if ($data['width'] != 0) :
-            echo "width: {$data['width']}px;";
+           /* @noEscape */ echo "width: {$data['width']}px;";
         endif; ?>
         <?php if ($data['height'] != 0) :
-            echo "height: {$data['height']}px;";
+           /* @noEscape */ echo "height: {$data['height']}px;";
         endif; ?>
         <?php if ($data['margin'] != 0) :
-            echo "margin-bottom: {$data['margin']}px; margin-right: {$data['margin']}px;";
+           /* @noEscape */ echo "margin-bottom: {$data['margin']}px; margin-right: {$data['margin']}px;";
         endif; ?>
         }
 
     </style>
 
-    <div class="m2e-gallery-list" id="m2e-gallery-list-<?php echo $block->getGalleryId(); ?>">
+    <div class="m2e-gallery-list" id="m2e-gallery-list-<?php /* @noEscape */ echo $block->getGalleryId(); ?>">
 
         <?php foreach ($block->getGalleryImages() as $imageIndex => $imageUrl) : ?>
-            <img src="<?php echo $imageUrl; ?>" class="m2e-gallery-list" <?php if ($data['watermark'] != 0) :
+            <img src="<?php /* @noEscape */ echo $imageUrl; ?>" class="m2e-gallery-list" <?php if ($data['watermark'] != 0) :
                 echo ' m2e_watermark="1"';
                       endif; ?> />
 

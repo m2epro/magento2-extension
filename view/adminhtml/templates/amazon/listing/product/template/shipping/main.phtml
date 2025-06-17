@@ -16,11 +16,11 @@
 
         <?php if (!empty($block->getMessages())) : ?>
             <div id="template_shippingTemplate_error_block">
-                <?php echo $block->getWarnings(); ?>
+                <?php /* @noEscape */ echo $block->getWarnings(); ?>
             </div>
         <?php endif; ?>
 
-        <?php echo $block->createBlock('HelpBlock')->setData([
+        <?php /* @noEscape */ echo $block->createBlock('HelpBlock')->setData([
             'content' => $block->__(
                 'The Shipping Policy is using to specify the Shipping Settings provided in Amazon Seller Central.<br />
                 You can select the Policy from the list of already created or add a new one for your Product by pressing <strong>Add New Shipping Policy</strong> Button.'

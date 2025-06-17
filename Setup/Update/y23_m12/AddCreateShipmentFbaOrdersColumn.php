@@ -32,4 +32,3 @@ class AddCreateShipmentFbaOrdersColumn extends \Ess\M2ePro\Model\Setup\Upgrade\E
         );
     }
 }
-

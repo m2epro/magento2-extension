@@ -14,21 +14,21 @@ $selectedCategory = $block->getSelectedCategory();
     <table>
         <tr>
             <td>
-                <strong id="category_title_container"><?php echo $block->__('Category'); ?>:</strong>
+                <strong id="category_title_container"><?php /* @noEscape */ echo $block->__('Category'); ?>:</strong>
             </td>
             <td>
                 <span id="selected_category_path">
                     <?php if (!empty($selectedCategory)) : ?>
-                        <?php echo $block->escapeHtml("{$selectedCategory['categoryPath']} ({$selectedCategory['browseNodeId']})"); ?>
+                        <?php /* @noEscape */ echo $block->escapeHtml("{$selectedCategory['categoryPath']} ({$selectedCategory['browseNodeId']})"); ?>
                     <?php else : ?>
-                        <span style="color: grey; font-style: italic"><?php echo $block->__('Not Selected'); ?></span>
+                        <span style="color: grey; font-style: italic"><?php /* @noEscape */ echo $block->__('Not Selected'); ?></span>
                     <?php endif; ?>
                 </span>
             </td>
             <td>
                 <a href="javascript:void(0)" id="category_reset_link" <?php if (empty($selectedCategory)) :
                     ?>style="display: none"<?php
-                                                                      endif; ?> onclick="WalmartTemplateCategoryCategoriesChooserObj.unSelectCategory()"><?php echo $block->__('Reset') ?></a>
+                                                                      endif; ?> onclick="WalmartTemplateCategoryCategoriesChooserObj.unSelectCategory()"><?php /* @noEscape */ echo $block->__('Reset') ?></a>
             </td>
 
         </tr>

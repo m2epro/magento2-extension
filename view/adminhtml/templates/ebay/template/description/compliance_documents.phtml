@@ -19,16 +19,16 @@ $element = $this->getElement();
             </colgroup>
             <thead>
                 <tr>
-                    <th class="data-grid-th"><span><?= __('Type') ?></span></th>
-                    <th class="data-grid-th"><span><?= __('Mode') ?></span></th>
+                    <th class="data-grid-th"><span><?= /* @noEscape */ __('Type') ?></span></th>
+                    <th class="data-grid-th"><span><?= /* @noEscape */ __('Mode') ?></span></th>
                     <th class="data-grid-th">
-                        <span><?= __('Document URL') ?></span>
-                        <?= $element->getTooltipHtml(__('Choose an Attribute containing a valid URL ' .
+                        <span><?= /* @noEscape */ __('Document URL') ?></span>
+                        <?= /* @noEscape */ $element->getTooltipHtml(__('Choose an Attribute containing a valid URL ' .
                             'for the selected Document Type')) ?>
                     </th>
                     <th class="data-grid-th">
-                        <span><?= __('Languages') ?></span>
-                        <?= $element->getTooltipHtml(__('Select one or more languages used in the document.')) ?>
+                        <span><?= /* @noEscape */ __('Languages') ?></span>
+                        <?= /* @noEscape */ $element->getTooltipHtml(__('Select one or more languages used in the document.')) ?>
                     </th>
                     <th class="data-grid-th"></th>
                 </tr>
@@ -37,20 +37,20 @@ $element = $this->getElement();
             <?php foreach ($element->getSavedComplianceDocuments() as $index => $document) : ?>
             <?php $mode = (int)$document['document_mode']?>
             <tr>
-                <td><?= $element->renderTypesDropdown($index, $document['document_type']) ?></td>
-                <td><?= $element->renderModeDropdown($index, $mode) ?></td>
+                <td><?= /* @noEscape */ $element->renderTypesDropdown($index, $document['document_type']) ?></td>
+                <td><?= /* @noEscape */ $element->renderModeDropdown($index, $mode) ?></td>
                 <td>
-                    <?= $element->renderAttributesDropdown($index, $document['document_attribute'], $mode) ?>
-                    <?= $element->renderCustomValueInput($index, $document['document_custom_value'] ?? '', $mode) ?>
+                    <?= /* @noEscape */ $element->renderAttributesDropdown($index, $document['document_attribute'], $mode) ?>
+                    <?= /* @noEscape */ $element->renderCustomValueInput($index, $document['document_custom_value'] ?? '', $mode) ?>
                 </td>
-                <td><?= $element->renderLanguagesDropdown($index, $document['document_languages'] ?? []) ?></td>
-                <td><?= $element->renderRemoveRowButton($index) ?></td>
+                <td><?= /* @noEscape */ $element->renderLanguagesDropdown($index, $document['document_languages'] ?? []) ?></td>
+                <td><?= /* @noEscape */ $element->renderRemoveRowButton($index) ?></td>
             </tr>
             <?php endforeach; ?>
             </tbody>
             <tfoot>
             <tr>
-                <td colspan="4" style="text-align:right;"><?= $element->renderAddRowButton() ?></td>
+                <td colspan="4" style="text-align:right;"><?= /* @noEscape */ $element->renderAddRowButton() ?></td>
             </tr>
             </tfoot>
         </table>

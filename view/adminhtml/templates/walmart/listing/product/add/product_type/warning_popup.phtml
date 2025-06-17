@@ -7,7 +7,7 @@
 <div id="product_type_warning_popup_content">
 
     <div style="margin-top: 10px;">
-        <?php echo $block->__(
+        <?php /* @noEscape */ echo $block->__(
             'You have not assigned the Product Type to <strong><span class="failed_count"></span></strong> of <strong><span class="total_count"></span></strong> Product(s).<br/><br/>
 
             Products without Product Type will not be added to M2E Pro Listing as they cannot be listed on the Channel. Walmart requires submitting full Category data when listing a new Item.<br/><br/>

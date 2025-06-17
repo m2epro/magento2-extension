@@ -23,9 +23,9 @@
             <?php foreach ($block->tableData as $index => $row) : ?>
                 <tr>
                     <td><?= ++$index ?></td>
-                    <td><?= $row['start'] ?></td>
-                    <td><?= $row['end'] ?></td>
-                    <td><?= $row['executed_time'] ?></td>
+                    <td><?= /* @noEscape */ $row['start'] ?></td>
+                    <td><?= /* @noEscape */ $row['end'] ?></td>
+                    <td><?= /* @noEscape */ $row['executed_time'] ?></td>
                 </tr>
             <?php endforeach; ?>
         </table>

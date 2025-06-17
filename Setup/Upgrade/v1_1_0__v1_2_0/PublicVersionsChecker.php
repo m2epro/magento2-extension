@@ -18,7 +18,6 @@ class PublicVersionsChecker extends AbstractFeature
     public function execute()
     {
         if (!$this->getConnection()->isTableExists($this->getFullTableName('versions_history'))) {
-
             $table = $this->getConnection()->newTable($this->getFullTableName('versions_history'))
                 ->addColumn(
                     'id', Table::TYPE_INTEGER, NULL,

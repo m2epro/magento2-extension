@@ -20,7 +20,7 @@
         }
     </style>
 
-    <?php echo $block->createBlock('HelpBlock')->setData([
+    <?php /* @noEscape */ echo $block->createBlock('HelpBlock')->setData([
         'no_collapse' => true,
         'no_hide' => true,
         'always_show' => true,
@@ -43,7 +43,7 @@
     <div class="admin__field admin__field-option" style="position: absolute; margin-left: 10px; margin-top: 30px;">
         <input class="admin__control-checkbox" type="checkbox" id="switch_to_individual_remember_checkbox" name="switch_to_individual_remember_checkbox">&nbsp;
         <label for="switch_to_individual_remember_checkbox" class="admin__field-label">
-            <span><?php echo $block->__('Remember my choice') ?></span>
+            <span><?php /* @noEscape */ echo $block->__('Remember my choice') ?></span>
         </label>
     </div>
 

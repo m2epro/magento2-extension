@@ -6,8 +6,7 @@ namespace Ess\M2ePro\Setup\Update\y25_m05;
 
 use Ess\M2ePro\Helper\Module\Database\Tables;
 
-class DeleteEbayUnmanagedDuplicatesByListingProducts
-    extends \Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature
+class DeleteEbayUnmanagedDuplicatesByListingProducts extends \Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature
 {
     public function execute()
     {

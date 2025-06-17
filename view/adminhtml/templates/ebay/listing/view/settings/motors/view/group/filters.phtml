@@ -15,7 +15,7 @@
     <table class="data-grid">
         <thead>
         <tr>
-            <th class="data-grid-th"><?php echo $block->__('Filter')?></th>
+            <th class="data-grid-th"><?php /* @noEscape */ echo $block->__('Filter')?></th>
             <th class="data-grid-th" style="width: 20px;">&nbsp;</th>
         </tr>
         </thead>
@@ -23,13 +23,13 @@
         <?php foreach ($block->getFilters() as $item) { ?>
             <tr>
                 <td>
-                    <?php echo $item['title']?>
+                    <?php /* @noEscape */ echo $item['title']?>
                 </td>
                 <td>
-                    <a title="<?php echo $block->__('Remove') ?>"
+                    <a title="<?php /* @noEscape */ echo $block->__('Remove') ?>"
                        href="javascript:void(0)"
                        class="ebay-listing-view-icon ebay-listing-view-remove"
-                       onclick="EbayListingViewSettingsMotorsAddGroupGridObj.removeFilterFromGroup(this, <?php echo $item['id']?>, <?php echo $block->getGroupId() ?>)">
+                       onclick="EbayListingViewSettingsMotorsAddGroupGridObj.removeFilterFromGroup(this, <?php /* @noEscape */ echo $item['id']?>, <?php /* @noEscape */ echo $block->getGroupId() ?>)">
                     </a>
                 </td>
             </tr>

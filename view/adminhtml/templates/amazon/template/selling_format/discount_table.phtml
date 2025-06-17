@@ -17,7 +17,7 @@
         <tfoot>
         <tr>
             <td valign="middle" align="center" style="vertical-align: middle; height: 40px">
-                <?php echo $block->createBlock('Magento\Button')->setData([
+                <?php /* @noEscape */ echo $block->createBlock('Magento\Button')->setData([
                     'label'   => $block->__('Add Discount Rule'),
                     'onclick' => 'AmazonTemplateSellingFormatObj.addRow(\'fixed\');',
                     'class' => 'action primary add_discount_rule_button'
@@ -32,9 +32,9 @@
 <table id="business_discounts_custom_value_discount_table" class="data-grid data-grid-not-hovered" cellpadding="0" cellspacing="0" style="display: none;">
     <thead>
     <tr class="headings">
-        <th class="data-grid-th" style="width: 60px"><?php echo $block->__('Quantity'); ?> <span class="required">*</span></th>
-        <th class="data-grid-th" style="width: 130px"><?php echo $block->__('Price'); ?> <span class="required">*</span></th>
-        <th class="data-grid-th" style="width: 50px"><?php echo $block->__('Price Change'); ?></th>
+        <th class="data-grid-th" style="width: 60px"><?php /* @noEscape */ echo $block->__('Quantity'); ?> <span class="required">*</span></th>
+        <th class="data-grid-th" style="width: 130px"><?php /* @noEscape */ echo $block->__('Price'); ?> <span class="required">*</span></th>
+        <th class="data-grid-th" style="width: 50px"><?php /* @noEscape */ echo $block->__('Price Change'); ?></th>
         <th class="data-grid-th" style="width: 35px;">&nbsp;</th>
     </tr>
     </thead>
@@ -44,7 +44,7 @@
     <tfoot>
     <tr>
         <td colspan="20" class="a-right">
-            <?php echo $block->createBlock('Magento\Button')->setData([
+            <?php /* @noEscape */ echo $block->createBlock('Magento\Button')->setData([
                 'label'   => $block->__('Add'),
                 'onclick' => 'AmazonTemplateSellingFormatObj.addRow(\'fixed\');',
                 'class' => 'action primary add_discount_rule_button'
@@ -65,13 +65,13 @@
         <td>
             <input name="business_discount[attribute][%i%]" class="business-discount-attribute" type="hidden" />
             <select id="business_discount[mode][%i%]" name="business_discount[mode][%i%]" class="select admin__control-select business-discount-mode M2ePro-required-when-visible M2ePro-business-discount-attribute-coefficient-unique" allowed_attribute_types="text,price">
-                <option value="<?php echo \Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount::MODE_PRODUCT; ?>"><?php echo $block->__('Product Price'); ?></option>
-                <option value="<?php echo \Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount::MODE_SPECIAL; ?>"><?php echo $block->__('Special Price'); ?></option>
+                <option value="<?php echo \Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount::MODE_PRODUCT; ?>"><?php /* @noEscape */ echo $block->__('Product Price'); ?></option>
+                <option value="<?php echo \Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount::MODE_SPECIAL; ?>"><?php /* @noEscape */ echo $block->__('Special Price'); ?></option>
 
                 <optgroup class="M2ePro-custom-attribute-optgroup" label="Magento Attribute">
                     <?php foreach ($block->getAttributes() as $attribute) : ?>
-                        <option attribute_code="<?php echo $attribute['code']; ?>" value="<?php echo \Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount::MODE_ATTRIBUTE; ?>">
-                            <?php echo $block->getHelper('Data')->escapeHtml($attribute['label']); ?>
+                        <option attribute_code="<?php /* @noEscape */ echo $attribute['code']; ?>" value="<?php echo \Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount::MODE_ATTRIBUTE; ?>">
+                            <?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($attribute['label']); ?>
                         </option>
                     <?php endforeach; ?>
                 </optgroup>
@@ -80,11 +80,11 @@
         <td>
             <input name="business_discount[coefficient][%i%]" type="text" style="text-align: right; width: 80%" class="business-discount-coefficient M2ePro-validate-price-coefficient input-text admin__control-text" />
             <div style="display: inline;">
-                <?php echo $block->getTooltipHtml('Absolute figure (+8,-3), percentage (+15%, -20%) or Currency rate (1.44).'); ?>
+                <?php /* @noEscape */ echo $block->getTooltipHtml('Absolute figure (+8,-3), percentage (+15%, -20%) or Currency rate (1.44).'); ?>
             </div>
         </td>
         <td>
-            <?php echo $block->createBlock('Magento\Button')->setData([
+            <?php /* @noEscape */ echo $block->createBlock('Magento\Button')->setData([
                 'label'   => $block->__('Remove'),
                 'onclick' => 'AmazonTemplateSellingFormatObj.removeRow(this);',
                 'class' => 'delete icon-btn remove_discount_rule_button'

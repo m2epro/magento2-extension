@@ -22,7 +22,6 @@ class EbayTaxReference extends AbstractFeature
     {
         $this->getTableModifier('ebay_order')
             ->addColumn('tax_reference', 'VARCHAR(72) DEFAULT NULL', null, 'tax_details');
-
     }
 
     //########################################

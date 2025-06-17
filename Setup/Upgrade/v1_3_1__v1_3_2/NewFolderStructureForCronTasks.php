@@ -47,7 +47,6 @@ class NewFolderStructureForCronTasks extends AbstractFeature
 
         $tableName = $this->getFullTableName("lock_item");
         foreach ($changesMap as $oldGroup => $newGroup) {
-
             $newNick = $nickPrefix . str_replace("/", "_", $newGroup);
             $oldNick = $nickPrefix . $oldGroup;
 
@@ -67,7 +66,6 @@ class NewFolderStructureForCronTasks extends AbstractFeature
 
         $tableName = $this->getFullTableName("operation_history");
         foreach ($changesMap as $oldGroup => $newGroup) {
-
             $newNick = $nickPrefix . str_replace("/", "_", $newGroup);
             $oldNick = $nickPrefix . $oldGroup;
 

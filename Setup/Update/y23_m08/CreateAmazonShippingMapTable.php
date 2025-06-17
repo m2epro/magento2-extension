@@ -60,4 +60,3 @@ class CreateAmazonShippingMapTable extends \Ess\M2ePro\Model\Setup\Upgrade\Entit
         $this->getConnection()->createTable($shippingMethodsTable);
     }
 }
-

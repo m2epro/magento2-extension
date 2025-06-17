@@ -16,7 +16,7 @@
     <?php if ($block->getIsAjax()) : ?>
     BlockNoticeObj.init(true);
 
-        <?php echo
+        <?php /* @noEscape */ echo
         $block->jsPhp->render()
         . $block->jsTranslator->render()
         . $block->jsUrl->render()
@@ -27,12 +27,12 @@
     initCollapsable();
 
     <?php else : ?>
-    var BLOCK_NOTICES_SHOW = <?php echo $block->block_notices_show ? 'true' : 'false'; ?>;
+    var BLOCK_NOTICES_SHOW = <?php /* @noEscape */ echo $block->block_notices_show ? 'true' : 'false'; ?>;
 
-    var IS_VIEW_EBAY = <?php echo json_encode($block->viewHelper->isCurrentViewEbay()); ?>;
-    var IS_VIEW_AMAZON = <?php echo json_encode($block->viewHelper->isCurrentViewAmazon()); ?>;
-    var IS_VIEW_WALMART = <?php echo json_encode($block->viewHelper->isCurrentViewWalmart()); ?>;
-    var IS_VIEW_CONFIGURATION = <?php echo json_encode($block->viewHelper->isCurrentViewConfiguration()); ?>;
+    var IS_VIEW_EBAY = <?php /* @noEscape */ echo json_encode($block->viewHelper->isCurrentViewEbay()); ?>;
+    var IS_VIEW_AMAZON = <?php /* @noEscape */ echo json_encode($block->viewHelper->isCurrentViewAmazon()); ?>;
+    var IS_VIEW_WALMART = <?php /* @noEscape */ echo json_encode($block->viewHelper->isCurrentViewWalmart()); ?>;
+    var IS_VIEW_CONFIGURATION = <?php /* @noEscape */ echo json_encode($block->viewHelper->isCurrentViewConfiguration()); ?>;
 
     var M2ePro = {};
 
@@ -44,9 +44,9 @@
         M2ePro.formData   = {};
         M2ePro.customData = {};
 
-        <?php echo $block->jsPhp->render(); ?>
-        <?php echo $block->jsTranslator->render(); ?>
-        <?php echo $block->jsUrl->render(); ?>
+        <?php /* @noEscape */ echo $block->jsPhp->render(); ?>
+        <?php /* @noEscape */ echo $block->jsTranslator->render(); ?>
+        <?php /* @noEscape */ echo $block->jsUrl->render(); ?>
 
         window.CommonObj = new window.Common();
         CommonObj.initCommonValidators();
@@ -54,7 +54,7 @@
         window.BlockNoticeObj = new BlockNotice();
         BlockNoticeObj.init();
 
-        <?php echo $block->js->render(); ?>
+        <?php /* @noEscape */ echo $block->js->render(); ?>
 
         window.initializationCustomAttributeInputs = function()
         {
@@ -78,7 +78,7 @@
     require(['M2ePro/ControlPanel'], function(controlPanel) {
 
         window.ControlPanelObj = new ControlPanel();
-        window.ControlPanelObj.setControlPanelUrl('<?php echo $block->getUrl('m2epro/controlPanel'); ?>')
+        window.ControlPanelObj.setControlPanelUrl('<?php /* @noEscape */ echo $block->getUrl('m2epro/controlPanel'); ?>')
     });
 
     <?php endif; ?>
@@ -86,5 +86,5 @@
 </script>
 
 <style type="text/css">
-    <?php echo $block->css->render(); ?>
+    <?php /* @noEscape */ echo $block->css->render(); ?>
 </style>

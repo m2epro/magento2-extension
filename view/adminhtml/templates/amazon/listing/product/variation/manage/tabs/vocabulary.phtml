@@ -14,7 +14,7 @@ $localVocabulary = $data['local_vocabulary'];
 $fixedAttributes = $data['fixed_attributes'];
 ?>
 
-<?php echo $block->createBlock('HelpBlock')->setData([
+<?php /* @noEscape */ echo $block->createBlock('HelpBlock')->setData([
     'content' => $block->__('In this section you can find <strong>Advanced Settings</strong> which will help you manage associations between Magento Variational Attributes and Product Options.<br/>
         After the correspondence between an Attribute and Option is set up, it can be saved and automatically used by M2E Pro at further stages.<br/>
         There are two blocks available:
@@ -27,7 +27,7 @@ $fixedAttributes = $data['fixed_attributes'];
 ])->toHtml() ?>
 
 <form id="auto_action_settings_form" action="javascript:void(0);">
-    <?php echo $block->getChildHtml('variation_Vocabulary_form');?>
+    <?php /* @noEscape */ echo $block->getChildHtml('variation_Vocabulary_form');?>
 </form>
 
 <?php if (!empty($localVocabulary)) { ?>
@@ -57,7 +57,7 @@ $fixedAttributes = $data['fixed_attributes'];
 
     <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
         <strong class="admin__collapsible-title">
-            <span><?php echo $block->__('Saved Attributes & Options');?></span>
+            <span><?php /* @noEscape */ echo $block->__('Saved Attributes & Options');?></span>
         </strong>
         <div class="form-buttons"></div>
     </div>
@@ -71,10 +71,10 @@ $fixedAttributes = $data['fixed_attributes'];
                                          font-weight: bold;
                                          border-bottom: 1px solid #D6D6D6 !important;
                                          border-right: 1px solid #D6D6D6 !important;">
-                    <?php echo $block->__('Magento') ?>
+                    <?php /* @noEscape */ echo $block->__('Magento') ?>
                 </td>
                 <td class="value" style="font-weight: bold; border-bottom: 1px solid #D6D6D6 !important;">
-                    <?php echo $block->__('Amazon') ?>
+                    <?php /* @noEscape */ echo $block->__('Amazon') ?>
                 </td>
             </tr>
             </thead>
@@ -86,14 +86,14 @@ $fixedAttributes = $data['fixed_attributes'];
 
             <tr class="matched-attributes-pair">
                 <td class="label" style="padding: 1rem 0 0 1rem !important; border-right: 1px solid #D6D6D6 !important;">
-                <?php echo $magentoAttribute ?>
+                <?php /* @noEscape */ echo $magentoAttribute ?>
                 </td>
                 <td class="value" style="padding: 1rem 0 0 1rem !important;">
-                    <div class="magento-attribute-name" style="display: none;"><?php echo $magentoAttribute; ?></div>
-                    <div class="channel-attribute-name" style="display: none;"><?php echo $amazonAttribute; ?></div>
-                    <span><?php echo $amazonAttribute ?></span>&nbsp;
+                    <div class="magento-attribute-name" style="display: none;"><?php /* @noEscape */ echo $magentoAttribute; ?></div>
+                    <div class="channel-attribute-name" style="display: none;"><?php /* @noEscape */ echo $amazonAttribute; ?></div>
+                    <span><?php /* @noEscape */ echo $amazonAttribute ?></span>&nbsp;
                 <?php if (empty($fixedAttributes[$magentoAttribute]) || !in_array($amazonAttribute, $fixedAttributes[$magentoAttribute])) { ?>
-                    <a title="<?php echo $block->__('Remove') ?>"
+                    <a title="<?php /* @noEscape */ echo $block->__('Remove') ?>"
                        href="javascript:void(0)"
                        class="amazon-listing-view-icon amazon-listing-view-generalId-remove"
                        onclick="ListingGridObj.variationProductManageHandler.removeAttributeFromVocabulary(this);">
@@ -106,7 +106,7 @@ $fixedAttributes = $data['fixed_attributes'];
 
             <tr class="magento-attribute-options">
                 <td class="label" style="padding: 1rem 0 0 1rem !important; border-right: 1px solid #D6D6D6 !important;">
-                    <label style="padding-left: 25px;"><?php echo $magentoOption ?></label>
+                    <label style="padding-left: 25px;"><?php /* @noEscape */ echo $magentoOption ?></label>
                 </td>
                 <td class="value" style="padding: 0 0 0 1rem !important;">
                     <ul class="product-options-groups" style="list-style: none; margin: 5px 0px; padding-left: 25px;">
@@ -114,20 +114,20 @@ $fixedAttributes = $data['fixed_attributes'];
                         <?php foreach ($amazonOptions as $amazonOptionsGroup) { ?>
 
                         <li class="channel-attribute-options-group" style="margin: 0;">
-                            <div class="product-option" style="display: none;"><?php echo $magentoOption ?></div>
+                            <div class="product-option" style="display: none;"><?php /* @noEscape */ echo $magentoOption ?></div>
                             <div class="product-options-group" style="display: none;">
-                                <?php echo $block->getHelper('Data')->escapeHtml(
+                                <?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml(
                                     \Ess\M2ePro\Helper\Json::encode($amazonOptionsGroup)
                                 ) ?>
                             </div>
-                            <div class="channel-attribute-name" style="display: none;"><?php echo $amazonAttribute ?></div>
+                            <div class="channel-attribute-name" style="display: none;"><?php /* @noEscape */ echo $amazonAttribute ?></div>
                             <?php
                             if (($key = array_search($magentoOption, $amazonOptionsGroup)) !== false) {
                                 unset($amazonOptionsGroup[$key]);
                             }
                             ?>
-                            <span><?php echo implode(', ', $amazonOptionsGroup) ?></span>&nbsp;
-                            <a title="<?php echo $block->__('Remove') ?>"
+                            <span><?php /* @noEscape */ echo implode(', ', $amazonOptionsGroup) ?></span>&nbsp;
+                            <a title="<?php /* @noEscape */ echo $block->__('Remove') ?>"
                                href="javascript:void(0)"
                                class="amazon-listing-view-icon amazon-listing-view-generalId-remove"
                                onclick="ListingGridObj.variationProductManageHandler.removeOptionFromVocabulary(this);">

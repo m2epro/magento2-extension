@@ -20,7 +20,7 @@
             <p>
                 Module awaits importing of M2E Pro table dump from Magento v1.x.
                 Please import the created dump into the MySQL database of Magento v2.x.
-                After that, open <a href="<?php echo $block->getData('migration_wizard_url'); ?>">Migration Wizard</a>.
+                After that, open <a href="<?php /* @noEscape */ echo $block->getData('migration_wizard_url'); ?>">Migration Wizard</a>.
                 At Wizard Step 2, click <b>Continue</b> to proceed.
             </p>
         </li>
@@ -28,7 +28,7 @@
             <p>
                 Import of M2E Pro table dump from Magento v1.x failed.
                 To resolve the issue, please try to import the dump again.
-                After that, open <a href="<?php echo $block->getData('migration_wizard_url'); ?>">Migration Wizard</a>.
+                After that, open <a href="<?php /* @noEscape */ echo $block->getData('migration_wizard_url'); ?>">Migration Wizard</a>.
                 At Wizard Step 2, click <b>Continue</b> to proceed.
             </p>
         </li>

@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Ess\M2ePro\Setup\Update\y25_m04;
 
-class AddIntoWalmartProductIsNotMappedToExistingChannelItemColumn
-    extends \Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature
+class AddIntoWalmartProductIsNotMappedToExistingChannelItemColumn extends \Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature
 {
     public function execute(): void
     {

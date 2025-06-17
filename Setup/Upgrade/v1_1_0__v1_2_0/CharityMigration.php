@@ -104,7 +104,6 @@ class CharityMigration extends AbstractFeature
         }
 
         foreach ($sellingFormatTemplates as $sellingFormatTemplate) {
-
             $oldCharity = json_decode($sellingFormatTemplate['charity'], true);
 
             if (!empty($oldCharity[$sellingFormatTemplate['marketplace_id']])) {

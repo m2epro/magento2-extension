@@ -16,7 +16,7 @@
     <div>
         <?php
 
-        echo $block->__(
+        /* @noEscape */ echo $block->__(
             'In this version, M2E Pro introduces significant improvements to provide full compatibility with SP-API,
             the latest Amazon enhancement. The updates concern the basic functionality – new ASIN creation
             and listing under new ASINs.<br><br>
@@ -30,10 +30,10 @@
         ?>
     </div>
 
-    <button title="<?php echo $block->__('Proceed'); ?>"
+    <button title="<?php /* @noEscape */ echo $block->__('Proceed'); ?>"
             type="button"
             class="action-default scalable action primary"
             onclick="WizardAmazonMigrationToProductTypesObj.proceed()">
-        <span><?php echo $block->__('Proceed'); ?></span>
+        <span><?php /* @noEscape */ echo $block->__('Proceed'); ?></span>
     </button>
 </div>

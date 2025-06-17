@@ -9,11 +9,11 @@
 
         <?php if (!empty($block->getMessages())) : ?>
             <div id="product_type_error_block">
-                <?php echo $block->getWarnings(); ?>
+                <?php /* @noEscape */ echo $block->getWarnings(); ?>
             </div>
         <?php endif; ?>
 
-        <?php echo $block->getChildHtml('help_block'); ?>
+        <?php /* @noEscape */ echo $block->getChildHtml('help_block'); ?>
 
         <div id="product_type_grid"></div>
 

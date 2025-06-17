@@ -61,7 +61,7 @@ class Uninstall implements \Magento\Framework\Setup\UninstallInterface
             // Database
             // -----------------------
             $tables = $setup->getConnection()->getTables(
-                (string)$this->deploymentConfig->get(ConfigOptionsListConstants::CONFIG_PATH_DB_PREFIX).'m2epro_%'
+                (string)$this->deploymentConfig->get(ConfigOptionsListConstants::CONFIG_PATH_DB_PREFIX) . 'm2epro_%'
             );
 
             foreach ($tables as $table) {

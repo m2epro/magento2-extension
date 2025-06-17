@@ -2,8 +2,7 @@
 
 namespace Ess\M2ePro\Setup\Update\y23_m03;
 
-class AddColumnIsStoppedManuallyForAmazonAndWalmartProducts extends
-    \Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature
+class AddColumnIsStoppedManuallyForAmazonAndWalmartProducts extends \Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature
 {
     /**
      * @return void

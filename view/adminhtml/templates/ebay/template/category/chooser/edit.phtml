@@ -130,20 +130,20 @@ $selectedCategory = $block->getSelectedCategory();
         <tr>
             <td style="vertical-align: middle;">
                 <strong id="category_title_container">
-                    <?php echo $block->getCategoryTitle(); ?>
+                    <?php /* @noEscape */ echo $block->getCategoryTitle(); ?>
                 </strong>
 
                 <span id="selected_category_path" style="vertical-align: middle; padding-left: 5px">
-                    <?php echo $block->getSelectedCategoryPathHtml(); ?>
+                    <?php /* @noEscape */ echo $block->getSelectedCategoryPathHtml(); ?>
                 </span>
 
                 <a href="javascript:void(0)" id="category_reset_link" <?php if (empty($selectedCategory)) : ?>style="display: none"<?php endif; ?>
-                   onclick="EbayTemplateCategoryChooserObj.unSelectCategory()"><?php echo $block->__('Reset') ?></a>
+                   onclick="EbayTemplateCategoryChooserObj.unSelectCategory()"><?php /* @noEscape */ echo $block->__('Reset') ?></a>
             </td>
 
         </tr>
     </table>
 </div>
 
-<input type="hidden" id="category_type" value="<?php echo $block->getCategoryType(); ?>">
+<input type="hidden" id="category_type" value="<?php /* @noEscape */ echo $block->getCategoryType(); ?>">
 <input type="hidden" id="category_validation" value="" class="required-entry">

@@ -17,7 +17,7 @@ $startWizardLink = $block->getUrl("*/wizard_migrationToInnodb");
     <div>
         <?php
 
-        echo $block->__(
+        /* @noEscape */ echo $block->__(
                 'The Marketplace data must be synchronized. Click <a href="%url_1%">here</a> to get to the Marketplace Synchronization Wizard.',
                 $startWizardLink
         );

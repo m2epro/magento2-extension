@@ -1,9 +1,4 @@
 <?php
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
 
 namespace Ess\M2ePro\Setup\Upgrade\v1_3_3__v1_3_4;
 
@@ -24,7 +19,6 @@ class SaveOnlineIdentifiers extends AbstractFeature
             ->query();
 
         while ($row = $queryStmt->fetch()) {
-
             $additionalData = (array)json_decode($row['additional_data'], true);
             $additionalData['online_product_details']['mpn'] = $additionalData['ebay_mpn_value'];
             unset($additionalData['ebay_mpn_value']);

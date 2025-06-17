@@ -149,7 +149,6 @@ class MappingTablesDownloader
         }
 
         if ($responseCode !== 200 || !is_array($responseData)) {
-
             throw new \Exception(
                 $this->helperFactory->getObject('Module\Translation')->translate([
                     'Failed to prepare M2E Pro data for the uploading. Reason: %REASON%
@@ -224,7 +223,7 @@ class MappingTablesDownloader
     {
         $mapTableName = $this->mapper->getMapTableName('magento_products');
 
-        if ($this->getConnection()->isTableExists($mapTableName)){
+        if ($this->getConnection()->isTableExists($mapTableName)) {
             $this->getConnection()->dropTable($mapTableName);
         }
 
@@ -260,7 +259,7 @@ class MappingTablesDownloader
     {
         $mapTableName = $this->mapper->getMapTableName('magento_orders');
 
-        if ($this->getConnection()->isTableExists($mapTableName)){
+        if ($this->getConnection()->isTableExists($mapTableName)) {
             $this->getConnection()->dropTable($mapTableName);
         }
 
@@ -296,7 +295,7 @@ class MappingTablesDownloader
     {
         $mapTableName = $this->mapper->getMapTableName('magento_stores');
 
-        if ($this->getConnection()->isTableExists($mapTableName)){
+        if ($this->getConnection()->isTableExists($mapTableName)) {
             $this->getConnection()->dropTable($mapTableName);
         }
 
@@ -338,7 +337,7 @@ class MappingTablesDownloader
     {
         $mapTableName = $this->mapper->getMapTableName('magento_categories');
 
-        if ($this->getConnection()->isTableExists($mapTableName)){
+        if ($this->getConnection()->isTableExists($mapTableName)) {
             $this->getConnection()->dropTable($mapTableName);
         }
 
@@ -382,7 +381,6 @@ class MappingTablesDownloader
         $getMappingDataUrl = $this->getM1BaseUrl()  . '/M2ePro/unexpectedMigrationToM2/getMappingTableData';
 
         for ($offset = 0; $offset < $this->mappingRecordsCount[$mappingTable]; $offset += self::ROWS_PER_ONE_CALL) {
-
             $postData['offset'] = $offset;
 
             $curlResource = $this->getCurlResource($getMappingDataUrl, $postData);
@@ -394,7 +392,6 @@ class MappingTablesDownloader
             }
 
             if ($responseCode !== 200 || !is_array($responseData)) {
-
                 throw new \Exception(
                     $this->helperFactory->getObject('Module\Translation')->translate([
                         'Failed to upload M2E Pro data. Reason: %REASON% Please try again by clicking <b>Continue</b>.

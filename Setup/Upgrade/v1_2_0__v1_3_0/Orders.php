@@ -18,9 +18,10 @@ class Orders extends AbstractFeature
     {
         $amazonAccountTableName = $this->getFullTableName('amazon_account');
 
-        if ($this->getTableModifier('amazon_account')->isColumnExists('orders_last_synchronization') &&
-            $this->getTableModifier('amazon_account')->isColumnExists('merchant_id')) {
-
+        if (
+            $this->getTableModifier('amazon_account')->isColumnExists('orders_last_synchronization') &&
+            $this->getTableModifier('amazon_account')->isColumnExists('merchant_id')
+        ) {
             $result = $this->getConnection()->query(<<<SQL
     SELECT aa.merchant_id,
            MIN(aa.orders_last_synchronization) as orders_last_synchronization

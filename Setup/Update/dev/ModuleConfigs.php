@@ -23,7 +23,7 @@ class ModuleConfigs extends AbstractFeature
 
     //########################################
 
-    public function __construct (
+    public function __construct(
         HelperFactory $helperFactory,
         ModelFactory $modelFactory,
         Setup $installer,

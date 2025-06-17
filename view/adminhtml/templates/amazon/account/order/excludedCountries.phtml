@@ -23,8 +23,8 @@
                         <td class="value" style="vertical-align: top">
                             <?php foreach ($column as $code => $name) : ?>
                                 <div class="checkbox_container excluded_countries" style="display: block; margin: 5px;">
-                                    <input class="excluded_country_checkbox" type="checkbox" value="<?php echo $code; ?>" <?php if (in_array($code, $block->getSelectedCountries(), true)): ?>checked="checked"<?php endif; ?>/>
-                                    <label><?php echo $name; ?></label>
+                                    <input class="excluded_country_checkbox" type="checkbox" value="<?php /* @noEscape */ echo $code; ?>" <?php if (in_array($code, $block->getSelectedCountries(), true)): ?>checked="checked"<?php endif; ?>/>
+                                    <label><?php /* @noEscape */ echo $name; ?></label>
                                 </div>
                             <?php endforeach; ?>
                         </td>

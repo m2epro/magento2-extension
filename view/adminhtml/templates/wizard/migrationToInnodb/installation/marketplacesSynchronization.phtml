@@ -16,13 +16,13 @@
 
         <div>
             <h3>
-                <?php echo $block->__("Enabled {$component} Marketplaces"); ?>
+                <?php /* @noEscape */ echo $block->__("Enabled {$component} Marketplaces"); ?>
             </h3>
             <ul>
                 <?php foreach($marketplaces as $marketplace) { ?>
-                <li id="status_<?php echo $marketplace->getId(); ?>">
-                    <span id="marketplace_<?php echo $marketplace->getId(); ?>"><?php echo $marketplace->getTitle(); ?></span>
-                    <input type="hidden" class="marketplace-id" component="<?php echo $marketplace->getComponentTitle(); ?>" value="<?php echo $marketplace->getId(); ?>">
+                <li id="status_<?php /* @noEscape */ echo $marketplace->getId(); ?>">
+                    <span id="marketplace_<?php /* @noEscape */ echo $marketplace->getId(); ?>"><?php /* @noEscape */ echo $marketplace->getTitle(); ?></span>
+                    <input type="hidden" class="marketplace-id" component="<?php /* @noEscape */ echo $marketplace->getComponentTitle(); ?>" value="<?php /* @noEscape */ echo $marketplace->getId(); ?>">
                  </li>
                 <?php } ?>
             </ul>

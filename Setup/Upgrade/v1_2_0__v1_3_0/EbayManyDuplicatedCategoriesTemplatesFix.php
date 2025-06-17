@@ -24,7 +24,6 @@ SQL
         )->fetchAll(\PDO::FETCH_ASSOC);
 
         foreach ($listings as $listing) {
-
             $listingId = $listing['id'];
             $additionalData = (array)json_decode($listing['additional_data'], true);
 

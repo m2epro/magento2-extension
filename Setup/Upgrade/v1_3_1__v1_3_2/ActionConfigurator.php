@@ -18,7 +18,6 @@ class ActionConfigurator extends AbstractFeature
     {
         $processingTable = $this->getFullTableName('processing');
         if ($this->getConnection()->isTableExists($processingTable)) {
-
             $processingsStmt = $this->getConnection()->query("
 SELECT * FROM {$processingTable}
 WHERE `model` LIKE 'Amazon\Connector\Product\%' OR
@@ -26,7 +25,6 @@ WHERE `model` LIKE 'Amazon\Connector\Product\%' OR
 ");
 
             while ($processing = $processingsStmt->fetch(\PDO::FETCH_ASSOC)) {
-
                 if (empty($processing['params'])) {
                     continue;
                 }
@@ -59,8 +57,9 @@ WHERE `model` LIKE 'Amazon\Connector\Product\%' OR
 
                     unset($productData['configurator']['mode']);
 
-                    if (strpos($processing['model'], 'Amazon') === false ||
-                        !isset($productData['configurator']['allowed_data_types'])
+                    if (
+                        strpos($processing['model'], 'Amazon') === false
+                        || !isset($productData['configurator']['allowed_data_types'])
                     ) {
                         continue;
                     }

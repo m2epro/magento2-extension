@@ -42,7 +42,8 @@ class ClearPolicyLinkingToDeletedAccount extends AbstractFeature
                 $row['international_shipping_rate_table']
             );
 
-            if ($newLocalShippingRateTable !== $row['local_shipping_rate_table']
+            if (
+                $newLocalShippingRateTable !== $row['local_shipping_rate_table']
                 || $newInternationalShippingRateTable !== $row['international_shipping_rate_table']
             ) {
                 $this->getConnection()->update(

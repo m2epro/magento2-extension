@@ -15,50 +15,50 @@
 
     <tr>
         <td class="label">
-            <label><?php echo $block->__('Extension Key'); ?>: </label>
+            <label><?php /* @noEscape */ echo $block->__('Extension Key'); ?>: </label>
         </td>
         <td class="value">
-            <?php echo $this->licenseData['key']; ?>
+            <?php /* @noEscape */ echo $this->licenseData['key']; ?>
         </td>
     </tr>
 
     <tr>
         <td class="label">
-            <label><?php echo $block->__('Domain [valid | real]'); ?>: </label>
+            <label><?php /* @noEscape */ echo $block->__('Domain [valid | real]'); ?>: </label>
         </td>
         <td class="value">
-            <span <?php echo $this->licenseData['valid']['domain'] ? '' : 'style="color:red;"' ?>>
-                <?php echo "{$this->licenseData['domain']} | {$this->locationData['domain']}"; ?>
+            <span <?php /* @noEscape */ echo $this->licenseData['valid']['domain'] ? '' : 'style="color:red;"' ?>>
+                <?php /* @noEscape */ echo "{$this->licenseData['domain']} | {$this->locationData['domain']}"; ?>
             </span>
         </td>
     </tr>
 
     <tr>
         <td class="label">
-            <label><?php echo $block->__('IP [valid | real]'); ?>: </label>
+            <label><?php /* @noEscape */ echo $block->__('IP [valid | real]'); ?>: </label>
         </td>
         <td class="value">
-            <span <?php echo $this->licenseData['valid']['ip'] ? '' : 'style="color:red;"' ?>>
-                <?php echo "{$this->licenseData['ip']} | {$this->locationData['ip']}"; ?>
+            <span <?php /* @noEscape */ echo $this->licenseData['valid']['ip'] ? '' : 'style="color:red;"' ?>>
+                <?php /* @noEscape */ echo "{$this->licenseData['ip']} | {$this->locationData['ip']}"; ?>
             </span>
         </td>
     </tr>
 
     <tr>
         <td class="label">
-            <label><?php echo $block->__('Directory [root]'); ?>: </label>
+            <label><?php /* @noEscape */ echo $block->__('Directory [root]'); ?>: </label>
         </td>
         <td class="value">
-            <?php echo $this->locationData['directory']; ?>
+            <?php /* @noEscape */ echo $this->locationData['directory']; ?>
         </td>
     </tr>
 
     <tr>
         <td class="label">
-            <label><?php echo $block->__('Directory [m2e]'); ?>: </label>
+            <label><?php /* @noEscape */ echo $block->__('Directory [m2e]'); ?>: </label>
         </td>
         <td class="value">
-            <?php echo $this->locationData['relative_directory']; ?>
+            <?php /* @noEscape */ echo $this->locationData['relative_directory']; ?>
         </td>
     </tr>
 

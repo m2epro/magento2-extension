@@ -10,15 +10,15 @@
 ?>
 <form id="order_note_popup" action="javascript:void(0);" method="post">
     <?php if ($noteId = $block->getRequest()->getParam('note_id')) : ?>
-        <input type="hidden" name="note_id" value="<?php echo $noteId; ?>" />
+        <input type="hidden" name="note_id" value="<?php /* @noEscape */ echo $noteId; ?>" />
     <?php endif; ?>
 
     <?php if ($orderId = $block->getRequest()->getParam('order_id')) : ?>
-        <input type="hidden" name="order_id" value="<?php echo $orderId; ?>" />
+        <input type="hidden" name="order_id" value="<?php /* @noEscape */ echo $orderId; ?>" />
     <?php endif; ?>
 
     <div style="float: right; margin-top: 20px; margin-bottom: 12px;">
-        <label for="note"><?php echo $block->__('Description') ?><span class="required">*</span></label><br />
-        <textarea id="note" name="note" class="textarea required-entry" style="resize: none; width: 535px; height: 100px;"><?php echo $block->getNoteText();?></textarea>
+        <label for="note"><?php /* @noEscape */ echo $block->__('Description') ?><span class="required">*</span></label><br />
+        <textarea id="note" name="note" class="textarea required-entry" style="resize: none; width: 535px; height: 100px;"><?php /* @noEscape */ echo $block->getNoteText();?></textarea>
     </div>
 </form>

@@ -1,30 +1,30 @@
 <?php /** @var \Ess\M2ePro\Block\Adminhtml\Dashboard $block */ ?>
 
 <div class="col-m-12 component-tabs-container">
-    <?= $block->getComponentTabs()->toHtml() ?>
+    <?= /* @noEscape */ $block->getComponentTabs()->toHtml() ?>
 </div>
 
 <div class="row">
     <div class="col-m-3 right-border-line">
         <div class="shipments-block">
-            <h2><?= __('Shipments') ?></h2>
-            <?= $block->getShipments()->toHtml() ?>
+            <h2><?= /* @noEscape */ __('Shipments') ?></h2>
+            <?= /* @noEscape */ $block->getShipments()->toHtml() ?>
         </div>
         <div class="errors-block">
-            <h2><?= __('Errors') ?></h2>
-            <?= $block->getErrors()->toHtml() ?>
+            <h2><?= /* @noEscape */ __('Errors') ?></h2>
+            <?= /* @noEscape */ $block->getErrors()->toHtml() ?>
         </div>
     </div>
     <div class="col-m-6 sales-block">
-        <h2><?= __('Sales') ?></h2>
-        <?= $block->getSales()->toHtml() ?>
+        <h2><?= /* @noEscape */ __('Sales') ?></h2>
+        <?= /* @noEscape */ $block->getSales()->toHtml() ?>
     </div>
     <div class="col-m-3">
-        <h2><?= __('Products') ?></h2>
-        <?= $block->getProducts()->toHtml() ?>
+        <h2><?= /* @noEscape */ __('Products') ?></h2>
+        <?= /* @noEscape */ $block->getProducts()->toHtml() ?>
     </div>
     <div class="col-m-9 listing-product-issues-block">
-        <h2><?= __('Top 5 Issues') ?></h2>
-        <?= $block->getListingProductIssues()->toHtml() ?>
+        <h2><?= /* @noEscape */ __('Top 5 Issues') ?></h2>
+        <?= /* @noEscape */ $block->getListingProductIssues()->toHtml() ?>
     </div>
 </div>

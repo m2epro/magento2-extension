@@ -15,19 +15,19 @@
     <tbody>
 
     <tr>
-        <td class="label"><?php echo $block->__('Name');?></td>
+        <td class="label"><?php /* @noEscape */ echo $block->__('Name');?></td>
         <td class="value">
             <strong>
-                <?php echo $block->getHelper('Data')->escapeHtml($block->getOrder()->getChildObject()->getBuyerName()) ?>
+                <?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($block->getOrder()->getChildObject()->getBuyerName()) ?>
             </strong>
         </td>
     </tr>
 
     <tr>
-        <td class="label"><?php echo $block->__('eBay User ID');?></td>
+        <td class="label"><?php /* @noEscape */ echo $block->__('eBay User ID');?></td>
         <td class="value">
             <strong>
-                <?php echo $block->getHelper('Data')->escapeHtml($block->getOrder()->getChildObject()->getBuyerUserId()) ?>
+                <?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($block->getOrder()->getChildObject()->getBuyerUserId()) ?>
             </strong>
         </td>
     </tr>
@@ -36,10 +36,10 @@
 
     <?php if (!empty($buyerTaxId)) : ?>
         <tr>
-            <td class="label"><?php echo $block->__('Tax ID');?></td>
+            <td class="label"><?php /* @noEscape */ echo $block->__('Tax ID');?></td>
             <td class="value">
                 <strong>
-                    <?php echo $block->getHelper('Data')->escapeHtml($buyerTaxId); ?>
+                    <?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($buyerTaxId); ?>
                 </strong>
             </td>
         </tr>
@@ -47,36 +47,36 @@
     <?php endif; ?>
 
     <tr>
-        <td class="label"><?php echo $block->__('Email');?></td>
+        <td class="label"><?php /* @noEscape */ echo $block->__('Email');?></td>
         <td class="value">
             <strong>
                 <?php if ($block->getOrder()->getChildObject()->getBuyerEmail() != '') { ?>
                     <?php if (stripos($block->getOrder()->getChildObject()->getBuyerEmail(), 'Invalid Request') !== false) { ?>
-                        &lt;<?php echo $block->__('Private Restriction'); ?>&gt;<br/>
+                        &lt;<?php /* @noEscape */ echo $block->__('Private Restriction'); ?>&gt;<br/>
                     <?php } else { ?>
-                        &lt;<?php echo $block->getHelper('Data')->escapeHtml($block->getOrder()->getChildObject()->getBuyerEmail()); ?>&gt;<br/>
+                        &lt;<?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($block->getOrder()->getChildObject()->getBuyerEmail()); ?>&gt;<br/>
                     <?php } ?>
                 <?php } ?>
             </strong>
         </td>
     </tr>
         <tr>
-            <td class="label"><?php echo $block->__('Address'); ?></td>
+            <td class="label"><?php /* @noEscape */ echo $block->__('Address'); ?></td>
             <td class="value">
                 <strong>
 
                     <?php if (!empty($block->getShippingAddress())) : ?>
 
                         <?php if (!empty($block->getShippingAddress()['recipient_name'])): ?>
-                            <?php echo $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['recipient_name']); ?>
+                            <?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['recipient_name']); ?>
                         <?php endif; ?>
 
                         <?php if (!empty($block->getShippingAddress()['street'][0])) : ?>
-                            <br/><?php echo $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['street'][0]); ?>
+                            <br/><?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['street'][0]); ?>
                         <?php endif; ?>
 
                         <?php if (!empty($block->getShippingAddress()['street'][1])) : ?>
-                            <br/><?php echo $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['street'][1]); ?>
+                            <br/><?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['street'][1]); ?>
                         <?php endif; ?>
 
                         <?php if (!empty($block->getShippingAddress()['city'])) : ?>
@@ -87,7 +87,7 @@
                                     $block->getShippingAddress()['postal_code'],
                                 ]);
                             ?>
-                            <br/><?php echo $block->getHelper('Data')->escapeHtml(implode(', ', $addressData)) ?>
+                            <br/><?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml(implode(', ', $addressData)) ?>
                         <?php endif; ?>
 
                         <?php if (!empty($block->getShippingAddress()['country_name'])) : ?>

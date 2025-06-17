@@ -20,7 +20,7 @@ $url = $block->getSupportUrl();
             We detected a discrepancy between M2E Pro version stated in your database (setup_module table)
             and the actual version of M2E Pro files available in your filesystem. Most likely, M2E Pro files
             were attempted to get downgraded. To have the issue resolved, it’s required to perform an extension upgrade.
-            Please, follow <a href="<?php echo $url ?>" class="external-link" target="_blank">these instructions</a>
+            Please, follow <a href="<?php /* @noEscape */ echo $url ?>" class="external-link" target="_blank">these instructions</a>
             to complete the upgrade.
         </p>
         <p>

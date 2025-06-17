@@ -6,8 +6,7 @@ namespace Ess\M2ePro\Setup\Update\y25_m03;
 
 use Ess\M2ePro\Model\ResourceModel\Ebay\Template\Description;
 
-class AddCustomAttributeForConditionDescriptorIntoEbayDescriptionTemplate
-    extends \Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature
+class AddCustomAttributeForConditionDescriptorIntoEbayDescriptionTemplate extends \Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature
 {
     /** @see \Ess\M2ePro\Model\Ebay\Template\Description */
     private const CONDITION_DESCRIPTOR_MODE_NONE = 0;

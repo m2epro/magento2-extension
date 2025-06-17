@@ -19,11 +19,11 @@ $buttons .= '</div>';
 
 ?>
 
-<?php echo $block->getChildHtml('view_header'); ?>
+<?php /* @noEscape */ echo $block->getChildHtml('view_header'); ?>
 
 <div class="block_notices_module" title="" subtitle="" collapseable="no" hideblock="no" always_show="yes">
 
-    <?php echo $block->createBlock('HelpBlock')->setData([
+    <?php /* @noEscape */ echo $block->createBlock('HelpBlock')->setData([
         'no_collapse' => true,
         'no_hide' => true,
         'always_show' => true,

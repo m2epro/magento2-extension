@@ -16,14 +16,12 @@ class UpdateWatermarkImage extends AbstractFeature
 
     //########################################
 
-    public function __construct
-    (
+    public function __construct(
         HelperFactory $helperFactory,
         ModelFactory $modelFactory,
         Setup $installer,
         \Ess\M2ePro\Helper\Data\Cache\Permanent $permanentCache
-    )
-    {
+    ) {
         parent::__construct($helperFactory, $modelFactory, $installer);
 
         $this->permanentCache = $permanentCache;

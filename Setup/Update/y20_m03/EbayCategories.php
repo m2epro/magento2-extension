@@ -1,9 +1,5 @@
 <?php
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+
 // @codingStandardsIgnoreFile
 
 namespace Ess\M2ePro\Setup\Update\y20_m03;
@@ -15,7 +11,6 @@ use Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature;
  */
 class EbayCategories extends AbstractFeature
 {
-
     public function getBackupTables()
     {
         return [
@@ -276,8 +271,9 @@ class EbayCategories extends AbstractFeature
 
         $mostUsed = [];
         while ($row = $stmt->fetch()) {
-            if (!isset($mostUsed[$row['template_value']]) ||
-                $row['usages'] > $mostUsed[$row['template_value']]['usages']
+            if (
+                !isset($mostUsed[$row['template_value']])
+                || $row['usages'] > $mostUsed[$row['template_value']]['usages']
             ) {
                 $mostUsed[$row['template_value']] = $row;
             }
@@ -327,7 +323,6 @@ class EbayCategories extends AbstractFeature
             ->query();
 
         while ($row = $stmt->fetch()) {
-
             $this->getConnection()->insert(
                 $this->getFullTableName('ebay_template_category'),
                 [
@@ -391,7 +386,6 @@ class EbayCategories extends AbstractFeature
             ->query();
 
         while ($row = $stmt->fetch()) {
-
             $this->getConnection()->insert(
                 $this->getFullTableName('ebay_template_store_category'),
                 [
@@ -453,7 +447,6 @@ class EbayCategories extends AbstractFeature
             ->query();
 
         while ($row = $stmt->fetch()) {
-
             $this->getConnection()->insert(
                 $this->getFullTableName('ebay_template_store_category'),
                 [

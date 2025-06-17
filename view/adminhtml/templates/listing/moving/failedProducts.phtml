@@ -16,7 +16,7 @@
     <div class="messages m2epro-messages">
         <div class="message message-warning error">
             <div>
-                <?php echo $block->__(
+                <?php /* @noEscape */ echo $block->__(
                     'The Products below will not be Moved into the chosen Listing. <br/>
                     <div style="font-weight: normal;">
                         <strong>Possible reason:</strong>
@@ -28,7 +28,7 @@
     </div>
 
     <div id="help_grid" style="margin: 0 auto; padding-top: 10px;">
-        <?php echo $block->getChildHtml('failedProducts_grid') ?>
+        <?php /* @noEscape */ echo $block->getChildHtml('failedProducts_grid') ?>
     </div>
 
 </div>

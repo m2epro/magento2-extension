@@ -9,26 +9,26 @@ $element = $this->getElement();
 <table class="data-grid data-grid-not-hovered" cellpadding="0" cellspacing="0" style="width: 100%">
     <thead>
     <tr class="headings">
-        <th class="data-grid-th" style="width: 30%;"><?= __('Name') ?></th>
-        <th class="data-grid-th" style="width: 30%;"><?= __('Mode') ?></th>
-        <th class="data-grid-th" style="width: 40%;"><?= __('Value') ?></th>
+        <th class="data-grid-th" style="width: 30%;"><?= /* @noEscape */ __('Name') ?></th>
+        <th class="data-grid-th" style="width: 30%;"><?= /* @noEscape */ __('Mode') ?></th>
+        <th class="data-grid-th" style="width: 40%;"><?= /* @noEscape */ __('Value') ?></th>
     </tr>
     </thead>
     <tbody>
     <?php foreach ($element->getSpecifics() as $index => $specific) { ?>
         <tr style="height: 25px;">
             <td style="vertical-align:top;">
-                <?php echo $element->getAttributeTitleHiddenHtml($index, $specific); ?>
-                <?php echo $element->getModeHtml($index); ?>
-                <?php echo $element->getAttributeTitleLabelHtml($index, $specific); ?>
+                <?php /* @noEscape */ echo $element->getAttributeTitleHiddenHtml($index, $specific); ?>
+                <?php /* @noEscape */ echo $element->getModeHtml($index); ?>
+                <?php /* @noEscape */ echo $element->getAttributeTitleLabelHtml($index, $specific); ?>
             </td>
             <td style="vertical-align:top;">
-                <?php echo $element->getValueModeSelectHtml($index, $specific); ?>
+                <?php /* @noEscape */ echo $element->getValueModeSelectHtml($index, $specific); ?>
             </td>
             <td style="width: 100%; vertical-align:top; text-align: left;">
-                <?php echo $element->getValueEbayRecomendedHtml($index, $specific); ?>
-                <?php echo $element->getValueCustomValueHtml($index, $specific); ?>
-                <?php echo $element->getValueCustomAttributeHtml($index, $specific); ?>
+                <?php /* @noEscape */ echo $element->getValueEbayRecomendedHtml($index, $specific); ?>
+                <?php /* @noEscape */ echo $element->getValueCustomValueHtml($index, $specific); ?>
+                <?php /* @noEscape */ echo $element->getValueCustomAttributeHtml($index, $specific); ?>
             </td>
         </tr>
         <?php } ?>

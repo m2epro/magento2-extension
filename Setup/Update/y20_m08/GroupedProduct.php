@@ -170,7 +170,6 @@ class GroupedProduct extends AbstractFeature
             ->query();
 
         while ($row = $magentoOrderItemStmt->fetch()) {
-
             if (empty($row['additional_data'])) {
                 continue;
             }

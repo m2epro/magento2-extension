@@ -33,14 +33,16 @@ class RefactorAmazonOrderColumns extends \Ess\M2ePro\Model\Setup\Upgrade\Entity\
             $this->getFullTableName('m2epro_amazon_order'),
             ['shipping_category' => null],
             [
-                'shipping_category = ?' => 0
-            ]);
+                'shipping_category = ?' => 0,
+            ]
+        );
 
         $this->getConnection()->update(
             $this->getFullTableName('m2epro_amazon_order'),
             ['shipping_mapping' => null],
             [
-                'shipping_mapping = ?' => 0
-            ]);
+                'shipping_mapping = ?' => 0,
+            ]
+        );
     }
 }

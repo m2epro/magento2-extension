@@ -15,14 +15,14 @@
 
         <tr>
             <td>
-                <a href="<?php echo $block->getUrl('*/controlPanel_debug/debug', ['action' => 'firstTest']) ?>" target="_blank">First Test</a>
+                <a href="<?php /* @noEscape */ echo $block->getUrl('*/controlPanel_debug/debug', ['action' => 'firstTest']) ?>" target="_blank">First Test</a>
                 <p>Command for quick development</p>
             </td>
         </tr>
 
         <tr>
             <td>
-                <a href="<?php echo $block->getUrl('*/controlPanel_debug/debug', ['action' => 'secondTest']) ?>" target="_blank">Second Test</a>
+                <a href="<?php /* @noEscape */ echo $block->getUrl('*/controlPanel_debug/debug', ['action' => 'secondTest']) ?>" target="_blank">Second Test</a>
                 <p>Command for quick development</p>
             </td>
         </tr>

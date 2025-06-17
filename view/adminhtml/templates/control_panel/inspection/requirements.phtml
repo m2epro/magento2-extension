@@ -21,13 +21,13 @@
 
     <tr>
         <td class="label" style="width:200px;">
-            <strong><?php echo $block->__('Properties'); ?></strong>
+            <strong><?php /* @noEscape */ echo $block->__('Properties'); ?></strong>
         </td>
         <td class="value" style="width:250px;">
-            <strong><?php echo $block->__('Minimum / Recommended Value'); ?></strong>
+            <strong><?php /* @noEscape */ echo $block->__('Minimum / Recommended Value'); ?></strong>
         </td>
         <td class="value" style="width:250px;">
-            <strong><?php echo $block->__('Configuration Value'); ?></strong>
+            <strong><?php /* @noEscape */ echo $block->__('Configuration Value'); ?></strong>
         </td>
         <td class="value" style="width:100px;">
         </td>
@@ -38,16 +38,16 @@
 
         <tr>
             <td class="label">
-                <label><?php echo $check->getRenderer()->getTitle(); ?></label>
+                <label><?php /* @noEscape */ echo $check->getRenderer()->getTitle(); ?></label>
             </td>
             <td class="value">
-                <?php echo $check->getRenderer()->getMin(); ?>
+                <?php /* @noEscape */ echo $check->getRenderer()->getMin(); ?>
             </td>
             <td class="value">
-                <?php echo $check->getRenderer()->getReal(); ?>
+                <?php /* @noEscape */ echo $check->getRenderer()->getReal(); ?>
             </td>
             <td class="value">
-                <?php echo $check->getRenderer()->getAdditional(); ?>
+                <?php /* @noEscape */ echo $check->getRenderer()->getAdditional(); ?>
             </td>
         </tr>
     <?php } ?>

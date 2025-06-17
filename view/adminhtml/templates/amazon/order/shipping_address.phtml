@@ -15,11 +15,11 @@
     <tbody>
 
     <tr>
-        <td class="label"><?php echo $block->__('Customer Name'); ?></td>
+        <td class="label"><?php /* @noEscape */ echo $block->__('Customer Name'); ?></td>
         <td class="value">
             <strong>
                 <?php if ($block->getOrder()->getChildObject()->getData('buyer_name') == '') {
-                    echo $block->__('N/A');
+                    /* @noEscape */ echo $block->__('N/A');
                 } else {
                     echo $block->getHelper('Data')->escapeHtml($block->getOrder()->getChildObject()->getData('buyer_name'));
                 } ?>
@@ -29,38 +29,38 @@
 
     <?php if ($block->getOrder()->getChildObject()->getData('buyer_email') != '') { ?>
         <tr>
-            <td class="label"><?php echo $block->__('Buyer Email');?></td>
+            <td class="label"><?php /* @noEscape */ echo $block->__('Buyer Email');?></td>
             <td class="value">
                 <strong>
-                    &lt;<?php echo $block->getHelper('Data')->escapeHtml($block->getOrder()->getChildObject()->getData('buyer_email')); ?>&gt;
+                    &lt;<?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($block->getOrder()->getChildObject()->getData('buyer_email')); ?>&gt;
                 </strong>
             </td>
         </tr>
     <?php } ?>
 
     <tr>
-        <td class="label"><?php echo $block->__('Shipping Address');?></td>
+        <td class="label"><?php /* @noEscape */ echo $block->__('Shipping Address');?></td>
         <td class="value">
             <strong>
 
                 <?php if ($block->getOrder()->getShippingAddress()->isEmpty()) : ?>
-                    <?php echo $block->__('N/A'); ?>
+                    <?php /* @noEscape */ echo $block->__('N/A'); ?>
                 <?php else : ?>
 
-                    <?php echo $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['recipient_name']) ?>
+                    <?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['recipient_name']) ?>
 
                     <?php if (!empty($block->getShippingAddress()['country_code']) || !empty($block->getShippingAddress()['city'])) : ?>
 
                         <?php if (!empty($block->getShippingAddress()['street'][0])) : ?>
-                            <br/><?php echo $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['street'][0]); ?>
+                            <br/><?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['street'][0]); ?>
                         <?php endif; ?>
 
                         <?php if (!empty($block->getShippingAddress()['street'][1])) : ?>
-                            <br/><?php echo $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['street'][1]); ?>
+                            <br/><?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['street'][1]); ?>
                         <?php endif; ?>
 
                         <?php if (!empty($block->getShippingAddress()['street'][2])) : ?>
-                            <br/><?php echo $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['street'][2]); ?>
+                            <br/><?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['street'][2]); ?>
                         <?php endif; ?>
 
                         <?php if (!empty($block->getShippingAddress()['city'])) : ?>
@@ -71,7 +71,7 @@
                                     $block->getShippingAddress()['postal_code'],
                                 ]);
                             ?>
-                            <br/><?php echo $block->getHelper('Data')->escapeHtml(implode(', ', $addressData)) ?>
+                            <br/><?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml(implode(', ', $addressData)) ?>
                         <?php endif; ?>
 
                         <?php if (!empty($block->getShippingAddress()['country_name'])) : ?>

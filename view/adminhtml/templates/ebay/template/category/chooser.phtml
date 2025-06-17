@@ -9,7 +9,7 @@
 
 /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser $block */
 
-use \Ess\M2ePro\Helper\Component\Ebay\Category as Category;
+use Ess\M2ePro\Helper\Component\Ebay\Category as Category;
 
 $categoriesData = $block->getCategoriesData();
 $itemSpecificsRequired = isset($categoriesData[Category::TYPE_EBAY_MAIN]['mode']) && $block->isItemSpecificsRequired();
@@ -83,7 +83,7 @@ require([
         <div class="entry-edit" id="magento_block_ebay_listing_category_chooser_ebay" style="padding-top: 5px;">
 
             <div class="entry-edit-head">
-                <h4 class="icon-head head-edit-form fieldset-legend"><?php echo $block->__('eBay Catalog'); ?></h4>
+                <h4 class="icon-head head-edit-form fieldset-legend"><?php /* @noEscape */ echo $block->__('eBay Catalog'); ?></h4>
             </div>
 
         <div class="fieldset">
@@ -94,24 +94,24 @@ require([
                     <?php if (!$block->isCategoryModeEbaySecondary()) : ?>
                         <tr>
                             <td class="label" style="width: 110px;">
-                                <?php echo $block->__('Primary'); ?> <span class="required">*</span>
+                                <?php /* @noEscape */ echo $block->__('Primary'); ?> <span class="required">*</span>
                             </td>
 
                             <td class="value" style="min-width: 300px;">
-                                <?php echo $block->getCategoryPathHtml(Category::TYPE_EBAY_MAIN) ?>
-                                <input type="text" style="display: none" id="category_validation" name="category_validation" class="required-entry" value="<?php if (isset($categoriesData[Category::TYPE_EBAY_MAIN]['value'])) : echo $categoriesData[Category::TYPE_EBAY_MAIN]['value']; endif; ?>" />
+                                <?php /* @noEscape */ echo $block->getCategoryPathHtml(Category::TYPE_EBAY_MAIN) ?>
+                                <input type="text" style="display: none" id="category_validation" name="category_validation" class="required-entry" value="<?php if (isset($categoriesData[Category::TYPE_EBAY_MAIN]['value'])) : /* @noEscape */ echo $categoriesData[Category::TYPE_EBAY_MAIN]['value']; endif; ?>" />
                             </td>
                             <?php if ($block->getIsEditCategoryAllowed()) : ?>
                                 <td class="value" style="padding-left: 15px;">
                                     <a id="ebay_template_category_chooser_ebay_primary_category_edit"
                                        href="#" style="padding-left: 150px;"
-                                       onclick="EbayTemplateCategoryChooserObj.showEditPopUp(<?php echo \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN; ?>)"><?php echo $block->__('Edit'); ?></a>
+                                       onclick="EbayTemplateCategoryChooserObj.showEditPopUp(<?php echo \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN; ?>)"><?php /* @noEscape */ echo $block->__('Edit'); ?></a>
                                 </td>
                             <?php endif; ?>
                         </tr>
                         <tr>
                             <td class="label" style="width: 110px;">
-                                <?php echo $block->__('Item Specifics'); ?>:
+                                <?php /* @noEscape */ echo $block->__('Item Specifics'); ?>:
                                 <?php if ($itemSpecificsRequired): ?>
                                     <span class="required">*</span>
                                 <?php endif; ?>
@@ -120,25 +120,25 @@ require([
                             <td class="value" style="min-width: 300px;">
                                 <?php if (!isset($categoriesData[Category::TYPE_EBAY_MAIN]['is_custom_template'])) : ?>
                                     <?php $color = $itemSpecificsRequired ? 'red' : 'grey'; ?>
-                                    <span style="font-style: italic; color: <?php echo $color; ?>"><?php echo $block->__('Not Set'); ?></span>
+                                    <span style="font-style: italic; color: <?php /* @noEscape */ echo $color; ?>"><?php /* @noEscape */ echo $block->__('Not Set'); ?></span>
                                 <?php elseif ($categoriesData[Category::TYPE_EBAY_MAIN]['is_custom_template'] == 1) : ?>
-                                    <span><?php echo $block->__('Custom'); ?></span>
+                                    <span><?php /* @noEscape */ echo $block->__('Custom'); ?></span>
                                 <?php else : ?>
-                                    <span><?php echo $block->__('Default'); ?></span>
+                                    <span><?php /* @noEscape */ echo $block->__('Default'); ?></span>
                                 <?php endif; ?>
-                                <input type="text" style="display: none" id="specifics_validation" name="specifics_validation" class="<?php if ($itemSpecificsRequired) : echo ' required-entry '; endif; ?>" value="<?php if (isset($categoriesData[Category::TYPE_EBAY_MAIN]['is_custom_template'])) : echo $categoriesData[Category::TYPE_EBAY_MAIN]['is_custom_template']; endif; ?>" />
+                                <input type="text" style="display: none" id="specifics_validation" name="specifics_validation" class="<?php if ($itemSpecificsRequired) : echo ' required-entry '; endif; ?>" value="<?php if (isset($categoriesData[Category::TYPE_EBAY_MAIN]['is_custom_template'])) : /* @noEscape */ echo $categoriesData[Category::TYPE_EBAY_MAIN]['is_custom_template']; endif; ?>" />
                             </td>
 
                             <?php if (isset($categoriesData[Category::TYPE_EBAY_MAIN]['mode']) && $categoriesData[Category::TYPE_EBAY_MAIN]['mode'] != \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE): ?>
                                 <td style="float: right" class="value">
                                     <a id="ebay_template_category_chooser_item_specifics_edit" href="#"
-                                       onclick="EbayTemplateCategoryChooserObj.editSpecifics()"><?php echo $block->__('Edit'); ?></a>
+                                       onclick="EbayTemplateCategoryChooserObj.editSpecifics()"><?php /* @noEscape */ echo $block->__('Edit'); ?></a>
                                 </td>
                             <?php endif; ?>
 
                             <?php if (isset($categoriesData[Category::TYPE_EBAY_MAIN]['is_custom_template']) && $categoriesData[Category::TYPE_EBAY_MAIN]['is_custom_template']): ?>
                                 <td style="float: right" class="value">
-                                    <a href="#" style="padding-right: 10px;" onclick="EbayTemplateCategoryChooserObj.resetSpecificsToDefault()"><?php echo $block->__('Reset to Default'); ?></a>
+                                    <a href="#" style="padding-right: 10px;" onclick="EbayTemplateCategoryChooserObj.resetSpecificsToDefault()"><?php /* @noEscape */ echo $block->__('Reset to Default'); ?></a>
                                 </td>
                             <?php endif; ?>
                         </tr>
@@ -156,15 +156,15 @@ require([
                     <?php if (!$block->isCategoryModeEbayPrimary()) : ?>
                         <tr>
                             <td class="label" style="width: 110px;">
-                                <?php echo $block->__('Secondary'); ?>
+                                <?php /* @noEscape */ echo $block->__('Secondary'); ?>
                             </td>
 
                             <td class="value" style="min-width: 300px;">
-                                <?php echo $block->getCategoryPathHtml(Category::TYPE_EBAY_SECONDARY) ?>
+                                <?php /* @noEscape */ echo $block->getCategoryPathHtml(Category::TYPE_EBAY_SECONDARY) ?>
                             </td>
                             <?php if ($block->getIsEditCategoryAllowed()) : ?>
                                 <td class="value" style="padding-left: 15px;">
-                                    <a href="#" style="padding-left: 150px;" onclick="EbayTemplateCategoryChooserObj.showEditPopUp(<?php echo \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_SECONDARY; ?>)"><?php echo $block->__('Edit'); ?></a>
+                                    <a href="#" style="padding-left: 150px;" onclick="EbayTemplateCategoryChooserObj.showEditPopUp(<?php echo \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_SECONDARY; ?>)"><?php /* @noEscape */ echo $block->__('Edit'); ?></a>
                                 </td>
                             <?php endif; ?>
                         </tr>
@@ -185,7 +185,7 @@ require([
             <div class="entry-edit" id="magento_block_ebay_listing_category_chooser_store" style="padding-top: 25px;">
 
                 <div class="entry-edit-head">
-                    <h4 class="icon-head head-edit-form fieldset-legend"><?php echo $block->__('eBay Store Category'); ?></h4>
+                    <h4 class="icon-head head-edit-form fieldset-legend"><?php /* @noEscape */ echo $block->__('eBay Store Category'); ?></h4>
                 </div>
 
                 <div class="fieldset">
@@ -195,32 +195,32 @@ require([
 
                             <tr>
                                 <td class="label" style="width: 110px;">
-                                    <?php echo $block->__('Primary'); ?>
+                                    <?php /* @noEscape */ echo $block->__('Primary'); ?>
                                 </td>
 
                                 <td class="value" style="min-width: 300px;">
-                                    <?php echo $block->getCategoryPathHtml(Category::TYPE_STORE_MAIN) ?>
-                                    <input type="hidden" class="main_store_category_value" name="main_store_category_value" value="<?php echo isset($categoriesData[Category::TYPE_STORE_MAIN]['value']) ? $categoriesData[Category::TYPE_STORE_MAIN]['value'] : ''; ?>" />
+                                    <?php /* @noEscape */ echo $block->getCategoryPathHtml(Category::TYPE_STORE_MAIN) ?>
+                                    <input type="hidden" class="main_store_category_value" name="main_store_category_value" value="<?php /* @noEscape */ echo isset($categoriesData[Category::TYPE_STORE_MAIN]['value']) ? $categoriesData[Category::TYPE_STORE_MAIN]['value'] : ''; ?>" />
                                 </td>
                                 <?php if ($block->getIsEditCategoryAllowed()) : ?>
                                     <td class="value" style="padding-left: 15px;">
-                                        <a href="#" style="padding-left: 150px;" onclick="EbayTemplateCategoryChooserObj.showEditPopUp(<?php echo \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN; ?>)"><?php echo $block->__('Edit'); ?></a>
+                                        <a href="#" style="padding-left: 150px;" onclick="EbayTemplateCategoryChooserObj.showEditPopUp(<?php echo \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN; ?>)"><?php /* @noEscape */ echo $block->__('Edit'); ?></a>
                                     </td>
                                 <?php endif; ?>
                             </tr>
 
                             <tr>
                                 <td class="label" style="width: 110px;">
-                                    <?php echo $block->__('Secondary'); ?>
+                                    <?php /* @noEscape */ echo $block->__('Secondary'); ?>
                                 </td>
 
                                 <td class="value" style="min-width: 300px;">
-                                    <?php echo $block->getCategoryPathHtml(Category::TYPE_STORE_SECONDARY) ?>
-                                    <input type="hidden" id="secondary_store_category_value" class="secondary_store_category_value" value="<?php echo isset($categoriesData[Category::TYPE_STORE_SECONDARY]['value']) ? $categoriesData[Category::TYPE_STORE_SECONDARY]['value'] : ''; ?>" />
+                                    <?php /* @noEscape */ echo $block->getCategoryPathHtml(Category::TYPE_STORE_SECONDARY) ?>
+                                    <input type="hidden" id="secondary_store_category_value" class="secondary_store_category_value" value="<?php /* @noEscape */ echo isset($categoriesData[Category::TYPE_STORE_SECONDARY]['value']) ? $categoriesData[Category::TYPE_STORE_SECONDARY]['value'] : ''; ?>" />
                                 </td>
                                 <?php if ($block->getIsEditCategoryAllowed()) : ?>
                                     <td class="value" style="padding-left: 15px;">
-                                        <a href="#" style="padding-left: 150px;" onclick="EbayTemplateCategoryChooserObj.showEditPopUp(<?php echo \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY; ?>)"><?php echo $block->__('Edit'); ?></a>
+                                        <a href="#" style="padding-left: 150px;" onclick="EbayTemplateCategoryChooserObj.showEditPopUp(<?php echo \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY; ?>)"><?php /* @noEscape */ echo $block->__('Edit'); ?></a>
                                     </td>
                                 <?php endif; ?>
                             </tr>

@@ -87,16 +87,16 @@ class VCSLiteInvoices extends AbstractFeature
             )
             ->commit();
 
-
         $this->getTableModifier('amazon_order')
             ->addColumn(
                 'invoice_data_report', 'LONGTEXT', 'NULL', 'is_credit_memo_sent', false, false
             )
             ->commit();
 
-        if ($this->getTableModifier('amazon_account')
-            ->isColumnExists('is_magento_invoice_creation_disabled')) {
-
+        if (
+            $this->getTableModifier('amazon_account')
+                 ->isColumnExists('is_magento_invoice_creation_disabled')
+        ) {
             $amazonAccountTable = $this->getFullTableName('amazon_account');
 
             $query = $this->getConnection()

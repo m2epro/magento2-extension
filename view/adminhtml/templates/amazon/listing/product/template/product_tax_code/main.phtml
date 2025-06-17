@@ -16,11 +16,11 @@
 
         <?php if (!empty($block->getMessages())) : ?>
             <div id="template_productTaxCode_error_block">
-                <?php echo $block->getWarnings(); ?>
+                <?php /* @noEscape */ echo $block->getWarnings(); ?>
             </div>
         <?php endif; ?>
 
-        <?php echo $block->createBlock('HelpBlock')->setData([
+        <?php /* @noEscape */ echo $block->createBlock('HelpBlock')->setData([
             'content' => $block->__(
                 'The Product Tax Code Policy is using to apply the VAT Calculation Service settings, provided
                 in Amazon Seller Central, to your Products managed via M2E Pro.

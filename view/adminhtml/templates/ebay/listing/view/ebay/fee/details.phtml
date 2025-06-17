@@ -41,20 +41,20 @@ $fees = $block->getFees();
 <div class="entry-edit" style="padding-top: 10px;">
     <div id="fees-table" cellspacing="0" class="form-list" style="width: 100%;">
         <div class="row th">
-            <div class="cell"><?php echo $block->__('Name') ?></div>
-            <div class="cell"><?php echo $block->__('Fee') ?></div>
+            <div class="cell"><?php /* @noEscape */ echo $block->__('Name') ?></div>
+            <div class="cell"><?php /* @noEscape */ echo $block->__('Fee') ?></div>
         </div>
         <?php foreach ($fees as $feeCode => $fee) : ?>
             <?php if ($feeCode != 'listing_fee') : ?>
                 <div class="row">
-                    <div class="cell label"><?php echo $block->__($block->getHelper('Data')->escapeHtml($fee['label'])) ?>:</div>
-                    <div class="cell value"><?php echo $block->getHelper('Data')->escapeHtml($fee['value']) ?></div>
+                    <div class="cell label"><?php /* @noEscape */ echo $block->__($block->getHelper('Data')->escapeHtml($fee['label'])) ?>:</div>
+                    <div class="cell value"><?php /* @noEscape */ echo $block->getHelper('Data')->escapeHtml($fee['value']) ?></div>
                 </div>
             <?php endif; ?>
         <?php endforeach; ?>
         <div class="row">
-            <div class="cell label total"><?php echo $block->__('Total') ?>:</div>
-            <div class="cell value total"><?php echo $fees['listing_fee']['value'] ?></div>
+            <div class="cell label total"><?php /* @noEscape */ echo $block->__('Total') ?>:</div>
+            <div class="cell value total"><?php /* @noEscape */ echo $fees['listing_fee']['value'] ?></div>
         </div>
     </div>
 </div>

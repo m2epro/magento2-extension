@@ -17,7 +17,6 @@ class AmazonShippingTemplateAttributes extends AbstractFeature
     public function execute()
     {
         if ($this->getTableModifier('amazon_template_shipping_template')->isColumnExists('template_name')) {
-
             $this->getTableModifier('amazon_template_shipping_template')
                 ->dropIndex('template_name', false)
                 ->renameColumn(

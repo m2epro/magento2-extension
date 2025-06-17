@@ -14,5 +14,4 @@ class FixDevKeyForJapanAmazonMarketplace extends AbstractFeature
             '`marketplace_id` = 42'
         );
     }
-
 }

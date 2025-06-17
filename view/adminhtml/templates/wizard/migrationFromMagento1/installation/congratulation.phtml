@@ -14,17 +14,17 @@
 <div class="wizard_block">
 
     <p>
-        <?php echo $block->__('Our congratulations! You have migrated M2E Pro data from Magento v1.x to Magento v2.x.'); ?>
+        <?php /* @noEscape */ echo $block->__('Our congratulations! You have migrated M2E Pro data from Magento v1.x to Magento v2.x.'); ?>
     </p>
 
     <p>
-        <?php echo $block->__('
+        <?php /* @noEscape */ echo $block->__('
             Enable automatic synchronization to start syncing your Magento inventory and sales with Channels.
             Click <strong>Complete</strong> to exit the Wizard.
         '); ?>
     </p>
 
     <p>
-        <?php echo $block->getChildHtml('enable_synchronization_form'); ?>
+        <?php /* @noEscape */ echo $block->getChildHtml('enable_synchronization_form'); ?>
     </p>
 </div>

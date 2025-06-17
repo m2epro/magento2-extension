@@ -42,8 +42,9 @@ class RemoveAmazonShippingOverride extends AbstractFeature
             $this->getConnection()->dropTable($amazonTemplateShippingOverrideTableName);
         }
 
-        if ($this->installer->tableExists($this->getFullTableName('amazon_template_shipping_template')) &&
-            !$this->installer->tableExists($this->getFullTableName('amazon_template_shipping'))
+        if (
+            $this->installer->tableExists($this->getFullTableName('amazon_template_shipping_template'))
+            && !$this->installer->tableExists($this->getFullTableName('amazon_template_shipping'))
         ) {
             $this->renameTable(
                 'amazon_template_shipping_template',

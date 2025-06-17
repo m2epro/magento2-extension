@@ -17,10 +17,22 @@ class PartialStatesForAfnRepricingFilters extends AbstractFeature
     public function execute()
     {
         $this->getTableModifier('amazon_listing_product')
-             ->addColumn('variation_parent_afn_state', 'SMALLINT UNSIGNED',
-                         'NULL', 'is_general_id_owner', true, false)
-             ->addColumn('variation_parent_repricing_state', 'SMALLINT UNSIGNED',
-                         'NULL', 'variation_parent_afn_state', true, false)
+             ->addColumn(
+                 'variation_parent_afn_state',
+                 'SMALLINT UNSIGNED',
+                 'NULL',
+                 'is_general_id_owner',
+                 true,
+                 false
+             )
+             ->addColumn(
+                 'variation_parent_repricing_state',
+                 'SMALLINT UNSIGNED',
+                 'NULL',
+                 'variation_parent_afn_state',
+                 true,
+                 false
+             )
              ->commit();
     }
 

@@ -18,8 +18,8 @@ UPDATE `{$registryTable}` SET `key` = '/product/variation/vocabulary/server/' WH
         ");
 
         $this->installer->run("
-UPDATE `{$registryTable}` SET `key` = '/product/variation/vocabulary/local/' WHERE `key` = 'amazon_vocabulary_local';"
-        );
+UPDATE `{$registryTable}` SET `key` = '/product/variation/vocabulary/local/' WHERE `key` = 'amazon_vocabulary_local';
+        ");
 
         $this->installer->run("
 DELETE FROM `{$registryTable}` WHERE `key` IN ('walmart_vocabulary_server', 'walmart_vocabulary_local');

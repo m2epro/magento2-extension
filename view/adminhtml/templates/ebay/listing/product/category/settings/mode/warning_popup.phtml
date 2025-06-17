@@ -12,7 +12,7 @@
 <div id="next_step_warning_popup_content" style="display: none">
 
     <div>
-        <?php echo $block->__(
+        <?php /* @noEscape */ echo $block->__(
             'You have not specified full Category data for
             <strong><span class="failed_count"></span></strong> of <strong><span class="total_count"></span></strong>
             Product(s).<br><br>

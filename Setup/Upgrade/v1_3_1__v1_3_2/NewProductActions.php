@@ -43,7 +43,6 @@ class NewProductActions extends AbstractFeature
             ->query();
 
         while ($oldProcessingRow = $processingsStmt->fetch()) {
-
             if (strpos($oldProcessingRow['model'], 'Ebay\Connector\Item') !== false) {
                 $this->processEbayItemProcessing($oldProcessingRow);
                 continue;
@@ -453,9 +452,10 @@ WHERE `apab`.`processing_id` = {$oldProcessingRow['id']}
                     $oldProcessingRow, $oldActionData['related_id']
                 );
 
-                if (is_null($newProcessingData['result_data']) &&
-                    !empty($oldActionData['is_completed']) &&
-                    !empty($oldActionData['output_messages'])
+                if (
+                    is_null($newProcessingData['result_data'])
+                    && !empty($oldActionData['is_completed'])
+                    && !empty($oldActionData['output_messages'])
                 ) {
                     $newProcessingData['result_data'] = array(
                         'messages' => json_decode($oldActionData['output_messages'], true),
@@ -549,9 +549,10 @@ WHERE `apab`.`processing_id` = {$oldProcessingRow['id']}
                     $oldProcessingRow, $oldActionData['related_id']
                 );
 
-                if (is_null($newProcessingData['result_data']) &&
-                    !empty($oldActionData['is_completed']) &&
-                    !empty($oldActionData['output_messages'])
+                if (
+                    is_null($newProcessingData['result_data'])
+                    && !empty($oldActionData['is_completed'])
+                    && !empty($oldActionData['output_messages'])
                 ) {
                     $newProcessingData['result_data'] = array(
                         'messages' => json_decode($oldActionData['output_messages'], true),
@@ -776,7 +777,7 @@ WHERE `apab`.`processing_id` = {$oldProcessingRow['id']}
 
     //########################################
 
-    private function updateProcessingLocks(array $oldProcessingRow, $newProcessingId, $objectId  = NULL)
+    private function updateProcessingLocks(array $oldProcessingRow, $newProcessingId, $objectId = NULL)
     {
         $where = array(
             'processing_id = ?' => $oldProcessingRow['id'],
@@ -802,10 +803,10 @@ WHERE `apab`.`processing_id` = {$oldProcessingRow['id']}
 
     private function getBackupTableName($tableName)
     {
-        $tableName = $this->getTableName($tableName).self::BACKUP_TABLE_SUFFIX;
+        $tableName = $this->getTableName($tableName) . self::BACKUP_TABLE_SUFFIX;
 
         if (strlen($tableName) > self::BACKUP_TABLE_IDENTIFIER_MAX_LEN) {
-            $tableName = 'm2epro'.'_'.sha1($tableName).self::BACKUP_TABLE_SUFFIX;
+            $tableName = 'm2epro' . '_' . sha1($tableName) . self::BACKUP_TABLE_SUFFIX;
         }
 
         return $tableName;
@@ -819,7 +820,8 @@ WHERE `apab`.`processing_id` = {$oldProcessingRow['id']}
      */
     protected function getTableModifier($tableName)
     {
-        return $this->modelFactory->getObject('Setup\Database\Modifier\Table',
+        return $this->modelFactory->getObject(
+            'Setup\Database\Modifier\Table',
             [
                 'installer' => $this->installer,
                 'tableName' => $tableName,
@@ -833,9 +835,10 @@ WHERE `apab`.`processing_id` = {$oldProcessingRow['id']}
      */
     protected function getConfigModifier($configName = '')
     {
-        $tableName = $configName.'_config';
+        $tableName = $configName . '_config';
 
-        return $this->modelFactory->getObject('Setup\Database\Modifier\Config',
+        return $this->modelFactory->getObject(
+            'Setup\Database\Modifier\Config',
             [
                 'installer' => $this->installer,
                 'tableName' => $tableName,

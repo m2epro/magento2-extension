@@ -11,82 +11,82 @@ $priceModifierAttributes = $block->getPriceModifierAttributes($priceModifierData
 $attributesByInputTypes = $block->getAttributesByInputTypes();
 ?>
 
-<div id="<?= $type; ?>_change_container"></div>
-<div id="<?= $type; ?>_calculation_example" class="price_change_row" style="display: none;"></div>
-<button title="<?= $block->__('Add Price Change'); ?>"
-        id="<?= $type; ?>_change_add_row_button"
+<div id="<?= /* @noEscape */ $type; ?>_change_container"></div>
+<div id="<?= /* @noEscape */ $type; ?>_calculation_example" class="price_change_row" style="display: none;"></div>
+<button title="<?= /* @noEscape */ $block->__('Add Price Change'); ?>"
+        id="<?= /* @noEscape */ $type; ?>_change_add_row_button"
         type="button"
         class="action-default scalable action primary price_change_remove price_change_additional_element">
-    <span><?= $block->__('Add Price Change'); ?></span>
+    <span><?= /* @noEscape */ $block->__('Add Price Change'); ?></span>
 </button>
 
-<div id="<?= $type; ?>_change_row_template" style="display: none;">
+<div id="<?= /* @noEscape */ $type; ?>_change_row_template" style="display: none;">
     <div style="position: relative;" class="price_change_row">
-        <select id="<?= $type; ?>_modifier_mode_%index%"
-                name="<?= $type; ?>_modifier_mode[%index%]"
+        <select id="<?= /* @noEscape */ $type; ?>_modifier_mode_%index%"
+                name="<?= /* @noEscape */ $type; ?>_modifier_mode[%index%]"
                 class="select admin__control-select M2ePro-validate-price-modifier price_modifier_mode required-entry"
-                data-<?= $typeForDataset; ?>-change-index="%index%"
+                data-<?= /* @noEscape */ $typeForDataset; ?>-change-index="%index%"
                 style="width: 320px;">
             <option value="<?= \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ABSOLUTE_INCREASE; ?>">
-                <?= __('Absolute Value increase'); ?>
+                <?= /* @noEscape */ __('Absolute Value increase'); ?>
             </option>
             <option value="<?= \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ABSOLUTE_DECREASE; ?>">
-                <?= __('Absolute Value decrease'); ?>
+                <?= /* @noEscape */ __('Absolute Value decrease'); ?>
             </option>
             <option value="<?= \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_PERCENTAGE_INCREASE; ?>">
-                <?= __('Percentage increase'); ?>
+                <?= /* @noEscape */ __('Percentage increase'); ?>
             </option>
             <option value="<?= \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_PERCENTAGE_DECREASE; ?>">
-                <?= __('Percentage decrease'); ?>
+                <?= /* @noEscape */ __('Percentage decrease'); ?>
             </option>
             <option value="<?= \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ATTRIBUTE_INCREASE; ?>">
-                <?= __('Increase by Attribute Value'); ?>
+                <?= /* @noEscape */ __('Increase by Attribute Value'); ?>
             </option>
             <option value="<?= \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ATTRIBUTE_DECREASE; ?>">
-                <?= __('Decrease by Attribute Value'); ?>
+                <?= /* @noEscape */ __('Decrease by Attribute Value'); ?>
             </option>
             <option value="<?= \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ATTRIBUTE_PERCENTAGE_INCREASE; ?>">
-                <?= __('Percentage increase by Attribute Value'); ?>
+                <?= /* @noEscape */ __('Percentage increase by Attribute Value'); ?>
             </option>
             <option value="<?= \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ATTRIBUTE_PERCENTAGE_DECREASE; ?>">
-                <?= __('Percentage decrease by Attribute Value'); ?>
+                <?= /* @noEscape */ __('Percentage decrease by Attribute Value'); ?>
             </option>
         </select>
 
         <div style="width: 250px; display: inline-block">
-            <input name="<?= $type; ?>_modifier_value[%index%]"
-                   id="<?= $type; ?>_modifier_value_%index%"
+            <input name="<?= /* @noEscape */ $type; ?>_modifier_value[%index%]"
+                   id="<?= /* @noEscape */ $type; ?>_modifier_value_%index%"
                    type="text"
                    class="admin__control-text input-text coef price_change_additional_element M2ePro-required-when-visible"
                    style="width: 100%"/>
 
-            <select id="<?= $type; ?>_modifier_attribute_%index%"
-                    name="<?= $type; ?>_modifier_attribute[%index%]"
+            <select id="<?= /* @noEscape */ $type; ?>_modifier_attribute_%index%"
+                    name="<?= /* @noEscape */ $type; ?>_modifier_attribute[%index%]"
                     class="select admin__control-select M2ePro-validate-price-modifier price_modifier_mode M2ePro-required-when-visible"
-                    data-<?= $typeForDataset; ?>-change-index="%index%"
+                    data-<?= /* @noEscape */ $typeForDataset; ?>-change-index="%index%"
                     style="width: 100%">
 
                 <?php foreach ($priceModifierAttributes as $attributeCode): ?>
                     <?php if(!$block->magentoAttributeHelper->isExistInAttributesArray($attributeCode, $attributes)): ?>
-                        <option value="<?= $attributeCode; ?>">
-                            <?= $block->escapeHtml($block->magentoAttributeHelper->getAttributeLabel($attributeCode)); ?>
+                        <option value="<?= /* @noEscape */ $attributeCode; ?>">
+                            <?= /* @noEscape */ $block->escapeHtml($block->magentoAttributeHelper->getAttributeLabel($attributeCode)); ?>
                         </option>
                     <?php endif; ?>
                 <?php endforeach; ?>
 
                 <?php foreach ($attributesByInputTypes['text_price'] as $attribute) : ?>
-                    <option value="<?= $attribute['code']; ?>">
-                        <?= $block->escapeHtml($attribute['label']); ?>
+                    <option value="<?= /* @noEscape */ $attribute['code']; ?>">
+                        <?= /* @noEscape */ $block->escapeHtml($attribute['label']); ?>
                     </option>
                 <?php endforeach; ?>
             </select>
         </div>
 
-        <button title="<?= __('Remove'); ?>"
-                id="<?= $type; ?>_modifier_row_remove_button_%index%"
+        <button title="<?= /* @noEscape */ __('Remove'); ?>"
+                id="<?= /* @noEscape */ $type; ?>_modifier_row_remove_button_%index%"
                 type="button"
                 class="action-default scalable action primary price_change_remove price_change_additional_element">
-            <span><?= __('Remove'); ?></span>
+            <span><?= /* @noEscape */ __('Remove'); ?></span>
         </button>
     </div>
 </div>

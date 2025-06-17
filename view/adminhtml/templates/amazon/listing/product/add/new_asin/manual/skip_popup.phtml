@@ -14,7 +14,7 @@
 <div id="new_asin_skip_popup_content">
 
     <div style="margin-top: 10px;">
-        <?php echo $block->__(
+        <?php /* @noEscape */ echo $block->__(
             '<b>Warning:</b> There are <span id="failed_count"></span> Product(s) of <span id="total_count"></span> which have no Product Type assigned.<br/><br/>
 
             If you want to assign Product Type now, click<strong>Cancel</strong>then choose the Set Product Type Action for the Products which need them.<br/><br/>

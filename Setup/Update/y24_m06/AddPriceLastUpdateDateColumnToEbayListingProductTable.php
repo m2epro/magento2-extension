@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Ess\M2ePro\Setup\Update\y24_m06;
 
-class AddPriceLastUpdateDateColumnToEbayListingProductTable extends
-    \Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature
+class AddPriceLastUpdateDateColumnToEbayListingProductTable extends \Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature
 {
     public function execute(): void
     {

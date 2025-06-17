@@ -13,7 +13,7 @@
 
 <div id="variation_individual_edit_popup">
 
-    <?php echo $block->createBlock('HelpBlock')->setData([
+    <?php /* @noEscape */ echo $block->createBlock('HelpBlock')->setData([
         'style' => 'margin-bottom: 15px',
         'content' => $block->__('Magento Variation, to which this Product is linked to, can be changed here.')
     ])->toHtml(); ?>
@@ -29,11 +29,11 @@
     <script type="text/javascript">
 
         WalmartListingProductVariationObj.setNeededVariationData(
-            <?php echo json_encode(array_keys($block->getMagentoVariationsSets())); ?>,
-            <?php echo json_encode($block->getMagentoVariationsTree()); ?>
+            <?php /* @noEscape */ echo json_encode(array_keys($block->getMagentoVariationsSets())); ?>,
+            <?php /* @noEscape */ echo json_encode($block->getMagentoVariationsTree()); ?>
         );
         WalmartListingProductVariationObj.editPopupInit(
-            <?php echo json_encode($block->currentVariation); ?>
+            <?php /* @noEscape */ echo json_encode($block->currentVariation); ?>
         );
 
     </script>

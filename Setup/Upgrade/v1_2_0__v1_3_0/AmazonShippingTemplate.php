@@ -38,11 +38,10 @@ SQL
         );
 
         while ($row = $queryStmt->fetch()) {
-
             $reasons = explode(',', $row['synch_reasons']);
             $reasons = array_unique(array_filter($reasons));
 
-            array_walk($reasons, function (&$el){
+            array_walk($reasons, function (&$el) {
                 $el = str_replace('shippingOverrideTemplate', 'shippingTemplate', $el);
             });
             $reasons = implode(',', $reasons);

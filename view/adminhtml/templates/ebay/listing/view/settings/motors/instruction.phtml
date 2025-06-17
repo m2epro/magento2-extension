@@ -12,7 +12,7 @@
 ?>
 
 <div id="add_custom_motors_record_instruction_container">
-    <?php echo $block->createBlock('HelpBlock')->setData([
+    <?php /* @noEscape */ echo $block->createBlock('HelpBlock')->setData([
         'no_collapse' => true,
         'no_hide' => true,
         'content' => $block->__('
