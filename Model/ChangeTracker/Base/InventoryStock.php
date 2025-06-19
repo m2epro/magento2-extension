@@ -27,7 +27,16 @@ class InventoryStock
         return $this->getNoMsiInventoryQuery($tracker);
     }
 
-    public function getMsiInventoryQuery(TrackerInterface $tracker): SelectQueryBuilder
+    public function getInventoryStockJoinCondition(): string
+    {
+        if ($this->magentoHelper->isMSISupportingVersion()) {
+            return 'product.product_id = stock.product_id AND product.store_id = stock.store_id';
+        }
+
+        return 'product.product_id = stock.product_id';
+    }
+
+    private function getMsiInventoryQuery(TrackerInterface $tracker): SelectQueryBuilder
     {
         $stockSubQuery = $this->queryBuilder
             ->makeSubQuery()
@@ -106,31 +115,12 @@ class InventoryStock
         return $this->queryBuilder
             ->makeSubQuery()
             ->addSelect('product_id', 'stock.product_id')
-            ->addSelect('store_id', 'st.store_id')
             ->addSelect('is_in_stock', 'stock.is_in_stock')
             ->addSelect('qty', 'stock.qty')
             ->from('stock', 'cataloginventory_stock_item')
-            ->leftJoin(
-                's',
-                'inventory_stock',
-                's.stock_id = stock.stock_id'
-            )
-            ->leftJoin(
-                'issc',
-                'inventory_stock_sales_channel',
-                's.stock_id = issc.stock_id'
-            )
-            ->innerJoin(
-                'sw',
-                'store_website',
-                "issc.code = sw.code AND issc.type = 'website'"
-            )
-            ->innerJoin(
-                'st',
-                'store',
-                'sw.website_id = st.website_id'
-            )
             ->andWhere('stock.product_id IN (?)', $tracker->getMagentoProductIds())
+            ->andWhere('stock.stock_id = 1')
+            ->andWhere('stock.website_id = 0')
         ;
     }
 }

@@ -419,7 +419,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
             ->innerJoin(
                 'stock',
                 $this->inventoryStock->getInventoryStockQuery($this),
-                'product.product_id = stock.product_id AND product.store_id = stock.store_id'
+                $this->inventoryStock->getInventoryStockJoinCondition()
             )
             ->leftJoin(
                 'selling_policy',
