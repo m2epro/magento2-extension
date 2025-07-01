@@ -79,8 +79,8 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
         \Ess\M2ePro\Model\Listing\Product\PriceRounder $rounder,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        ?\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        ?\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         parent::__construct(
@@ -1484,5 +1484,22 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             EbayProductResource::COLUMN_COMPLIANCE_DOCUMENTS,
             json_encode($documents, JSON_THROW_ON_ERROR)
         );
+    }
+
+    public function assignCampaign(int $campaignId, float $rate)
+    {
+        $this->setData(EbayProductResource::COLUMN_PROMOTED_LISTING_CAMPAIGN_ID, $campaignId);
+        $this->setData(EbayProductResource::COLUMN_PROMOTED_LISTING_CAMPAIGN_RATE, $rate);
+    }
+
+    public function unassignCampaign()
+    {
+        $this->setData(EbayProductResource::COLUMN_PROMOTED_LISTING_CAMPAIGN_ID, null);
+        $this->setData(EbayProductResource::COLUMN_PROMOTED_LISTING_CAMPAIGN_RATE, null);
+    }
+
+    public function hasAssignedCampaign(): bool
+    {
+        return !empty($this->getData(EbayProductResource::COLUMN_PROMOTED_LISTING_CAMPAIGN_ID));
     }
 }

@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\Amazon\Account\FbaInventory;
 
-use Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeData\AfnQty\MerchantManager as MerchantManager;
-
 class MagentoSourceUpdater
 {
-    /** @var \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeData\AfnQty\MerchantManager */
-    private $merchantManager;
     /** @var \Magento\Framework\Api\SearchCriteriaBuilder */
     private $searchCriteriaBuilder;
     /** @var \Magento\InventoryApi\Api\SourceItemRepositoryInterface|null */
@@ -22,29 +18,23 @@ class MagentoSourceUpdater
     private $listingLogFactory;
     /** @var \Ess\M2ePro\Helper\Module\Log */
     private $logHelper;
-    /** @var \Ess\M2ePro\Model\Amazon\Account\MerchantSetting\Repository */
-    private $merchantSettingsRepository;
-    /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\EventDispatcher */
-    private $listingProductEventDispatcher;
+    private \Ess\M2ePro\Model\Amazon\Account\Repository $accountRepository;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        MerchantManager $merchantManager,
-        \Ess\M2ePro\Model\Amazon\Account\MerchantSetting\Repository $merchantSettingsRepository,
         \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder,
         \Ess\M2ePro\Helper\Magento $magentoHelper,
         \Ess\M2ePro\Model\Amazon\Listing\LogFactory $listingLogFactory,
-        \Ess\M2ePro\Model\Amazon\Listing\Product\EventDispatcher $listingProductEventDispatcher,
-        \Ess\M2ePro\Helper\Module\Log $logHelper
+        \Ess\M2ePro\Helper\Module\Log $logHelper,
+        \Ess\M2ePro\Model\Amazon\Account\Repository $accountRepository
     ) {
-        $this->merchantManager = $merchantManager;
-        $this->merchantManager->init();
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->magentoHelper = $magentoHelper;
         $this->listingLogFactory = $listingLogFactory;
         $this->logHelper = $logHelper;
         $this->sourceItemRepository = null;
         $this->sourceItemsSave = null;
+        $this->accountRepository = $accountRepository;
 
         if ($this->magentoHelper->isMSISupportingVersion()) {
             $this->sourceItemRepository = $objectManager->get(
@@ -54,14 +44,12 @@ class MagentoSourceUpdater
                 \Magento\InventoryApi\Api\SourceItemsSaveInterface::class
             );
         }
-        $this->merchantSettingsRepository = $merchantSettingsRepository;
-        $this->listingProductEventDispatcher = $listingProductEventDispatcher;
     }
 
     /**
-     * @param string $merchantId
      * @param \Ess\M2ePro\Model\Listing\Product[] $listingProductItems
      * @param array $changedData
+     * @param int $accountId
      *
      * @return void
      * @throws \Magento\Framework\Exception\CouldNotSaveException
@@ -70,9 +58,9 @@ class MagentoSourceUpdater
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function updateQty(
-        string $merchantId,
         array $listingProductItems,
-        array $changedData
+        array $changedData,
+        int $accountId
     ): void {
         if (
             !$this->magentoHelper->isMSISupportingVersion()
@@ -82,7 +70,7 @@ class MagentoSourceUpdater
             return;
         }
 
-        $account = $this->findAccountWithEnabledFbaInventoryMode($merchantId);
+        $account = $this->findAccountWithEnabledFbaInventoryMode($accountId);
         if ($account === null) {
             return;
         }
@@ -93,7 +81,7 @@ class MagentoSourceUpdater
         }
 
         $searchCriteria = $this->buildSearchCriteria(
-            $account->getMerchantSetting()->getManageFbaInventorySourceName(),
+            $account->getManageFbaInventorySourceName(),
             $changedItems
         );
 
@@ -129,29 +117,13 @@ class MagentoSourceUpdater
         }
 
         $this->sourceItemsSave->execute($sourceItems);
-
-        $this->listingProductEventDispatcher->dispatchEventFbaProductSourceItemsUpdated(
-            $merchantId
-        );
     }
 
-    /**
-     * @param string $merchantId
-     *
-     * @return \Ess\M2ePro\Model\Amazon\Account|null
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    private function findAccountWithEnabledFbaInventoryMode(
-        string $merchantId
-    ): ?\Ess\M2ePro\Model\Amazon\Account {
-        $settings = $this->merchantSettingsRepository->get($merchantId);
-        if (!$settings->isManageFbaInventory()) {
-            return null;
-        }
+    private function findAccountWithEnabledFbaInventoryMode(int $accountId): ?\Ess\M2ePro\Model\Amazon\Account
+    {
+        $account = $this->accountRepository->find($accountId);
 
-        $accounts = $this->merchantManager->getMerchantAccounts($merchantId);
-
-        return reset($accounts)->getChildObject();
+        return ($account && $account->isEnabledFbaInventoryMode()) ? $account : null;
     }
 
     /**

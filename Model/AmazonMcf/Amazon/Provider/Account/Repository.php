@@ -61,7 +61,7 @@ class Repository
         foreach ($accountsByMerchantId as $merchantId => $accounts) {
             /** @var \Ess\M2ePro\Model\Amazon\Account $account */
             $account = reset($accounts);
-            $isEnabled = $account->getMerchantSetting()->isManageFbaInventory();
+            $isEnabled = $this->isMerchantHasEnabledFbaInventory($accounts);
             $this->itemsByMerchantId[$merchantId] = $this->createItem(
                 $merchantId,
                 $isEnabled,
@@ -99,5 +99,16 @@ class Repository
         }
 
         throw new \LogicException('Unknown Region');
+    }
+
+    private function isMerchantHasEnabledFbaInventory(array $accounts): bool
+    {
+        foreach ($accounts as $account) {
+            if ($account->isEnabledFbaInventoryMode()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

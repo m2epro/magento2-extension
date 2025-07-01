@@ -29,11 +29,11 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Connector\Command\Re
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
-        \Ess\M2ePro\Model\Marketplace $marketplace = null,
-        \Ess\M2ePro\Model\Account $account = null,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        array $params
+        ?\Ess\M2ePro\Model\Marketplace $marketplace = null,
+        ?\Ess\M2ePro\Model\Account $account = null,
+        array $params = []
     ) {
         parent::__construct($helperFactory, $modelFactory, $marketplace, $account, $params);
         $this->activeRecordFactory = $activeRecordFactory;

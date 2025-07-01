@@ -36,8 +36,8 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
         \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Other $listingOtherResourceModel,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        AbstractDb $resourceCollection = null,
+        ?\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        ?AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->productBuilderFactory = $productBuilderFactory;

@@ -10,18 +10,12 @@ use Ess\M2ePro\Model\ResourceModel\Listing as ListingResource;
 
 class Repository
 {
-    /** @var \Ess\M2ePro\Model\ResourceModel\MSI\Magento\SourceItem\CollectionFactory */
-    private $sourceItemCollectionFactory;
-    /** @var \Magento\Catalog\Model\ResourceModel\Product */
-    private $magentoProductResource;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product */
-    private $listingProductResource;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product */
-    private $amazonListingProductResource;
-    /** @var \Ess\M2ePro\Model\Amazon\Account\Repository */
-    private $amazonAccountRepository;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing */
-    private $listingResource;
+    private \Ess\M2ePro\Model\ResourceModel\MSI\Magento\SourceItem\CollectionFactory $sourceItemCollectionFactory;
+    private \Magento\Catalog\Model\ResourceModel\Product $magentoProductResource;
+    private \Ess\M2ePro\Model\ResourceModel\Listing\Product $listingProductResource;
+    private \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product $amazonListingProductResource;
+    private \Ess\M2ePro\Model\Amazon\Account\Repository $amazonAccountRepository;
+    private \Ess\M2ePro\Model\ResourceModel\Listing $listingResource;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\MSI\Magento\SourceItem\CollectionFactory $sourceItemCollectionFactory,
@@ -49,32 +43,19 @@ class Repository
             return $itemCollection;
         }
 
-        $merchantSetting = $this->amazonAccountRepository
-            ->getFistByMerchantId($merchantId)
-            ->getMerchantSetting();
-
-        if (!$merchantSetting->isManageFbaInventory()) {
+        $sources = $this->collectSources($this->amazonAccountRepository->retrieveByMerchantId($merchantId));
+        if (empty($sources)) {
             return $itemCollection;
         }
 
-        $items = $this->retrieveItems(
-            $merchantSetting->getManageFbaInventorySourceName(),
-            $this->amazonAccountRepository->retrieveEntityIdsByMerchantId($merchantId)
+        $itemsBySource = array_map(
+            fn($source, $accountIds) => $this->retrieveItems($source, $accountIds),
+            array_keys($sources),
+            $sources
         );
 
-        foreach ($items as $item) {
-            $asin = !empty($item->getDataByKey('asin')) ? $item->getDataByKey('asin') : null;
-            $itemCollection->add(
-                $this->createItem(
-                    $merchantId,
-                    $item->getDataByKey('channel_sku'),
-                    (int)$item->getDataByKey('magento_product_entity_id'),
-                    $item->getDataByKey('magento_product_sku'),
-                    (int)$item->getDataByKey('online_afn_qty'),
-                    $asin
-                )
-            );
-        }
+        $summarizedItems = $this->summarizeItems($itemsBySource);
+        $this->addToCollection($summarizedItems, $itemCollection, $merchantId);
 
         return $itemCollection;
     }
@@ -113,7 +94,7 @@ class Repository
             [
                 'channel_sku' => sprintf('alp.%s', AmazonListingProductResource::COLUMN_SKU),
                 'online_afn_qty' => sprintf('alp.%s', AmazonListingProductResource::COLUMN_ONLINE_AFN_QTY),
-                'asin' => sprintf('alp.%s', AmazonListingProductResource::COLUMN_GENERAL_ID)
+                'asin' => sprintf('alp.%s', AmazonListingProductResource::COLUMN_GENERAL_ID),
             ]
         );
 
@@ -163,5 +144,76 @@ class Repository
         }
 
         return $item;
+    }
+
+    private function collectSources(array $accounts): array
+    {
+        $sources = [];
+
+        foreach ($accounts as $account) {
+            if (!$account->isEnabledFbaInventoryMode()) {
+                continue;
+            }
+
+            $sourceName = $account->getManageFbaInventorySourceName();
+            if (!$sourceName) {
+                continue;
+            }
+
+            if (!isset($sources[$sourceName])) {
+                $sources[$sourceName] = [];
+            }
+
+            $sources[$sourceName][] = $account->getAccountId();
+        }
+
+        return $sources;
+    }
+
+    private function summarizeItems(array $itemsBySource): array
+    {
+        $summary = [];
+        foreach ($itemsBySource as $sourceItems) {
+            foreach ($sourceItems as $item) {
+                $channelSku = $item->getDataByKey('channel_sku');
+                $onlineAfnQty = (int)$item->getDataByKey('online_afn_qty');
+
+                if (isset($summary[$channelSku])) {
+                    $summary[$channelSku]['online_afn_qty'] += $onlineAfnQty;
+                } else {
+                    $summary[$channelSku] = [
+                        'asin' => $item->getDataByKey('asin') ?: null,
+                        'channel_sku' => $channelSku,
+                        'magento_product_entity_id' => (int)$item->getDataByKey('magento_product_entity_id'),
+                        'magento_product_sku' => $item->getDataByKey('magento_product_sku'),
+                        'online_afn_qty' => $onlineAfnQty,
+                    ];
+                }
+            }
+        }
+
+        return $summary;
+    }
+
+    /**
+     * @psalm-suppress UndefinedClass
+     */
+    private function addToCollection(
+        array $summarizedItems,
+        \M2E\AmazonMcf\Model\Provider\Amazon\Product\ItemCollection $itemCollection,
+        string $merchantId
+    ): void {
+        foreach ($summarizedItems as $itemData) {
+            $itemCollection->add(
+                $this->createItem(
+                    $merchantId,
+                    $itemData['channel_sku'],
+                    $itemData['magento_product_entity_id'],
+                    $itemData['magento_product_sku'],
+                    $itemData['online_afn_qty'],
+                    $itemData['asin']
+                )
+            );
+        }
     }
 }

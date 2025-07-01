@@ -6,25 +6,17 @@ class DeleteManager
 {
     /** @var \Ess\M2ePro\Helper\Data\Cache\Permanent */
     private $cachePermanent;
-    /** @var \Ess\M2ePro\Model\Amazon\Account\Repository */
-    private $amazonAccountRepository;
-    /** @var \Ess\M2ePro\Model\Amazon\Account\MerchantSetting\Repository */
-    private $merchantSettingRepository;
     /** @var \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory */
     private $accountCollectionFactory;
     /** @var \Ess\M2ePro\Model\Amazon\Account\EventDispatcher */
     private $eventDispatcher;
 
     public function __construct(
-        Repository $amazonAccountRepository,
-        MerchantSetting\Repository $merchantSettingRepository,
         \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent,
         \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory $accountCollectionFactory,
         EventDispatcher $eventDispatcher
     ) {
         $this->cachePermanent = $cachePermanent;
-        $this->amazonAccountRepository = $amazonAccountRepository;
-        $this->merchantSettingRepository = $merchantSettingRepository;
         $this->accountCollectionFactory = $accountCollectionFactory;
         $this->eventDispatcher = $eventDispatcher;
     }
@@ -106,19 +98,6 @@ class DeleteManager
             $this->eventDispatcher->dispatchEventAccountDeleted(
                 $amazonAccount->getMerchantId()
             );
-        }
-
-        $this->deleteMerchantSetting($amazonAccount->getMerchantId());
-    }
-
-    private function deleteMerchantSetting(string $merchantId): void
-    {
-        if ($this->amazonAccountRepository->isExistsWithMerchantId($merchantId)) {
-            return;
-        }
-
-        if ($merchantSetting = $this->merchantSettingRepository->find($merchantId)) {
-            $this->merchantSettingRepository->delete($merchantSetting);
         }
     }
 

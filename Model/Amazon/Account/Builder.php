@@ -7,16 +7,42 @@ use Ess\M2ePro\Model\Amazon\Account;
 class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 {
     private \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper;
+    private \Ess\M2ePro\Model\Amazon\Account\EventDispatcher $eventDispatcher;
 
     public function __construct(
         \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\Amazon\Account\EventDispatcher $eventDispatcher,
         array $data = []
     ) {
         parent::__construct($helperFactory, $modelFactory, $data);
 
         $this->magentoStoreHelper = $magentoStoreHelper;
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\ActiveRecord\ActiveRecordAbstract|\Ess\M2ePro\Model\ActiveRecord\AbstractModel $model
+     * @param array $rawData
+     *
+     * @return \Ess\M2ePro\Model\ActiveRecord\ActiveRecordAbstract|\Ess\M2ePro\Model\ActiveRecord\AbstractModel
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function build($model, array $rawData)
+    {
+        $isNewAccount = $model->isObjectNew();
+        $result = parent::build($model, $rawData);
+
+        /** @var \Ess\M2ePro\Model\Amazon\Account $amazonAccount */
+        $amazonAccount = $result->getChildObject();
+        if ($isNewAccount) {
+            $this->eventDispatcher->dispatchEventCreatedSettingManageFbaInventory($amazonAccount);
+        } else {
+            $this->eventDispatcher->dispatchEventUpdatedSettingManageFbaInventory($amazonAccount);
+        }
+
+        return $result;
     }
 
     protected function prepareData(): array
@@ -376,7 +402,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'invoice_generation',
             'create_magento_invoice',
             'create_magento_shipment',
-            'create_magento_shipment_fba_orders'
+            'create_magento_shipment_fba_orders',
         ];
         foreach ($keys as $key) {
             if (isset($this->rawData[$key])) {
@@ -384,6 +410,17 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             }
         }
 
+        // tab: FBA Inventory
+        // ---------------------------------------
+        $keys = [
+            'fba_inventory_mode',
+            'fba_inventory_source_name',
+        ];
+        foreach ($keys as $key) {
+            if (isset($this->rawData[$key])) {
+                $data[$key] = $this->rawData[$key];
+            }
+        }
         // region server data
         if (isset($this->rawData['server_hash'])) {
             $data['server_hash'] = $this->rawData['server_hash'];
@@ -507,6 +544,10 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'create_magento_invoice' => 1,
             'create_magento_shipment' => 1,
             'create_magento_shipment_fba_orders' => 1,
+
+            // fba_inventory
+            'fba_inventory_mode' => 0,
+            'fba_inventory_source_name' => null,
         ];
     }
 

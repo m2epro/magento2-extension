@@ -422,6 +422,11 @@ class Config extends AbstractConfig
             'y25_m05' => [
                 'AddAmazonOnlineQtyLastUpdateDate',
                 'DeleteEbayUnmanagedDuplicatesByListingProducts',
+                'AddAmazonInventoryFbaFieldsInAmazonAccountTable',
+                'EbayPromotedListingCampaigns',
+            ],
+            'y25_m06' => [
+                'FixValueOfProductTypeIdInWalmartListingProduct',
             ],
         ];
     }
@@ -523,6 +528,10 @@ class Config extends AbstractConfig
             \Ess\M2ePro\Setup\Update\y25_m04\AddCustomizationDetailsToAmazonOrderItem::class,
 
             \Ess\M2ePro\Setup\Update\y25_m05\AddAmazonOnlineQtyLastUpdateDate::class,
+            \Ess\M2ePro\Setup\Update\y25_m05\AddAmazonInventoryFbaFieldsInAmazonAccountTable::class,
+            \Ess\M2ePro\Setup\Update\y25_m05\EbayPromotedListingCampaigns::class,
+
+            \Ess\M2ePro\Setup\Update\y25_m06\FixValueOfProductTypeIdInWalmartListingProduct::class,
         ];
     }
 

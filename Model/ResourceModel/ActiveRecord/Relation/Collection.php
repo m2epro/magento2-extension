@@ -37,8 +37,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy,
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Relation $relationModel,
-        \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
-        \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null
+        ?\Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
+        ?\Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null
     ) {
         $this->relationModel = $relationModel;
         $this->objectManager = $objectManager;

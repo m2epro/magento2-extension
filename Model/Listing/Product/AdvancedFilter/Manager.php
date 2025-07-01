@@ -85,7 +85,7 @@ class Manager
     public function getRuleWithSavedConditions(
         int $entityId,
         string $modelNick,
-        int $storeId = null
+        ?int $storeId = null
     ): \Ess\M2ePro\Model\Magento\Product\Rule {
         $entity = $this->repository->getAdvancedFilter($entityId);
         if ($entity->getModelNick() !== $modelNick) {
@@ -98,7 +98,7 @@ class Manager
         return $rule;
     }
 
-    public function getRuleModelByNick(string $nick, int $storeId = null): \Ess\M2ePro\Model\Magento\Product\Rule
+    public function getRuleModelByNick(string $nick, ?int $storeId = null): \Ess\M2ePro\Model\Magento\Product\Rule
     {
         if ($nick === \Ess\M2ePro\Model\Magento\Product\Rule::NICK) {
             return $this->magentoRuleFactory->create(\Ess\M2ePro\Model\Magento\Product\Rule::NICK, $storeId);

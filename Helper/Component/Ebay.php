@@ -26,6 +26,16 @@ class Ebay
     public const LISTING_DURATION_GTC = 100;
     public const ITEM_SKU_MAX_LENGTH = 50;
 
+    public const PROMOTED_LISTINGS_MARKETPLACE = [
+        self::MARKETPLACE_AU,
+        self::MARKETPLACE_CA,
+        self::MARKETPLACE_FR,
+        self::MARKETPLACE_DE,
+        self::MARKETPLACE_IT,
+        self::MARKETPLACE_UK,
+        self::MARKETPLACE_US,
+    ];
+
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     private $ebayFactory;
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */

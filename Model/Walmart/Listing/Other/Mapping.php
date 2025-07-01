@@ -40,7 +40,7 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    public function initialize(\Ess\M2ePro\Model\Account $account = null)
+    public function initialize(?\Ess\M2ePro\Model\Account $account = null)
     {
         $this->account = $account;
         $this->mappingSettings = null;

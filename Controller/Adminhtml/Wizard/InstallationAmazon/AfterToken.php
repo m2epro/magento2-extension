@@ -10,12 +10,9 @@ class AfterToken extends \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAma
     private $serverAccountCreate;
     /** @var \Ess\M2ePro\Model\Amazon\Account\Builder */
     private $accountBuilder;
-    /** @var \Ess\M2ePro\Model\Amazon\Account\MerchantSetting\CreateService */
-    private $accountMerchantSettingsCreateService;
 
     public function __construct(
         \Ess\M2ePro\Model\Amazon\Account\Builder $accountBuilder,
-        \Ess\M2ePro\Model\Amazon\Account\MerchantSetting\CreateService $accountMerchantSettingsCreateService,
         \Ess\M2ePro\Model\Amazon\Account\Server\Create $serverAccountCreate,
         \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -28,7 +25,6 @@ class AfterToken extends \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAma
         $this->exceptionHelper = $exceptionHelper;
         $this->serverAccountCreate = $serverAccountCreate;
         $this->accountBuilder = $accountBuilder;
-        $this->accountMerchantSettingsCreateService = $accountMerchantSettingsCreateService;
     }
 
     public function execute()
@@ -142,7 +138,5 @@ class AfterToken extends \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAma
             $account,
             $data
         );
-
-        $this->accountMerchantSettingsCreateService->createDefault($account->getChildObject());
     }
 }

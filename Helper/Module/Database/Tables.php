@@ -39,6 +39,7 @@ class Tables
     public const TABLE_EBAY_TEMPLATE_DESCRIPTION = self::PREFIX . 'ebay_template_description';
     public const TABLE_EBAY_PROMOTION = self::PREFIX . 'ebay_promotion';
     public const TABLE_EBAY_PROMOTION_DISCOUNT = self::PREFIX . 'ebay_promotion_discount';
+    public const TABLE_EBAY_PROMOTED_LISTING_CAMPAIGN = self::PREFIX . 'ebay_promoted_listing_campaign';
     public const TABLE_EBAY_MARKETPLACE = self::PREFIX . 'ebay_marketplace';
     public const TABLE_EBAY_DICTIONARY_MARKETPLACE = self::PREFIX . 'ebay_dictionary_marketplace';
     public const TABLE_EBAY_VIDEO = self::PREFIX . 'ebay_video';
@@ -51,7 +52,6 @@ class Tables
 
     public const TABLE_AMAZON_ACCOUNT = self::PREFIX . 'amazon_account';
     public const TABLE_AMAZON_LISTING = self::PREFIX . 'amazon_listing';
-    public const TABLE_AMAZON_ACCOUNT_MERCHANT_SETTING = self::PREFIX . 'amazon_account_merchant_setting';
     public const TABLE_AMAZON_MARKETPLACE = self::PREFIX . 'amazon_marketplace';
     public const TABLE_AMAZON_LISTING_PRODUCT = self::PREFIX . 'amazon_listing_product';
     public const TABLE_AMAZON_ORDER = self::PREFIX . 'amazon_order';

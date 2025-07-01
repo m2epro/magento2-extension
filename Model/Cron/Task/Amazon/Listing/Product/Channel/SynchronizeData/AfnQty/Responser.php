@@ -8,7 +8,6 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeData\AfnQty;
 
-use Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeData\AfnQty\MerchantManager as MerchantManager;
 use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstractModel;
 use Ess\M2ePro\Model\Amazon\Account\FbaInventory\MagentoSourceUpdater;
 
@@ -23,8 +22,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
     private $translationHelper;
     /** @var \Ess\M2ePro\Helper\Module\Logger */
     private $logger;
-    /** @var \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeData\AfnQty\MerchantManager */
-    private $merchantManager;
+    private AccountUpdateIntervalManager $accountUpdateIntervalManager;
     /** @var \Ess\M2ePro\Model\ResourceModel\Listing */
     private $listingResource;
     /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Account */
@@ -39,15 +37,17 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
     private $listingLogger;
     /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Log */
     private $listingLoggerResource;
+    private \Ess\M2ePro\Model\Amazon\Account\Repository $accountRepository;
 
     public function __construct(
+        \Ess\M2ePro\Model\Amazon\Account\Repository $accountRepository,
         \Ess\M2ePro\Model\ResourceModel\Listing\Log $listingLoggerResource,
         \Ess\M2ePro\Model\Listing\Log $listingLogger,
         MagentoSourceUpdater $magentoSourceUpdater,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction $instructionResource,
         \Ess\M2ePro\Helper\Module\Translation $translationHelper,
         \Ess\M2ePro\Helper\Module\Logger $logger,
-        MerchantManager $merchantManager,
+        AccountUpdateIntervalManager $accountUpdateIntervalManager,
         \Ess\M2ePro\Model\ResourceModel\Listing $listingResource,
         \Ess\M2ePro\Model\ResourceModel\Amazon\Account $amazonAccountResource,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -73,12 +73,12 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
         $this->listingLogger = $listingLogger;
         $this->translationHelper = $translationHelper;
         $this->logger = $logger;
-        $this->merchantManager = $merchantManager;
-        $this->merchantManager->init();
+        $this->accountUpdateIntervalManager = $accountUpdateIntervalManager;
         $this->listingResource = $listingResource;
         $this->amazonAccountResource = $amazonAccountResource;
         $this->instructionResource = $instructionResource;
         $this->magentoSourceUpdater = $magentoSourceUpdater;
+        $this->accountRepository = $accountRepository;
     }
 
     /**
@@ -168,21 +168,13 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
         }
 
         $accountId = (int)$this->params['account_id'];
-        $merchantId = $this->merchantManager->getMerchantIdByAccountId($accountId);
-        // $this->params['account_id'] is always available
-        // next lines is for possible situation with deleted account
-        if (!$merchantId) {
+        if (!$this->isAccountExists($accountId)) {
             $this->refreshLastUpdate(true);
 
             return;
         }
 
-        $keys = array_map(
-            function ($value) {
-                return (string)$value;
-            },
-            array_keys($receivedItems)
-        );
+        $keys = array_map('strval', array_column($receivedItems, 'sku'));
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $m2eproListingProductCollection */
         $m2eproListingProductCollection = $this->amazonFactory
@@ -205,7 +197,8 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
                 'aa.account_id=l.account_id',
                 []
             )
-            ->where('aa.merchant_id = ? AND is_afn_channel = 1', $merchantId);
+            ->where('is_afn_channel = 1')
+            ->where('aa.account_id = ? ', $accountId);
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Other\Collection $unmanagedListingProductCollection */
         $unmanagedListingProductCollection = $this->amazonFactory
@@ -221,14 +214,18 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
                 'aa.account_id=main_table.account_id',
                 []
             )
-            ->where('aa.merchant_id = ? AND is_afn_channel = 1', $merchantId);
+            ->where('is_afn_channel = 1')
+            ->where('aa.account_id = ? ', $accountId);
 
-        $normalizedReceivedItems = array_change_key_case($receivedItems, CASE_LOWER);
+        $normalizedReceivedItems = [];
+        foreach ($receivedItems as $item) {
+            $normalizedReceivedItems[strtolower($item['sku'])] = $item['qty'];
+        }
 
         $this->magentoSourceUpdater->updateQty(
-            $merchantId,
             $m2eproListingProductCollection->getItems(),
-            $normalizedReceivedItems
+            $normalizedReceivedItems,
+            $accountId
         );
 
         $this->updateItemsFromCollection($m2eproListingProductCollection, $normalizedReceivedItems);
@@ -316,17 +313,12 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
      */
     private function refreshLastUpdate(bool $success): void
     {
-        $merchantId = $this->merchantManager->getMerchantIdByAccountId((int)$this->params['account_id']);
-        // $this->params['account_id'] is always available
-        // next lines is for possible situation with deleted account
-        if (!$merchantId) {
-            return;
-        }
+        $accountId = (int)$this->params['account_id'];
 
         if ($success) {
-            $this->merchantManager->setMerchantLastUpdateNow($merchantId);
+            $this->accountUpdateIntervalManager->setAccountLastUpdateNow($accountId);
         } else {
-            $this->merchantManager->resetMerchantLastUpdate($merchantId);
+            $this->accountUpdateIntervalManager->resetAccountLastUpdate($accountId);
         }
     }
 
@@ -356,5 +348,12 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
             'initiator' => self::INSTRUCTION_INITIATOR,
             'priority' => 100,
         ];
+    }
+
+    private function isAccountExists(int $accountId): bool
+    {
+        $account = $this->accountRepository->find($accountId);
+
+        return (bool)$account;
     }
 }

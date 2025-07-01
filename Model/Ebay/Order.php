@@ -78,8 +78,8 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Other $listingOtherResourceModel,
         \Magento\Sales\Model\Order\CreditmemoFactory $creditmemoFactory,
         \Magento\Sales\Model\Service\CreditmemoService $creditmemoService,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        ?\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        ?\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         parent::__construct(
@@ -1216,7 +1216,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function refund(array $items = [], Creditmemo $creditMemo = null)
+    public function refund(array $items = [], ?Creditmemo $creditMemo = null)
     {
         if (!$this->canRefund()) {
             return false;

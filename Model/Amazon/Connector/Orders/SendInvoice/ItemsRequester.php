@@ -25,7 +25,7 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
         \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\Account $account = null,
+        ?\Ess\M2ePro\Model\Account $account = null,
         array $params = []
     ) {
         $this->activeRecordFactory = $activeRecordFactory;

@@ -106,7 +106,7 @@ class ProcessPartial extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 continue;
             }
 
-            $this->completeRequest($requestPendingPartial, $serverData['messages']);
+            $this->completeRequest($requestPendingPartial, $serverData['messages'] ?? []);
             break;
         }
     }

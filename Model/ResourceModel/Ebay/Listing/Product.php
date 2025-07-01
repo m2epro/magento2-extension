@@ -22,6 +22,8 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 
     public const COLUMN_COMPLIANCE_DOCUMENTS = 'compliance_documents';
     public const COLUMN_ONLINE_COMPLIANCE_DOCUMENTS = 'online_compliance_documents';
+    public const COLUMN_PROMOTED_LISTING_CAMPAIGN_ID = 'promoted_listing_campaign_id';
+    public const COLUMN_PROMOTED_LISTING_CAMPAIGN_RATE = 'promoted_listing_campaign_rate';
 
     /** @var bool  */
     protected $_isPkAutoIncrement = false;

@@ -190,7 +190,7 @@ class ChannelItemProvideUnmanaged implements ProviderInterface
 
     private function getItemTitle(
         \Ess\M2ePro\Model\Listing\Other $unmanagedProduct,
-        array $variationItemData = null
+        ?array $variationItemData = null
     ): string {
         $title = $unmanagedProduct->getChildObject()->getTitle();
         if (!$variationItemData) {
@@ -204,7 +204,7 @@ class ChannelItemProvideUnmanaged implements ProviderInterface
 
     private function getItemSku(
         \Ess\M2ePro\Model\Listing\Other $unmanagedProduct,
-        array $variationItemData = null
+        ?array $variationItemData = null
     ): string {
         if (!isset($variationItemData['sku'])) {
             return substr(

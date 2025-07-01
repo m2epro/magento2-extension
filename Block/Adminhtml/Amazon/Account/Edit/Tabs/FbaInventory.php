@@ -11,8 +11,6 @@ class FbaInventory extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     /** @var \Ess\M2ePro\Model\Amazon\Account\Builder */
     private $amazonAccountBuilder;
-    /** @var \Ess\M2ePro\Model\Amazon\Account\MerchantSetting\Repository */
-    private $merchantSettingRepository;
     /** @var \Ess\M2ePro\Helper\Magento */
     private $magentoHelper;
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
@@ -22,7 +20,6 @@ class FbaInventory extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     public function __construct(
         \Ess\M2ePro\Model\Amazon\Account\Builder $amazonAccountBuilder,
-        \Ess\M2ePro\Model\Amazon\Account\MerchantSetting\Repository $merchantSettingRepository,
         \Ess\M2ePro\Helper\Magento $magentoHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Magento\Framework\ObjectManagerInterface $objectManager,
@@ -32,7 +29,6 @@ class FbaInventory extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         array $data = []
     ) {
         $this->amazonAccountBuilder = $amazonAccountBuilder;
-        $this->merchantSettingRepository = $merchantSettingRepository;
         $this->magentoHelper = $magentoHelper;
         $this->globalDataHelper = $globalDataHelper;
         $this->sourceRepository = null;
@@ -144,22 +140,8 @@ class FbaInventory extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $accountFormData = $account ? array_merge($account->toArray(), $account->getChildObject()->toArray()) : [];
         $defaultAccountData = $this->amazonAccountBuilder->getDefaultData();
-        $formData = array_merge($defaultAccountData, $accountFormData);
 
-        // region fba_inventory
-        $formData[self::FORM_KEY_FBA_INVENTORY_MODE] = 0;
-        $formData[self::FORM_KEY_FBA_INVENTORY_SOURCE_NAME] = null;
-
-        if (!empty($formData['merchant_id'])) {
-            if ($merchantSetting = $this->merchantSettingRepository->find($formData['merchant_id'])) {
-                $formData[self::FORM_KEY_FBA_INVENTORY_MODE] = (int)$merchantSetting->isManageFbaInventory();
-                $formData[self::FORM_KEY_FBA_INVENTORY_SOURCE_NAME] = $merchantSetting->isManageFbaInventory() ?
-                    $merchantSetting->getManageFbaInventorySourceName() : null;
-            }
-        }
-        // endregion
-
-        return $formData;
+        return array_merge($defaultAccountData, $accountFormData);
     }
 
     private function getSourceOptions(): array

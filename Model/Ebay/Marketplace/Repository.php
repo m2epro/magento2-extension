@@ -46,4 +46,36 @@ class Repository
 
         return array_values($marketplaceCollection->getItems());
     }
+
+    public function getByMarketplaceId(int $marketplaceId): \Ess\M2ePro\Model\Ebay\Marketplace
+    {
+        $collection = $this->marketplaceCollectionFactory->createWithEbayChildMode();
+        $collection->addFieldToFilter(
+            \Ess\M2ePro\Model\ResourceModel\Ebay\Marketplace::COLUMN_MARKETPLACE_ID,
+            ['eq' => $marketplaceId]
+        );
+
+        $marketplace = $collection->getFirstItem();
+        if ($marketplace->isObjectNew()) {
+            throw new \Ess\M2ePro\Model\Exception\Logic('Not found Marketplace by id ' . $marketplaceId);
+        }
+
+        return $marketplace->getChildObject();
+    }
+
+    public function getByNativeId(int $nativeId): \Ess\M2ePro\Model\Ebay\Marketplace
+    {
+        $collection = $this->marketplaceCollectionFactory->createWithEbayChildMode();
+        $collection->addFieldToFilter(
+            \Ess\M2ePro\Model\ResourceModel\Marketplace::COLUMN_NATIVE_ID,
+            ['eq' => $nativeId]
+        );
+
+        $marketplace = $collection->getFirstItem();
+        if ($marketplace->isObjectNew()) {
+            throw new \Ess\M2ePro\Model\Exception\Logic('Not found Marketplace by native_id ' . $nativeId);
+        }
+
+        return $marketplace->getChildObject();
+    }
 }

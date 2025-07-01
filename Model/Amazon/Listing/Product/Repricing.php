@@ -30,8 +30,8 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        ?\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        ?\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->amazonFactory = $amazonFactory;
@@ -447,9 +447,9 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     private function getPriceCalculator(
         array $source,
-        array $sourceModeMapping = null,
-        string $coefficient = null,
-        int $priceVariationMode = null,
+        ?array $sourceModeMapping = null,
+        ?string $coefficient = null,
+        ?int $priceVariationMode = null,
         array $modifier = []
     ): Repricing\PriceCalculator {
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Repricing\PriceCalculator $calculator */

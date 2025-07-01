@@ -27,7 +27,7 @@ class Manager
         \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewState $viewState,
         string $ruleModelNick,
         callable $getRuleBySessionData,
-        int $storeId = null
+        ?int $storeId = null
     ): \Ess\M2ePro\Model\Magento\Product\Rule {
 
         // State - Creation
@@ -127,7 +127,7 @@ class Manager
     private function getRuleWithUnselectedState(
         \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewState $viewState,
         string $ruleModelNick,
-        int $storeId = null
+        ?int $storeId = null
     ): \Ess\M2ePro\Model\Magento\Product\Rule {
         $viewState->setStateUnselect();
         $rule = $this->ruleManager->getRuleModelByNick($ruleModelNick, $storeId);

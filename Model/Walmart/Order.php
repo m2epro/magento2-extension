@@ -45,8 +45,8 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
         \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Other $listingOtherResourceModel,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        ?\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        ?\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->shipmentFactory = $shipmentFactory;
@@ -783,7 +783,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function refund(array $items = [], Creditmemo $creditMemo = null)
+    public function refund(array $items = [], ?Creditmemo $creditMemo = null)
     {
         if (!$this->canRefund()) {
             return false;

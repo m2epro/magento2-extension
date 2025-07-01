@@ -1,21 +1,15 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeData;
 
 use Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeData\AfnQty\ProcessingRunner as Runner;
-use Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeData\AfnQty\MerchantManager as MerchantManager;
+use Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeData\AfnQty\AccountUpdateIntervalManager;
 use Ess\M2ePro\Model\ResourceModel\Amazon\Account\Collection as AmazonAccountCollection;
 
 class AfnQty extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     public const NICK = 'amazon/listing/product/channel/synchronize_data/afn_qty';
-    private const MERCHANT_INTERVAL = 14400; // 4 hours
+    private const MERCHANT_INTERVAL = 7200; // 2 hours
 
     /** @var int (in seconds) */
     protected $interval = 600;
@@ -23,8 +17,7 @@ class AfnQty extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     private $serverMaintenanceHelper;
     /** @var \Ess\M2ePro\Helper\Module\Translation */
     private $translationHelper;
-    /** @var \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeData\AfnQty\MerchantManager */
-    private $merchantManager;
+    private AccountUpdateIntervalManager $accountUpdateIntervalManager;
     /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
     private $amazonConnectorDispatcher;
     /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Account\CollectionFactory */
@@ -39,33 +32,13 @@ class AfnQty extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     private $listingOtherResource;
     /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Other */
     private $amazonListingOtherResource;
+    private \Ess\M2ePro\Model\Amazon\Account\Repository $accountRepository;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Server\Maintenance $serverMaintenanceHelper
-     * @param \Ess\M2ePro\Helper\Module\Translation $translationHelper
-     * @param MerchantManager $merchantManager
-     * @param \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $amazonConnectorDispatcher
-     * @param \Ess\M2ePro\Model\ResourceModel\Amazon\Account\CollectionFactory $amazonAccountCollectionFactory
-     * @param \Ess\M2ePro\Model\ResourceModel\Listing $listingResource
-     * @param \Ess\M2ePro\Model\ResourceModel\Listing\Product $listingProductResource
-     * @param \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product $amazonListingProductResource
-     * @param \Ess\M2ePro\Model\ResourceModel\Listing\Other $listingOtherResource
-     * @param \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Other $amazonListingOtherResource
-     * @param \Ess\M2ePro\Helper\Data $helperData
-     * @param \Magento\Framework\Event\Manager $eventManager
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory
-     * @param \Ess\M2ePro\Model\Factory $modelFactory
-     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
-     * @param \Ess\M2ePro\Helper\Factory $helperFactory
-     * @param \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo
-     * @param \Magento\Framework\App\ResourceConnection $resource
-     *
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
     public function __construct(
+        \Ess\M2ePro\Model\Amazon\Account\Repository $accountRepository,
         \Ess\M2ePro\Helper\Server\Maintenance $serverMaintenanceHelper,
         \Ess\M2ePro\Helper\Module\Translation $translationHelper,
-        MerchantManager $merchantManager,
+        AccountUpdateIntervalManager $accountUpdateIntervalManager,
         \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $amazonConnectorDispatcher,
         \Ess\M2ePro\Model\ResourceModel\Amazon\Account\CollectionFactory $amazonAccountCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Listing $listingResource,
@@ -95,10 +68,10 @@ class AfnQty extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $resource
         );
 
+        $this->accountRepository = $accountRepository;
         $this->serverMaintenanceHelper = $serverMaintenanceHelper;
         $this->translationHelper = $translationHelper;
-        $this->merchantManager = $merchantManager;
-        $this->merchantManager->init();
+        $this->accountUpdateIntervalManager = $accountUpdateIntervalManager;
         $this->amazonConnectorDispatcher = $amazonConnectorDispatcher;
         $this->amazonAccountCollectionFactory = $amazonAccountCollectionFactory;
         $this->listingResource = $listingResource;
@@ -141,86 +114,68 @@ class AfnQty extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
      */
     protected function performActions()
     {
-        $merchantsIds = $this->merchantManager->getMerchantsIds();
-        if (empty($merchantsIds)) {
+        $accountList = $this->accountRepository->findAllWithEnabledFbaInventory();
+        if (empty($accountList)) {
             return;
         }
 
-        foreach ($merchantsIds as $merchantId) {
-            $this->getOperationHistory()->addText("Starting Merchant \"$merchantId\"");
-            if (
-                $this->isLockedMerchant($merchantId)
-                || !$this->merchantManager->isIntervalExceeded($merchantId, self::MERCHANT_INTERVAL)
-            ) {
-                continue;
-            }
-
-            $this->getOperationHistory()->addTimePoint(
-                __METHOD__ . 'process' . $merchantId,
-                "Process Merchant $merchantId"
-            );
-
-            try {
-                $this->processMerchant($merchantId);
-            } catch (\Exception $exception) {
-                $message = 'The "Get AFN Qty" Action for Amazon Merchant "%merchant%" was completed with error.';
-                $message = $this->translationHelper->__($message, $merchantId);
-
-                $this->processTaskAccountException($message, __FILE__, __LINE__);
-                $this->processTaskException($exception);
-            }
-
-            $this->getOperationHistory()->saveTimePoint(__METHOD__ . 'process' . $merchantId);
+        foreach ($accountList as $account) {
+            $this->processAccountIfEligible($account);
         }
     }
 
-    /**
-     * @param string $merchantId
-     *
-     * @return void
-     * @throws \Ess\M2ePro\Model\Exception\Logic|\Magento\Framework\Exception\LocalizedException
-     */
-    protected function processMerchant(string $merchantId): void
+    private function processAccountIfEligible(\Ess\M2ePro\Model\Amazon\Account $account): void
     {
-        $merchantAccountsIds = $this->merchantManager->getMerchantAccountsIds($merchantId);
-        if (
-            $this->isM2eProListingsHaveAfnProducts($merchantAccountsIds)
-            || $this->isUnmanagedListingsHaveAfnProducts($merchantAccountsIds)
-        ) {
-            $someAccount = $this->merchantManager->getMerchantAccount($merchantId);
-            /** @var AfnQty\Requester $connectorObj */
-            $connectorObj = $this->amazonConnectorDispatcher->getCustomConnector(
-                'Cron_Task_Amazon_Listing_Product_Channel_SynchronizeData_AfnQty_Requester',
-                ['merchant_id' => $merchantId],
-                $someAccount
+        $accountId = $account->getId();
+        $this->getOperationHistory()->addText("Starting Merchant Account \"$accountId\"");
+        if ($this->canSkipAccountProcessing($accountId)) {
+            return;
+        }
+
+        $this->processAccountIfHasAfnProducts($account);
+    }
+
+    private function canSkipAccountProcessing(int $accountId): bool
+    {
+        return $this->isLockedAccount($accountId)
+            || !$this->accountUpdateIntervalManager->isIntervalExceeded($accountId, self::MERCHANT_INTERVAL);
+    }
+
+    private function processAccountIfHasAfnProducts(\Ess\M2ePro\Model\Amazon\Account $account): void
+    {
+        $accountId = $account->getId();
+        if ($this->hasAfnProducts($accountId)) {
+            $this->getOperationHistory()->addTimePoint(
+                __METHOD__ . 'process' . $accountId,
+                "Process Merchant Account $accountId"
             );
-            $this->amazonConnectorDispatcher->process($connectorObj);
+
+            $this->processAccount($account);
+
+            $this->getOperationHistory()->saveTimePoint(
+                __METHOD__ . 'process' . $accountId
+            );
         }
     }
 
-    /**
-     * @param array $merchantAccountsIds
-     *
-     * @return \Ess\M2ePro\Model\ResourceModel\Amazon\Account\Collection
-     */
-    private function getBaseCollectionForAfnProductsCheck(array $merchantAccountsIds): AmazonAccountCollection
+    private function hasAfnProducts(int $accountId): bool
+    {
+        return $this->isM2eProListingsHaveAfnProducts($accountId)
+            || $this->isUnmanagedListingsHaveAfnProducts($accountId);
+    }
+
+    private function getBaseCollectionForAfnProductsCheck(int $merchantAccountId): AmazonAccountCollection
     {
         $collection = $this->amazonAccountCollectionFactory->create();
-        $collection->addFieldToFilter('main_table.account_id', ['in' => $merchantAccountsIds]);
+        $collection->addFieldToFilter('main_table.account_id', $merchantAccountId);
         $collection->addFieldToFilter('is_afn_channel', 1);
 
         return $collection;
     }
 
-    /**
-     * @param array $merchantAccountsIds
-     *
-     * @return bool
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
-    private function isM2eProListingsHaveAfnProducts(array $merchantAccountsIds): bool
+    private function isM2eProListingsHaveAfnProducts(int $accountId): bool
     {
-        $collection = $this->getBaseCollectionForAfnProductsCheck($merchantAccountsIds);
+        $collection = $this->getBaseCollectionForAfnProductsCheck($accountId);
         $collection->joinInner(
             [
                 'l' => $this->listingResource->getMainTable(),
@@ -243,18 +198,14 @@ class AfnQty extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             []
         );
 
+        $collection->getSelect()->limit(1);
+
         return (bool)$collection->getSize();
     }
 
-    /**
-     * @param array $merchantAccountsIds
-     *
-     * @return bool
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
-    private function isUnmanagedListingsHaveAfnProducts(array $merchantAccountsIds): bool
+    private function isUnmanagedListingsHaveAfnProducts(int $accountId): bool
     {
-        $collection = $this->getBaseCollectionForAfnProductsCheck($merchantAccountsIds);
+        $collection = $this->getBaseCollectionForAfnProductsCheck($accountId);
         $collection->joinInner(
             [
                 'lo' => $this->listingOtherResource->getMainTable(),
@@ -270,18 +221,14 @@ class AfnQty extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             []
         );
 
+        $collection->getSelect()->limit(1);
+
         return (bool)$collection->getSize();
     }
 
-    /**
-     * @param string $merchantId
-     *
-     * @return bool
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    protected function isLockedMerchant(string $merchantId): bool
+    private function isLockedAccount(int $accountId): bool
     {
-        $lockItemNick = Runner::LOCK_ITEM_PREFIX . '_' . $merchantId;
+        $lockItemNick = Runner::LOCK_ITEM_PREFIX . '_' . $accountId;
 
         /** @var \Ess\M2ePro\Model\Lock\Item\Manager $lockItemManager */
         $lockItemManager = $this->modelFactory->getObject(
@@ -299,5 +246,24 @@ class AfnQty extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
 
         return true;
+    }
+
+    private function processAccount(\Ess\M2ePro\Model\Amazon\Account $account): void
+    {
+        try {
+            /** @var AfnQty\Requester $connectorObj */
+            $connectorObj = $this->amazonConnectorDispatcher->getConnectorByClass(
+                \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeData\AfnQty\Requester::class,
+                ['merchant_id' => $account->getMerchantId()],
+                $account->getParentObject()
+            );
+            $this->amazonConnectorDispatcher->process($connectorObj);
+        } catch (\Exception $exception) {
+            $message = 'The "Get AFN Qty" Action for Amazon Merchant Account "%account%" was completed with error.';
+            $message = $this->translationHelper->__($message, $account->getAccountId());
+
+            $this->processTaskAccountException($message, __FILE__, __LINE__);
+            $this->processTaskException($exception);
+        }
     }
 }

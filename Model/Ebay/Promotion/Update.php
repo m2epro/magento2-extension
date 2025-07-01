@@ -82,16 +82,16 @@ class Update
 
         $allListingProducts = array_merge($selectedListingProducts, $existListingProducts);
 
-        $itemsWithErrors = $this->updateConnector->updateChannelPromotion(
-            $promotion,
-            $allListingProducts
-        );
+        //$itemsWithErrors = $this->updateConnector->updateChannelPromotion(
+        //    $promotion,
+        //    $allListingProducts
+        //);
 
         $this->processListingProducts(
             $promotion,
             $allListingProducts,
             $existListingProductPromotions,
-            $itemsWithErrors
+            []
         );
     }
 

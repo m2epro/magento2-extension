@@ -77,7 +77,7 @@ class Preview extends Description
 
     private function getDescription(
         \Ess\M2ePro\Model\Magento\Product $magentoProduct,
-        \Ess\M2ePro\Model\Listing\Product $listingProduct = null
+        ?\Ess\M2ePro\Model\Listing\Product $listingProduct = null
     ) {
         $descriptionModeProduct = \Ess\M2ePro\Model\Ebay\Template\Description::DESCRIPTION_MODE_PRODUCT;
         $descriptionModeShort = \Ess\M2ePro\Model\Ebay\Template\Description::DESCRIPTION_MODE_SHORT;

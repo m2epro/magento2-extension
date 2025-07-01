@@ -12,16 +12,19 @@ class EventDispatcher
 
     /** @var \Magento\Framework\Event\ManagerInterface */
     private $eventManager;
+    private \Ess\M2ePro\Model\Amazon\Account\Repository $accountRepository;
 
-    public function __construct(\Magento\Framework\Event\ManagerInterface $eventManager)
-    {
+    public function __construct(
+        \Magento\Framework\Event\ManagerInterface $eventManager,
+        \Ess\M2ePro\Model\Amazon\Account\Repository $accountRepository
+    ) {
         $this->eventManager = $eventManager;
+        $this->accountRepository = $accountRepository;
     }
 
     // ----------------------------------------
 
     public function dispatchEventCreatedSettingManageFbaInventory(
-        bool $isEnabledManageFbaInventory,
         \Ess\M2ePro\Model\Amazon\Account $amazonAccount
     ): void {
         $marketplace = $amazonAccount->getMarketplace();
@@ -29,7 +32,7 @@ class EventDispatcher
         $this->eventManager->dispatch(
             'ess_amazon_account_created_setting_manage_fba_inventory',
             [
-                'is_enabled_manage_fba_inventory' => $isEnabledManageFbaInventory,
+                'is_enabled_manage_fba_inventory' => $this->isEnabledFbaInventoryMode($amazonAccount),
                 'merchant_id' => $amazonAccount->getMerchantId(),
                 'region' => $this->resolveRegion($marketplace),
 
@@ -42,7 +45,6 @@ class EventDispatcher
     }
 
     public function dispatchEventUpdatedSettingManageFbaInventory(
-        bool $isEnabledManageFbaInventory,
         \Ess\M2ePro\Model\Amazon\Account $amazonAccount
     ): void {
         $marketplace = $amazonAccount->getMarketplace();
@@ -50,7 +52,7 @@ class EventDispatcher
         $this->eventManager->dispatch(
             'ess_amazon_account_updated_setting_manage_fba_inventory',
             [
-                'is_enabled_manage_fba_inventory' => $isEnabledManageFbaInventory,
+                'is_enabled_manage_fba_inventory' => $this->isEnabledFbaInventoryMode($amazonAccount),
                 'merchant_id' => $amazonAccount->getMerchantId(),
                 'region' => $this->resolveRegion($marketplace),
 
@@ -73,6 +75,12 @@ class EventDispatcher
         }
 
         return self::REGION_ASIA_PACIFIC;
+    }
+
+    private function isEnabledFbaInventoryMode(\Ess\M2ePro\Model\Amazon\Account $amazonAccount): bool
+    {
+        return $amazonAccount->isEnabledFbaInventoryMode() ||
+            $this->accountRepository->findWithEnabledFbaInventoryByMerchantId($amazonAccount->getMerchantId()) !== null;
     }
 
     // ----------------------------------------

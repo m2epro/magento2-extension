@@ -78,8 +78,8 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         \Ess\M2ePro\Model\Magento\Quote\Manager $quoteManager,
         \Ess\M2ePro\Helper\Module\Exception $helperModuleException,
         \Ess\M2ePro\Helper\Module\Log $helperModuleLog,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        ?\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        ?\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->noteRepository = $noteRepository;

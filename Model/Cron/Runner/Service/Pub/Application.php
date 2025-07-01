@@ -56,7 +56,7 @@ class Application implements \Magento\Framework\AppInterface
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\Magento\Framework\Http\NotCacheableResponseFactory $responseFactory,
         array $parameters = [],
-        \Magento\Framework\App\AreaList $areaList = null
+        ?\Magento\Framework\App\AreaList $areaList = null
     ) {
         $this->state = $state;
         $this->request = $request;

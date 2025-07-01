@@ -194,28 +194,24 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                 }
 
                 if ($this->isDataChanged($existingData, $newData, 'online_qty')) {
-                    if ($this->isNeedSkipQTYChange($existingData, $newData)) {
-                        unset($newData['online_qty']);
-                    } else {
-                        $instructionsData[] = [
-                            'listing_product_id' => (int)$existingItem['listing_product_id'],
-                            'type' => Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
-                            'initiator' => Responser::INSTRUCTION_INITIATOR,
-                            'priority' => 80,
-                        ];
+                    $instructionsData[] = [
+                        'listing_product_id' => (int)$existingItem['listing_product_id'],
+                        'type' => Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
+                        'initiator' => Responser::INSTRUCTION_INITIATOR,
+                        'priority' => 80,
+                    ];
 
-                        $tempLogMessages[] = $this->helperFactory->getObject('Module_Translation')->__(
-                            'Item QTY was changed from %from% to %to% .',
-                            (int)$existingData['online_qty'],
-                            (int)$newData['online_qty']
-                        );
+                    $tempLogMessages[] = $this->helperFactory->getObject('Module_Translation')->__(
+                        'Item QTY was changed from %from% to %to% .',
+                        (int)$existingData['online_qty'],
+                        (int)$newData['online_qty']
+                    );
 
-                        if (
-                            !empty($existingItem['is_variation_product'])
-                            && !empty($existingItem['variation_parent_id'])
-                        ) {
-                            $parentIdsForProcessing[] = (int)$existingItem['variation_parent_id'];
-                        }
+                    if (
+                        !empty($existingItem['is_variation_product'])
+                        && !empty($existingItem['variation_parent_id'])
+                    ) {
+                        $parentIdsForProcessing[] = (int)$existingItem['variation_parent_id'];
                     }
                 }
 
@@ -344,20 +340,6 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
         $lastDate->modify('+1 hour');
 
         return $lastDate > $requestDate;
-    }
-
-    /**
-     * Skip channel change to prevent oversell when we have got report before an order
-     * https://m2epro.atlassian.net/browse/M1-77
-     *
-     * @param $existData
-     * @param $newData
-     *
-     * @return bool
-     */
-    protected function isNeedSkipQTYChange($existData, $newData)
-    {
-        return $newData['online_qty'] < 5 && $newData['online_qty'] < $existData['online_qty'];
     }
 
     /**

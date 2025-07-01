@@ -22,7 +22,7 @@ class Condition
         return $condition;
     }
 
-    private function __construct(string $value = null)
+    private function __construct(?string $value = null)
     {
         $this->value = $value;
     }

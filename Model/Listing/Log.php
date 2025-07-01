@@ -115,6 +115,9 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
     public const ACTION_EDIT_LISTING_SETTINGS = 42;
     public const _ACTION_EDIT_LISTING_SETTINGS = 'Edit Listing Settings';
 
+    public const ACTION_EBAY_PROMOTED_LISTING_CAMPAIGNS = 43;
+    public const _ACTION_EBAY_PROMOTED_LISTING_CAMPAIGNS = 'Update Promotion Campaign';
+
     protected function _construct(): void
     {
         parent::_construct();

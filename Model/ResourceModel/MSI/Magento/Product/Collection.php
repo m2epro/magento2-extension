@@ -44,7 +44,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collect
         \Magento\Framework\Stdlib\DateTime $dateTime,
         \Magento\Customer\Api\GroupManagementInterface $groupManagement,
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Magento\Framework\DB\Adapter\AdapterInterface $connection = null
+        ?\Magento\Framework\DB\Adapter\AdapterInterface $connection = null
     ) {
         parent::__construct(
             $helperFactory,

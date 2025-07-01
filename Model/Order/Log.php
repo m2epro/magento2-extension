@@ -31,8 +31,8 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         \Magento\Framework\Registry $registry,
         \Ess\M2ePro\Model\ResourceModel\Order\Log\CollectionFactory $orderLogCollection,
         \Ess\M2ePro\Helper\Data $helperData,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        ?\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        ?\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         parent::__construct(

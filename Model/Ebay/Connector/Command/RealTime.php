@@ -28,8 +28,8 @@ abstract class RealTime extends \Ess\M2ePro\Model\Connector\Command\RealTime
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\Marketplace $marketplace = null,
-        \Ess\M2ePro\Model\Account $account = null,
+        ?\Ess\M2ePro\Model\Marketplace $marketplace = null,
+        ?\Ess\M2ePro\Model\Account $account = null,
         array $params = []
     ) {
         $this->marketplace = $marketplace;

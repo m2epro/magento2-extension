@@ -3,6 +3,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings;
 
 use Ess\M2ePro\Model\Ebay\Template\Manager;
+use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product as EbayProductResource;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {
@@ -42,6 +43,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     private $sessionDataHelper;
 
     private \Ess\M2ePro\Model\Ebay\Promotion\DashboardUrlGenerator $dashboardUrlGenerator;
+    private \Ess\M2ePro\Model\Ebay\PromotedListing\Campaign\Repository $campaignRepository;
 
     public function __construct(
         \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
@@ -57,6 +59,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
         \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
         \Ess\M2ePro\Model\Ebay\Promotion\DashboardUrlGenerator $dashboardUrlGenerator,
+        \Ess\M2ePro\Model\Ebay\PromotedListing\Campaign\Repository $campaignRepository,
         \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
@@ -72,6 +75,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->databaseHelper = $databaseHelper;
         $this->sessionDataHelper = $sessionDataHelper;
         $this->dashboardUrlGenerator = $dashboardUrlGenerator;
+        $this->campaignRepository = $campaignRepository;
         parent::__construct($context, $backendHelper, $dataHelper, $globalDataHelper, $data);
     }
 
@@ -153,6 +157,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'template_description_id' => 'template_description_id',
                 'template_selling_format_id' => 'template_selling_format_id',
                 'template_synchronization_id' => 'template_synchronization_id',
+
+                EbayProductResource::COLUMN_PROMOTED_LISTING_CAMPAIGN_ID =>
+                    EbayProductResource::COLUMN_PROMOTED_LISTING_CAMPAIGN_ID,
             ]
         );
         $eiTable = $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable();
@@ -329,6 +336,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'renderer' => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\OnlineSku::class,
         ]);
 
+        if ($this->isMarketplaceSupportPromotedListingsCampaign()) {
+            $this->addColumn('ebay_promotedListing_campaign', [
+                'header' => $this->__('Campaign'),
+                'align' => 'left',
+                'type' => 'options',
+                'index' => EbayProductResource::COLUMN_PROMOTED_LISTING_CAMPAIGN_ID,
+                'sortable' => false,
+                'options' => $this->getCampaignOptions(),
+            ]);
+        }
+
         if ($this->isMotorsAvailable() && $this->motorsAttribute) {
             $this->addColumn('parts_motors_attribute_value', [
                 'header' => $this->__('Compatibility'),
@@ -442,6 +460,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'label' => __('Manage Discounts'),
             'url' => '',
         ], 'other');
+
+        if ($this->isMarketplaceSupportPromotedListingsCampaign()) {
+            $this->getMassactionBlock()->addItem('managePromotedListings', [
+                'label' => __('Manage Promoted Listings'),
+                'url' => '',
+            ], 'other');
+        }
 
         $this->getMassactionBlock()->addItem('moving', [
             'label' => $this->__('Move Item(s) to Another Listing'),
@@ -1055,6 +1080,43 @@ JS
             'ebay_promotion/updateItemPromotion'
         );
 
+        $this->jsUrl->add(
+            $this->getUrl('*/ebay_promotedListing/getCampaignGrid'),
+            'promotedListing/getCampaignGrid'
+        );
+        $this->jsUrl->add(
+            $this->getUrl('*/ebay_promotedListing/getCreateCampaignForm'),
+            'promotedListing/getCreateCampaignForm'
+        );
+        $this->jsUrl->add(
+            $this->getUrl('*/ebay_promotedListing/getUpdateCampaignForm'),
+            'promotedListing/getUpdateCampaignForm'
+        );
+        $this->jsUrl->add(
+            $this->getUrl('*/ebay_promotedListing/refreshCampaigns'),
+            'promotedListing/refreshCampaigns'
+        );
+        $this->jsUrl->add(
+            $this->getUrl('*/ebay_promotedListing/createCampaign'),
+            'promotedListing/createCampaign'
+        );
+        $this->jsUrl->add(
+            $this->getUrl('*/ebay_promotedListing/updateCampaign'),
+            'promotedListing/updateCampaign'
+        );
+        $this->jsUrl->add(
+            $this->getUrl('*/ebay_promotedListing/deleteCampaign'),
+            'promotedListing/deleteCampaign'
+        );
+        $this->jsUrl->add(
+            $this->getUrl('*/ebay_promotedListing/addItemsToCampaign'),
+            'promotedListing/addItemsToCampaign'
+        );
+        $this->jsUrl->add(
+            $this->getUrl('*/ebay_promotedListing/deleteItemsFromCampaign'),
+            'promotedListing/deleteItemsFromCampaign'
+        );
+
         $this->jsUrl->addUrls($helper->getControllerActions('Ebay_Listing_Settings_Motors'));
         // ---------------------------------------
 
@@ -1177,6 +1239,13 @@ JS
             '{$this->listing->getMarketplaceId()}',
             '{$this->dashboardUrlGenerator->generate($this->listing->getMarketplaceId())}'
         );
+
+        window.CampaignObj = new Campaign(
+            {$this->listing->getAccountId()},
+            {$this->listing->getMarketplaceId()},
+            '{$this->getId()}',
+            '{$this->listing->getMarketplace()->getTitle()}'
+        )
     });
 JS
         );
@@ -1296,5 +1365,26 @@ JS
         $this->productsMotorsData = $productsMotorsData;
 
         return $this;
+    }
+
+    private function isMarketplaceSupportPromotedListingsCampaign(): bool
+    {
+        return in_array(
+            $this->listing->getMarketplaceId(),
+            \Ess\M2ePro\Helper\Component\Ebay::PROMOTED_LISTINGS_MARKETPLACE
+        );
+    }
+
+    private function getCampaignOptions(): array
+    {
+        $campaigns = $this->campaignRepository
+            ->getAllByAccountIdAndMarketplaceId($this->listing->getAccountId(), $this->listing->getMarketplaceId());
+
+        $campaignNames = [];
+        foreach ($campaigns as $campaign) {
+            $campaignNames[$campaign->getId()] = $campaign->getName();
+        }
+
+        return $campaignNames;
     }
 }

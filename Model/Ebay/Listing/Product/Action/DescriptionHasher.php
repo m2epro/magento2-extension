@@ -14,9 +14,9 @@ class DescriptionHasher
     }
 
     public function hashProductDescriptionFields(
-        string $description = null,
-        string $includeEbayDetails = null,
-        string $includeImage = null
+        ?string $description = null,
+        ?string $includeEbayDetails = null,
+        ?string $includeImage = null
     ): string {
         $productDescriptionFields = [
             'description' => $description,

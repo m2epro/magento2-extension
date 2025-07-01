@@ -37,8 +37,8 @@ class Template extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        ?\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        ?\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->ebayFactory = $ebayFactory;

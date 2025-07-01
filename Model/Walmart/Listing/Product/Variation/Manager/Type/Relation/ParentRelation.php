@@ -635,6 +635,11 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
      */
     public function createChildListingProduct(array $productOptions, array $channelOptions)
     {
+        $parentWalmartListingProduct = $this->getWalmartListingProduct();
+        $productTypeId = $parentWalmartListingProduct->isExistsProductType()
+            ? $parentWalmartListingProduct->getProductTypeId()
+            : null;
+
         $data = [
             'listing_id' => $this->getListingProduct()->getListingId(),
             'product_id' => $this->getListingProduct()->getProductId(),
@@ -643,7 +648,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
             'is_variation_product' => 1,
             'is_variation_parent' => 0,
             'variation_parent_id' => $this->getListingProduct()->getId(),
-            WalmartProductResource::COLUMN_PRODUCT_TYPE_ID => $this->getWalmartListingProduct()->getProductTypeId(),
+            WalmartProductResource::COLUMN_PRODUCT_TYPE_ID => $productTypeId,
         ];
 
         /** @var \Ess\M2ePro\Model\Listing\Product $childListingProduct */

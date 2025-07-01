@@ -11,7 +11,12 @@ class Template extends AbstractModel
 
     protected function execute()
     {
-        $productTypeId = $this->getProcessor()->getWalmartListingProduct()->getProductTypeId();
+        $parentWalmartListingProduct = $this->getProcessor()
+                                            ->getWalmartListingProduct();
+
+        $productTypeId = $parentWalmartListingProduct->isExistsProductType()
+            ? $parentWalmartListingProduct->getProductTypeId()
+            : null;
 
         foreach ($this->getProcessor()->getTypeModel()->getChildListingsProducts() as $listingProduct) {
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */

@@ -37,8 +37,8 @@ class Product extends AbstractModel
         Factory $modelFactory,
         ActiveRecordFactory $activeRecordFactory,
         HelperFactory $helperFactory,
-        AbstractResource $resource = null,
-        AbstractDb $resourceCollection = null,
+        ?AbstractResource $resource = null,
+        ?AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         parent::__construct(

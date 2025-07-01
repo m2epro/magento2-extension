@@ -83,7 +83,7 @@ class ProductTypeRelationService
         $this->runProcessorForParents($productsIds);
     }
 
-    private function processRelation(array $productsIds, int $productTypeId = null): void
+    private function processRelation(array $productsIds, ?int $productTypeId = null): void
     {
         $collection = $this->listingProductCollectionFactory->createWithWalmartChildMode();
         $collection->addFieldToFilter('id', ['in' => $productsIds]);

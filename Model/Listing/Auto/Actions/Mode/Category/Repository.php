@@ -59,7 +59,7 @@ class Repository
      */
     public function getGroupSet(
         array $categoryIds,
-        \Magento\Catalog\Model\Product $magentoProduct = null
+        ?\Magento\Catalog\Model\Product $magentoProduct = null
     ): GroupSet {
         $autoCategoryCollection = $this->autoCategoryCollectionFactory->create();
         $autoCategoryCollection->selectCategoryId();

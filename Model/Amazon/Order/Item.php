@@ -32,8 +32,8 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
         \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Other $listingOtherResourceModel,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        ?\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        ?\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->productBuilderFactory = $productBuilderFactory;

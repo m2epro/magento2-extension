@@ -15,9 +15,7 @@ class CreateAndFillAmazonAccountMerchantSettingTable extends \Ess\M2ePro\Model\S
 
     private function createMerchantSettingTable(): void
     {
-        $amazonAccountMerchantSettingTableName = $this->getFullTableName(
-            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_ACCOUNT_MERCHANT_SETTING
-        );
+        $amazonAccountMerchantSettingTableName = $this->getFullTableName('amazon_account_merchant_setting');
         $amazonAccountMerchantSettingTable = $this->getConnection()->newTable($amazonAccountMerchantSettingTableName);
         $amazonAccountMerchantSettingTable->addColumn(
             'merchant_id',
@@ -74,9 +72,7 @@ class CreateAndFillAmazonAccountMerchantSettingTable extends \Ess\M2ePro\Model\S
         $amazonAccountTableName = $this->getFullTableName(
             \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_ACCOUNT
         );
-        $amazonAccountMerchantSettingTableName = $this->getFullTableName(
-            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_ACCOUNT_MERCHANT_SETTING
-        );
+        $amazonAccountMerchantSettingTableName = $this->getFullTableName('amazon_account_merchant_setting');
 
         $amazonAccountData = $this->getConnection()
                                   ->query(

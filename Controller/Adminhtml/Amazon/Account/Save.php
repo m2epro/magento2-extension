@@ -13,13 +13,11 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
     private \Ess\M2ePro\Helper\Url $urlHelper;
     private \Ess\M2ePro\Helper\Module\Exception $exceptionHelper;
     private \Ess\M2ePro\Helper\Module\Support $supportHelper;
-    private \Ess\M2ePro\Model\Amazon\Account\MerchantSetting\CreateService $accountMerchantSettingsCreateService;
 
     public function __construct(
         \Ess\M2ePro\Model\Amazon\Account\MagentoOrderCreateService $magentoOrderCreateService,
         \Ess\M2ePro\Helper\Magento $magentoHelper,
         \Ess\M2ePro\Model\Amazon\Account\Builder $accountBuilder,
-        \Ess\M2ePro\Model\Amazon\Account\MerchantSetting\CreateService $accountMerchantSettingsCreateService,
         \Ess\M2ePro\Helper\Module\Wizard $helperWizard,
         \Ess\M2ePro\Helper\Url $urlHelper,
         \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
@@ -36,7 +34,6 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
         $this->urlHelper = $urlHelper;
         $this->exceptionHelper = $exceptionHelper;
         $this->supportHelper = $supportHelper;
-        $this->accountMerchantSettingsCreateService = $accountMerchantSettingsCreateService;
     }
 
     public function execute()
@@ -64,7 +61,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
         $previousMagentoOrdersSettings = $this->getPreviousMagentoOrdersSettings($amazonAccount);
 
         try {
-            $this->updateAccount($account, $formData);
+            $this->saveAccount($account, $formData);
         } catch (\Throwable $e) {
             $this->exceptionHelper->process($e);
             $this->messageManager->addErrorMessage(
@@ -105,28 +102,9 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
         return $this->_redirect($this->urlHelper->getBackUrl('list', [], ['edit' => $routerParams]));
     }
 
-    private function updateAccount(\Ess\M2ePro\Model\Account $account, array $data): void
-    {
-        $this->saveAccount($account, $data);
-
-        if ($this->magentoHelper->isMSISupportingVersion()) {
-            $this->accountMerchantSettingsCreateService->update(
-                $account->getChildObject(),
-                (bool)$data[FbaInventoryForm::FORM_KEY_FBA_INVENTORY_MODE],
-                $data[FbaInventoryForm::FORM_KEY_FBA_INVENTORY_SOURCE_NAME] ?? null
-            );
-        } else {
-            $this->accountMerchantSettingsCreateService->update(
-                $account->getChildObject(),
-                false
-            );
-        }
-    }
-
     private function saveAccount(\Ess\M2ePro\Model\Account $account, array $data): void
     {
         if (!empty($data['magento_orders_settings']['listing']['create_from_date'])) {
-            ;
             $data['magento_orders_settings']['listing']['create_from_date'] =
                 \Ess\M2ePro\Helper\Date::createDateInCurrentZone(
                     $data['magento_orders_settings']['listing']['create_from_date']
@@ -139,6 +117,12 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
                     $data['magento_orders_settings']['listing_other']['create_from_date']
                 );
         }
+
+        $isMsiSupported = $this->magentoHelper->isMSISupportingVersion();
+        $inventorySourceName = $data[FbaInventoryForm::FORM_KEY_FBA_INVENTORY_SOURCE_NAME] ?? null;
+        $data[FbaInventoryForm::FORM_KEY_FBA_INVENTORY_MODE] = ($isMsiSupported && $inventorySourceName !== null)
+            ? $data[FbaInventoryForm::FORM_KEY_FBA_INVENTORY_MODE]
+            : 0;
 
         $this->accountBuilder->build($account, $data);
     }

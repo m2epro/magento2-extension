@@ -100,7 +100,7 @@ class Log
                 $value = $this->translationHelper->__($value);
             }
 
-            $string = str_replace('%' . $key . '%', $value, $string);
+            $string = str_replace('%' . $key . '%', (string)$value, $string);
         }
 
         return $string;

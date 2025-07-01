@@ -38,6 +38,38 @@ class Repository
         return $account;
     }
 
+    /**
+     * @return \Ess\M2ePro\Model\Amazon\Account[]
+     */
+    public function findAllWithEnabledFbaInventory(): array
+    {
+        $collection = $this->collectionFactory->create();
+        $collection->addFieldToFilter(
+            \Ess\M2ePro\Model\ResourceModel\Amazon\Account::COLUMN_FBA_INVENTORY_MODE,
+            ['eq' => 1]
+        );
+
+        return array_values($collection->getItems());
+    }
+
+    public function findWithEnabledFbaInventoryByMerchantId(string $merchantId): ?\Ess\M2ePro\Model\Amazon\Account
+    {
+        $collection = $this->collectionFactory->create();
+        $collection->addFieldToFilter(
+            \Ess\M2ePro\Model\ResourceModel\Amazon\Account::COLUMN_MERCHANT_ID,
+            ['eq' => $merchantId]
+        );
+        $collection->addFieldToFilter(
+            \Ess\M2ePro\Model\ResourceModel\Amazon\Account::COLUMN_FBA_INVENTORY_MODE,
+            ['eq' => 1]
+        );
+        $collection->setPageSize(1);
+
+        $account = $collection->getFirstItem();
+
+        return $account->isObjectNew() ? null : $account;
+    }
+
     public function isExistsWithMerchantId(string $merchantId): bool
     {
         return !empty($this->retrieveByMerchantId($merchantId));

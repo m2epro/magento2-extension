@@ -3,7 +3,8 @@ define([
     'M2ePro/Ebay/Listing/View/Grid',
     'M2ePro/Listing/Moving',
     'M2ePro/Listing/Mapping',
-    'Magento_Ui/js/modal/modal'
+    'Magento_Ui/js/modal/modal',
+    'M2ePro/Ebay/PromotedListing/Campaign'
 ], function (jQuery) {
 
     window.EbayListingViewSettingsGrid = Class.create(EbayListingViewGrid, {
@@ -79,6 +80,10 @@ define([
                 managePromotionAction: (function() {
                     PromotionObj.openPromotionPopup(this.getSelectedProductsString());
                 }).bind(this),
+
+                managePromotedListingsAction: (() => {
+                    window.CampaignObj.openCampaignModal(this.getSelectedProductsArray());
+                }),
 
                 movingAction: this.movingHandler.run.bind(this.movingHandler),
 

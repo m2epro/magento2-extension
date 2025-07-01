@@ -31,7 +31,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\Pending\Req
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\Account $account = null,
+        ?\Ess\M2ePro\Model\Account $account = null,
         array $params = []
     ) {
         $this->account = $account;

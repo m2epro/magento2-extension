@@ -51,7 +51,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\Account $account = null,
+        ?\Ess\M2ePro\Model\Account $account = null,
         array $params = []
     ) {
         if (!isset($params['logs_action_id']) || !isset($params['status_changer'])) {

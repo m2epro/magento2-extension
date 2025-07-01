@@ -13,7 +13,7 @@ class DashboardFactory
         \Ess\M2ePro\Block\Adminhtml\Dashboard\Shipments\UrlStorageInterface $shipmentsUrlStorage,
         \Ess\M2ePro\Model\Dashboard\Errors\CalculatorInterface $errorsCalculator,
         \Ess\M2ePro\Block\Adminhtml\Dashboard\Errors\UrlStorageInterface $errorsUrlStorage,
-        \Ess\M2ePro\Model\Dashboard\ListingProductIssues\CalculatorInterface $listingProductIssuesCalculator = null
+        ?\Ess\M2ePro\Model\Dashboard\ListingProductIssues\CalculatorInterface $listingProductIssuesCalculator = null
     ): Dashboard {
         $allowedNicks = [
             \Ess\M2ePro\Helper\Component\Ebay::NICK,

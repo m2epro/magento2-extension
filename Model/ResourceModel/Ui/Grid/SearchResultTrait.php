@@ -10,7 +10,7 @@ trait SearchResultTrait
 {
     private \Magento\Framework\Api\Search\AggregationInterface $aggregations;
 
-    public function setItems(array $items = null)
+    public function setItems(?array $items = null)
     {
     }
 

@@ -22,11 +22,8 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
     protected $marketplaceFactory;
     /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace */
     protected $marketplaceResource;
-    /** @var \Ess\M2ePro\Model\Amazon\Account\MerchantSetting\CreateService  */
-    private $accountMerchantSettingsCreateService;
 
     public function __construct(
-        \Ess\M2ePro\Model\Amazon\Account\MerchantSetting\CreateService $accountMerchantSettingsCreateService,
         \Ess\M2ePro\Model\Amazon\Account\Server\Update $accountServerUpdate,
         \Ess\M2ePro\Helper\Module\Exception $helperException,
         \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory $accountCollectionFactory,
@@ -48,7 +45,6 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
         $this->serverAccountCreate = $serverAccountCreate;
         $this->accountBuilder = $accountBuilder;
         $this->accountFactory = $accountFactory;
-        $this->accountMerchantSettingsCreateService = $accountMerchantSettingsCreateService;
     }
 
     public function execute()
@@ -245,8 +241,6 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
         );
 
         $this->accountBuilder->build($account, $accountData);
-
-        $this->accountMerchantSettingsCreateService->createDefault($account->getChildObject());
 
         return $account;
     }

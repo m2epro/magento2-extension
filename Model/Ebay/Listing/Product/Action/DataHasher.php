@@ -14,12 +14,12 @@ class DataHasher
     }
 
     public function hashProductIdentifiers(
-        string $upc = null,
-        string $ean = null,
-        string $isbn = null,
-        string $epid = null,
-        string $brand = null,
-        string $mpn = null
+        ?string $upc = null,
+        ?string $ean = null,
+        ?string $isbn = null,
+        ?string $epid = null,
+        ?string $brand = null,
+        ?string $mpn = null
     ): string {
         $productIdentifiers = [
             'upc' => $upc,

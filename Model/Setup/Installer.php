@@ -3,6 +3,7 @@
 namespace Ess\M2ePro\Model\Setup;
 
 use Ess\M2ePro\Helper\Module\Database\Tables as TablesHelper;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Account as AmazonAccountResource;
 use Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\Marketplace as AmazonDictionaryMarketplaceResoruce;
 use Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\ProductType as AmazonDictionaryProductTypeResource;
 use Ess\M2ePro\Model\ResourceModel\Ebay\Account as ebayAccountResource;
@@ -25,6 +26,7 @@ use Ess\M2ePro\Model\ResourceModel\AttributeOptionMapping\Pair as OptionPairReso
 use Ess\M2ePro\Model\ResourceModel\Ebay\ComplianceDocuments as ComplianceDocumentsResource;
 use Ess\M2ePro\Model\ResourceModel\Ebay\ComplianceDocuments\ListingProductRelation
     as EbayComplianceDocumentListingProductRelationResource;
+use Ess\M2ePro\Model\ResourceModel\Ebay\PromotedListing\Campaign as CampaignResource;
 
 class Installer
 {
@@ -4826,6 +4828,18 @@ class Installer
                                             null,
                                             ['default' => null]
                                         )
+                                        ->addColumn(
+                                            EbayListingProduct::COLUMN_PROMOTED_LISTING_CAMPAIGN_ID,
+                                            Table::TYPE_INTEGER,
+                                            null,
+                                            ['unsigned' => true, 'default' => null]
+                                        )
+                                        ->addColumn(
+                                            EbayListingProduct::COLUMN_PROMOTED_LISTING_CAMPAIGN_RATE,
+                                            Table::TYPE_DECIMAL,
+                                            [12, 4],
+                                            ['unsigned' => true, 'default' => null]
+                                        )
                                         ->addIndex('ebay_item_id', 'ebay_item_id')
                                         ->addIndex('item_uuid', 'item_uuid')
                                         ->addIndex('is_duplicate', 'is_duplicate')
@@ -7742,6 +7756,94 @@ class Installer
         $this->getConnection()->createTable($ebayComplianceDocumentsTable);
         //endregion
 
+        //region ebay_promoted_listing_campaign
+        $tableName = $this->getFullTableName(TablesHelper::TABLE_EBAY_PROMOTED_LISTING_CAMPAIGN);
+
+        if ($this->getConnection()->isTableExists($tableName)) {
+            return;
+        }
+
+        $table = $this
+            ->getConnection()
+            ->newTable($tableName);
+
+        $table
+            ->addColumn(
+                CampaignResource::COLUMN_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+            )
+            ->addColumn(
+                CampaignResource::COLUMN_ACCOUNT_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                CampaignResource::COLUMN_MARKETPLACE_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                CampaignResource::COLUMN_EBAY_CAMPAIGN_ID,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                CampaignResource::COLUMN_NAME,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                CampaignResource::COLUMN_TYPE,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                CampaignResource::COLUMN_STATUS,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                CampaignResource::COLUMN_START_DATE,
+                Table::TYPE_DATETIME,
+                null,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                CampaignResource::COLUMN_END_DATE,
+                Table::TYPE_DATETIME,
+                null,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                CampaignResource::COLUMN_RATE,
+                Table::TYPE_DECIMAL,
+                [12, 4],
+                ['nullable' => false]
+            )
+            ->addColumn(
+                CampaignResource::COLUMN_UPDATE_DATE,
+                Table::TYPE_DATETIME,
+                null,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                CampaignResource::COLUMN_CREATE_DATE,
+                Table::TYPE_DATETIME,
+                null,
+                ['nullable' => false]
+            );
+
+        $this->getConnection()->createTable($table);
+        //endregion
+
         //region ebay_compliance_document_listing_product
         $ebayComplianceDocumentListingProductTableName = $this->getFullTableName(
             TablesHelper::TABLE_EBAY_COMPLIANCE_DOCUMENTS_LISTING_PRODUCT
@@ -8780,56 +8882,24 @@ class Installer
                                        null,
                                        ['default' => null]
                                    )
+                                   ->addColumn(
+                                       AmazonAccountResource::COLUMN_FBA_INVENTORY_MODE,
+                                       Table::TYPE_SMALLINT,
+                                       null,
+                                       ['unsigned' => true, 'nullable' => false, 'default' => 0]
+                                   )
+                                   ->addColumn(
+                                       AmazonAccountResource::COLUMN_FBA_INVENTORY_SOURCE_NAME,
+                                       Table::TYPE_TEXT,
+                                       255,
+                                       ['default' => null]
+                                   )
                                    ->setOption('type', 'INNODB')
                                    ->setOption('charset', 'utf8')
                                    ->setOption('collate', 'utf8_general_ci')
                                    ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonAccountTable);
         # endregion
-
-        #region amazon_account_merchant_setting
-        $amazonAccountMerchantSettingTableName = $this->getFullTableName(
-            TablesHelper::TABLE_AMAZON_ACCOUNT_MERCHANT_SETTING
-        );
-        $amazonAccountMerchantSettingTable = $this->getConnection()->newTable($amazonAccountMerchantSettingTableName);
-        $amazonAccountMerchantSettingTable->addColumn(
-            'merchant_id',
-            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-            255,
-            ['primary' => true, 'nullable' => false,]
-        );
-        $amazonAccountMerchantSettingTable->addColumn(
-            'fba_inventory_mode',
-            \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
-            null,
-            ['unsigned' => true, 'nullable' => false, 'default' => 0]
-        );
-        $amazonAccountMerchantSettingTable->addColumn(
-            'fba_inventory_source_name',
-            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-            255,
-            ['default' => null]
-        );
-        $amazonAccountMerchantSettingTable->addColumn(
-            'update_date',
-            \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME,
-            null,
-            ['default' => null]
-        );
-        $amazonAccountMerchantSettingTable->addColumn(
-            'create_date',
-            \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME,
-            null,
-            ['default' => null]
-        );
-
-        $amazonAccountMerchantSettingTable->setOption('type', 'INNODB');
-        $amazonAccountMerchantSettingTable->setOption('charset', 'utf8');
-        $amazonAccountMerchantSettingTable->setOption('collate', 'utf8_general_ci');
-        $amazonAccountMerchantSettingTable->setOption('row_format', 'dynamic');
-
-        $this->getConnection()->createTable($amazonAccountMerchantSettingTable);
-        #endregion
 
         # region amazon_account_repricing
         $amazonAccountRepricingTable = $this->getConnection()->newTable(

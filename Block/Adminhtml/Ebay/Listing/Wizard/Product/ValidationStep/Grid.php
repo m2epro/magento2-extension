@@ -181,7 +181,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function callbackColumnProductTitle($productTitle, $row, $column, $isExport): string
     {
         if ($productTitle === '') {
-            return __('N/A');
+            return (string)__('N/A');
         }
 
         $value = sprintf(

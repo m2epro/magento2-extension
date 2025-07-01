@@ -59,7 +59,6 @@ class CreateUnmanaged extends EbayListingController
     public function execute()
     {
         $listingId = (int)$this->getRequest()->getParam('listingId');
-        $componentMode = $this->getRequest()->getParam('componentMode');
 
         if (empty($listingId)) {
             $this->getMessageManager()->addError(__('Cannot start Wizard, Listing must be created first.'));
@@ -105,24 +104,15 @@ class CreateUnmanaged extends EbayListingController
         $this->sessionDataHelper->removeValue($sessionKey);
 
         if ($errorsCount) {
-            $logViewUrl = $this->getUrl(
-                '*/' . $componentMode . '_log_listing_product/index',
-                [
-                    'id' => $listing->getId(),
-                    'back' => $this->dataHelper
-                        ->makeBackUrlParam('*/' . $componentMode . '_listing/view', ['id' => $listing->getId()]),
-                ]
-            );
-
             if (count($selectedProducts) == $errorsCount) {
                 $manager->cancel();
 
                 $this->setJsonContent(
                     [
                         'result' => false,
-                        'message' => $this->__(
-                            'Products were not Moved. <a target="_blank" href="%url%">View Log</a> for details.',
-                            $logViewUrl
+                        'message' => __(
+                            'Products were not moved because they already exist in the selected Listing or do not
+                            belong to the channel account or marketplace of the listing.'
                         ),
                     ]
                 );
@@ -135,11 +125,9 @@ class CreateUnmanaged extends EbayListingController
                     'result' => true,
                     'isFailed' => true,
                     'wizardId' => $wizard->getId(),
-                    'message' => $this->__(
-                        '%errors_count% product(s) were not Moved.
-                        Please <a target="_blank" href="%url%">view Log</a> for the details.',
-                        $errorsCount,
-                        $logViewUrl
+                    'message' => __(
+                        'Some products were not moved because they already exist in the selected Listing or do not
+                        belong to the channel account or marketplace of the listing.'
                     ),
                 ]
             );

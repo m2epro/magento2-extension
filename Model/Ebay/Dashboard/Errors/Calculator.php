@@ -45,7 +45,7 @@ class Calculator implements \Ess\M2ePro\Model\Dashboard\Errors\CalculatorInterfa
         return $this->getQuantityEbayLogs();
     }
 
-    private function getQuantityEbayLogs(DateRange $dateRange = null): int
+    private function getQuantityEbayLogs(?DateRange $dateRange = null): int
     {
         $listingLogCollection = $this->listingLogCollectionFactory->create();
         $listingLogCollection->skipIncorrectAccounts();

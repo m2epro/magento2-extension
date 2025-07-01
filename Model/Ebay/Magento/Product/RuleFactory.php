@@ -14,7 +14,7 @@ class RuleFactory
         $this->objectManager = $objectManager;
     }
 
-    public function create(string $prefix, int $storeId = null): Rule
+    public function create(string $prefix, ?int $storeId = null): Rule
     {
         return $this->objectManager->create(Rule::class)->setData(
             [

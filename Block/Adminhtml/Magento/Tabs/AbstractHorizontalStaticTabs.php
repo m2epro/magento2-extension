@@ -34,7 +34,7 @@ abstract class AbstractHorizontalStaticTabs extends \Ess\M2ePro\Block\Adminhtml\
         string $tabId,
         string $content,
         string $url,
-        string $title = null
+        ?string $title = null
     ): void {
         $this->tabs[$tabId] = [
             'content' => $content,

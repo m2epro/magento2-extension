@@ -67,23 +67,17 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     private $repricingModel;
     /** @var \Ess\M2ePro\Helper\Data\Cache\Permanent */
     private $cachePermanent;
-    /** @var \Ess\M2ePro\Model\Amazon\Account\MerchantSetting\Repository */
-    private $merchantSettingRepository;
-
-    /** @var \Ess\M2ePro\Model\Amazon\Account\MerchantSetting|null */
-    private $merchantSetting = null;
 
     public function __construct(
         \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent,
-        \Ess\M2ePro\Model\Amazon\Account\MerchantSetting\Repository $merchantSettingRepository,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        ?\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        ?\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         parent::__construct(
@@ -99,7 +93,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         );
 
         $this->cachePermanent = $cachePermanent;
-        $this->merchantSettingRepository = $merchantSettingRepository;
     }
 
     public function _construct()
@@ -272,20 +265,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getMerchantId()
     {
         return $this->getData('merchant_id');
-    }
-
-    public function getMerchantSetting(): Account\MerchantSetting
-    {
-        if ($this->merchantSetting !== null) {
-            return $this->merchantSetting;
-        }
-
-        $merchantId = $this->getMerchantId();
-        if (empty($merchantId)) {
-            throw new \LogicException('Merchant id must be set');
-        }
-
-        return $this->merchantSetting = $this->merchantSettingRepository->get($merchantId);
     }
 
     public function getToken()
@@ -1194,17 +1173,30 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return (bool)$this->getData('create_magento_shipment_fba_orders');
     }
 
-    /**
-     * @return bool
-     */
     public function isRemoteFulfillmentProgramEnabled(): bool
     {
         return (bool)$this->getData('remote_fulfillment_program_mode');
     }
 
-    /**
-     * @return bool
-     */
+    public function getFbaInventoryMode(): int
+    {
+        return (int)$this->getData(ResourceAccount::COLUMN_FBA_INVENTORY_MODE);
+    }
+
+    public function isEnabledFbaInventoryMode(): bool
+    {
+        return $this->getFbaInventoryMode() === 1;
+    }
+
+    public function getManageFbaInventorySourceName(): ?string
+    {
+        if (!$this->isEnabledFbaInventoryMode()) {
+            throw new \Ess\M2ePro\Model\Exception\Logic('Manage FBA inventory was not enabled.');
+        }
+
+        return $this->getData(ResourceAccount::COLUMN_FBA_INVENTORY_SOURCE_NAME);
+    }
+
     public function isCacheEnabled(): bool
     {
         return true;
