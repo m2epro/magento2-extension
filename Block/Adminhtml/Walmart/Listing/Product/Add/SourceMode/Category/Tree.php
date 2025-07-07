@@ -194,7 +194,7 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree
         if ($node->hasChildren()) {
             $item['children'] = [];
 
-            if (!($node->getLevel() > 1 && !$isParent)) {
+            if (!($this->getUseAjax() && $node->getLevel() > 1 && !$isParent)) {
                 foreach ($node->getChildren() as $child) {
                     $item['children'][] = $this->_getNodeJson($child, $level + 1);
                 }
@@ -225,44 +225,45 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree
     public function buildNodeName($node)
     {
         $treeSettings = $this->getData('tree_settings');
-        $result = $this->escapeHtml($node->getName());
+        if (!$treeSettings['show_products_amount']) {
+            return $this->_escaper->escapeHtml($node->getName());
+        }
 
         $collection = $this->resourceConnection->getConnection();
 
         $ccpTable = $this->databaseHelper->getTableNameWithPrefix('catalog_category_product');
         $cpeTable = $this->databaseHelper->getTableNameWithPrefix('catalog_product_entity');
 
-        $dbSelect = $collection->select()
-                               ->from(['ccp' => $ccpTable], new \Zend_Db_Expr('DISTINCT `ccp`.`product_id`'))
-                               ->join(['cpe' => $cpeTable], '`cpe`.`entity_id` = `ccp`.`product_id`', [])
-                               ->where('`ccp`.`category_id` = ?', (int)$node->getId());
+        $dbSelect = $collection
+            ->select()
+            ->from(['ccp' => $ccpTable], new \Zend_Db_Expr('DISTINCT `ccp`.`product_id`'))
+            ->join(['cpe' => $cpeTable], '`cpe`.`entity_id` = `ccp`.`product_id`', [])
+            ->where('`ccp`.`category_id` = ?', (int)$node->getId());
 
         // ---------------------------------------
-        if ($treeSettings['show_products_amount'] != false) {
-            if ($treeSettings['hide_products_this_listing']) {
-                $fields = new \Zend_Db_Expr('DISTINCT `product_id`');
-                $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
+        if ($treeSettings['hide_products_this_listing']) {
+            $fields = new \Zend_Db_Expr('DISTINCT `product_id`');
+            $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
 
-                $dbSelect3 = $collection->select()
-                                        ->from($lpTable, $fields)
-                                        ->where('`component_mode` = ?', $this->getData('component'))
-                                        ->where('`listing_id` = ?', $this->getRequest()->getParam('id'));
+            $dbSelect3 = $collection->select()
+                                    ->from($lpTable, $fields)
+                                    ->where('`component_mode` = ?', $this->getData('component'))
+                                    ->where('`listing_id` = ?', $this->getRequest()->getParam('id'));
 
-                $dbSelect->where('`ccp`.`product_id` NOT IN (' . $dbSelect3->__toString() . ')');
-            }
-            $sqlQuery = " SELECT count(`rez`.`product_id`) as `count_products`
-                      FROM ( " . $dbSelect->__toString() . " ) as `rez` ";
-
-            $countProducts = $collection->fetchOne($sqlQuery);
-
-            $result .= <<<HTML
-<span category_id="{$node->getId()}">(0</span>{$this->__('of')} {$countProducts})
-HTML;
+            $dbSelect->where('`ccp`.`product_id` NOT IN (' . $dbSelect3->__toString() . ')');
         }
+        $sqlQuery = " SELECT count(`rez`.`product_id`) as `count_products`
+                  FROM ( " . $dbSelect->__toString() . " ) as `rez` ";
 
-        // ---------------------------------------
+        $countProducts = $collection->fetchOne($sqlQuery);
 
-        return $result;
+        return sprintf(
+            '%s (<span category_id="%s">0</span> %s %s)',
+            $this->_escaper->escapeHtml($node->getName()),
+            $node->getId(),
+            __('of'),
+            $countProducts
+        );
     }
 
     //########################################

@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Ebay\Template;
 /**
  * @method \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Category getResource()
  */
-class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
+class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel implements CategoryInterface
 {
     public const CATEGORY_MODE_NONE = 0;
     public const CATEGORY_MODE_EBAY = 1;
@@ -233,20 +233,19 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         return (int)$this->getData('marketplace_id');
     }
 
-    /**
-     * @return int
-     */
-    public function getIsCustomTemplate()
+    public function getIsCustomTemplate(): int
     {
-        return $this->getData('is_custom_template');
+        return (int)$this->getData('is_custom_template');
+    }
+
+    public function getCategoryPath(): string
+    {
+        return $this->getData(\Ess\M2ePro\Model\ResourceModel\Ebay\Template\Category::COLUMN_CATEGORY_PATH);
     }
 
     //---------------------------------------
 
-    /**
-     * @return int
-     */
-    public function getCategoryMode()
+    public function getCategoryMode(): int
     {
         return (int)$this->getData('category_mode');
     }
@@ -291,7 +290,7 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     //########################################
 
     /**
-     * @return string
+     * @return int|string
      */
     public function getCategoryValue()
     {
@@ -310,35 +309,6 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             'attribute' => $this->getData('category_attribute'),
         ];
     }
-
-    /**
-     * @param \Ess\M2ePro\Model\Listing $listing
-     * @param bool $withId
-     *
-     * @return string
-     */
-    public function getCategoryPath(\Ess\M2ePro\Model\Listing $listing, $withId = true)
-    {
-        $src = $this->getCategorySource();
-
-        $data = [
-            'category_id' => $src['value'],
-            'category_mode' => $src['mode'],
-            'category_path' => $src['path'],
-            'category_attribute' => $src['attribute'],
-        ];
-
-        $this->componentEbayCategory->fillCategoriesPaths($data, $listing);
-
-        $path = $data['category_path'];
-        if ($withId && $src['mode'] == self::CATEGORY_MODE_EBAY) {
-            $path .= ' (' . $src['value'] . ')';
-        }
-
-        return $path;
-    }
-
-    //########################################
 
     /**
      * @return array

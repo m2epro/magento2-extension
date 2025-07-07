@@ -20,8 +20,10 @@ class Edit extends Account
 
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
+    private \Ess\M2ePro\Model\Walmart\Account\Repository $accountRepository;
 
     public function __construct(
+        \Ess\M2ePro\Model\Walmart\Account\Repository $accountRepository,
         \Ess\M2ePro\Helper\Component\Walmart $walmartHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalData,
         \Ess\M2ePro\Helper\Data $dataHelper,
@@ -29,7 +31,7 @@ class Edit extends Account
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($walmartFactory, $context);
-
+        $this->accountRepository = $accountRepository;
         $this->walmartHelper = $walmartHelper;
         $this->globalData = $globalData;
         $this->dataHelper = $dataHelper;
@@ -42,16 +44,11 @@ class Edit extends Account
 
     public function execute()
     {
-        $id = $this->getRequest()->getParam('id');
+        $id = (int)$this->getRequest()->getParam('id');
 
-        $account = null;
-        try {
-            /** @var \Ess\M2ePro\Model\Account $account */
-            $account = $this->walmartFactory->getObjectLoaded('Account', $id);
-        } catch (\Exception $e) {
-        }
+        $account = $this->accountRepository->find($id);
 
-        if ($id && !$account->getId()) {
+        if ($account === null) {
             $this->messageManager->addError($this->__('Account does not exist.'));
 
             return $this->_redirect('*/walmart_account');
@@ -65,9 +62,7 @@ class Edit extends Account
             return $this->_redirect('*/walmart_account');
         }
 
-        if ($account !== null) {
-            $this->addLicenseMessage($account);
-        }
+        $this->addLicenseMessage($account);
 
         $this->globalData->setValue('edit_account', $account);
 
@@ -75,17 +70,9 @@ class Edit extends Account
         // ---------------------------------------
 
         $headerTextEdit = $this->__('Edit Account');
-        $headerTextAdd = $this->__('Add Account');
 
-        if (
-            $account &&
-            $account->getId()
-        ) {
-            $headerText = $headerTextEdit;
-            $headerText .= ' "' . $this->dataHelper->escapeHtml($account->getTitle()) . '"';
-        } else {
-            $headerText = $headerTextAdd;
-        }
+        $headerText = $headerTextEdit;
+        $headerText .= ' "' . $this->dataHelper->escapeHtml($account->getTitle()) . '"';
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
 

@@ -88,10 +88,12 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;
+    private \Ess\M2ePro\Model\Ebay\Listing\Wizard\RememberedCategoriesService $rememberedCategoriesService;
 
     // ---------------------------------------
 
     public function __construct(
+        \Ess\M2ePro\Model\Ebay\Listing\Wizard\RememberedCategoriesService $rememberedCategoriesService,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -116,6 +118,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         );
 
         $this->moduleConfiguration = $moduleConfiguration;
+        $this->rememberedCategoriesService = $rememberedCategoriesService;
     }
 
     // ---------------------------------------
@@ -680,11 +683,6 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     // ---------------------------------------
 
-    public function getAddProductMode()
-    {
-        return $this->getData('add_product_mode');
-    }
-
     /**
      * @return bool
      */
@@ -988,7 +986,12 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     public function setAddProductMode(string $mode)
     {
-        $this->setData('add_product_mode', $mode);
+        $this->setData(\Ess\M2ePro\Model\ResourceModel\Ebay\Listing::COLUMN_ADD_PRODUCT_MODE, $mode);
+    }
+
+    public function getAddProductMode(): ?string
+    {
+        return $this->getData(\Ess\M2ePro\Model\ResourceModel\Ebay\Listing::COLUMN_ADD_PRODUCT_MODE);
     }
 
     // ---------------------------------------
@@ -999,4 +1002,22 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     }
 
     // ---------------------------------------
+
+    public function getPreviousCategoryChoiceForSameMode(): array
+    {
+        $additionalData = $this->getSettings('additional_data');
+
+        return $this->rememberedCategoriesService->getPreviousEbayCategoryChoice($additionalData);
+    }
+
+    public function updateCategoryChoiceForSameMode(
+        \Ess\M2ePro\Model\Ebay\Listing\Wizard\TemplateCategoryLinkProcessorResult $categoryLinkResult
+    ): void {
+        $additionalData = $this->rememberedCategoriesService->updateEbayCategoryChoiceForSameMode(
+            $this->getSettings('additional_data'),
+            $categoryLinkResult
+        );
+
+        $this->setSettings('additional_data', $additionalData);
+    }
 }

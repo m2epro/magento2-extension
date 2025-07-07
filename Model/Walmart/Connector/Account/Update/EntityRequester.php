@@ -62,8 +62,7 @@ class EntityRequester extends \Ess\M2ePro\Model\Walmart\Connector\Command\RealTi
      */
     protected function validateResponse()
     {
-        $responseData = $this->getResponse()->getResponseData();
-        if (!isset($responseData['info']) && !$this->getResponse()->getMessages()->hasErrorEntities()) {
+        if ($this->getResponse()->getMessages()->hasErrorEntities()) {
             return false;
         }
 

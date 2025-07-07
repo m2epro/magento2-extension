@@ -26,10 +26,9 @@ class ListingMagentoCategoriesDataProcessor
     {
         $listing = $manager->getListing();
         $productIds = $this->getWizardProductIdsByMagentoCategory($categoryIds, $manager);
+        $categoryLinkProcessorResult = $this->categoryLinkProcessor->process($manager, $templateData, $productIds);
 
-        $mainCategoriesIds = $this->categoryLinkProcessor->process($manager, $templateData, $productIds);
-
-        $this->updateListingCategoriesData($categoryIds, $listing, $templateData, $mainCategoriesIds);
+        $this->updateListingCategoriesData($categoryIds, $listing, $templateData, $categoryLinkProcessorResult);
     }
 
     public function assignByCategoriesData(array $templatesData, Manager $manager): void
@@ -45,7 +44,6 @@ class ListingMagentoCategoriesDataProcessor
     public function getWizardProductIdsByMagentoCategory(array $categoryIds, Manager $manager): array
     {
         $assignedProductIds = $this->categoryHelper->getProductsFromCategories($categoryIds);
-
         $wizardProductsIds = [];
 
         foreach ($manager->getNotProcessedProducts() as $product) {
@@ -61,7 +59,7 @@ class ListingMagentoCategoriesDataProcessor
         array $categoryIds,
         Listing $listing,
         array $templateData,
-        array $templateIds
+        TemplateCategoryLinkProcessorResult $categoryLinkProcessorResult
     ): void {
         $ebayListing = $listing->getChildObject();
 
@@ -69,7 +67,7 @@ class ListingMagentoCategoriesDataProcessor
             if (isset($templateData[EbayCategory::TYPE_EBAY_MAIN])) {
                 unset($templateData[EbayCategory::TYPE_EBAY_MAIN]['specific']);
                 $templateData[EbayCategory::TYPE_EBAY_MAIN]['template_id'] =
-                    $templateIds[EbayCategory::TYPE_EBAY_MAIN] ?? '';
+                    $categoryLinkProcessorResult->getCategoryId() ?? '';
 
                 $ebayListing->updateLastPrimaryCategory(
                     ['ebay_primary_category', 'mode_category', $categoryId],
@@ -79,7 +77,7 @@ class ListingMagentoCategoriesDataProcessor
 
             if (isset($templateData[EbayCategory::TYPE_STORE_MAIN])) {
                 $templateData[EbayCategory::TYPE_STORE_MAIN]['template_id'] =
-                    $templateIds[EbayCategory::TYPE_STORE_MAIN] ?? '';
+                    $categoryLinkProcessorResult->getStoreCategoryId() ?? '';
                 $ebayListing->updateLastPrimaryCategory(
                     ['ebay_store_primary_category', 'mode_category', $categoryId],
                     $templateData[EbayCategory::TYPE_STORE_MAIN]

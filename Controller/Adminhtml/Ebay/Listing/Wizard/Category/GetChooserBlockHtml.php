@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Wizard\Category;
 
-use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode as CategoryTemplateBlock;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Listing as EbayListingController;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Wizard\WizardTrait;
@@ -22,11 +21,8 @@ class GetChooserBlockHtml extends EbayListingController
     use WizardTrait;
 
     private ManagerFactory $wizardManagerFactory;
-
     private Details $categoryDetailsProvider;
-
     private Category $componentEbayCategory;
-
     private MagentoCategoriesMode $categoryMagentoModeDataProvider;
 
     public function __construct(
@@ -78,7 +74,7 @@ class GetChooserBlockHtml extends EbayListingController
             $temp = [];
             foreach ($this->componentEbayCategory->getCategoriesTypes() as $categoryType) {
                 isset($categoriesData[$id][$categoryType]) && $temp[$categoryType]
-                                                                                  = $categoriesData[$id][$categoryType];
+                    = $categoriesData[$id][$categoryType];
             }
 
             $neededProducts[$id] = $temp;

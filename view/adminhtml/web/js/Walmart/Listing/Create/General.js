@@ -1,10 +1,11 @@
 define([
     'underscore',
+    'Magento_Ui/js/modal/modal',
     'Magento_Ui/js/modal/alert',
     'M2ePro/Walmart/Listing/Create/General/MarketplaceSynchProgress',
     'M2ePro/Plugin/ProgressBar',
     'M2ePro/Plugin/AreaWrapper'
-], function(_) {
+], function(_, modal) {
 
     window.WalmartListingCreateGeneral = Class.create({
 
@@ -68,20 +69,34 @@ define([
 
             self.renderAccounts();
 
-            $('add_account_button').observe('click', function() {
-                var win = window.open(M2ePro.url.get('walmart_account/newAction'));
+            $('add_account_button-account-ca').observe('click', function () {
+                let popup = jQuery('#account_credentials');
+                let specificEndUrl = jQuery(this).attr('data-specific_end_url');
 
-                var intervalId = setInterval(function() {
+                let input = popup.find('input[name="specific_end_url"]');
+                if (input.length) {
+                    input.val(specificEndUrl);
+                }
 
-                    if (!win.closed) {
-                        return;
-                    }
+                modal({
+                    'type': 'popup',
+                    'responsive': true,
+                    'innerScroll': true,
+                    'buttons': []
+                }, popup);
 
-                    clearInterval(intervalId);
+                popup.modal('openModal');
 
-                    self.renderAccounts();
+                require(['jquery'], function ($) {
+                    $('body').off('submit', '#account_credentials').on('submit', '#account_credentials', function (e) {
+                        if (!$(this).valid()) {
+                            e.preventDefault();
+                            return false;
+                        }
+                    });
+                });
 
-                }, 1000);
+                self.renderAccounts();
             });
         },
 

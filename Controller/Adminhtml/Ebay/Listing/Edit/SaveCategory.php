@@ -45,10 +45,6 @@ class SaveCategory extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Edit
         try {
             $ebayListing = $this->ebayListingFactory->create();
             $this->ebayListingResource->load($ebayListing, $listingId);
-            if ($mode != $listing->getData('add_product_mode')) {
-                $listing->setData('additional_data', null);
-                $this->listingResource->save($listing);
-            }
             $ebayListing->setAddProductMode($mode);
             $this->ebayListingResource->save($ebayListing);
 

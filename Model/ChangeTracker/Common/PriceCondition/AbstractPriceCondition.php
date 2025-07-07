@@ -10,8 +10,6 @@ use Ess\M2ePro\Model\Listing\Product\PriceRounder;
 
 abstract class AbstractPriceCondition
 {
-    protected array $sellingPolicyData;
-
     protected \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder $queryBuilder;
     private ProductAttributesQueryBuilder $attributesQueryBuilder;
     private string $channel;
@@ -32,8 +30,6 @@ abstract class AbstractPriceCondition
         $this->queryBuilder = $queryBuilder;
         $this->magentoAttributes = $magentoAttributes;
         $this->moduleConfiguration = $moduleConfiguration;
-
-        $this->sellingPolicyData = $this->loadSellingPolicyData();
         $this->logger = $logger;
     }
 
@@ -41,17 +37,27 @@ abstract class AbstractPriceCondition
 
     public function getCondition(): string
     {
+        $sellingPolicyData = $this->loadSellingPolicyData();
+
         $queryData = [];
-        foreach ($this->sellingPolicyData as $sellingPolicy) {
+        foreach ($sellingPolicyData as $sellingPolicy) {
             try {
                 $priceColumn = $this->getPriceColumnCondition(
                     (int)$sellingPolicy['mode'],
                     $sellingPolicy['mode_attribute']
                 );
 
+                $modifiers = [];
+                if (!empty($sellingPolicy['modifier'])) {
+                    $decodedModifiers = json_decode($sellingPolicy['modifier'], true);
+                    if (is_array($decodedModifiers)) {
+                        $modifiers = $decodedModifiers;
+                    }
+                }
+
                 $thenCondition = $this->buildThenCondition(
                     $priceColumn,
-                    $sellingPolicy['modifier'],
+                    $modifiers,
                     (float)$sellingPolicy['vat'],
                     (int)($sellingPolicy['price_rounding'] ?? PriceRounder::PRICE_ROUNDING_NONE)
                 );
@@ -134,11 +140,10 @@ abstract class AbstractPriceCondition
 
     protected function buildThenCondition(
         string $priceColumn,
-        string $modifiers,
+        array $modifiers,
         float $vat,
         int $priceRounding
     ): string {
-        $modifiers = json_decode($modifiers, true);
         $sql = $priceColumn;
         foreach ($modifiers as $modifier) {
             $mode = (int)$modifier['mode'];

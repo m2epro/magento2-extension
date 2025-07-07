@@ -122,6 +122,21 @@ class Form extends AbstractForm
         $accountSelect->setForm($form);
 
         $isAddAccountButtonHidden = $this->getRequest()->getParam('wizard', false) ? ' display: none;' : '';
+
+        $addAnotherAccountButton = $this
+            ->getLayout()
+            ->createBlock(
+                \Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown::class
+            );
+
+        $addAnotherAccountButton->setData([
+            'id' => 'add_account_button',
+            'label' => __('Add Another'),
+            'style' => 'margin-left: 5px;' . $isAddAccountButtonHidden,
+            'class' => 'primary',
+            'options' => $this->getDropdownOptions()
+        ]);
+
         $fieldset->addField(
             'account_container',
             self::CUSTOM_CONTAINER,
@@ -135,17 +150,11 @@ class Form extends AbstractForm
 HTML
                 ,
 
-                'after_element_html' => $this->getLayout()
-                                             ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                                             ->setData(
-                                                 [
-                                                     'id' => 'add_account_button',
-                                                     'label' => __('Add Another'),
-                                                     'style' => 'margin-left: 5px;' . $isAddAccountButtonHidden,
-                                                     'onclick' => '',
-                                                     'class' => 'primary',
-                                                 ]
-                                             )->toHtml(),
+                'after_element_html' => sprintf(
+                    '<div style="margin-left:5px; display: inline-block; position:absolute;%s">%s</div>',
+                    $isAddAccountButtonHidden ? 'display: none;' : '',
+                    $addAnotherAccountButton->toHtml()
+                ),
             ]
         );
 
@@ -440,6 +449,38 @@ HTML
 
     // ---------------------------------------
 
+    private function getDropdownOptions(): array
+    {
+        return [
+            [
+                'label' => __('United States'),
+                'id' => 'account-us',
+                'onclick' => 'setLocation(this.getAttribute("data-url"))',
+                'data_attribute' => [
+                    'url' => $this->getUrl(
+                        '*/walmart_account_unitedStates/beforeGetToken',
+                        [
+                            '_current' => true,
+                            'marketplace_id' => \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_US,
+                            'specific_end_url' => $this->getUrl('*/*/*', ['_current' => true]),
+                            'wizard' => (bool)$this->getRequest()->getParam('wizard', false),
+                        ]
+                    ),
+                ],
+            ],
+            [
+                'label' => __('Canada'),
+                'id' => 'account-ca',
+                'on_click' => '',
+                'data_attribute' => [
+                    'marketplace_id' => \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_CA,
+                    'specific_end_url' => $this->getUrl('*/*/*', ['_current' => true]),
+                    'wizard' => (bool)$this->getRequest()->getParam('wizard', false),
+                ],
+            ],
+        ];
+    }
+
     private function addConditionFieldset(\Magento\Framework\Data\Form $form, array $formData): void
     {
         $fieldset = $form->addFieldset(
@@ -559,13 +600,6 @@ HTML
                     '*/template/checkMessages',
                     [
                         'component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-                    ]
-                ),
-                'walmart_account/newAction' => $this->getUrl(
-                    '*/walmart_account/newAction',
-                    [
-                        'close_on_save' => true,
-                        'wizard' => (bool)$this->getRequest()->getParam('wizard', false),
                     ]
                 ),
                 'logViewUrl' => $this->getUrl(

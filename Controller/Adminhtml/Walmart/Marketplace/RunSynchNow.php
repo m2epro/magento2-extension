@@ -29,7 +29,7 @@ class RunSynchNow extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Marketplace
 
         $synchronization = $this->synchronizationFactory->create();
         if ($synchronization->isMarketplaceAllowed($marketplace)) {
-            $this->setJsonContent(['result' => 'error']);
+            $this->setJsonContent(['result' => 'success']);
 
             return $this->getResult();
         }

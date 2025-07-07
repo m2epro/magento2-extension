@@ -122,24 +122,9 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         return (int)$this->getData('marketplace_id');
     }
 
-    public function getConsumerId()
+    public function getIdentifier(): string
     {
-        return $this->getData('consumer_id');
-    }
-
-    public function getClientId()
-    {
-        return $this->getData('client_id');
-    }
-
-    public function getClientSecret()
-    {
-        return $this->getData('client_secret');
-    }
-
-    public function getPrivateKey()
-    {
-        return $this->getData('private_key');
+        return $this->getData(\Ess\M2ePro\Model\ResourceModel\Walmart\Account::COLUMN_IDENTIFIER);
     }
 
     /**

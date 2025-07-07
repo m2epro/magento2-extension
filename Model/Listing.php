@@ -64,8 +64,6 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
     protected $productColFactory;
 
-    //########################################
-
     public function __construct(
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productColFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -92,7 +90,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         );
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function _construct()
     {
@@ -100,7 +98,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Listing::class);
     }
 
-    //########################################
+    // ---------------------------------------
 
     /**
      * @return bool
@@ -984,12 +982,10 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         }
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function isCacheEnabled()
     {
         return true;
     }
-
-    //########################################
 }

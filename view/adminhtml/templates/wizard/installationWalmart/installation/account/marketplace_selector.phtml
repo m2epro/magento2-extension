@@ -1,0 +1,29 @@
+<?php
+/** @var Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation\Account\MarketplaceSelector $block */
+
+$marketplaces = $block->getMarketplaces();
+$button = $block->getConnectButton();
+?>
+
+<div class="admin__field field walmart_marketplace" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-right: 30%">
+    <label for="marketplace_id" class="admin__field-label" style="flex-shrink: 0; width: 150px;">
+        <span><?= $block->escapeHtml(__('Marketplace')) ?></span>
+    </label>
+    <div class="admin__field-control">
+        <select id="marketplace_id" name="marketplace_id" class="admin__control-select"
+                onchange="InstallationWalmartWizardObj.changeMarketplace(this.value);"
+                style="min-width: 200px;">
+            <option value=""><?= $block->escapeHtml(__('')) ?></option>
+            <?php foreach ($marketplaces as $item): ?>
+                <?php $m = array_merge($item->getData(), $item->getChildObject()->getData()); ?>
+                <option value="<?= $block->escapeHtml($m['id']) ?>">
+                    <?= $block->escapeHtml($m['title']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <?= /* @noEscape */ $button->toHtml(); ?>
+    </div>
+</div>
+
+
+

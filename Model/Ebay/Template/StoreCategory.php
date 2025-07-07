@@ -15,7 +15,7 @@ namespace Ess\M2ePro\Model\Ebay\Template;
 /**
  * Class \Ess\M2ePro\Model\Ebay\Template\StoreCategory
  */
-class StoreCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
+class StoreCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel implements CategoryInterface
 {
     /**
      * @var \Ess\M2ePro\Model\Account
@@ -192,16 +192,13 @@ class StoreCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMod
 
     //########################################
 
-    /**
-     * @return int
-     */
-    public function getCategoryMode()
+    public function getCategoryMode(): int
     {
         return (int)$this->getData('category_mode');
     }
 
     /**
-     * @return double
+     * @return string
      */
     public function getCategoryId()
     {
@@ -251,6 +248,11 @@ class StoreCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMod
         return $this->getCategoryMode() === \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_ATTRIBUTE;
     }
 
+    public function getIsCustomTemplate(): int
+    {
+        return 0;
+    }
+
     /**
      * @return string
      */
@@ -259,7 +261,12 @@ class StoreCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMod
         return $this->isCategoryModeEbay() ? $this->getCategoryId() : $this->getCategoryAttribute();
     }
 
-    //########################################
+    //---------------------------------------
+
+    public function getCategoryPath(): string
+    {
+        return $this->getData(\Ess\M2ePro\Model\ResourceModel\Ebay\Template\StoreCategory::COLUMN_CATEGORY_PATH);
+    }
 
     /**
      * @return array

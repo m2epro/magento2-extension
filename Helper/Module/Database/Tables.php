@@ -63,6 +63,7 @@ class Tables
 
     public const TABLE_AMAZON_ORDER_ITEM = self::PREFIX . 'amazon_order_item';
 
+    public const TABLE_WALMART_ACCOUNT = self::PREFIX . 'walmart_account';
     public const TABLE_WALMART_LISTING = self::PREFIX . 'walmart_listing';
     public const TABLE_WALMART_LISTING_PRODUCT = self::PREFIX . 'walmart_listing_product';
     public const TABLE_WALMART_LISTING_AUTO_CATEGORY_GROUP = self::PREFIX . 'walmart_listing_auto_category_group';

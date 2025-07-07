@@ -51,9 +51,8 @@ class EntityRequester extends \Ess\M2ePro\Model\Walmart\Connector\Command\RealTi
             ];
         } else {
             $requestData = [
-                'title' => $this->account->getTitle(),
-                'client_id' => $this->params['client_id'],
-                'client_secret' => $this->params['client_secret'],
+                'seller_id' => $this->params['seller_id'],
+                'auth_code' => $this->params['auth_code'],
                 'marketplace_id' => $marketplaceObject->getNativeId(),
             ];
         }
@@ -78,8 +77,7 @@ class EntityRequester extends \Ess\M2ePro\Model\Walmart\Connector\Command\RealTi
     {
         $responseData = $this->getResponse()->getResponseData();
         if (
-            (empty($responseData['hash']) || !isset($responseData['info'])) &&
-            !$this->getResponse()->getMessages()->hasErrorEntities()
+            empty($responseData['hash']) && !$this->getResponse()->getMessages()->hasErrorEntities()
         ) {
             return false;
         }

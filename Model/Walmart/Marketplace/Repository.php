@@ -24,6 +24,11 @@ class Repository
         $this->marketplaceFactory = $marketplaceFactory;
     }
 
+    public function save(\Ess\M2ePro\Model\Marketplace $marketplace): void
+    {
+        $this->marketplaceResource->save($marketplace);
+    }
+
     public function get(int $marketplaceId): \Ess\M2ePro\Model\Marketplace
     {
         $marketplace = $this->find($marketplaceId);
@@ -60,6 +65,18 @@ class Repository
             ['eq' => \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE]
         )
                    ->setOrder(MarketplaceResource::COLUMN_SORDER, 'ASC');
+
+        return array_values($collection->getItems());
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\Marketplace[]
+     */
+    public function findWithDeveloperKey(): array
+    {
+        $collection = $this->collectionFactory->createWithWalmartChildMode();
+        $collection->addFieldToFilter('developer_key', ['notnull' => true])
+                   ->setOrder('sorder', 'ASC');
 
         return array_values($collection->getItems());
     }

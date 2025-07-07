@@ -9,6 +9,22 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 class Form extends AbstractForm
 {
+    private string $selectedMode;
+    private string $blockTitle;
+
+    public function __construct(
+        string $selectedMode,
+        string $blockTitle,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        parent::__construct($context, $registry, $formFactory, $data);
+        $this->selectedMode = $selectedMode;
+        $this->blockTitle = $blockTitle;
+    }
+
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create(
@@ -26,7 +42,7 @@ class Form extends AbstractForm
             'block-title',
             'label',
             [
-                'value' => __('You need to choose Ebay Categories for Products in order to list them on Ebay.'),
+                'value' => $this->blockTitle,
                 'field_extra_attributes' =>
                     'id="categories_mode_block_title" style="font-weight: bold;font-size:18px;margin-bottom:0px"',
             ]
@@ -60,7 +76,7 @@ CSS
                         'label' => __('All Products same Category'),
                     ],
                 ],
-                'value' => SelectMode::MODE_SAME,
+                'value' => $this->selectedMode,
                 'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
                     __('Products will be Listed using the same Ebay Category.') . '</div>',
             ]
@@ -78,7 +94,7 @@ CSS
                         'label' => __('Set Manually for each Product'),
                     ],
                 ],
-                'value' => SelectMode::MODE_SAME,
+                'value' => $this->selectedMode,
                 'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
                     __('Set Ebay Categories for each Product (or a group of Products) manually.') . '</div>',
             ]
@@ -96,7 +112,7 @@ CSS
                         'label' => __('Set eBay Categories (Based On Magento Categories)'),
                     ],
                 ],
-                'value' => SelectMode::MODE_SAME,
+                'value' => $this->selectedMode,
                 'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
                     __('Products will have eBay Categories set according to the Magento Categories.') . '</div>',
             ]
@@ -114,7 +130,7 @@ CSS
                         'label' => __('Get suggested Categories'),
                     ],
                 ],
-                'value' => SelectMode::MODE_SAME,
+                'value' => $this->selectedMode,
                 'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
                     __('Get eBay to suggest Categories for your Products based on the Title and Magento Attribute set.') . '</div>',
             ]

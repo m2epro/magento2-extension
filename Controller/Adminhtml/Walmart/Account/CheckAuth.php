@@ -34,8 +34,6 @@ class CheckAuth extends Account
     {
         $consumerId = $this->getRequest()->getParam('consumer_id', false);
         $privateKey = $this->getRequest()->getParam('private_key', false);
-        $clientId = $this->getRequest()->getParam('client_id', false);
-        $clientSecret = $this->getRequest()->getParam('client_secret', false);
         $marketplaceId = $this->getRequest()->getParam('marketplace_id', false);
 
         $result = [
@@ -57,15 +55,6 @@ class CheckAuth extends Account
                 'marketplace' => $marketplaceObject->getNativeId(),
                 'consumer_id' => $consumerId,
                 'private_key' => $privateKey,
-            ];
-        } elseif (
-            $marketplaceId != \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_CA &&
-            $clientId && $clientSecret
-        ) {
-            $requestData = [
-                'marketplace' => $marketplaceObject->getNativeId(),
-                'client_id' => $clientId,
-                'client_secret' => $clientSecret,
             ];
         } else {
             $this->setJsonContent($result);

@@ -77,7 +77,7 @@
         updateInfo = function () {
             $('span[category_id]').each(function () {
                 const categoryId = $(this).attr('category_id');
-                $(this).text('(' + treeInfo['category_products'][categoryId] + ')');
+                $(this).text(treeInfo['category_products'][categoryId]);
             });
 
             $('#total_products_count').text(treeInfo['total_products_count']);
@@ -182,6 +182,10 @@
 
             $('#tree-div').on("select_node.jstree", function (e, data) {
                 categoryClick(data.node, e);
+            });
+
+            $('#tree-div').on("click.jstree", function () {
+                updateInfo();
             });
 
             updateInfo();

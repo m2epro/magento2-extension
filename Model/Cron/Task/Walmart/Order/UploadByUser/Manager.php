@@ -182,9 +182,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
     public function setIdentifierByAccount(\Ess\M2ePro\Model\Account $account)
     {
-        $id = $account->getChildObject()->getClientId()
-            ? $account->getChildObject()->getClientId()
-            : $account->getChildObject()->getConsumerId();
+        $id = $account->getChildObject()->getIdentifier();
 
         return $this->setIdentifier($id);
     }

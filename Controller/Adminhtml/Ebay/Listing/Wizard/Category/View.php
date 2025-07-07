@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Wizard\Category;
 
+use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Wizard\Category;
+use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Wizard\SelectMode;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Wizard\StepAbstract;
+use Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Wizard\WizardTrait;
 use Ess\M2ePro\Helper\Data\Session as SessionHelper;
 use Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory;
-use Ess\M2ePro\Model\Ebay\Listing\Wizard\ListingMagentoCategoriesDataProcessor;
-use Ess\M2ePro\Model\Ebay\Listing\Wizard\StepDeclarationCollectionFactory;
-use Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Wizard\WizardTrait;
-use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Wizard\SelectMode;
-use Ess\M2ePro\Model\Listing;
-use Ess\M2ePro\Model\Ebay\Listing\Wizard\ManagerFactory;
 use Ess\M2ePro\Model\Ebay\Dictionary\CategoryFactory;
-use Ess\M2ePro\Model\Listing\Ui\RuntimeStorage;
-use Ess\M2ePro\Model\Ebay\Listing\Wizard\Ui\RuntimeStorage as WizardRuntimeStorage;
-use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Wizard\Category;
+use Ess\M2ePro\Model\Ebay\Listing\Wizard\ListingMagentoCategoriesDataProcessor;
+use Ess\M2ePro\Model\Ebay\Listing\Wizard\ManagerFactory;
 use Ess\M2ePro\Model\Ebay\Listing\Wizard\Provider\Category\Details;
+use Ess\M2ePro\Model\Ebay\Listing\Wizard\StepDeclarationCollectionFactory;
+use Ess\M2ePro\Model\Ebay\Listing\Wizard\Ui\RuntimeStorage as WizardRuntimeStorage;
+use Ess\M2ePro\Model\Listing;
+use Ess\M2ePro\Model\Listing\Ui\RuntimeStorage;
 use Ess\M2ePro\Model\Ebay\Listing\Wizard\Provider\Category\MagentoCategoriesMode;
 
 class View extends StepAbstract
@@ -28,14 +28,10 @@ class View extends StepAbstract
     private const SESSION_DATA_KEY = 'ebay_listing_product_category_settings';
 
     private CategoryFactory $categoryFactory;
-
     private SessionHelper $sessionHelper;
-
     private Details $categoryDetailsProvider;
-
-    private MagentoCategoriesMode $categoryMagentoModeDataProvider;
-
     private ListingMagentoCategoriesDataProcessor $magentoCategoriesDataProcessor;
+    private MagentoCategoriesMode $categoryMagentoModeDataProvider;
 
     public function __construct(
         ManagerFactory $wizardManagerFactory,
@@ -97,12 +93,16 @@ class View extends StepAbstract
 
     private function stepSelectCategoryModeSame()
     {
+        /** @var \Ess\M2ePro\Model\Ebay\Listing $eBayListing */
+        $eBayListing = $this->getWizardManager()->getListing()->getChildObject();
         $this->addContent(
             $this->getLayout()->createBlock(
                 Category\Same::class,
                 '',
                 [
-                    'data' => ['categories_data' => []],
+                    'data' => [
+                        'categories_data' => $eBayListing->getPreviousCategoryChoiceForSameMode(),
+                    ],
                 ]
             ),
         );

@@ -48,9 +48,7 @@ class Complete extends EbayListingController
 
         $listingProducts = $this->completeProcessor->process($wizardManager);
 
-        $wizardManager->completeStep(
-            StepDeclarationCollectionFactory::STEP_REVIEW,
-        );
+        $wizardManager->completeStep(StepDeclarationCollectionFactory::STEP_REVIEW);
         $wizardManager->setProductCountTotal(count($listingProducts));
 
         if ($this->getRequest()->getParam('do_list')) {

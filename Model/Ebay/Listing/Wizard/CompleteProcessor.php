@@ -54,7 +54,7 @@ class CompleteProcessor
             if ($wizardProduct->getTemplateCategoryId() || $wizardProduct->getStoreCategoryId()) {
                 $this->activeRecordFactory->getObject('Ebay_Listing_Product')
                                           ->assignTemplatesToProducts(
-                                              [$listingProduct ->getId()],
+                                              [$listingProduct->getId()],
                                               $wizardProduct->getTemplateCategoryId(),
                                               $wizardProduct->getTemplateCategorySecondaryId(),
                                               $wizardProduct->getStoreCategoryId(),
@@ -69,6 +69,8 @@ class CompleteProcessor
         if (!empty($processedWizardProductIds)) {
             $wizardManager->markProductsAsProcessed($processedWizardProductIds);
         }
+
+        $this->rememberSelectedModeInListingSettings($wizardManager);
 
         return $listingProducts;
     }
@@ -121,5 +123,23 @@ class CompleteProcessor
         }
 
         return $listingProduct;
+    }
+
+    private function rememberSelectedModeInListingSettings(
+        \Ess\M2ePro\Model\Ebay\Listing\Wizard\Manager $wizardManager
+    ) {
+        $stepData = $wizardManager->getStepData(StepDeclarationCollectionFactory::STEP_GENERAL_SELECT_CATEGORY_MODE);
+
+        if (empty($stepData['mode'])) {
+            return;
+        }
+        /** @var \Ess\M2ePro\Model\Ebay\Listing $ebayListing */
+        $ebayListing = $wizardManager->getListing()->getChildObject();
+        $mode = $stepData['mode'];
+
+        if ($ebayListing->getAddProductMode() !== $mode) {
+            $ebayListing->setAddProductMode($mode);
+            $ebayListing->save();
+        }
     }
 }

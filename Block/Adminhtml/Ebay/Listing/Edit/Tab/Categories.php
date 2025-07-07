@@ -1,16 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit\Tab;
 
 use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit\Tabs;
 
 class Categories extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
-    protected $tabs;
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-    /** @var \Ess\M2ePro\Model\ListingFactory */
-    protected $listingFactory;
+    protected Tabs $tabs;
+    private \Ess\M2ePro\Helper\Data $dataHelper;
+    protected \Ess\M2ePro\Model\ListingFactory $listingFactory;
+
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit\Tabs $tabs,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
@@ -29,8 +30,6 @@ class Categories extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContai
         parent::_construct();
 
         $this->setId('ebayListingEdit');
-        $this->_controller = 'adminhtml_ebay_listing';
-        $this->_mode = 'product_category_settings_mode';
 
         $this->removeButton('delete');
         $this->removeButton('back');
@@ -60,84 +59,45 @@ class Categories extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContai
             'class' => 'action-primary',
             'onclick' => "
         var customActionUrl = '{$url}';
-        $('categories_mode_form').setAttribute('action', customActionUrl);
-        $('categories_mode_form').submit();
+        $('edit_form').setAttribute('action', customActionUrl);
+        $('edit_form').submit();
     ",
         ]);
     }
 
     protected function _prepareLayout()
     {
-        $this->tabs->activatePoliciesTab();
-
-        $this->css->addFile('listing/autoAction.css');
-
-        $this->jsPhp->addConstants(
-            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Listing::class)
-        );
-
-        $this->jsUrl->addUrls(
-            $this->dataHelper->getControllerActions(
-                'Ebay_Listing_AutoAction',
-                ['listing_id' => $this->getListing()->getId()]
-            )
-        );
-
-        $this->jsTranslator->addTranslations(
+        $formBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Wizard\Category\ModeSame\Form::class,
+            '',
             [
-                'Remove Category' => $this->__('Remove Category'),
-                'Add New Rule' => $this->__('Add New Rule'),
-                'Add/Edit Categories Rule' => $this->__('Add/Edit Categories Rule'),
-                'Auto Add/Remove Rules' => $this->__('Auto Add/Remove Rules'),
-                'Based on Magento Categories' => $this->__('Based on Magento Categories'),
-                'You must select at least 1 Category.' => $this->__('You must select at least 1 Category.'),
-                'Rule with the same Title already exists.' => $this->__('Rule with the same Title already exists.'),
-                'Compatibility Attribute' => $this->__('Compatibility Attribute'),
-                'Sell on Another Marketplace' => $this->__('Sell on Another Marketplace'),
-                'Create new' => $this->__('Create new'),
+                'selectedMode' => $this->getMode(),
+                'blockTitle' => (string)__('To change the eBay category settings mode for this Listing, ' .
+                    'please click one of the available options below and save:'),
             ]
         );
-
-        $mode = $this->getMode();
-        $this->js->addOnReadyJs(
-            <<<JS
-    require([
-        'M2ePro/Ebay/Listing/AutoAction',
-        'M2ePro/Ebay/Listing/Product/Category/Settings/Mode'
-    ], function(){
-        window.ListingAutoActionObj = new EbayListingAutoAction();
-        window.EbayListingProductCategorySettingsModeObj = new EbayListingProductCategorySettingsMode(
-        '{$mode}'
-    );
-    });
-JS
-        );
+        $this->setChild('form', $formBlock);
 
         return parent::_prepareLayout();
     }
 
-    protected function getListing()
+    protected function getListing(): \Ess\M2ePro\Model\Listing
     {
-        $id = $this->getRequest()->getParam('id');
-        if ($id) {
-            $listing = $this->listingFactory->create()->load($id);
-        }
-
-        return $listing;
+        return $this->listingFactory->create()->load($this->getRequest()->getParam('id'));
     }
 
     protected function getMode()
     {
         $mode = $this->getListing()->getChildObject()->getAddProductMode();
-        if (!$mode) {
-            $mode = 'same';
+        if (empty($mode)) {
+            $mode = \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Wizard\SelectMode::MODE_SAME;
         }
+
         return $mode;
     }
 
     protected function _toHtml()
     {
-        /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit\Tabs $tabsBlock */
         $tabsBlock = $this->getLayout()->createBlock(Tabs::class);
         $tabsBlock->activateCategoriesTab();
         $tabsBlockHtml = $tabsBlock->toHtml();
@@ -147,6 +107,8 @@ JS
             ['data' => ['listing' => $this->getListing()]]
         );
 
-        return $viewHeaderBlock->toHtml() . $tabsBlockHtml . parent::_toHtml();
+        return $viewHeaderBlock->toHtml()
+            . $tabsBlockHtml
+            . parent::_toHtml();
     }
 }

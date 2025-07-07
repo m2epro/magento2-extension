@@ -427,6 +427,10 @@ class Config extends AbstractConfig
             ],
             'y25_m06' => [
                 'FixValueOfProductTypeIdInWalmartListingProduct',
+                'EbayListingModifyAddProductModeAndAddAdditionalDataColumn',
+            ],
+            'y25_m07' => [
+                'ModifyWalmartAccountTable',
             ],
         ];
     }
@@ -532,6 +536,9 @@ class Config extends AbstractConfig
             \Ess\M2ePro\Setup\Update\y25_m05\EbayPromotedListingCampaigns::class,
 
             \Ess\M2ePro\Setup\Update\y25_m06\FixValueOfProductTypeIdInWalmartListingProduct::class,
+            \Ess\M2ePro\Setup\Update\y25_m06\EbayListingModifyAddProductModeAndAddAdditionalDataColumn::class,
+
+            \Ess\M2ePro\Setup\Update\y25_m07\ModifyWalmartAccountTable::class,
         ];
     }
 

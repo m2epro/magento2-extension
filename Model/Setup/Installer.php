@@ -27,6 +27,7 @@ use Ess\M2ePro\Model\ResourceModel\Ebay\ComplianceDocuments as ComplianceDocumen
 use Ess\M2ePro\Model\ResourceModel\Ebay\ComplianceDocuments\ListingProductRelation
     as EbayComplianceDocumentListingProductRelationResource;
 use Ess\M2ePro\Model\ResourceModel\Ebay\PromotedListing\Campaign as CampaignResource;
+use Ess\M2ePro\Model\ResourceModel\Walmart\Account as WalmartAccountResource;
 
 class Installer
 {
@@ -4268,9 +4269,9 @@ class Installer
                                      ['unsigned' => true, 'default' => null]
                                  )
                                 ->addColumn(
-                                    'add_product_mode',
+                                    \Ess\M2ePro\Model\ResourceModel\Ebay\Listing::COLUMN_ADD_PRODUCT_MODE,
                                     Table::TYPE_TEXT,
-                                    10,
+                                    20,
                                     ['default' => null]
                                 )
                                  ->addColumn(
@@ -4313,6 +4314,12 @@ class Installer
                                      'parts_compatibility_mode',
                                      Table::TYPE_TEXT,
                                      10,
+                                     ['default' => null]
+                                 )
+                                 ->addColumn(
+                                     \Ess\M2ePro\Model\ResourceModel\Ebay\Listing::COLUMN_ADDITIONAL_DATA,
+                                     Table::TYPE_TEXT,
+                                     self::LONG_COLUMN_SIZE,
                                      ['default' => null]
                                  )
                                  ->addIndex(
@@ -12142,28 +12149,10 @@ class Installer
                                         ['unsigned' => true, 'nullable' => false]
                                     )
                                     ->addColumn(
-                                        'consumer_id',
+                                        WalmartAccountResource::COLUMN_IDENTIFIER,
                                         Table::TYPE_TEXT,
-                                        255,
-                                        ['nullable' => true]
-                                    )
-                                    ->addColumn(
-                                        'private_key',
-                                        Table::TYPE_TEXT,
-                                        null,
-                                        ['nullable' => true]
-                                    )
-                                    ->addColumn(
-                                        'client_id',
-                                        Table::TYPE_TEXT,
-                                        255,
-                                        ['nullable' => true]
-                                    )
-                                    ->addColumn(
-                                        'client_secret',
-                                        Table::TYPE_TEXT,
-                                        null,
-                                        ['nullable' => true]
+                                        100,
+                                        ['nullable' => false, 'default' => '']
                                     )
                                     ->addColumn(
                                         'related_store_id',

@@ -6,19 +6,17 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Wizard\Category;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Listing as EbayListingController;
-use Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Wizard\WizardTrait;
+use Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory;
 use Ess\M2ePro\Model\Ebay\Listing\Wizard\ManagerFactory;
 use Ess\M2ePro\Model\Ebay\Listing\Wizard\StepDeclarationCollectionFactory;
 use Ess\M2ePro\Model\Ebay\Listing\Wizard\TemplateCategoryLinkProcessor;
-use Ess\M2ePro\Model\Ebay\Listing\Wizard\Manager;
 
 class AssignModeSame extends EbayListingController
 {
     use WizardTrait;
 
     private ManagerFactory $wizardManagerFactory;
-
     private TemplateCategoryLinkProcessor $templateCategoryLinkProcessor;
 
     public function __construct(
@@ -48,7 +46,12 @@ class AssignModeSame extends EbayListingController
             $this->redirectToIndex($id);
         }
 
-        $this->templateCategoryLinkProcessor->process($manager, $categoryData, []);
+        $result = $this->templateCategoryLinkProcessor->process($manager, $categoryData, []);
+
+        /** @var \Ess\M2ePro\Model\Ebay\Listing $eBayListing */
+        $eBayListing = $manager->getListing()->getChildObject();
+        $eBayListing->updateCategoryChoiceForSameMode($result);
+        $eBayListing->save();
 
         $manager->completeStep(StepDeclarationCollectionFactory::STEP_GENERAL_SELECT_CATEGORY_STEP);
 

@@ -13,6 +13,8 @@ namespace Ess\M2ePro\Model\ResourceModel\Ebay\Template;
  */
 class StoreCategory extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
+    public const COLUMN_CATEGORY_PATH = 'category_path';
+
     //########################################
 
     public function _construct()

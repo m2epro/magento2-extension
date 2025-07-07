@@ -55,7 +55,17 @@ class SelectMode extends AbstractContainer
 
     protected function _prepareLayout()
     {
-        $this->addChild('form', \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Wizard\Category\ModeSame\Form::class);
+        $formBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Wizard\Category\ModeSame\Form::class,
+            '',
+            [
+                'selectedMode' => SelectMode::MODE_SAME,
+                'blockTitle' => (string)__('You need to choose eBay Categories for ' .
+                    'Products in order to list them on eBay.'),
+            ]
+        );
+
+        $this->setChild('form', $formBlock);
 
         return parent::_prepareLayout();
     }

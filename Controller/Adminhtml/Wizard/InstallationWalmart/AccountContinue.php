@@ -23,12 +23,16 @@ class AccountContinue extends InstallationWalmart
 
     /** @var \Ess\M2ePro\Helper\View\Configuration */
     private $configurationHelper;
+    private \Ess\M2ePro\Model\Walmart\Account\Canada\Create $accountCreate;
+    private \Ess\M2ePro\Model\Walmart\Account\Builder $accountBuilder;
 
     public function __construct(
         \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
         \Ess\M2ePro\Helper\Magento\Store $storeHelper,
         \Ess\M2ePro\Helper\Module\License $licenseHelper,
         \Ess\M2ePro\Helper\View\Configuration $configurationHelper,
+        \Ess\M2ePro\Model\Walmart\Account\Canada\Create $accountCreate,
+        \Ess\M2ePro\Model\Walmart\Account\Builder $accountBuilder,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Helper\View\Walmart $walmartViewHelper,
         \Magento\Framework\Code\NameBuilder $nameBuilder,
@@ -40,6 +44,8 @@ class AccountContinue extends InstallationWalmart
         $this->storeHelper = $storeHelper;
         $this->licenseHelper = $licenseHelper;
         $this->configurationHelper = $configurationHelper;
+        $this->accountCreate = $accountCreate;
+        $this->accountBuilder = $accountBuilder;
     }
 
     public function execute()
@@ -55,21 +61,9 @@ class AccountContinue extends InstallationWalmart
             return $this->getResult();
         }
 
-        $accountData = [];
-
-        $requiredFields = [
-            'marketplace_id',
-            'consumer_id',
-            'private_key',
-            'client_id',
-            'client_secret',
-        ];
-
-        foreach ($requiredFields as $requiredField) {
-            if (!empty($params[$requiredField])) {
-                $accountData[$requiredField] = $params[$requiredField];
-            }
-        }
+        $marketplaceId = (int)$this->getRequest()->getParam('marketplace_id');
+        $consumerId = $this->getRequest()->getPost('consumer_id');
+        $privateKey = $this->getRequest()->getPost('private_key');
 
         /** @var \Ess\M2ePro\Model\Marketplace $marketplaceObject */
         $marketplaceObject = $this->walmartFactory->getCachedObjectLoaded(
@@ -78,62 +72,22 @@ class AccountContinue extends InstallationWalmart
         );
         $marketplaceObject->setData('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE)->save();
 
-        $accountData = array_merge(
-            $this->getAccountDefaultSettings(),
-            [
-                'title' => "Default - {$marketplaceObject->getCode()}",
-            ],
-            $accountData
-        );
-
-        /** @var \Ess\M2ePro\Model\Account $account */
-        $account = $this->walmartFactory->getObject('Account');
-        $this->modelFactory->getObject('Walmart_Account_Builder')->build($account, $accountData);
+        $title = "Default - {$marketplaceObject->getCode()}";
 
         try {
-            $requestData = [
-                'marketplace_id' => $params['marketplace_id'],
-            ];
-
-            if ($params['marketplace_id'] == \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_US) {
-                $requestData['client_id'] = $params['client_id'];
-                $requestData['client_secret'] = $params['client_secret'];
-            } else {
-                $requestData['consumer_id'] = $params['consumer_id'];
-                $requestData['private_key'] = $params['private_key'];
-            }
-
-            /** @var \Ess\M2ePro\Model\Walmart\Connector\Dispatcher $dispatcherObject */
-            $dispatcherObject = $this->modelFactory->getObject('Walmart_Connector_Dispatcher');
-
-            /** @var \Ess\M2ePro\Model\Walmart\Connector\Account\Add\EntityRequester $connectorObj */
-            $connectorObj = $dispatcherObject->getConnector(
-                'account',
-                'add',
-                'entityRequester',
-                $requestData,
-                $account
-            );
-            $dispatcherObject->process($connectorObj);
-            $responseData = $connectorObj->getResponseData();
-
-            $account->getChildObject()->addData(
-                [
-                    'server_hash' => $responseData['hash'],
-                    'info' => \Ess\M2ePro\Helper\Json::encode($responseData['info']),
-                ]
-            );
-            $account->getChildObject()->save();
+            $account = $this->accountCreate->createAccount($marketplaceId, $consumerId, $privateKey, $title);
+            $this->accountBuilder->build($account, $this->getAccountDefaultStoreId());
         } catch (\Exception $exception) {
             $this->exceptionHelper->process($exception);
-
-            $account->delete();
 
             $this->modelFactory->getObject('Servicing\Dispatcher')->processTask(
                 \Ess\M2ePro\Model\Servicing\Task\License::NAME
             );
 
-            $error = 'The Walmart access obtaining is currently unavailable.<br/>Reason: %error_message%';
+            $error = (string)__(
+                'The Walmart token obtaining is currently unavailable.<br/>Reason: %error_message',
+                ['error_message' => $exception->getMessage()]
+            );
 
             if (
                 !$this->licenseHelper->isValidDomain() ||
@@ -180,10 +134,8 @@ class AccountContinue extends InstallationWalmart
         return true;
     }
 
-    private function getAccountDefaultSettings(): array
+    private function getAccountDefaultStoreId(): array
     {
-        $data = $this->modelFactory->getObject('Walmart_Account_Builder')->getDefaultData();
-
         $data['magento_orders_settings']['listing_other']['store_id'] = $this->storeHelper->getDefaultStoreId();
 
         return $data;

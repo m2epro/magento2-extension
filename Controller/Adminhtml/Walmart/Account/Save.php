@@ -8,7 +8,6 @@ class Save extends Account
 {
     private \Ess\M2ePro\Model\Walmart\Account\Builder $accountBuilder;
     private \Ess\M2ePro\Model\Walmart\Account\MagentoOrderCreateService $magentoOrderCreateService;
-    private \Ess\M2ePro\Model\Walmart\Connector\Dispatcher $connectorDispatcher;
     private \Ess\M2ePro\Helper\Module\Wizard $helperWizard;
     private \Ess\M2ePro\Helper\Module\Exception $helperException;
     private \Ess\M2ePro\Helper\Url $urlHelper;
@@ -16,7 +15,6 @@ class Save extends Account
     public function __construct(
         \Ess\M2ePro\Model\Walmart\Account\Builder $accountBuilder,
         \Ess\M2ePro\Model\Walmart\Account\MagentoOrderCreateService $magentoOrderCreateService,
-        \Ess\M2ePro\Model\Walmart\Connector\Dispatcher $connectorDispatcher,
         \Ess\M2ePro\Helper\Module\Wizard $helperWizard,
         \Ess\M2ePro\Helper\Url $urlHelper,
         \Ess\M2ePro\Helper\Module\Exception $helperException,
@@ -28,7 +26,6 @@ class Save extends Account
 
         $this->accountBuilder = $accountBuilder;
         $this->magentoOrderCreateService = $magentoOrderCreateService;
-        $this->connectorDispatcher = $connectorDispatcher;
         $this->helperWizard = $helperWizard;
         $this->helperException = $helperException;
         $this->urlHelper = $urlHelper;
@@ -46,9 +43,7 @@ class Save extends Account
         $data = $post->toArray();
 
         try {
-            $account = $id
-                ? $this->updateAccount((int)$id, $data)
-                : $this->addAccount($data);
+            $this->saveSettings((int)$id, $data);
         } catch (\Throwable $exception) {
             $this->helperException->process($exception);
 
@@ -82,7 +77,7 @@ class Save extends Account
         $this->messageManager->addSuccessMessage(__('Account was saved'));
 
         $routerParams = [
-            'id' => $account->getId(),
+            'id' => $id,
             '_current' => true,
         ];
 
@@ -96,26 +91,16 @@ class Save extends Account
         return $this->_redirect($this->urlHelper->getBackUrl('list', [], ['edit' => $routerParams]));
     }
 
-    private function updateAccount(int $id, array $data): \Ess\M2ePro\Model\Account
+    private function saveSettings(int $id, array $data): \Ess\M2ePro\Model\Account
     {
         /** @var \Ess\M2ePro\Model\Account $account */
         $account = $this->walmartFactory->getObjectLoaded('Account', $id);
         /** @var \Ess\M2ePro\Model\Walmart\Account $account */
         $walmartAccount = $account->getChildObject();
 
-        $oldData = array_merge($account->getOrigData(), $walmartAccount->getOrigData());
-
         $previousMagentoOrdersSettings = $this->getPreviousMagentoOrdersSettings($walmartAccount);
 
         $this->saveAccount($account, $data);
-
-        try {
-            $this->updateAccountOnServer($account, $data, $oldData);
-        } catch (\Throwable $exception) {
-            $this->accountBuilder->build($account, $oldData);
-
-            throw $exception;
-        }
 
         try {
             $this->createMagentoOrders($walmartAccount, $previousMagentoOrdersSettings);
@@ -143,55 +128,6 @@ class Save extends Account
         }
 
         $this->accountBuilder->build($account, $data);
-    }
-
-    private function updateAccountOnServer(\Ess\M2ePro\Model\Account $account, array $data, array $oldData): void
-    {
-        $params = $this->getDataForServer($data);
-
-        if (!$this->isNeedSendDataToServer($params, $oldData)) {
-            return;
-        }
-
-        /** @var \Ess\M2ePro\Model\Walmart\Connector\Account\Update\EntityRequester $connectorObj */
-        $connectorObj = $this->connectorDispatcher->getConnector(
-            'account',
-            'update',
-            'entityRequester',
-            $params,
-            $account
-        );
-        $this->connectorDispatcher->process($connectorObj);
-        $responseData = $connectorObj->getResponseData();
-
-        $account->getChildObject()->addData(
-            [
-                'info' => \Ess\M2ePro\Helper\Json::encode($responseData['info']),
-            ]
-        );
-        $account->getChildObject()->save();
-    }
-
-    private function isNeedSendDataToServer($newData, $oldData): bool
-    {
-        return !empty(array_diff_assoc($newData, $oldData));
-    }
-
-    private function getDataForServer(array $data): array
-    {
-        $params = [
-            'marketplace_id' => (int)$data['marketplace_id'],
-        ];
-
-        if ($data['marketplace_id'] == \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_US) {
-            $params['client_id'] = $data['client_id'];
-            $params['client_secret'] = $data['client_secret'];
-        } else {
-            $params['consumer_id'] = $data['consumer_id'];
-            $params['private_key'] = $data['private_key'];
-        }
-
-        return $params;
     }
 
     private function getPreviousMagentoOrdersSettings(\Ess\M2ePro\Model\Walmart\Account $walmartAccount): array
@@ -235,61 +171,6 @@ class Save extends Account
                 $walmartAccount->getMagentoOrdersListingsOtherCreateFromDate()
             );
         }
-    }
-
-    private function addAccount(array $data): \Ess\M2ePro\Model\Account
-    {
-        $searchField = empty($data['client_id']) ? 'consumer_id' : 'client_id';
-        $searchValue = empty($data['client_id']) ? $data['consumer_id'] : $data['client_id'];
-
-        if ($this->isAccountExists($searchField, $searchValue)) {
-            throw new \Ess\M2ePro\Model\Exception(
-                'An account with the same Walmart Client ID already exists.'
-            );
-        }
-
-        /** @var \Ess\M2ePro\Model\Account $account */
-        $account = $this->walmartFactory->getObject('Account');
-
-        $this->accountBuilder->build($account, $data);
-
-        try {
-            $params = $this->getDataForServer($data);
-
-            /** @var \Ess\M2ePro\Model\Walmart\Connector\Account\Add\EntityRequester $connectorObj */
-            $connectorObj = $this->connectorDispatcher->getConnector(
-                'account',
-                'add',
-                'entityRequester',
-                $params,
-                $account
-            );
-            $this->connectorDispatcher->process($connectorObj);
-            $responseData = $connectorObj->getResponseData();
-
-            $account->getChildObject()->addData(
-                [
-                    'server_hash' => $responseData['hash'],
-                    'info' => \Ess\M2ePro\Helper\Json::encode($responseData['info']),
-                ]
-            );
-            $account->getChildObject()->save();
-        } catch (\Throwable $exception) {
-            $account->delete();
-
-            throw $exception;
-        }
-
-        return $account;
-    }
-
-    private function isAccountExists($search, $value): bool
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $collection */
-        $collection = $this->walmartFactory->getObject('Account')->getCollection()
-                                           ->addFieldToFilter($search, $value);
-
-        return (bool)$collection->getSize();
     }
 
     private function isNeedCreateMagentoOrdersListing(

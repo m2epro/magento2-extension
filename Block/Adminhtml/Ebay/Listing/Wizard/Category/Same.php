@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Wizard\Category;
 
-use Ess\M2ePro\Block\Adminhtml\Listing\View\Header;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer;
 use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Wizard\WizardTrait;
 use Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget;
@@ -18,13 +17,10 @@ class Same extends AbstractContainer
     use WizardTrait;
 
     private ListingRuntimeStorage $uiListingRuntimeStorage;
-
     private UrlInterface $urlBuilder;
-
     private WizardRuntimeStorage $uiWizardRuntimeStorage;
     private ManagerFactory $wizardManagerFactory;
-
-    private $dataHelper;
+    private \Ess\M2ePro\Helper\Data $dataHelper;
 
     public function __construct(
         ManagerFactory $wizardManagerFactory,

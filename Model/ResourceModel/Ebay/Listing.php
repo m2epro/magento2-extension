@@ -8,6 +8,8 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 {
     public const COLUMN_LISTING_ID = 'listing_id';
     public const COLUMN_TEMPLATE_SYNCHRONIZATION_ID = 'template_synchronization_id';
+    public const COLUMN_ADD_PRODUCT_MODE = 'add_product_mode';
+    public const COLUMN_ADDITIONAL_DATA = 'additional_data';
 
     /** @var \Magento\Catalog\Model\Product\Action  */
     protected $catalogProductAction;

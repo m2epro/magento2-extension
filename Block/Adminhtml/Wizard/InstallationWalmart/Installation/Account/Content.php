@@ -22,11 +22,13 @@ class Content extends AbstractForm
     private $walmartHelper;
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
+    private \Ess\M2ePro\Block\Adminhtml\Walmart\Account\CredentialsFormFactory $credentialsFormFactory;
 
     public function __construct(
         \Ess\M2ePro\Helper\Component\Walmart $walmartHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Block\Adminhtml\Walmart\Account\CredentialsFormFactory $credentialsFormFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
@@ -37,6 +39,7 @@ class Content extends AbstractForm
         $this->supportHelper = $supportHelper;
         $this->walmartHelper = $walmartHelper;
         $this->dataHelper = $dataHelper;
+        $this->credentialsFormFactory = $credentialsFormFactory;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -59,140 +62,32 @@ HTML
             )
         );
 
+        $marketplaceBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation\Account\MarketplaceSelector::class
+        );
+        $this->setChild('marketplace_selector', $marketplaceBlock);
+
         parent::_prepareLayout();
     }
 
     protected function _prepareForm()
     {
-        $form = $this->_formFactory->create(
-            [
-                'data' => [
-                    'id' => 'edit_form',
-                ],
-            ]
-        );
+        $form = $this->credentialsFormFactory->create(false, false, 'edit_form');
+        $form->setUseContainer(true);
+        $this->setForm($form);
 
-        $fieldset = $form->addFieldset(
-            'account_details',
-            [
-            ]
-        );
+        return parent::_prepareForm();
+    }
 
-        $marketplacesCollection = $this->walmartFactory->getObject('Marketplace')->getCollection()
-                                                       ->addFieldToFilter('developer_key', ['notnull' => true])
-                                                       ->setOrder('sorder', 'ASC');
-
-        $marketplaces = [
-            [
-                'value' => '',
-                'label' => '',
-            ],
-        ];
-        foreach ($marketplacesCollection->getItems() as $item) {
-            $marketplace = array_merge($item->getData(), $item->getChildObject()->getData());
-            $marketplaces[$marketplace['id']] = $marketplace['title'];
-        }
-
-        $fieldset->addField(
-            'marketplace_id',
-            'select',
-            [
-                'label' => $this->__('Marketplace'),
-                'name' => 'marketplace_id',
-                'required' => true,
-                'values' => $marketplaces,
-                'onchange' => 'InstallationWalmartWizardObj.changeMarketplace(this.value);',
-            ]
-        );
-
-        $marketplaceUS = Walmart::MARKETPLACE_US;
-        $marketplaceCA = Walmart::MARKETPLACE_CA;
-
-        $fieldset->addField(
-            'marketplaces_register_url_ca',
-            'link',
-            [
-                'label' => '',
-                'href' => $this->walmartHelper->getRegisterUrl($marketplaceCA),
-                'target' => '_blank',
-                'value' => $this->__('Get Access Data'),
-                'class' => "external-link",
-                'css_class' => "marketplace-required-field marketplace-required-field-id{$marketplaceCA}",
-            ]
-        );
-        $fieldset->addField(
-            'marketplaces_register_url_us',
-            'link',
-            [
-                'label' => '',
-                'href' => $this->walmartHelper->getRegisterUrl($marketplaceUS),
-                'target' => '_blank',
-                'value' => $this->__('Get Access Data'),
-                'class' => "external-link",
-                'css_class' => "marketplace-required-field marketplace-required-field-id{$marketplaceUS}",
-            ]
-        );
-
-        $fieldset->addField(
-            'consumer_id',
-            'text',
-            [
-                'container_id' => 'marketplaces_consumer_id_container',
-                'name' => 'consumer_id',
-                'label' => $this->__('Consumer ID'),
-                'css_class' => "marketplace-required-field marketplace-required-field-id{$marketplaceCA}",
-                'required' => true,
-                'tooltip' => $this->__('A unique seller identifier on the website.'),
-            ]
-        );
-
-        $fieldset->addField(
-            'private_key',
-            'textarea',
-            [
-                'container_id' => 'marketplaces_private_key_container',
-                'name' => 'private_key',
-                'label' => $this->__('Private Key'),
-                'class' => "M2ePro-marketplace-merchant",
-                'css_class' => "marketplace-required-field marketplace-required-field-id{$marketplaceCA}",
-                'required' => true,
-                'tooltip' => $this->__('Walmart Private Key generated from your Seller Center Account.'),
-            ]
-        );
-
-        $fieldset->addField(
-            'client_id',
-            'text',
-            [
-                'container_id' => 'marketplaces_client_id_container',
-                'name' => 'client_id',
-                'label' => $this->__('Client ID'),
-                'class' => '',
-                'css_class' => "marketplace-required-field marketplace-required-field-id{$marketplaceUS}",
-                'required' => true,
-                'tooltip' => $this->__('A Client ID retrieved to get an access token.'),
-            ]
-        );
-
-        $fieldset->addField(
-            'client_secret',
-            'textarea',
-            [
-                'container_id' => 'marketplaces_client_secret_container',
-                'name' => 'client_secret',
-                'label' => $this->__('Client Secret'),
-                'class' => 'M2ePro-marketplace-merchant',
-                'css_class' => "marketplace-required-field marketplace-required-field-id{$marketplaceUS}",
-                'required' => true,
-                'tooltip' => $this->__('A Client Secret key retrieved to get an access token.'),
-            ]
-        );
-
+    protected function _beforeToHtml()
+    {
         $this->jsPhp->addConstants($this->dataHelper->getClassConstants(WalmartAccount::class));
         $this->jsPhp->addConstants($this->dataHelper->getClassConstants(Walmart::class));
 
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Wizard\InstallationWalmart'));
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Walmart\Account'));
+
+        $checkAuthUrl = $this->getUrl('*/walmart_account/checkAuth');
 
         $this->js->addRequireJs(
             [
@@ -200,7 +95,7 @@ HTML
             ],
             <<<JS
     WalmartAccountObj = new WalmartAccount();
-    WalmartAccountObj.initTokenValidation();
+WalmartAccountObj.initTokenValidation('{$checkAuthUrl}');
 JS
         );
 
@@ -218,29 +113,12 @@ JS
 JS
         );
 
-        $form->setUseContainer(true);
-        $this->setForm($form);
-
-        return parent::_prepareForm();
+        return parent::_beforeToHtml();
     }
 
-    protected function _beforeToHtml()
+    protected function _toHtml(): string
     {
-        $this->jsTranslator->addTranslations(
-            [
-                'M2E Pro was not able to get access to the Walmart Account' => $this->__(
-                    'M2E Pro could not get access to your Walmart account. <br>
-                 For Walmart CA, please check if you entered valid Consumer ID and Private Key. <br>
-                 For Walmart US, please ensure to provide M2E Pro with full access permissions
-                 to all API sections and enter valid Consumer ID, Client ID, and Client Secret.'
-                ),
-                'M2E Pro was not able to get access to the Walmart Account. Reason: %error_message%' => $this->__(
-                    'M2E Pro was not able to get access to the Walmart Account. Reason: %error_message%'
-                ),
-            ]
-        );
-
-        return parent::_beforeToHtml();
+        return $this->getChildHtml('marketplace_selector') . parent::_toHtml();
     }
 
     //########################################

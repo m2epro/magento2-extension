@@ -14,11 +14,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         // ---------------------------------------
         $keys = [
             'title',
-            'marketplace_id',
-            'consumer_id',
-            'client_id',
-            'client_secret',
-            'private_key',
+            'marketplace_id'
         ];
         foreach ($keys as $key) {
             if (isset($this->rawData[$key])) {
@@ -386,10 +382,6 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         return [
             'title' => '',
             'marketplace_id' => 0,
-            'consumer_id' => '',
-            'private_key' => '',
-            'client_id' => '',
-            'client_secret' => '',
 
             'related_store_id' => 0,
 

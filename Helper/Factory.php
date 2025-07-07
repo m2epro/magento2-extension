@@ -1,28 +1,22 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Helper;
 
 class Factory
 {
-    /** @var \Magento\Framework\ObjectManagerInterface */
-    private $objectManager;
+    private \Magento\Framework\ObjectManagerInterface $objectManager;
 
-    /**
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager
-     */
-    public function __construct(
-        \Magento\Framework\ObjectManagerInterface $objectManager
-    ) {
+    public function __construct(\Magento\Framework\ObjectManagerInterface $objectManager)
+    {
         $this->objectManager = $objectManager;
     }
 
     /**
+     * @deprecated
+     * @use self::getObjectByClass
+     *
      * @param string $helperName
      *
      * @return object
@@ -33,5 +27,18 @@ class Factory
         $helperName = str_replace('_', '\\', $helperName);
 
         return $this->objectManager->get('\Ess\M2ePro\Helper\\' . $helperName);
+    }
+
+    /**
+     * @psalm-template T
+     * @psalm-param T $className
+     *
+     * @param string $className
+     *
+     * @return T
+     */
+    public function getObjectByClass(string $className)
+    {
+        return $this->objectManager->get($className);
     }
 }

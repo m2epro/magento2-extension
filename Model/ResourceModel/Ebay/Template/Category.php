@@ -4,6 +4,8 @@ namespace Ess\M2ePro\Model\ResourceModel\Ebay\Template;
 
 class Category extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
+    public const COLUMN_CATEGORY_PATH = 'category_path';
+
     public function _construct(): void
     {
         $this->_init('m2epro_ebay_template_category', 'id');

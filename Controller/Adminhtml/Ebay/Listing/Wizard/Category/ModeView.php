@@ -21,6 +21,10 @@ class ModeView extends StepAbstract
 
     protected function process(Listing $listing)
     {
+        if ($this->isNeedUseModeFromListingSetting($listing)) {
+            return $this->redirectToNextStep($listing);
+        }
+
         $this->addContent(
             $this->getLayout()->createBlock(
                 SelectMode::class,
@@ -35,5 +39,25 @@ class ModeView extends StepAbstract
         $this->setPageHelpLink('set-ebay-categories');
 
         return $this->getResult();
+    }
+
+    private function isNeedUseModeFromListingSetting(Listing $listing): bool
+    {
+        return !empty($listing->getChildObject()->getAddProductMode());
+    }
+
+    private function redirectToNextStep(Listing $listing): \Magento\Framework\App\ResponseInterface
+    {
+        /** @var \Ess\M2ePro\Model\Ebay\Listing $ebayListing */
+        $ebayListing = $listing->getChildObject();
+
+        $manager = $this->getWizardManager();
+        $manager->setStepData(StepDeclarationCollectionFactory::STEP_GENERAL_SELECT_CATEGORY_MODE, [
+            'mode' => $ebayListing->getAddProductMode(),
+        ]);
+
+        $manager->completeStep(StepDeclarationCollectionFactory::STEP_GENERAL_SELECT_CATEGORY_MODE, true);
+
+        return $this->redirectToIndex($manager->getWizardId());
     }
 }

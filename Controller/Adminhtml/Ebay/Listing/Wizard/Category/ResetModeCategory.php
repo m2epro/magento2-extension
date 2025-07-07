@@ -10,7 +10,6 @@ use Ess\M2ePro\Helper\Component\Ebay\Category as EbayCategory;
 use Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Wizard\WizardTrait;
 use Ess\M2ePro\Model\Ebay\Listing\Wizard\ListingMagentoCategoriesDataProcessor;
-use Ess\M2ePro\Model\Ebay\Listing\Wizard\Manager;
 use Ess\M2ePro\Model\Ebay\Listing\Wizard\ManagerFactory;
 use Ess\M2ePro\Model\Ebay\Listing\Wizard\Provider\Category\MagentoCategoriesMode;
 use Ess\M2ePro\Model\Ebay\Listing\Wizard\Repository;
@@ -20,11 +19,8 @@ class ResetModeCategory extends EbayListingController
     use WizardTrait;
 
     private Repository $repository;
-
     private ManagerFactory $wizardManagerFactory;
-
     private ListingMagentoCategoriesDataProcessor $magentoCategoriesDataProcessor;
-
     private MagentoCategoriesMode $categoryMagentoModeDataProvider;
 
     public function __construct(
@@ -51,7 +47,7 @@ class ResetModeCategory extends EbayListingController
         $ebayListing = $listing->getChildObject();
         $magentoCategoryIds = $this->getRequestIds('products_id');
         $wizardProductsIds = $this->magentoCategoriesDataProcessor
-                                      ->getWizardProductIdsByMagentoCategory($magentoCategoryIds, $manager);
+            ->getWizardProductIdsByMagentoCategory($magentoCategoryIds, $manager);
 
         if (!empty($wizardProductsIds)) {
             $this->repository->resetCategories($wizardProductsIds);

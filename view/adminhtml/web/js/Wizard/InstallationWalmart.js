@@ -30,9 +30,12 @@ define([
                 return false;
             }
 
+            let params = $('edit_form').serialize(true);
+            params.marketplace_id = jQuery('#marketplace_id').val()
+
             new Ajax.Request(M2ePro.url.get('wizard_installationWalmart/accountContinue'), {
                 method       : 'post',
-                parameters   : $('edit_form').serialize(true),
+                parameters   : params,
                 onSuccess: function(transport) {
 
                     var response = transport.responseText.evalJSON();
@@ -67,19 +70,18 @@ define([
 
         // ---------------------------------------
 
-        changeMarketplace: function(marketplaceId)
-        {
-            $$('.marketplace-required-field').each(function(obj) {
-                obj.hide();
-            });
-
-            if (marketplaceId === '') {
-                return;
+        changeMarketplace: function (marketplaceId) {
+            $('edit_form').hide();
+            $('account_us_connect').hide();
+            if (marketplaceId == M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart::MARKETPLACE_CA')) {
+                $('edit_form').show();
+                jQuery('#continue').removeAttr('disabled')
             }
 
-            $$('.marketplace-required-field-id' + marketplaceId, '.marketplace-required-field-id-not-null').each(function(obj) {
-                obj.show();
-            });
+            if (marketplaceId == M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart::MARKETPLACE_US')) {
+                $('account_us_connect').show();
+                jQuery('#continue').prop('disabled', true);
+            }
         }
 
         // ---------------------------------------

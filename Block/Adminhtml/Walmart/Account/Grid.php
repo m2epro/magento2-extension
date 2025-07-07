@@ -91,20 +91,9 @@ JS
     {
         /** @var \Ess\M2ePro\Model\Account $row */
 
-        if ($row->getChildObject()->getData('marketplace_id') == \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_US) {
-            $titleLabel = __('Client ID');
-            $titleValue = $row->getChildObject()->getData('client_id');
-        } else {
-            $titleLabel = __('Consumer ID');
-            $titleValue = $row->getChildObject()->getData('consumer_id');
-        }
-
         return <<<HTML
 <div>
     {$value}<br/>
-    <span style="font-weight: bold">{$titleLabel}</span>:
-    <span style="color: #505050">{$titleValue}</span>
-    <br/>
     <span style="font-weight: bold">{$this->__('Marketplace')}</span>:
     <span style="color: #505050">{$row->getData('marketplace_title')}</span>
     <br/>
@@ -136,7 +125,7 @@ HTML;
         }
 
         $collection->getSelect()->where(
-            'main_table.title LIKE ? OR m.title LIKE ? OR consumer_id LIKE ? OR client_id LIKE ?',
+            'main_table.title LIKE ? OR m.title LIKE ?',
             '%' . $value . '%'
         );
     }
