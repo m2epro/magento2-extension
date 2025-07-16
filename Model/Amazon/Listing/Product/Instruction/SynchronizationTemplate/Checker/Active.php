@@ -13,8 +13,6 @@ use Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract as 
 
 class Active extends AbstractModel
 {
-    //########################################
-
     protected function getStopInstructionTypes()
     {
         return [
@@ -504,8 +502,7 @@ class Active extends AbstractModel
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
         $amazonListingProduct = $listingProduct->getChildObject();
 
-        $amazonSynchronizationTemplate = $amazonListingProduct->getAmazonSynchronizationTemplate();
-        if (!$amazonSynchronizationTemplate->isReviseWhenChangeDetails()) {
+        if (!$this->shouldReviseDetails($amazonListingProduct)) {
             return false;
         }
 
@@ -528,5 +525,14 @@ class Active extends AbstractModel
         }
 
         return false;
+    }
+
+    private function shouldReviseDetails(\Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct): bool
+    {
+        $synchronizationTemplate = $amazonListingProduct->getAmazonSynchronizationTemplate();
+
+        return $synchronizationTemplate->isReviseWhenChangeDetails()
+            || $synchronizationTemplate->isReviseWhenChangeMainDetails()
+            || $synchronizationTemplate->isReviseWhenChangeImages();
     }
 }

@@ -127,8 +127,13 @@ class CompleteProcessor
 
     private function rememberSelectedModeInListingSettings(
         \Ess\M2ePro\Model\Ebay\Listing\Wizard\Manager $wizardManager
-    ) {
-        $stepData = $wizardManager->getStepData(StepDeclarationCollectionFactory::STEP_GENERAL_SELECT_CATEGORY_MODE);
+    ): void {
+        try {
+            $stepData = $wizardManager
+                ->getStepData(StepDeclarationCollectionFactory::STEP_GENERAL_SELECT_CATEGORY_MODE);
+        } catch (\Throwable $exception) {
+            return;
+        }
 
         if (empty($stepData['mode'])) {
             return;

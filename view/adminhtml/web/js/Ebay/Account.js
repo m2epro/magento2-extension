@@ -1,7 +1,7 @@
 define([
     'Magento_Ui/js/modal/modal',
     'M2ePro/Common',
-    'jstree',
+    'M2ePro/External/jstree/jstree.min',
     'mage/adminhtml/form',
     'mage/calendar'
 ], function(modal) {

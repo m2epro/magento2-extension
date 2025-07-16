@@ -168,6 +168,20 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ama
         return $this->getData('revise_update_details') != 0;
     }
 
+    public function isReviseWhenChangeMainDetails(): bool
+    {
+        return $this->getData(
+            \Ess\M2ePro\Model\ResourceModel\Amazon\Template\Synchronization::COLUMN_REVISE_UPDATE_MAIN_DETAILS
+        ) != 0;
+    }
+
+    public function isReviseWhenChangeImages(): bool
+    {
+        return $this->getData(
+            \Ess\M2ePro\Model\ResourceModel\Amazon\Template\Synchronization::COLUMN_REVISE_UPDATE_IMAGES
+        ) != 0;
+    }
+
     // ---------------------------------------
 
     /**

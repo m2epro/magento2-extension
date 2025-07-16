@@ -1,21 +1,10 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon\Template\Synchronization;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Template\Synchronization\Diff
- */
 class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
 {
-    //########################################
-
-    public function isReviseSettingsChanged()
+    public function isReviseSettingsChanged(): bool
     {
         return $this->isReviseQtyEnabled() ||
             $this->isReviseQtyDisabled() ||
@@ -28,7 +17,7 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
 
     //########################################
 
-    public function isReviseQtyEnabled()
+    public function isReviseQtyEnabled(): bool
     {
         $newSnapshotData = $this->newSnapshot;
         $oldSnapshotData = $this->oldSnapshot;
@@ -36,7 +25,7 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
         return empty($oldSnapshotData['revise_update_qty']) && !empty($newSnapshotData['revise_update_qty']);
     }
 
-    public function isReviseQtyDisabled()
+    public function isReviseQtyDisabled(): bool
     {
         $newSnapshotData = $this->newSnapshot;
         $oldSnapshotData = $this->oldSnapshot;
@@ -46,7 +35,7 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
 
     // ---------------------------------------
 
-    public function isReviseQtySettingsChanged()
+    public function isReviseQtySettingsChanged(): bool
     {
         $keys = [
             'revise_update_qty_max_applied_value_mode',
@@ -56,9 +45,9 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
         return $this->isSettingsDifferent($keys);
     }
 
-    //########################################
+    // ---------------------------------------
 
-    public function isRevisePriceEnabled()
+    public function isRevisePriceEnabled(): bool
     {
         $newSnapshotData = $this->newSnapshot;
         $oldSnapshotData = $this->oldSnapshot;
@@ -66,7 +55,7 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
         return empty($oldSnapshotData['revise_update_price']) && !empty($newSnapshotData['revise_update_price']);
     }
 
-    public function isRevisePriceDisabled()
+    public function isRevisePriceDisabled(): bool
     {
         $newSnapshotData = $this->newSnapshot;
         $oldSnapshotData = $this->oldSnapshot;
@@ -74,21 +63,35 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
         return !empty($oldSnapshotData['revise_update_price']) && empty($newSnapshotData['revise_update_price']);
     }
 
-    //########################################
+    // ---------------------------------------
 
-    public function isReviseDetailsEnabled()
+    public function isReviseDetailsEnabled(): bool
     {
-        $newSnapshotData = $this->newSnapshot;
-        $oldSnapshotData = $this->oldSnapshot;
-
-        return empty($oldSnapshotData['revise_update_details']) && !empty($newSnapshotData['revise_update_details']);
+        return $this->isSettingEnabled('revise_update_details')
+            || $this->isSettingEnabled('revise_update_main_details')
+            || $this->isSettingEnabled('revise_update_images');
     }
 
-    public function isReviseDetailsDisabled()
+    public function isReviseDetailsDisabled(): bool
+    {
+        return $this->isSettingDisabled('revise_update_details')
+            || $this->isSettingDisabled('revise_update_main_details')
+            || $this->isSettingDisabled('revise_update_images');
+    }
+
+    private function isSettingEnabled(string $key): bool
     {
         $newSnapshotData = $this->newSnapshot;
         $oldSnapshotData = $this->oldSnapshot;
 
-        return !empty($oldSnapshotData['revise_update_details']) && empty($newSnapshotData['revise_update_details']);
+        return empty($oldSnapshotData[$key]) && !empty($newSnapshotData[$key]);
+    }
+
+    private function isSettingDisabled(string $key): bool
+    {
+        $newSnapshotData = $this->newSnapshot;
+        $oldSnapshotData = $this->oldSnapshot;
+
+        return !empty($oldSnapshotData[$key]) && empty($newSnapshotData[$key]);
     }
 }

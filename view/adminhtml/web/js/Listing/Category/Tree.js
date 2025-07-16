@@ -1,7 +1,7 @@
 define([
     'M2ePro/Common',
     'jquery',
-    'jstree'
+    'M2ePro/External/jstree/jstree.min'
 ], function ($) {
     window.ListingCategoryTree = Class.create(Common, {
 

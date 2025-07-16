@@ -59,7 +59,7 @@ class ReviseRules extends AbstractForm
             'amazon_template_synchronization_revise',
             self::HELP_BLOCK,
             [
-                'content' => $this->__(
+                'content' => __(
                     <<<HTML
 <p>Specify which Channel data should be automatically revised by M2E Pro.</p><br>
 
@@ -78,7 +78,7 @@ HTML
         $fieldset = $form->addFieldset(
             'magento_block_amazon_template_synchronization_form_data_revise_products',
             [
-                'legend' => $this->__('Revise Conditions'),
+                'legend' => __('Revise Conditions'),
                 'collapsable' => true,
             ]
         );
@@ -88,13 +88,13 @@ HTML
             self::SELECT,
             [
                 'name' => 'revise_update_qty',
-                'label' => $this->__('Quantity'),
+                'label' => __('Quantity'),
                 'value' => $formData['revise_update_qty'],
                 'values' => [
-                    1 => $this->__('Yes'),
+                    1 => __('Yes'),
                 ],
                 'disabled' => true,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Automatically revises Item Quantity, Production Time and Restock Date in Amazon Listing
                     when there are changes made in Magento to at least one mentioned parameter.'
                 ),
@@ -107,13 +107,13 @@ HTML
             [
                 'container_id' => 'revise_update_qty_max_applied_value_mode_tr',
                 'name' => 'revise_update_qty_max_applied_value_mode',
-                'label' => $this->__('Conditional Revise'),
+                'label' => __('Conditional Revise'),
                 'value' => $formData['revise_update_qty_max_applied_value_mode'],
                 'values' => [
-                    0 => $this->__('Disabled'),
-                    1 => $this->__('Revise When Less or Equal to'),
+                    0 => __('Disabled'),
+                    1 => __('Revise When Less or Equal to'),
                 ],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Set the Item Quantity limit at which the Revise Action should be triggered.
                     It is recommended to keep this value relatively low, between 10 and 20 Items.'
                 ),
@@ -138,15 +138,50 @@ HTML
             self::SELECT,
             [
                 'name' => 'revise_update_price',
-                'label' => $this->__('Price'),
+                'label' => __('Price'),
                 'value' => $formData['revise_update_price'],
                 'values' => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
+                    0 => __('No'),
+                    1 => __('Yes'),
                 ],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Automatically revises Item Price, Minimum Advertised Price, Sale Price and Business Price
                     in Amazon Listing when there are changes made in Magento to at least one mentioned parameter.'
+                ),
+            ]
+        );
+
+        $fieldset->addField(
+            'revise_update_main_details',
+            self::SELECT,
+            [
+                'name' => 'revise_update_main_details',
+                'label' => __('Main Product Details'),
+                'value' => $formData['revise_update_main_details'],
+                'values' => [
+                    0 => __('No'),
+                    1 => __('Yes'),
+                ],
+                'tooltip' => __(
+                    'Automatically revises Product Titles, Description, Bullet Points on Amazon when the details are '
+                    . 'updated in Magento or Product Type.'
+                ),
+            ]
+        );
+        $fieldset->addField(
+            'revise_update_images',
+            self::SELECT,
+            [
+                'name' => 'revise_update_images',
+                'label' => __('Images'),
+                'value' => $formData['revise_update_images'],
+                'values' => [
+                    0 => __('No'),
+                    1 => __('Yes'),
+                ],
+                'tooltip' => __(
+                    'Automatically revises Item Image(s) on Amazon when Product Image(s) or Magento Attribute used '
+                    . 'for Product Image(s) are modified in Magento or Product Type.'
                 ),
             ]
         );
@@ -156,13 +191,13 @@ HTML
             self::SELECT,
             [
                 'name' => 'revise_update_details',
-                'label' => $this->__('Details'),
+                'label' => __('All Details'),
                 'value' => $formData['revise_update_details'],
                 'values' => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
+                    0 => __('No'),
+                    1 => __('Yes'),
                 ],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Automatically revises Condition Note, Gift Message, Gift Wrap settings,
                     data from Product Type, List Price, Shipping Template Policy and Product Tax Code Policy
                     in Amazon Listing when there are changes made to Magento Attribute
@@ -171,32 +206,11 @@ HTML
             ]
         );
 
-        $fieldset->addField(
-            'revise_update_details_info_message',
-            self::MESSAGES,
-            [
-                'messages' => [
-                    [
-                        'type' => \Magento\Framework\Message\MessageInterface::TYPE_NOTICE,
-                        'content' => __('
-                            With Details option enabled, all of the following details will be automatically synchronized:
-                            <br/>
-                            <b>
-                                Condition Note, List Price, Product Type data, Product Tax Code,
-                                Gift Message, Gift Wrap, Shipping Template
-                            </b>
-                        '),
-                    ],
-                ],
-                'style' => 'width: 70%; margin-left: 70px; margin-top: -20px;',
-            ]
-        );
-
         $form->addField(
             'revise_qty_max_applied_value_confirmation_popup_template',
             self::CUSTOM_CONTAINER,
             [
-                'text' => (string) __(
+                'text' => (string)__(
                     '<br/>Disabling this option might affect synchronization performance. Please read
              <a href="%1" target="_blank">this article</a> before using the option.',
                     'https://help.m2epro.com/support/solutions/articles/9000200401'
@@ -205,7 +219,7 @@ HTML
             ]
         );
 
-        $this->jsTranslator->add('Wrong value. Only integer numbers.', $this->__('Wrong value. Only integer numbers.'));
+        $this->jsTranslator->add('Wrong value. Only integer numbers.', __('Wrong value. Only integer numbers.'));
 
         $jsFormData = [
             'revise_update_qty',

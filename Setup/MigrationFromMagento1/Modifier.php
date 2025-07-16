@@ -195,7 +195,7 @@ class Modifier
 
         $documentationUrlEntity = $configModifier->getEntity('/support/', 'documentation_url');
         $oldUrl = $documentationUrlEntity->getValue();
-        $newUrl = str_ends_with($oldUrl, '/') ?
+        $newUrl = substr($oldUrl, -1) === '/' ?
             $oldUrl : "$oldUrl/";
         $documentationUrlEntity->updateValue($newUrl);
     }

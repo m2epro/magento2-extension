@@ -49,6 +49,7 @@ class General extends Magento\AbstractBlock
         $this->css->addFile('help_block.css');
         $this->css->addFile('style.css');
         $this->css->addFile('grid.css');
+        $this->addJstreeStyles();
 
         $currentView = $this->viewHelper->getCurrentView();
         if (!empty($currentView)) {
@@ -164,5 +165,15 @@ class General extends Magento\AbstractBlock
         ]);
 
         return parent::_beforeToHtml();
+    }
+
+    private function addJstreeStyles()
+    {
+        // Remove default styles
+        $this->pageConfig
+            ->getAssetCollection()
+            ->remove('jquery/jstree/themes/default/style.css');
+
+        $this->css->addFile('jstree/themes/default/style.min.css');
     }
 }

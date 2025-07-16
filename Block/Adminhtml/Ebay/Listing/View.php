@@ -228,7 +228,7 @@ class View extends AbstractContainer
                 <<<JS
     define('EbayListingAutoActionInstantiation', [
         'M2ePro/Ebay/Listing/AutoAction',
-        'jstree'
+        'M2ePro/External/jstree/jstree.min'
     ], function(){
 
         window.ListingAutoActionObj = new EbayListingAutoAction();

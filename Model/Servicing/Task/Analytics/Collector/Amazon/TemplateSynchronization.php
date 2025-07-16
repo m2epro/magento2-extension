@@ -14,7 +14,7 @@ class TemplateSynchronization implements \Ess\M2ePro\Model\Servicing\Task\Analyt
 {
     /** @var SynchronizationCollectionFactory */
     private $templateSynchronizationEntityCollectionFactory;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Template\Synchronization\Collection|null  */
+    /** @var \Ess\M2ePro\Model\ResourceModel\Template\Synchronization\Collection|null */
     private $entityCollection;
 
     public function __construct(SynchronizationCollectionFactory $templateSynchronizationEntityCollectionFactory)

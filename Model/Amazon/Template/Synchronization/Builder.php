@@ -115,6 +115,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'revise_update_qty_max_applied_value' => 5,
             'revise_update_price' => 1,
             'revise_update_details' => 0,
+            'revise_update_main_details' => 0,
+            'revise_update_images' => 0,
 
             // stop
             'stop_mode' => 1,
@@ -129,6 +131,4 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'stop_advanced_rules_filters' => null,
         ];
     }
-
-    //########################################
 }

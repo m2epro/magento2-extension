@@ -181,9 +181,13 @@ class Unmanaged extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContain
         window.EbayListingOtherGridObj = new EbayListingOtherGrid('ebayListingUnmanagedGrid');
         window.ListingOtherMappingObj = new ListingMapping(EbayListingOtherGridObj,'ebay');
         window.ListingOtherCreateProductObj = new ListingOtherCreateProduct(EbayListingOtherGridObj,'ebay');
+        window.EbayListingOtherRemovingObj = new EbayListingOtherRemoving(EbayListingOtherGridObj,'ebay');
 
         EbayListingOtherGridObj.movingHandler.setProgressBar('listing_other_progress_bar');
         EbayListingOtherGridObj.movingHandler.setGridWrapper('listing_other_content_container');
+
+        EbayListingOtherGridObj.removingHandler.setProgressBar('listing_other_progress_bar');
+        EbayListingOtherGridObj.removingHandler.setGridWrapper('listing_other_content_container');
 
         EbayListingOtherGridObj.autoMappingHandler.setProgressBar('listing_other_progress_bar');
         EbayListingOtherGridObj.autoMappingHandler.setGridWrapper('listing_other_content_container');

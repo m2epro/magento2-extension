@@ -1,7 +1,9 @@
 define([
+    'mage/translate',
     'M2ePro/Listing/Other/Grid',
-    'M2ePro/Ebay/Listing/Moving'
-], function () {
+    'M2ePro/Ebay/Listing/Moving',
+    'M2ePro/Ebay/Listing/Removing'
+], function ($t) {
     window.EbayListingOtherGrid = Class.create(ListingOtherGrid, {
 
         prepareActions: function ($super) {
@@ -16,6 +18,7 @@ define([
         afterPrepareAction: function()
         {
             this.movingHandler = new EbayListingMoving(this);
+            this.removingHandler = new EbayListingOtherRemoving(this);
         },
 
         // ---------------------------------------
@@ -27,7 +30,7 @@ define([
 
         onSuccess: function(wizardId)
         {
-            var refererUrl = M2ePro.url.get('categorySettings', {id: wizardId});
+            const refererUrl = M2ePro.url.get('categorySettings', {id: wizardId});
 
             setLocation(refererUrl);
         },
@@ -67,8 +70,73 @@ define([
         getMaxProductsInPart: function()
         {
             return 10;
-        }
+        },
 
         // ---------------------------------------
+
+        massActionSubmitClick: function()
+        {
+            if (this.validateItemsForMassAction() === false) {
+                return;
+            }
+
+            const self = this;
+            let selectAction = true;
+            $$('select#'+self.gridId+'_massaction-select option').each(function(o) {
+                if (o.selected && o.value == '') {
+                    self.alert($t('Please select Action.'));
+                    selectAction = false;
+                    return;
+                }
+            });
+
+            if (!selectAction) {
+                return;
+            }
+
+            self.scrollPageToTop();
+
+            const selectedAction = $('ebayListingUnmanagedGrid_massaction-select').value;
+
+            if (selectedAction === 'removing') {
+                self.confirm({
+                    title: $t('Remove Item(s) from eBay'),
+                    content: '<p>' + $t('You are about to permanently remove the selected item(s) from your eBay account. This action will delete the item(s) from the eBay channel and cannot be undone.') + '</p>'
+                            + '<br><p>' + $t('Are you sure you want to proceed?') + '</p>',
+                    actions: {
+                        confirm: () => {
+                            self.actions['removingAction']();
+                        },
+                        cancel: function () {}
+                    }
+                });
+
+                return;
+            }
+
+            self.confirm({
+                actions: {
+                    confirm: function () {
+                        $$('select#'+self.gridId+'_massaction-select option').each(function(o) {
+
+                            if (!o.selected) {
+                                return;
+                            }
+
+                            if (!o.value || !self.actions[o.value + 'Action']) {
+                                self.alert($t('Please select Action.'));
+                                return;
+                            }
+
+                            self.actions[o.value + 'Action']();
+
+                        });
+                    },
+                    cancel: function () {
+                        return false;
+                    }
+                }
+            });
+        },
     });
 });

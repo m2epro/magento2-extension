@@ -251,7 +251,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'url' => '',
         ], 'other');
         $this->getMassactionBlock()->addItem('removing', [
-            'label' => $this->__('Remove Item(s)'),
+            'label' => $this->__('Remove Item(s) from eBay'),
             'url' => '',
         ], 'other');
         $this->getMassactionBlock()->addItem('unmapping', [

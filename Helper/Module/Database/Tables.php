@@ -60,6 +60,7 @@ class Tables
     public const TABLE_AMAZON_DICTIONARY_PRODUCT_TYPE = self::PREFIX . 'amazon_dictionary_product_type';
 
     public const TABLE_AMAZON_TEMPLATE_PRODUCT_TYPE = self::PREFIX . 'amazon_template_product_type';
+    public const TABLE_AMAZON_TEMPLATE_SYNCHRONIZATION = self::PREFIX . 'amazon_template_synchronization';
 
     public const TABLE_AMAZON_ORDER_ITEM = self::PREFIX . 'amazon_order_item';
 

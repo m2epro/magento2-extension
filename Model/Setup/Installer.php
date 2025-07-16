@@ -6,6 +6,7 @@ use Ess\M2ePro\Helper\Module\Database\Tables as TablesHelper;
 use Ess\M2ePro\Model\ResourceModel\Amazon\Account as AmazonAccountResource;
 use Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\Marketplace as AmazonDictionaryMarketplaceResoruce;
 use Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\ProductType as AmazonDictionaryProductTypeResource;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Template\Synchronization as AmazonSynchronization;
 use Ess\M2ePro\Model\ResourceModel\Ebay\Account as ebayAccountResource;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Ddl\Table;
@@ -11503,6 +11504,18 @@ class Installer
                                                    )
                                                    ->addColumn(
                                                        'revise_update_price',
+                                                       Table::TYPE_SMALLINT,
+                                                       null,
+                                                       ['unsigned' => true, 'nullable' => false]
+                                                   )
+                                                   ->addColumn(
+                                                       AmazonSynchronization::COLUMN_REVISE_UPDATE_MAIN_DETAILS,
+                                                       Table::TYPE_SMALLINT,
+                                                       null,
+                                                       ['unsigned' => true, 'nullable' => false]
+                                                   )
+                                                   ->addColumn(
+                                                       AmazonSynchronization::COLUMN_REVISE_UPDATE_IMAGES,
                                                        Table::TYPE_SMALLINT,
                                                        null,
                                                        ['unsigned' => true, 'nullable' => false]

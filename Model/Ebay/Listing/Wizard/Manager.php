@@ -228,7 +228,7 @@ class Manager
     {
         $step = $this->findStepEntity($stepNick);
         if ($step === null) {
-            throw new \LogicException(sprintf("Listing Wizard step '%s' not found", $stepNick));
+            throw new \Ess\M2ePro\Model\Exception\Logic(sprintf("Listing Wizard step '%s' not found", $stepNick));
         }
 
         return $step->getResultData();

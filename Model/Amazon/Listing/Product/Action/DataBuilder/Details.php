@@ -87,6 +87,8 @@ class Details extends AbstractModel
             $data = array_merge($data, $this->getShippingData());
         }
 
+        $data['details_update_config'] = $this->getDetailsUpdateConfig($amazonListingProduct);
+
         return $data;
     }
 
@@ -156,7 +158,7 @@ class Details extends AbstractModel
         switch ((int)$setting['mode']) {
             case \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_VALUE:
                 return $this->descriptionRender
-                    ->parseWithoutMagentoTemplate($setting['value'], $magentoProduct);
+                    ->parseWithoutMagentoTemplate((string)$setting['value'], $magentoProduct);
             case \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_ATTRIBUTE:
                 $attributeValue = $magentoProduct->getAttributeValue($setting['attribute_code'], false);
 
@@ -301,5 +303,16 @@ class Details extends AbstractModel
         }
 
         return true;
+    }
+
+    private function getDetailsUpdateConfig(\Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct): array
+    {
+        $synchronizationTemplate = $amazonListingProduct->getAmazonSynchronizationTemplate();
+
+        return [
+            'full' => $synchronizationTemplate->isReviseWhenChangeDetails(),
+            'base' => $synchronizationTemplate->isReviseWhenChangeMainDetails(),
+            'images' => $synchronizationTemplate->isReviseWhenChangeImages(),
+        ];
     }
 }

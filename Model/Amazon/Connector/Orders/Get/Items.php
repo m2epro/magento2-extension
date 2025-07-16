@@ -17,14 +17,6 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
     private $registryManager;
     private \Ess\M2ePro\Helper\Component\Amazon\Configuration $amazonConfiguration;
 
-    /**
-     * @param \Ess\M2ePro\Model\Config\Manager $configManager
-     * @param \Ess\M2ePro\Model\Registry\Manager $registryManager
-     * @param \Ess\M2ePro\Helper\Factory $helperFactory
-     * @param \Ess\M2ePro\Model\Factory $modelFactory
-     * @param \Ess\M2ePro\Model\Account|NULL $account
-     * @param array $params
-     */
     public function __construct(
         \Ess\M2ePro\Helper\Component\Amazon\Configuration $amazonConfiguration,
         \Ess\M2ePro\Model\Config\Manager $configManager,

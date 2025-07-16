@@ -29,7 +29,7 @@ class Create
         int $marketplaceId,
         string $consumerId,
         string $privateKey,
-        string $title,
+        string $title
     ): \Ess\M2ePro\Model\Account {
         /** @var \Ess\M2ePro\Model\Account $account */
         $account = $this->walmartFactory->getObject('Account');
