@@ -1,33 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\AllItems;
 
 use Ess\M2ePro\Model\Listing\Product;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 {
-    /** @var array */
-    private $parentAndChildReviseScheduledCache = [];
-    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
-    private $databaseHelper;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory */
-    private $magentoProductCollectionFactory;
-    /** @var \Magento\Framework\Locale\CurrencyInterface */
-    private $localeCurrency;
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
-    private $walmartFactory;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing */
-    private $listingResource;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product */
-    private $listingProductResource;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product */
-    private $walmartListingProductResource;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Listing */
-    private $walmartListingResource;
-    /** @var \Ess\M2ePro\Model\Walmart\AdvancedFilter\AllItemsOptions */
-    private $advancedFilterAllItemsOptions;
-    /** @var \Ess\M2ePro\Block\Adminhtml\Widget\Grid\AdvancedFilter\FilterFactory */
-    private $advancedFilterFactory;
+    private array $parentAndChildReviseScheduledCache = [];
+    private \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper;
+    private \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory;
+    private \Magento\Framework\Locale\CurrencyInterface $localeCurrency;
+    private \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory;
+    private \Ess\M2ePro\Model\ResourceModel\Listing $listingResource;
+    private \Ess\M2ePro\Model\ResourceModel\Listing\Product $listingProductResource;
+    private \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product $walmartListingProductResource;
+    private \Ess\M2ePro\Model\ResourceModel\Walmart\Listing $walmartListingResource;
+    private \Ess\M2ePro\Model\Walmart\AdvancedFilter\AllItemsOptions $advancedFilterAllItemsOptions;
+    private \Ess\M2ePro\Block\Adminhtml\Widget\Grid\AdvancedFilter\FilterFactory $advancedFilterFactory;
 
     public function __construct(
         \Ess\M2ePro\Model\Walmart\AdvancedFilter\AllItemsOptions $advancedFilterAllItemsOptions,
@@ -74,12 +65,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
     protected function _prepareMassaction()
     {
-        $this->setMassactionIdField('id');
-        $this->getMassactionBlock()->addItem('', [
-            'label' => '',
-            'url' => '',
-        ]);
-
         $this->css->add(
             <<<CSS
             #{$this->getId()} .admin__grid-massaction {
@@ -1140,7 +1125,7 @@ HTML;
 
         $filter = $this->advancedFilterFactory->createDropDownFilter(
             'marketplace',
-            __('Marketplace'),
+            (string)__('Marketplace'),
             $options,
             $filterCallback
         );
@@ -1168,7 +1153,7 @@ HTML;
 
         $filter = $this->advancedFilterFactory->createDropDownFilter(
             'account',
-            __('Account'),
+            (string)__('Account'),
             $options,
             $filterCallback
         );
@@ -1198,7 +1183,7 @@ HTML;
 
         $filter = $this->advancedFilterFactory->createDropDownFilter(
             'selling_policy',
-            __('Selling Policy'),
+            (string)__('Selling Policy'),
             $options,
             $filterCallback
         );
@@ -1228,7 +1213,7 @@ HTML;
 
         $filter = $this->advancedFilterFactory->createDropDownFilter(
             'synchronization_policy',
-            __('Synchronization Policy'),
+            (string)__('Synchronization Policy'),
             $options,
             $filterCallback
         );
@@ -1258,7 +1243,7 @@ HTML;
 
         $filter = $this->advancedFilterFactory->createDropDownFilter(
             'description_policy',
-            __('Description Policy'),
+            (string)__('Description Policy'),
             $options,
             $filterCallback
         );
@@ -1287,7 +1272,7 @@ HTML;
 
         $filter = $this->advancedFilterFactory->createDropDownFilter(
             'magento_product_type',
-            __('Magento Product Type'),
+            (string)__('Magento Product Type'),
             $options,
             $filterCallback
         );

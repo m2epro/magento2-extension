@@ -69,7 +69,7 @@ class ProductDocumentUrlFinder
             );
         }
 
-        return  Result::createSuccess(
+        return Result::createSuccess(
             $type,
             $languages,
             $documentUrl

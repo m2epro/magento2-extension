@@ -1238,10 +1238,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     // ---------------------------------------
 
-    /**
-     * @return float|int
-     */
-    public function getPriceDiscountStp()
+    public function getPriceDiscountStp(): float
     {
         $src = $this->getEbaySellingFormatTemplate()->getPriceDiscountStpSource();
 
@@ -1250,7 +1247,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
-        return $this->getCalculatedPriceWithCoefficient($src, $vatPercent);
+        return (float)$this->getCalculatedPriceWithCoefficient($src, $vatPercent);
     }
 
     /**
@@ -1501,5 +1498,15 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function hasAssignedCampaign(): bool
     {
         return !empty($this->getData(EbayProductResource::COLUMN_PROMOTED_LISTING_CAMPAIGN_ID));
+    }
+
+    public function getOnlineStrikeThroughPrice(): ?float
+    {
+        $onlineStrikeThroughPrice = $this->getData(EbayProductResource::COLUMN_ONLINE_STRIKE_THROUGH_PRICE);
+        if (empty($onlineStrikeThroughPrice)) {
+            return null;
+        }
+
+        return (float)$onlineStrikeThroughPrice;
     }
 }

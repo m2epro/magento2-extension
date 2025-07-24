@@ -32,6 +32,45 @@ define([
 
             this.formMessageObj = Object.create(MessagesObj);
             this.formMessageObj.setContainer('#campaign_form_messages');
+
+            jQuery.validator.addMethod('M2ePro-greater-than-start-date', (value, el) => {
+                const form = $(el).closest('form');
+
+                if (!value) {
+                    return true;
+                }
+
+                const startDate = this.parseDate(form.find('[name=start_date]').val());
+                const endDate = this.parseDate(value);
+
+                return endDate > startDate;
+            }, $t('The campaign start date cannot be after the end date.'));
+
+            jQuery.validator.addMethod('M2ePro-start-date-greater-than-now', (value, el) => {
+                if (!value) {
+                    return true;
+                }
+
+                return this.parseDate(value) > new Date();
+            }, $t('A campaign start date cannot be in the past.'));
+
+            jQuery.validator.addMethod('M2ePro-end-date-greater-than-now', (value, el) => {
+                if (!value) {
+                    return true;
+                }
+
+                return this.parseDate(value) > new Date();
+            }, $t('A campaign end date cannot be in the past.'));
+
+            $.validator.addMethod('M2ePro-validate-date', (value, el) => {
+                if (!value) {
+                    return true;
+                }
+
+                const dateRegex = /^(0?[1-9]|1[0-2])\/(0?[1-9]|[12]\d|3[01])\/(19|20)\d\d\s(0?[1-9]|1[0-2]):([0-5]\d)\s(AM|PM)$/;
+
+                return dateRegex.test(value);
+            }, $t('Invalid date and time format.'));
         },
 
         /**
@@ -156,6 +195,7 @@ define([
             this.formMessageObj.clear();
 
             const form = campaignPopup.find('form');
+
             if (!form.valid()) {
                 return;
             }
@@ -415,6 +455,21 @@ define([
         ajaxErrorHandler: function(jqXHR) {
             this.formMessageObj.addError(jqXHR.statusText)
             console.error(jqXHR.responseText)
+        },
+
+        parseDate: function (dateStr) {
+            const [datePart, timePart, period] = dateStr.split(' ');
+            const [month, day, year] = datePart.split('/');
+            const [hours, minutes] = timePart.split(':');
+
+            let hour = parseInt(hours, 10);
+            if (period === 'PM' && hour !== 12) {
+                hour += 12;
+            } else if (period === 'AM' && hour === 12) {
+                hour = 0;
+            }
+
+            return new Date(year, month - 1, day, hour, minutes);
         }
     });
 })

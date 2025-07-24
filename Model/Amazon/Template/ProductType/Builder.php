@@ -118,6 +118,10 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
         switch ((int)$field['mode']) {
             case \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_VALUE:
+                if (empty($field['value'])) {
+                    return [];
+                }
+
                 if (!empty($field['format']) && $field['format'] === 'date-time') {
                     $timestamp = \Ess\M2ePro\Helper\Date::createDateInCurrentZone($field['value'])->getTimestamp();
                     $datetime = \Ess\M2ePro\Helper\Date::createCurrentGmt();

@@ -4657,6 +4657,12 @@ class Installer
                                             ['unsigned' => true, 'default' => null]
                                         )
                                         ->addColumn(
+                                            EbayListingProduct::COLUMN_ONLINE_STRIKE_THROUGH_PRICE,
+                                            Table::TYPE_DECIMAL,
+                                            [12, 4],
+                                            ['unsigned' => true, 'default' => null]
+                                        )
+                                        ->addColumn(
                                             'online_best_offer',
                                             Table::TYPE_TEXT,
                                             32,

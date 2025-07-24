@@ -403,19 +403,24 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         return $dataBuilder->getBuilderData();
     }
 
-    /**
-     * @return array
-     */
-    public function getPriceData()
+    public function getPriceData(): array
     {
         if (!$this->getConfigurator()->isPriceAllowed()) {
             return [];
         }
 
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Price $dataBuilder */
         $dataBuilder = $this->getDataBuilder('price');
 
-        $this->addMetaData('best_offer_hash', $dataBuilder->getBuilderData()['best_offer_hash']);
-        return $dataBuilder->getBuilderData();
+        $priceData = $dataBuilder->getBuilderData();
+
+        $this->addMetaData('best_offer_hash', $priceData['best_offer_hash']);
+        $this->addMetaData(
+            'online_strike_through_price',
+            $priceData['price_discount_stp']['original_retail_price'] ?? null
+        );
+
+        return $priceData;
     }
 
     /**

@@ -683,10 +683,9 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             return $data;
         }
 
-        $data['online_other_data'] = $this->getHelper('Data')->hashString(
-            \Ess\M2ePro\Helper\Json::encode($requestMetadata['other_data']),
-            'md5'
-        );
+        $data['online_other_data'] = $this->helperFactory
+            ->getObjectByClass(\Ess\M2ePro\Helper\Data::class)
+            ->hashString(\Ess\M2ePro\Helper\Json::encode($requestMetadata['other_data']), 'md5');
 
         if (isset($requestMetadata['other_data']['product_details']['video_id'])) {
             $data['online_video_id'] = $requestMetadata['other_data']['product_details']['video_id'];
@@ -709,6 +708,14 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $data['online_best_offer'] = $requestMetadata['best_offer_hash'];
+
+        return $data;
+    }
+
+    protected function appendStrikeThroughPriceData(array $data): array
+    {
+        $requestMetadata = $this->getRequestMetaData();
+        $data['online_strike_through_price'] = $requestMetadata['online_strike_through_price'];
 
         return $data;
     }

@@ -27,7 +27,7 @@ class Checker
     private $returnPolicyDataBuilderFactory;
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\OtherFactory */
     private $otherDataBuilderFactory;
-    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Price */
+    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\PriceFactory */
     private $priceDataBuilderFactory;
     /** @var \Ess\M2ePro\Helper\Data */
     private $helperData;
@@ -192,22 +192,6 @@ class Checker
         return false;
     }
 
-    public function isNeedReviseForBestOffer(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
-    {
-        $listingProduct = $ebayListingProduct->getParentObject();
-        $actionDataBuilder = $this->priceDataBuilderFactory->create();
-        $actionDataBuilder->setListingProduct($listingProduct);
-
-        $onlineBestOffer = $ebayListingProduct->getOnlineBestOffer();
-        $bestOffer = $actionDataBuilder->getBuilderData()['best_offer_hash'];
-
-        if ($onlineBestOffer !== $bestOffer) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     /**
      * @param \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct
      *
@@ -221,6 +205,10 @@ class Checker
         }
 
         if ($this->isNeedReviseForBestOffer($ebayListingProduct)) {
+            return true;
+        }
+
+        if ($this->isNeedReviseForStrikeThroughPrice($ebayListingProduct)) {
             return true;
         }
 
@@ -260,6 +248,35 @@ class Checker
         }
 
         return false;
+    }
+
+    private function isNeedReviseForBestOffer(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
+    {
+        $listingProduct = $ebayListingProduct->getParentObject();
+        $actionDataBuilder = $this->priceDataBuilderFactory->create();
+        $actionDataBuilder->setListingProduct($listingProduct);
+
+        $onlineBestOffer = $ebayListingProduct->getOnlineBestOffer();
+        $bestOffer = $actionDataBuilder->getBuilderData()['best_offer_hash'];
+
+        if ($onlineBestOffer !== $bestOffer) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function isNeedReviseForStrikeThroughPrice(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
+    {
+        $actionDataBuilder = $this->priceDataBuilderFactory->create();
+        $actionDataBuilder->setListingProduct($ebayListingProduct->getParentObject());
+
+        $priceData = $actionDataBuilder->getBuilderData();
+
+        $strikeThroughPrice = $priceData['price_discount_stp']['original_retail_price'] ?? null;
+        $onlineStrikeThroughPrice = $ebayListingProduct->getOnlineStrikeThroughPrice();
+
+        return $onlineStrikeThroughPrice !== $strikeThroughPrice;
     }
 
     /**
@@ -536,7 +553,7 @@ class Checker
         return $hashOtherData !== $ebayListingProduct->getOnlineOtherData();
     }
 
-    public function isProductIdentifierReviseEnabled(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
+    private function isProductIdentifierReviseEnabled(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
     {
         $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
 

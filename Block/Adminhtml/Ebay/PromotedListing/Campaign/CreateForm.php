@@ -77,9 +77,11 @@ class CreateForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             [
                 'name' => 'start_date',
                 'label' => __('Start Time'),
+                'class' => 'M2ePro-validate-date M2ePro-start-date-greater-than-now',
                 'required' => true,
                 'date_format' => $this->_localeDate->getDateFormatWithLongYear(),
                 'time_format' => $this->_localeDate->getTimeFormat(\IntlDateFormatter::SHORT),
+                'min_date' => '0',
             ]
         );
 
@@ -88,10 +90,12 @@ class CreateForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'date',
             [
                 'name' => 'end_date',
+                'class' => 'M2ePro-validate-date M2ePro-end-date-greater-than-now M2ePro-greater-than-start-date',
                 'label' => __('End Time'),
                 'required' => false,
                 'date_format' => $this->_localeDate->getDateFormatWithLongYear(),
                 'time_format' => $this->_localeDate->getTimeFormat(\IntlDateFormatter::SHORT),
+                'min_date' => '0',
             ]
         );
 
@@ -130,6 +134,40 @@ class CreateForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 #$formId .admin__fieldset > .admin__field > .admin__field-label { width: calc( (100%) * 0.25 - 30px ) }
 #$formId .admin__fieldset > .admin__field > .admin__field-control { width: calc( (100%) * 0.75  - 30px ) }
 
+#$formId .ui-datepicker-trigger {
+    width: auto !important;
+    margin-left: -2.6rem !important;
+    border: none;
+    background: none;
+    padding: 0;
+}
+
+#$formId .ui-datepicker-trigger:hover {
+    background: none !important;
+}
+
+#$formId .ui-datepicker-trigger:after {
+    /*width: auto !important;*/
+    /*margin-left: -2.6rem !important;*/
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: none;
+    font-size: 2.1rem;
+    line-height: 32px;
+    color: #514943;
+    content: '\\e627';
+    font-family: 'Admin Icons';
+    vertical-align: middle;
+    display: inline-block;
+    font-weight: normal;
+    overflow: hidden;
+    speak: none;
+    text-align: center;
+}
+
+#$formId label.error {
+    color: #eb5202
+}
 CSS;
 
         return '<style>' . $css . '</style>';

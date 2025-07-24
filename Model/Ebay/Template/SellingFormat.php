@@ -1142,10 +1142,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
 
     // ---------------------------------------
 
-    /**
-     * @return int
-     */
-    public function getPriceDiscountMapExposureType()
+    public function getPriceDiscountMapExposureType(): int
     {
         return (int)$this->getData('price_discount_map_exposure_type');
     }

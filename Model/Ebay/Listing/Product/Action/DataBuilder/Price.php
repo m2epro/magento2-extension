@@ -1,26 +1,16 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Price
- */
 class Price extends AbstractModel
 {
-    public const PRICE_DISCOUNT_MAP_EXPOSURE_NONE = 'None';
-    public const PRICE_DISCOUNT_MAP_EXPOSURE_DURING_CHECKOUT = 'DuringCheckout';
-    public const PRICE_DISCOUNT_MAP_EXPOSURE_PRE_CHECKOUT = 'PreCheckout';
+    private const PRICE_DISCOUNT_MAP_EXPOSURE_NONE = 'None';
+    private const PRICE_DISCOUNT_MAP_EXPOSURE_DURING_CHECKOUT = 'DuringCheckout';
+    private const PRICE_DISCOUNT_MAP_EXPOSURE_PRE_CHECKOUT = 'PreCheckout';
 
-    /** @var \Ess\M2ePro\Helper\Data */
-    protected $dataHelper;
-
-    //########################################
+    protected \Ess\M2ePro\Helper\Data $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -33,7 +23,11 @@ class Price extends AbstractModel
         parent::__construct($helperFactory, $modelFactory, $data);
     }
 
-    public function getBuilderData()
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception
+     */
+    public function getBuilderData(): array
     {
         $data = [];
 
@@ -55,17 +49,16 @@ class Price extends AbstractModel
         return $data;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
-     * @return array
-     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Ess\M2ePro\Model\Exception
      */
-    protected function getPriceDiscountStpData()
+    private function getPriceDiscountStpData(): array
     {
         if (
-            !$this->getEbayListingProduct()->isListingTypeFixed() ||
-            !$this->getEbayListingProduct()->isPriceDiscountStp()
+            !$this->getEbayListingProduct()->isListingTypeFixed()
+            || !$this->getEbayListingProduct()->isPriceDiscountStp()
         ) {
             return [];
         }
@@ -85,10 +78,9 @@ class Price extends AbstractModel
     }
 
     /**
-     * @return array
-     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Ess\M2ePro\Model\Exception
      */
-    protected function getBestOfferData()
+    private function getBestOfferData(): array
     {
         $data = [
             'bestoffer_mode' => $this->getEbayListingProduct()->getEbaySellingFormatTemplate()->isBestOfferEnabled(),
@@ -98,6 +90,7 @@ class Price extends AbstractModel
             $data['bestoffer_accept_price'] = $this->getEbayListingProduct()->getBestOfferAcceptPrice();
             $data['bestoffer_reject_price'] = $this->getEbayListingProduct()->getBestOfferRejectPrice();
         }
+
         $data['best_offer_hash'] = $this->dataHelper->hashString(
             \Ess\M2ePro\Helper\Json::encode($data),
             'md5'
@@ -107,14 +100,13 @@ class Price extends AbstractModel
     }
 
     /**
-     * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    protected function getPriceDiscountMapData()
+    private function getPriceDiscountMapData(): array
     {
         if (
-            !$this->getEbayListingProduct()->isListingTypeFixed() ||
-            !$this->getEbayListingProduct()->isPriceDiscountMap()
+            !$this->getEbayListingProduct()->isListingTypeFixed()
+            || !$this->getEbayListingProduct()->isPriceDiscountMap()
         ) {
             return [];
         }
@@ -129,18 +121,16 @@ class Price extends AbstractModel
         return ['price_discount_map' => $data];
     }
 
-    public static function getPriceDiscountMapExposureType($type)
+    public static function getPriceDiscountMapExposureType(int $type): string
     {
         switch ($type) {
-            case \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_MAP_EXPOSURE_NONE:
-                return self::PRICE_DISCOUNT_MAP_EXPOSURE_NONE;
-
             case \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_MAP_EXPOSURE_DURING_CHECKOUT:
                 return self::PRICE_DISCOUNT_MAP_EXPOSURE_DURING_CHECKOUT;
 
             case \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_MAP_EXPOSURE_PRE_CHECKOUT:
                 return self::PRICE_DISCOUNT_MAP_EXPOSURE_PRE_CHECKOUT;
 
+            case \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_MAP_EXPOSURE_NONE:
             default:
                 return self::PRICE_DISCOUNT_MAP_EXPOSURE_NONE;
         }

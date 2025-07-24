@@ -27,6 +27,9 @@ class ResultCollection
         return $this->results;
     }
 
+    /**
+     * @return \Ess\M2ePro\Model\Ebay\ComplianceDocuments\ProductDocumentUrlFinder\Result[]
+     */
     public function getSuccessResults(): array
     {
         return array_filter($this->results, function (Result $result) {

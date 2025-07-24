@@ -1,45 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AllItems;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 {
     private const ACTUAL_QTY_EXPRESSION = 'IF(alp.is_afn_channel = 1, alp.online_afn_qty, alp.online_qty)';
 
-    /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory */
-    private $magentoProductCollectionFactory;
-    /** @var \Magento\Framework\Locale\CurrencyInterface */
-    private $localeCurrency;
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
-    private $amazonFactory;
-    /** @var \Ess\M2ePro\Helper\Component\Amazon */
-    private $amazonHelper;
-    /** @var array */
-    private $parentAndChildReviseScheduledCache = [];
-    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
-    private $databaseHelper;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation */
-    private $tagRelationResource;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product */
-    private $listingProductResource;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product */
-    private $amazonListingProductResource;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing */
-    private $listingResource;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing */
-    private $amazonListingResource;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Repricing */
-    private $amazonListingProductRepricingResource;
-    /** @var \Ess\M2ePro\Model\Amazon\AdvancedFilter\AllItemsOptions */
-    private $advancedFilterAllItemsOptions;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\CollectionFactory */
-    private $amazonProductCollectionFactory;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product */
-    private $amazonProductResource;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Tag */
-    private $tagResource;
-    /** @var \Ess\M2ePro\Block\Adminhtml\Widget\Grid\AdvancedFilter\FilterFactory */
-    private $advancedFilterFactory;
+    private \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory;
+    private \Magento\Framework\Locale\CurrencyInterface $localeCurrency;
+    private \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory;
+    private \Ess\M2ePro\Helper\Component\Amazon $amazonHelper;
+    private array $parentAndChildReviseScheduledCache = [];
+    private \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper;
+    private \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation $tagRelationResource;
+    private \Ess\M2ePro\Model\ResourceModel\Listing\Product $listingProductResource;
+    private \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product $amazonListingProductResource;
+    private \Ess\M2ePro\Model\ResourceModel\Listing $listingResource;
+    private \Ess\M2ePro\Model\ResourceModel\Amazon\Listing $amazonListingResource;
+    private \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Repricing $amazonListingProductRepricingResource;
+    private \Ess\M2ePro\Model\Amazon\AdvancedFilter\AllItemsOptions $advancedFilterAllItemsOptions;
+    private \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\CollectionFactory $amazonProductCollectionFactory;
+    private \Ess\M2ePro\Block\Adminhtml\Widget\Grid\AdvancedFilter\FilterFactory $advancedFilterFactory;
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Widget\Grid\AdvancedFilter\FilterFactory $advancedFilterFactory,
@@ -54,9 +37,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
         \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\CollectionFactory $amazonProductCollectionFactory,
-        \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product $amazonProductResource,
         \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation $tagRelationResource,
-        \Ess\M2ePro\Model\ResourceModel\Tag $tagResource,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
@@ -78,8 +59,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         $this->amazonListingProductRepricingResource = $amazonListingProductRepricingResource;
         $this->advancedFilterAllItemsOptions = $advancedFilterAllItemsOptions;
         $this->amazonProductCollectionFactory = $amazonProductCollectionFactory;
-        $this->amazonProductResource = $amazonProductResource;
-        $this->tagResource = $tagResource;
         $this->advancedFilterFactory = $advancedFilterFactory;
     }
 
@@ -98,12 +77,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
     protected function _prepareMassaction()
     {
-        $this->setMassactionIdField('id');
-        $this->getMassactionBlock()->addItem('', [
-            'label' => '',
-            'url' => '',
-        ]);
-
         $this->css->add(
             <<<CSS
             #{$this->getId()} .admin__grid-massaction {
@@ -1625,7 +1598,7 @@ JS
 
         $filter = $this->advancedFilterFactory->createDropDownFilter(
             'marketplace',
-            __('Marketplace'),
+            (string)__('Marketplace'),
             $options,
             $filterCallback
         );
@@ -1649,7 +1622,7 @@ JS
 
         $filter = $this->advancedFilterFactory->createDropDownFilter(
             'account',
-            __('Account'),
+            (string)__('Account'),
             $options,
             $filterCallback
         );
@@ -1679,7 +1652,7 @@ JS
 
         $filter = $this->advancedFilterFactory->createDropDownFilter(
             'selling_policy',
-            __('Selling Policy'),
+            (string)__('Selling Policy'),
             $options,
             $filterCallback
         );
@@ -1709,7 +1682,7 @@ JS
 
         $filter = $this->advancedFilterFactory->createDropDownFilter(
             'synchronization_policy',
-            __('Synchronization Policy'),
+            (string)__('Synchronization Policy'),
             $options,
             $filterCallback
         );
@@ -1739,7 +1712,7 @@ JS
 
         $filter = $this->advancedFilterFactory->createDropDownFilter(
             'shipping_policy',
-            __('Shipping Policy'),
+            (string)__('Shipping Policy'),
             $options,
             $filterCallback
         );
@@ -1769,7 +1742,7 @@ JS
 
         $filter = $this->advancedFilterFactory->createDropDownFilter(
             'product_type',
-            __('Product Type'),
+            (string)__('Product Type'),
             $options,
             $filterCallback
         );
@@ -1798,7 +1771,7 @@ JS
 
         $filter = $this->advancedFilterFactory->createDropDownFilter(
             'errors_filter',
-            __('Amazon Error'),
+            (string)__('Amazon Error'),
             $options,
             $filterCallback
         );
@@ -1826,7 +1799,7 @@ JS
 
         $filter = $this->advancedFilterFactory->createDropDownFilter(
             'tax_code',
-            __('Tax Code Policy'),
+            (string)__('Tax Code Policy'),
             $options,
             $filterCallback
         );
@@ -1855,7 +1828,7 @@ JS
 
         $filter = $this->advancedFilterFactory->createDropDownFilter(
             'magento_product_type',
-            __('Magento Product Type'),
+            (string)__('Magento Product Type'),
             $options,
             $filterCallback
         );

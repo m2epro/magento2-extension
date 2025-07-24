@@ -50,7 +50,6 @@ class ComplianceDocumentCalculator
 
             $documentsToSave[$savedDocument->getEbayDocumentId()] = [
                 'type' => $savedDocument->getType(),
-                'attribute_code' => $findUrlResult->getAttributeCode(),
                 'document_id' => $savedDocument->getEbayDocumentId(),
             ];
         }
