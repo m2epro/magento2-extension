@@ -714,8 +714,12 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 
     protected function appendStrikeThroughPriceData(array $data): array
     {
+        $data['online_strike_through_price'] = null;
+
         $requestMetadata = $this->getRequestMetaData();
-        $data['online_strike_through_price'] = $requestMetadata['online_strike_through_price'];
+        if (!empty($requestMetadata['online_strike_through_price'])) {
+            $data['online_strike_through_price'] = $requestMetadata['online_strike_through_price'];
+        }
 
         return $data;
     }
