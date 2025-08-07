@@ -258,7 +258,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\
         }
 
         $where = '';
-        $onlineQty = 'elp.online_qty - elp.online_qty_sold';
+        $onlineQty = '(CAST(elp.online_qty AS SIGNED) - CAST(elp.online_qty_sold AS SIGNED))';
 
         if (isset($cond['from']) || isset($cond['to'])) {
             if (isset($cond['from']) && $cond['from'] != '') {

@@ -449,6 +449,10 @@ class Combine extends AbstractModel
     public function collectValidatedAttributes($productCollection)
     {
         foreach ($this->getConditions() as $condition) {
+            if (!$condition->isAttributeExist()) {
+                continue;
+            }
+
             $condition->collectValidatedAttributes($productCollection);
         }
 
@@ -465,6 +469,9 @@ class Combine extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return \Ess\M2ePro\Model\Magento\Product\Rule\Condition\AbstractModel[]
+     */
     public function getConditions()
     {
         $key = $this->getPrefix() ? $this->getPrefix() : 'conditions';

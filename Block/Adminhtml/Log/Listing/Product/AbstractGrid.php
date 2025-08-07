@@ -124,8 +124,8 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
             'type' => 'datetime',
             'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
             'filter_time' => true,
-            'filter_index' => 'main_table.create_date',
-            'index' => 'create_date',
+            'filter_index' => 'greatest_create_date',
+            'index' => 'greatest_create_date',
             'frame_callback' => [$this, 'callbackColumnCreateDate'],
         ]);
 
@@ -306,7 +306,11 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
         $logHash = $this->getLogHash($row);
 
         if ($logHash !== null) {
-            return "{$value}<div class='no-display log-hash'>{$logHash}</div>";
+            return sprintf(
+                '%s<div class="no-display log-hash">%s</div>',
+                $value,
+                $logHash
+            );
         }
 
         return $value;

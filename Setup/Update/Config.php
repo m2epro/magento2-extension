@@ -433,6 +433,7 @@ class Config extends AbstractConfig
             'y25_m07' => [
                 'ModifyWalmartAccountTable',
                 'AddOnlineStrikeThroughPriceColumnToEbayListingProductTable',
+                'DecreaseAmazonProcessingTime',
             ],
         ];
     }

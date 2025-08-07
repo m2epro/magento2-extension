@@ -224,7 +224,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
 
     public function getAttributeName()
     {
-        return $this->getAttributeOption($this->getAttribute());
+        return $this->getAttributeOption()[$this->getAttribute()] ?? '';
     }
 
     public function loadOperatorOptions()
@@ -762,5 +762,30 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
         return $this->helperFactory->getObject($helperName, $arguments);
     }
 
-    //########################################
+    // ----------------------------------------
+
+    protected function setAttributeOption(array $attributes): void
+    {
+        $this->setData('attribute_option', $attributes);
+    }
+
+    protected function getAttributeOption(): array
+    {
+        return $this->getData('attribute_option') ?: [];
+    }
+
+    protected function isAttributeExist(): bool
+    {
+        return array_key_exists($this->getAttribute(), $this->getAttributeOption());
+    }
+
+    protected function setAttribute(string $attribute): void
+    {
+        $this->setData('attribute', $attribute);
+    }
+
+    protected function getAttribute()
+    {
+        return $this->getData('attribute');
+    }
 }

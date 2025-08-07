@@ -110,10 +110,19 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'Listing\Other'
         )->getCollection();
-        $listingOtherCollection->addFieldToFilter('main_table.account_id', (int)$account->getId());
-        $listingOtherCollection->getSelect()->where('`second_table`.`sku` IS NULL');
-        $listingOtherCollection->getSelect()->orWhere('`second_table`.`online_main_category` IS NULL');
-        $listingOtherCollection->getSelect()->orWhere('`second_table`.`online_categories_data` IS NULL');
+        $listingOtherCollection->addFieldToFilter('main_table.account_id', ['eq' => 2]);
+        $listingOtherCollection->addFieldToFilter(
+            [
+                'second_table.sku',
+                'second_table.online_main_category',
+                'second_table.online_categories_data',
+            ],
+            [
+                ['null' => true],
+                ['null' => true],
+                ['null' => true],
+            ]
+        );
         $listingOtherCollection->getSelect()->order('second_table.start_date ASC');
         $listingOtherCollection->getSelect()->limit(200);
 
@@ -213,23 +222,33 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $onlineMainCategory = $ebayListingOther->getOnlineMainCategory();
             $onlineCategoriesData = $ebayListingOther->getOnlineCategoriesData();
 
-            if ($sku !== null && $onlineMainCategory !== null && $onlineCategoriesData !== null) {
-                continue;
-            }
-
-            $startDateTimestamp = (int)$this->helperData
-                ->createGmtDateTime($ebayListingOther->getStartDate())
-                ->format('U');
             if (
-                $toTimeReceived !== null &&
-                $startDateTimestamp >= (int)$this->helperData->createGmtDateTime($toTimeReceived)->format('U')
+                $sku !== null
+                && $onlineMainCategory !== null
+                && !empty($onlineCategoriesData)
             ) {
                 continue;
             }
 
-            $onlineMainCategory === null && $ebayListingOther->setData('online_main_category', '');
-            $onlineCategoriesData === null && $ebayListingOther->setData('online_categories_data', '');
-            $sku === null && $ebayListingOther->setData('sku', '');
+            $startDateTimestamp = (int)\Ess\M2ePro\Helper\Date::createDateGmt($ebayListingOther->getStartDate())->format('U');
+            if (
+                $toTimeReceived !== null &&
+                $startDateTimestamp >= (int)\Ess\M2ePro\Helper\Date::createDateGmt($toTimeReceived)->format('U')
+            ) {
+                continue;
+            }
+
+            if ($onlineMainCategory === null) {
+                $ebayListingOther->setData('online_main_category', '');
+            }
+
+            if (empty($onlineCategoriesData)) {
+                $ebayListingOther->setData('online_categories_data', '');
+            }
+
+            if ($sku === null) {
+                $ebayListingOther->setData('sku', '');
+            }
 
             $ebayListingOther->save();
         }

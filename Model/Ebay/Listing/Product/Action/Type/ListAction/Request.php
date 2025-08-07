@@ -120,12 +120,6 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 
     protected function initializeVariations()
     {
-        if (!$this->getEbayListingProduct()->isVariationMode()) {
-            foreach ($this->getListingProduct()->getVariations(true) as $variation) {
-                $variation->delete();
-            }
-        }
-
         parent::initializeVariations();
 
         if (!$this->getEbayListingProduct()->isVariationMode()) {

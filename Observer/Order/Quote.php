@@ -166,8 +166,6 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
 
     protected function addListingProductInstructions()
     {
-        $synchronizationInstructionsData = [];
-
         foreach ($this->getAffectedListingsProducts() as $listingProduct) {
             /** @var \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel $changeProcessor */
             $changeProcessor = $this->modelFactory->getObject(
@@ -181,10 +179,6 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
             );
             $changeProcessor->process();
         }
-
-        $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getResource()->add(
-            $synchronizationInstructionsData
-        );
     }
 
     //########################################
