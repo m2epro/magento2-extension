@@ -1139,7 +1139,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             return true;
         }
 
-        $limitDateOfInvoiceSent = \M2E\AmazonMcf\Helper\Date::createCurrentGmt()->modify(
+        $limitDateOfInvoiceSent = \Ess\M2ePro\Helper\Date::createCurrentGmt()->modify(
             sprintf('-%d hours', self::DATE_INTERVAL_IN_HOURS_FOR_INVOICE_SENDING_FROM_REPORT)
         );
         if (
