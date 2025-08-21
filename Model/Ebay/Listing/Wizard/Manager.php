@@ -310,13 +310,13 @@ class Manager
     }
 
     /**
-     * @return int[]|null
+     * @return int[]
      */
-    public function getProductsIds(): ?array
+    public function getProductsIds(): array
     {
         $wizardProducts = $this->getProducts();
         if (empty($wizardProducts)) {
-            return null;
+            return [];
         }
 
         $ids = [];

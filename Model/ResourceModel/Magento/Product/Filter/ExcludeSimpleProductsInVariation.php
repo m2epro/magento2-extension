@@ -62,6 +62,7 @@ class ExcludeSimpleProductsInVariation
                 'variation_option.listing_product_variation_id = variation.id',
                 []
             )
-            ->where('listing.id = ?', $listingId);
+            ->where('listing.id = ?', $listingId)
+            ->where('variation_option.product_id IS NOT NULL');
     }
 }

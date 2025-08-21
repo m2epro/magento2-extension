@@ -185,10 +185,7 @@ class Details extends AbstractModel
 
         $this->searchNotFoundAttributes();
         $condition['condition'] = $listingSource->getCondition();
-        if ($condition['condition'] != \Ess\M2ePro\Model\Amazon\Listing::CONDITION_NEW) {
-            $condition['condition_note'] = $listingSource->getConditionNote();
-        }
-
+        $condition['condition_note'] = $listingSource->getConditionNote();
         $this->processNotFoundAttributes('Condition / Condition Note');
 
         if ($condition['condition'] != \Ess\M2ePro\Model\Amazon\Listing::CONDITION_NEW) {

@@ -65,15 +65,10 @@ define([
 
         condition_mode_change: function () {
             var self = AmazonListingCreateSellingObj,
-                attributeCode = this.options[this.selectedIndex].getAttribute('attribute_code'),
                 conditionValue = $('condition_value'),
                 conditionCustomAttribute = $('condition_custom_attribute'),
-                conditionNoteModeTr = $('condition_note_mode_tr'),
-                conditionNoteValueTr = $('condition_note_value_tr'),
                 offerImagesWrapper = $('magento_block_amazon_offer_images_settings-wrapper');
 
-            conditionNoteModeTr.show();
-            conditionNoteValueTr.show();
             offerImagesWrapper.show();
 
 
@@ -82,18 +77,9 @@ define([
 
             if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Listing::CONDITION_MODE_DEFAULT')) {
                 self.updateHiddenValue(this, conditionValue);
-
-                if (attributeCode == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Listing::CONDITION_NEW')) {
-                    conditionNoteModeTr.hide();
-                    conditionNoteValueTr.hide();
-                    $('condition_custom_tr').hide();
-                    offerImagesWrapper.hide();
-                } else {
-                    self.condition_note_mode_change();
-                }
+                self.condition_note_mode_change();
             } else {
                 self.updateHiddenValue(this, conditionCustomAttribute);
-                conditionNoteModeTr.show();
                 self.condition_note_mode_change();
             }
         },

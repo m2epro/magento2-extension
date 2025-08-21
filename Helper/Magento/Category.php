@@ -184,6 +184,10 @@ class Category extends \Ess\M2ePro\Helper\Magento\AbstractHelper
 
     public function getLimitedCategoriesByProducts($productIds, $storeId = 0)
     {
+        if (empty($productIds)) {
+            return [];
+        }
+
         $connection = $this->resourceConnection->getConnection();
         $tableName = $this->dbStructureHelper->getTableNameWithPrefix('catalog_category_product');
 
