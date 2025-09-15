@@ -24,6 +24,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     private $globalDataHelper;
     /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Filter\ExcludeSimpleProductsInVariation */
     private ExcludeSimpleProductsInVariation $excludeSimpleProductsInVariation;
+    private \Magento\Store\Model\StoreManagerInterface $storeManager;
 
     public function __construct(
         ExcludeSimpleProductsInVariation $excludeSimpleProductsInVariation,
@@ -32,6 +33,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         \Magento\Store\Model\WebsiteFactory $websiteFactory,
         \Ess\M2ePro\Helper\Magento\Product $magentoProductHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
@@ -42,8 +44,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         $this->websiteFactory = $websiteFactory;
         $this->magentoProductHelper = $magentoProductHelper;
         $this->globalDataHelper = $globalDataHelper;
-        parent::__construct($context, $backendHelper, $dataHelper, $data);
         $this->excludeSimpleProductsInVariation = $excludeSimpleProductsInVariation;
+        $this->storeManager = $storeManager;
+        parent::__construct($context, $backendHelper, $dataHelper, $data);
     }
 
     public function _construct()
@@ -83,7 +86,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
                                                             ->addAttributeToSelect('name')
                                                             ->addAttributeToSelect('type_id');
 
-        $collection->setStoreId($this->listing->getStoreId());
+        $storeId = $this->listing->getStoreId();
+        $collection->setStoreId($storeId);
+        $websiteId = $this->storeManager->getStore($storeId)->getWebsiteId();
+        $collection->addWebsiteFilter($websiteId);
         $collection->joinStockItem();
 
         // ---------------------------------------

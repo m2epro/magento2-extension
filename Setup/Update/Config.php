@@ -435,6 +435,9 @@ class Config extends AbstractConfig
                 'AddOnlineStrikeThroughPriceColumnToEbayListingProductTable',
                 'DecreaseAmazonProcessingTime',
             ],
+            'y25_m09' => [
+                'EnableAmazonBusinessForAustralia',
+            ],
         ];
     }
 

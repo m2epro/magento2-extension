@@ -1,32 +1,19 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\ActionAbstract
- */
 abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {
     //########################################
 
     protected function scheduleAction($action, array $params = [])
     {
-        if (!$listingsProductsIds = $this->getRequest()->getParam('selected_products')) {
+        $listingsProducts = $this->getListingProductsFromRequest();
+        if (empty($listingsProducts)) {
             return $this->setRawContent('You should select Products');
         }
-
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $productsCollection */
-        $productsCollection = $this->amazonFactory->getObject('Listing_Product')->getCollection();
-        $productsCollection->addFieldToFilter('id', explode(',', $listingsProductsIds));
-
-        /** @var \Ess\M2ePro\Model\Listing\Product[] $listingsProducts */
-        $listingsProducts = $productsCollection->getItems();
 
         $childListingsProducts = [];
 
@@ -38,9 +25,10 @@ abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Ma
                 continue;
             }
 
-            $tempChildListingsProducts = $amazonListingProduct->getVariationManager()
-                                                              ->getTypeModel()
-                                                              ->getChildListingsProducts();
+            $tempChildListingsProducts = $amazonListingProduct
+                ->getVariationManager()
+                ->getTypeModel()
+                ->getChildListingsProducts();
 
             if (empty($tempChildListingsProducts)) {
                 continue;
@@ -55,7 +43,7 @@ abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Ma
         }
 
         $listingsProducts = array_merge($listingsProducts, $childListingsProducts);
-        $logsActionId = $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getNextActionId();
+        $logsActionId = $this->getNextLogActionId();
 
         $this->checkLocking($listingsProducts, $logsActionId, $action);
         if (empty($listingsProducts)) {
@@ -64,11 +52,7 @@ abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Ma
             return $this->getResult();
         }
 
-        $this->createUpdateScheduledActions(
-            $listingsProducts,
-            $action,
-            $params
-        );
+        $this->createUpdateScheduledActions($listingsProducts, $action, $params);
 
         if (isset($params['switch_to'])) {
             $this->setJsonContent([
@@ -90,7 +74,13 @@ abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Ma
 
     //########################################
 
-    protected function checkLocking(&$listingsProducts, $logsActionId, $action)
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Product[] $listingsProducts
+     *
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    protected function checkLocking(array &$listingsProducts, int $logsActionId, int $action)
     {
         foreach ($listingsProducts as $index => $listingProduct) {
             /** @var \Ess\M2ePro\Model\Listing\Product\LockManager $lockManager */
@@ -108,12 +98,10 @@ abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Ma
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product[] $listingsProducts
-     * @param int $action
-     * @param array $params
      *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    protected function createUpdateScheduledActions(&$listingsProducts, $action, array $params)
+    protected function createUpdateScheduledActions(array $listingsProducts, int $action, array $params)
     {
         $listingsProductsIds = [];
         foreach ($listingsProducts as $listingProduct) {
@@ -141,13 +129,11 @@ abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Ma
         }
     }
 
-    /**
-     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
-     * @param int $action
-     * @param array $params
-     */
-    protected function createUpdateScheduledActionsDataCallback($listingProduct, $action, array $params)
-    {
+    protected function createUpdateScheduledActionsDataCallback(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        int $action,
+        array $params
+    ) {
         $params['status_changer'] = \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER;
 
         return [
@@ -164,7 +150,7 @@ abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Ma
         ];
     }
 
-    protected function getLogsAction($action)
+    protected function getLogsAction(int $action): int
     {
         switch ($action) {
             case \Ess\M2ePro\Model\Listing\Product::ACTION_LIST:
@@ -184,6 +170,28 @@ abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Ma
         }
 
         throw new \Ess\M2ePro\Model\Exception\Logic('Unknown action.');
+    }
+
+    protected function getNextLogActionId()
+    {
+        return $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getNextActionId();
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\Listing\Product[]
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    protected function getListingProductsFromRequest(): array
+    {
+        if (!$listingsProductsIds = $this->getRequest()->getParam('selected_products')) {
+            return [];
+        }
+
+        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $productsCollection */
+        $productsCollection = $this->amazonFactory->getObject('Listing_Product')->getCollection();
+        $productsCollection->addFieldToFilter('id', explode(',', $listingsProductsIds));
+
+        return array_values($productsCollection->getItems());
     }
 
     //########################################

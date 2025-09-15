@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
+namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AllItems\Actions;
 
 class RunRelistProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\ActionAbstract
 {

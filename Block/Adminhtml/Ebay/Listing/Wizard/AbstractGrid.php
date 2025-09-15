@@ -17,6 +17,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Context\Template;
 use Ess\M2ePro\Helper\Module;
 use Magento\Catalog\Model\Product\Type;
 use Ess\M2ePro\Model\ResourceModel\Magento\Product\Filter\ExcludeSimpleProductsInVariation;
+use Magento\Store\Model\StoreManagerInterface;
 
 abstract class AbstractGrid extends EbayMagentoGrid
 {
@@ -30,6 +31,8 @@ abstract class AbstractGrid extends EbayMagentoGrid
     private Module $moduleHelper;
     /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Filter\ExcludeSimpleProductsInVariation */
     private ExcludeSimpleProductsInVariation $excludeSimpleProductsInVariation;
+    /** @var \Magento\Store\Model\StoreManagerInterface */
+    private StoreManagerInterface $storeManager;
 
     public function __construct(
         ExcludeSimpleProductsInVariation $excludeSimpleProductsInVariation,
@@ -41,6 +44,7 @@ abstract class AbstractGrid extends EbayMagentoGrid
         Module $moduleHelper,
         Type $type,
         ProductHelper $magentoProductHelper,
+        StoreManagerInterface $storeManager,
         Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
@@ -55,6 +59,7 @@ abstract class AbstractGrid extends EbayMagentoGrid
         $this->uiWizardRuntimeStorage = $uiWizardRuntimeStorage;
         $this->moduleHelper = $moduleHelper;
         $this->excludeSimpleProductsInVariation = $excludeSimpleProductsInVariation;
+        $this->storeManager = $storeManager;
 
         parent::__construct($context, $backendHelper, $dataHelper, $data);
     }
@@ -91,6 +96,9 @@ abstract class AbstractGrid extends EbayMagentoGrid
         $store = $this->_getStore();
 
         if ($store->getId()) {
+            $websiteId = $this->storeManager->getStore($store->getId())->getWebsiteId();
+            $collection->addWebsiteFilter($websiteId);
+
             $collection->joinAttribute(
                 'price',
                 'catalog_product/price',

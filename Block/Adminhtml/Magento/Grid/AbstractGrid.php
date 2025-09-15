@@ -212,6 +212,15 @@ abstract class AbstractGrid extends Extended
         return $csv;
     }
 
+    /**
+     * Implementation Magento magic methods.
+     * Use in \Magento\Backend\Block\Widget\Grid\Column\Renderer\Massaction::render
+     */
+    protected function setMassactionIdFieldOnlyIndexValue(bool $value): void
+    {
+        $this->setData('massaction_id_field_only_index_value', $value);
+    }
+
     protected function _setFilterValues($data)
     {
         $this->applyAdvancedFilters($data);

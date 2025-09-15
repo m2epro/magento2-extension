@@ -36,6 +36,13 @@ class AllItems extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         $tabsBlock->activateAllItemsTab();
         $tabsBlockHtml = $tabsBlock->toHtml();
 
-        return $tabsBlockHtml . parent::_toHtml();
+        return $tabsBlockHtml . $this->getHtmlForActions(parent::_toHtml());
+    }
+
+    private function getHtmlForActions(string $content): string
+    {
+        return '<div id="all_items_progress_bar"></div>'
+            . '<div id="listing_container_errors_summary" class="errors_summary" style="display: none;"></div>'
+            . '<div id="all_items_content_container">' . $content . '</div>';
     }
 }

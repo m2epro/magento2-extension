@@ -17,6 +17,7 @@ use Ess\M2ePro\Helper\Magento\Category;
 use Ess\M2ePro\Helper\Module\Database\Structure;
 use Ess\M2ePro\Model\ResourceModel\Magento\Product\Filter\ExcludeSimpleProductsInVariation;
 use Magento\Catalog\Model\Product\Type;
+use Magento\Store\Model\StoreManagerInterface;
 
 class Grid extends AbstractGrid
 {
@@ -37,6 +38,7 @@ class Grid extends AbstractGrid
         Type $type,
         ProductHelper $magentoProductHelper,
         Module $moduleHelper,
+        StoreManagerInterface $storeManager,
         Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
@@ -55,6 +57,7 @@ class Grid extends AbstractGrid
             $moduleHelper,
             $type,
             $magentoProductHelper,
+            $storeManager,
             $context,
             $backendHelper,
             $dataHelper,

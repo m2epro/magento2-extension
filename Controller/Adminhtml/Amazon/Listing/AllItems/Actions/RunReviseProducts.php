@@ -1,36 +1,33 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
-namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
+namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AllItems\Actions;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\RunReviseProducts
- */
 class RunReviseProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\ActionAbstract
 {
-    //########################################
+    private \Ess\M2ePro\Model\Amazon\Listing\Product\Action\ConfiguratorFactory $amazonConfiguratorFactory;
+
+    public function __construct(
+        \Ess\M2ePro\Model\Amazon\Listing\Product\Action\ConfiguratorFactory $amazonConfiguratorFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+        $this->amazonConfiguratorFactory = $amazonConfiguratorFactory;
+    }
 
     public function execute()
     {
-        return $this->scheduleAction(
-            \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
-        );
+        return $this->scheduleAction(\Ess\M2ePro\Model\Listing\Product::ACTION_REVISE);
     }
-
-    //########################################
 
     protected function createUpdateScheduledActionsDataCallback(
         \Ess\M2ePro\Model\Listing\Product $listingProduct,
         int $action,
         array $params
-    ) {
-        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator $configurator */
-        $configurator = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Configurator');
+    ): array {
+        $configurator = $this->amazonConfiguratorFactory->create();
         $configurator->enableAll();
         $tag = '/qty/price/details/';
         $params['status_changer'] = \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER;
@@ -59,6 +56,4 @@ class RunReviseProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\
             ),
         ];
     }
-
-    //########################################
 }

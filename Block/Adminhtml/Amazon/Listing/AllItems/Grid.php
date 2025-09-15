@@ -77,20 +77,35 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
     protected function _prepareMassaction()
     {
-        $this->css->add(
-            <<<CSS
-            #{$this->getId()} .admin__grid-massaction {
-                display: none;
-            }
+        $this->setMassactionIdField('id');
+        $this->setMassactionIdFieldOnlyIndexValue(true);
 
-            #{$this->getId()} .admin__control-support-text {
-                margin-left: 0;
-            }
+        $this->getMassactionBlock()->addItem('list', [
+            'label' => __('List Item(s) on Amazon'),
+            'url' => '',
+        ], 'actions');
 
-CSS
-        );
+        $this->getMassactionBlock()->addItem('revise', [
+            'label' => __('Revise Item(s) on Amazon'),
+            'url' => '',
+        ], 'actions');
 
-        return $this;
+        $this->getMassactionBlock()->addItem('relist', [
+            'label' => __('Relist Item(s) on Amazon'),
+            'url' => '',
+        ], 'actions');
+
+        $this->getMassactionBlock()->addItem('stop', [
+            'label' => __('Stop Item(s) on Amazon'),
+            'url' => '',
+        ], 'actions');
+
+        $this->getMassactionBlock()->addItem('stopAndRemove', [
+            'label' => __('Stop on Amazon / Remove From Listing'),
+            'url' => '',
+        ], 'actions');
+
+        return parent::_prepareMassaction();
     }
 
     protected function _prepareColumns()
@@ -1560,20 +1575,53 @@ HTML;
 
     protected function _toHtml()
     {
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            $this->js->add(
+                <<<JS
+                AmazonListingAllItemsGrid.afterInitPage();
+JS
+            );
+
+            return parent::_toHtml();
+        }
+
+        $this->jsUrl->addUrls([
+            'runListProducts' => $this->getUrl('*/amazon_listing_allItems_actions/runListProducts'),
+            'runRelistProducts' => $this->getUrl('*/amazon_listing_allItems_actions/runRelistProducts'),
+            'runReviseProducts' => $this->getUrl('*/amazon_listing_allItems_actions/runReviseProducts'),
+            'runStopProducts' => $this->getUrl('*/amazon_listing_allItems_actions/runStopProducts'),
+            'runStopAndRemoveProducts' => $this->getUrl('*/amazon_listing_allItems_actions/runStopAndRemoveProducts'),
+        ]);
+
+        $this->jsUrl->add($this->getUrl('*/listing/getErrorsSummary'), 'getErrorsSummary');
+
+        $this->jsTranslator->addTranslations([
+            'task_completed_warning_message' => __('"%task_title%" task has completed with warnings.'),
+            'task_completed_error_message' => __('"%task_title%" task has completed with errors.'),
+            'task_completed_message' => __('Task completed. Please wait ...'),
+            'task_completed_success_message' => __('"%task_title%" task has completed.'),
+            'sending_data_message' => __('Sending %product_title% Product(s) data on Amazon.'),
+            'please_select_the_products' => __('Please select the Products you want to perform the Action on.'),
+        ]);
+
         $this->jsUrl->addUrls([
             'amazon_listing_product_repricing/getUpdatedPriceBySkus' => $this->getUrl(
                 '*/amazon_listing_product_repricing/getUpdatedPriceBySkus'
             ),
         ]);
 
-        $this->js->addRequireJs(
-            [
-                'alprp' => 'M2ePro/Amazon/Listing/Product/Repricing/Price',
-            ],
-            <<<JS
-        window.AmazonListingProductRepricingPriceObj = new AmazonListingProductRepricingPrice();
-JS
-        );
+        $js = <<<JS
+require([
+    'M2ePro/Amazon/Listing/Product/Repricing/Price',
+    'M2ePro/Amazon/Listing/AllItems/Grid'
+], function() {
+    window.AmazonListingProductRepricingPriceObj = new AmazonListingProductRepricingPrice();
+    window.AmazonListingAllItemsGrid = new AmazonListingAllItemsGrid('{$this->getId()}');
+    AmazonListingAllItemsGrid.afterInitPage();
+});
+JS;
+
+        $this->js->add($js);
 
         return parent::_toHtml();
     }

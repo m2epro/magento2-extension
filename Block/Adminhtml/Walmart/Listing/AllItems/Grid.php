@@ -8,6 +8,8 @@ use Ess\M2ePro\Model\Listing\Product;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 {
+    public $hideMassactionColumn = true;
+
     private array $parentAndChildReviseScheduledCache = [];
     private \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper;
     private \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory;
