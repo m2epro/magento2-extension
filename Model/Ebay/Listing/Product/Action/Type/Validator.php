@@ -409,6 +409,12 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
         /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
         foreach ($this->getEbayListingProduct()->getVariations(true) as $variation) {
+            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation $childVariation */
+            $childVariation = $variation->getChildObject();
+            if ($childVariation->isDelete()) {
+                continue;
+            }
+
             $tmpOptions = [];
             foreach ($variation->getOptions(true) as $option) {
                 if ($option->getProductType() !== \Ess\M2ePro\Helper\Magento\Product::TYPE_BUNDLE) {
