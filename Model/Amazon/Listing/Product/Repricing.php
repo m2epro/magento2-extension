@@ -1,27 +1,21 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product;
 
+use Ess\M2ePro\Model\Amazon\Account\Repricing as AccountRepricing;
+use Ess\M2ePro\Model\Amazon\Listing\Product as AmazonListingProduct;
 use Ess\M2ePro\Model\Exception;
 use Ess\M2ePro\Model\Listing\Product;
 use Ess\M2ePro\Model\Magento\Product\Cache;
-use Ess\M2ePro\Model\Amazon\Account\Repricing as AccountRepricing;
-use Ess\M2ePro\Model\Amazon\Listing\Product as AmazonListingProduct;
 
 class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
-    /** @var Product $listingProductModel */
-    private $listingProductModel = null;
-    /** @var null  */
+    private ?Product $listingProductModel = null;
+    /** @var null */
     private $regularPriceCache = null;
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
-    protected $amazonFactory;
+    protected \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -293,8 +287,10 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $source = $this->getAccountRepricing()->getMinPriceSource();
 
         if (
-            $this->getAccountRepricing()->isMinPriceModeRegularPercent() ||
-            $this->getAccountRepricing()->isMinPriceModeRegularValue()
+            $this->getAccountRepricing()->isMinPriceModeRegularPercent()
+            || $this->getAccountRepricing()->isMinPriceModeRegularValue()
+            || $this->getAccountRepricing()->isMinPriceModeRegularValueAttribute()
+            || $this->getAccountRepricing()->isMinPriceModeRegularPercentAttribute()
         ) {
             if ($this->getAccountRepricing()->isRegularPriceModeManual()) {
                 return null;
@@ -351,8 +347,10 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $source = $this->getAccountRepricing()->getMaxPriceSource();
 
         if (
-            $this->getAccountRepricing()->isMaxPriceModeRegularPercent() ||
-            $this->getAccountRepricing()->isMaxPriceModeRegularValue()
+            $this->getAccountRepricing()->isMaxPriceModeRegularPercent()
+            || $this->getAccountRepricing()->isMaxPriceModeRegularValue()
+            || $this->getAccountRepricing()->isMaxPriceModeRegularValueAttribute()
+            || $this->getAccountRepricing()->isMaxPriceModeRegularPercentAttribute()
         ) {
             if ($this->getAccountRepricing()->isRegularPriceModeManual()) {
                 return null;
@@ -492,6 +490,31 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             $value = round($regularPrice * ((int)$source['regular_percent'] / 100), 2);
         }
 
-        return $value;
+        if (
+            $source['mode'] == AccountRepricing::MAX_PRICE_MODE_REGULAR_VALUE_ATTRIBUTE
+            || $source['mode'] == AccountRepricing::MIN_PRICE_MODE_REGULAR_VALUE_ATTRIBUTE
+        ) {
+            $attributeValue = $this->getValueFromAttribute($source['value_attribute']);
+            if ($attributeValue > 0) {
+                $value = round($attributeValue, 2);
+            }
+        }
+
+        if (
+            $source['mode'] == AccountRepricing::MAX_PRICE_MODE_REGULAR_PERCENT_ATTRIBUTE
+            || $source['mode'] == AccountRepricing::MIN_PRICE_MODE_REGULAR_PERCENT_ATTRIBUTE
+        ) {
+            $attributeValue = $this->getValueFromAttribute($source['percent_attribute']);
+            if ($attributeValue > 0) {
+                $value = round($regularPrice * ($attributeValue / 100), 2);
+            }
+        }
+
+        return (float)$value;
+    }
+
+    private function getValueFromAttribute($attribute): float
+    {
+        return (float)$this->getMagentoProduct()->getAttributeValue($attribute);
     }
 }

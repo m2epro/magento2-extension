@@ -83,8 +83,6 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
             'ships_in_original_packaging_mode',
             'ships_in_original_packaging_value',
             'ships_in_original_packaging_custom_attribute',
-            'shipping_override_rule_mode',
-            'shipping_overrides',
         ];
 
         return $this->isSettingsDifferent($keys);

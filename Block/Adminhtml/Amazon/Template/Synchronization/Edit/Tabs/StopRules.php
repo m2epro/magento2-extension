@@ -1,10 +1,6 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Tabs;
 
@@ -14,12 +10,9 @@ use Ess\M2ePro\Model\Template\Synchronization as TemplateSynchronization;
 
 class StopRules extends AbstractForm
 {
-    /** @var \Ess\M2ePro\Helper\Module\Support */
-    private $supportHelper;
-    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
-    private $globalDataHelper;
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
+    private \Ess\M2ePro\Helper\Module\Support $supportHelper;
+    private \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper;
+    private \Ess\M2ePro\Helper\Data $dataHelper;
 
     /**
      * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
@@ -51,8 +44,9 @@ class StopRules extends AbstractForm
         $formData = $template !== null
             ? array_merge($template->getData(), $template->getChildObject()->getData()) : [];
 
-        $defaults = $this->modelFactory->getObject('Amazon_Template_Synchronization_Builder')->getDefaultData();
-        $formData = array_merge($defaults, $formData);
+        /** @var \Ess\M2ePro\Model\Amazon\Template\Synchronization\Builder $synchronizationBuilder */
+        $synchronizationBuilder = $this->modelFactory->getObject('Amazon_Template_Synchronization_Builder');
+        $formData = array_merge($synchronizationBuilder->getDefaultData(), $formData);
 
         $form = $this->_formFactory->create();
 
@@ -60,16 +54,18 @@ class StopRules extends AbstractForm
             'amazon_template_synchronization_stop',
             self::HELP_BLOCK,
             [
-                'content' => $this->__(
-                    'Stop Rules define the Conditions when Amazon Items Listing must be
-    inactivated, depending on Magento Product state.<br/><br/>
-    <b>Note:</b> If all Stop Conditions are set to <i>No</i> or <i>No Action</i>,
-    then the Stop Option for Amazon Items is disabled.<br/>
-    If all Stop Conditions are enabled, then an Item will be inactivated if at least one of the
-    Stop Conditions is met.<br/><br/>
-    More detailed information about ability to work with this Page you can find
-    <a href="%url%" target="_blank" class="external-link">here</a>.',
-                    $this->supportHelper->getDocumentationArticleUrl('stop-rules')
+                'content' => __(
+                    'Stop Rules define the Conditions when Amazon Items Listing must be ' .
+                    'inactivated, depending on Magento Product state.<br/><br/>' .
+                    '<b>Note:</b> If all Stop Conditions are set to <i>No</i> or <i>No Action</i>, ' .
+                    'then the Stop Option for Amazon Items is disabled.<br/>' .
+                    'If all Stop Conditions are enabled, then an Item will be inactivated if at least one of the ' .
+                    'Stop Conditions is met.<br/><br/> ' .
+                    'More detailed information about ability to work with this Page you can find ' .
+                    '<a href="%url" target="_blank" class="external-link">here</a>.',
+                    [
+                        'url' => $this->supportHelper->getDocumentationArticleUrl('docs/stop-rules'),
+                    ]
                 ),
             ]
         );
@@ -146,13 +142,12 @@ class StopRules extends AbstractForm
             'stop_qty_calculated_confirmation_popup_template',
             self::CUSTOM_CONTAINER,
             [
-                'text' => (string) __(
-                    <<<HTML
-Disabling this option might affect actual product data updates.
-Please read <a href="%1" target="_blank">this article</a> before disabling the option.
-HTML
-                    ,
-                    'https://help.m2epro.com/support/solutions/articles/9000199813'
+                'text' => (string)__(
+                    'Disabling this option might affect actual product data updates. Please read ' .
+                    '<a href="%url" target="_blank">this article</a> before disabling the option.',
+                    [
+                        'url' => 'https://help.m2epro.com/support/solutions/articles/9000199813',
+                    ]
                 ),
                 'style' => 'display: none;',
             ]
@@ -170,8 +165,8 @@ HTML
                     TemplateSynchronization::QTY_MODE_YES => __('Less or Equal'),
                 ],
                 'tooltip' => __(
-                    'Automatically stops Item(s) if Quantity according to the Selling
-                    Policy has been changed and meets the Conditions.'
+                    'Automatically stops Item(s) if Quantity according to the Selling ' .
+                    'Policy has been changed and meets the Conditions.'
                 ),
             ]
         )->setAfterElementHtml(
@@ -189,8 +184,9 @@ HTML
                 'legend' => __('Advanced Conditions'),
                 'collapsable' => false,
                 'tooltip' => __(
-                    '<p>Define Magento Attribute value(s) based on which a product must be stopped on the Channel.<br>
-                    Once at least one Stop or Advanced Condition is met, the product will be stopped.</p>'
+                    '<p>Define Magento Attribute value(s) based on which a product must be stopped on ' .
+                    'the Channel.<br>Once at least one Stop or Advanced Condition is met, ' .
+                    'the product will be stopped.</p>'
                 ),
             ]
         );
@@ -203,9 +199,10 @@ HTML
                     [
                         'type' => \Magento\Framework\Message\MessageInterface::TYPE_WARNING,
                         'content' => __(
-                            'Please be very thoughtful before enabling this option as this functionality can have
-                        a negative impact on the Performance of your system.<br> It can decrease the speed of running
-                        in case you have a lot of Products with the high number of changes made to them.'
+                            'Please be very thoughtful before enabling this option as this functionality ' .
+                            'can have a negative impact on the Performance of your system.<br> It can decrease ' .
+                            'the speed of running in case you have a lot of Products with the high number ' .
+                            'of changes made to them.'
                         ),
                     ],
                 ],
@@ -226,16 +223,21 @@ HTML
             ]
         );
 
-        $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
-            ['prefix' => Synchronization::STOP_ADVANCED_RULES_PREFIX]
-        );
+        /** @var \Ess\M2ePro\Model\Magento\Product\Rule $ruleModel */
+        $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule');
+        $ruleModel->setData([
+            'prefix' => Synchronization::STOP_ADVANCED_RULES_PREFIX,
+        ]);
 
         if (!empty($formData['stop_advanced_rules_filters'])) {
             $ruleModel->loadFromSerialized($formData['stop_advanced_rules_filters']);
         }
 
-        $ruleBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule::class)
-                          ->setData(['rule_model' => $ruleModel]);
+        /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule $ruleBlock */
+        $ruleBlock = $this
+            ->getLayout()
+            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule::class)
+            ->setData(['rule_model' => $ruleModel]);
 
         $fieldset->addField(
             'advanced_filter',

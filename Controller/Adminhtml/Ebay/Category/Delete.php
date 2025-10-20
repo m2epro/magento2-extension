@@ -72,13 +72,15 @@ class Delete extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
         $tempString = $this->__('%s% record(s) were deleted.', $deleted);
         $deleted && $this->getMessageManager()->addSuccess($tempString);
 
-        $tempString = $this->__(
-            '[%count%] Category cannot be removed until it’s unassigned from the existing products.
-            Read the <a href="%url%" target="_blank">article</a> for more information.',
-            $locked,
-            $this->getHelper('Module\Support')->getDocumentationArticleUrl(
-                'display/eBayMagentoV6X/Set+eBay+Categories'
-            )
+        /** @var \Ess\M2ePro\Helper\Module\Support $supportHelper */
+        $supportHelper = $this->getHelper('Module\Support');
+        $tempString = __(
+            '[%count] Category cannot be removed until it’s unassigned from the existing products. ' .
+            'Read the <a href="%url" target="_blank">article</a> for more information.',
+            [
+                'count' => $locked,
+                'url' => $supportHelper->getDocumentationArticleUrl('docs/category-management/'),
+            ]
         );
         $locked && $this->getMessageManager()->addError($tempString);
 

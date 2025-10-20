@@ -1,10 +1,11 @@
 define(
     [
         'jquery',
+        'mage/translate',
         'M2ePro/Common',
         'M2ePro/Plugin/Magento/AttributeCreator',
     ],
-    function(jQuery) {
+    function(jQuery, $t) {
         window.WalmartProductTypeContent = Class.create(Common, {
             constFieldNotConfigured: M2ePro.php.constant(
                 '\\Ess\\M2ePro\\Model\\Walmart\\ProductType::FIELD_NOT_CONFIGURED'
@@ -44,24 +45,31 @@ define(
 
                 jQuery.validator.addMethod(
                     'M2ePro-validate-product-type-specific-mode',
-                    function(value, element) {
+                    (value, element) => {
                         if (!element.classList.contains('required-entry')) {
                             return true;
                         }
 
-                        if (value == WalmartProductTypeContentObj.constFieldNotConfigured) {
+                        if (parseInt(value) === this.constFieldNotConfigured) {
                             return false;
                         }
 
-                        if (value == WalmartProductTypeContentObj.constFieldCustomValue) {
-                            var htmlId = element.id.slice('field_mode_'.length);
+                        const htmlId = element.id.slice('field_mode_'.length);
+                        if (parseInt(value) === this.constFieldCustomValue) {
+                            const customValue = jQuery(`[id="field_value_${htmlId}"]`).val().trim();
 
-                            return $('field_value_' + htmlId).value != '';
+                            return customValue !== '';
+                        }
+
+                        if (parseInt(value) === this.constFieldCustomAttribute) {
+                            const customAttribute = jQuery(`[id="field_attribute_${htmlId}"]`).val();
+
+                            return customAttribute !== '';
                         }
 
                         return true;
                     },
-                    M2ePro.translator.translate('This is a required field.')
+                    $t('This is a required field.')
                 );
             },
 

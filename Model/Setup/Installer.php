@@ -9010,6 +9010,18 @@ class Installer
                                                 ['unsigned' => true, 'nullable' => false]
                                             )
                                             ->addColumn(
+                                                'min_price_value_attribute',
+                                                Table::TYPE_TEXT,
+                                                255,
+                                                ['nullable' => true]
+                                            )
+                                            ->addColumn(
+                                                'min_price_percent_attribute',
+                                                Table::TYPE_TEXT,
+                                                255,
+                                                ['nullable' => true]
+                                            )
+                                            ->addColumn(
                                                 'max_price_mode',
                                                 Table::TYPE_SMALLINT,
                                                 null,
@@ -9044,6 +9056,18 @@ class Installer
                                                 Table::TYPE_SMALLINT,
                                                 null,
                                                 ['unsigned' => true, 'nullable' => false]
+                                            )
+                                            ->addColumn(
+                                                'max_price_value_attribute',
+                                                Table::TYPE_TEXT,
+                                                255,
+                                                ['nullable' => true]
+                                            )
+                                            ->addColumn(
+                                                'max_price_percent_attribute',
+                                                Table::TYPE_TEXT,
+                                                255,
+                                                ['nullable' => true]
                                             )
                                             ->addColumn(
                                                 'disable_mode',
@@ -14015,12 +14039,6 @@ class Installer
                                                       ['nullable' => false]
                                                   )
                                                   ->addColumn(
-                                                      'shipping_override_rule_mode',
-                                                      Table::TYPE_SMALLINT,
-                                                      null,
-                                                      ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                                  )
-                                                  ->addColumn(
                                                       'sale_time_start_date_mode',
                                                       Table::TYPE_SMALLINT,
                                                       null,
@@ -14176,82 +14194,6 @@ class Installer
                                                            ->setOption('collate', 'utf8_general_ci')
                                                            ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($walmartTemplateSellingFormatPromotionTable);
-
-        /**
-         * Create table 'm2epro_walmart_template_selling_format_shipping_override'
-         */
-        $walmartTemplateSellingFormatShippingOverrideTable = $this->getConnection()
-                                                                  ->newTable(
-                                                                      $this->getFullTableName(
-                                                                          'walmart_template_selling_format_shipping_override'
-                                                                      )
-                                                                  )
-                                                                  ->addColumn(
-                                                                      'id',
-                                                                      Table::TYPE_INTEGER,
-                                                                      null,
-                                                                      [
-                                                                          'unsigned' => true,
-                                                                          'primary' => true,
-                                                                          'nullable' => false,
-                                                                          'auto_increment' => true,
-                                                                      ]
-                                                                  )
-                                                                  ->addColumn(
-                                                                      'template_selling_format_id',
-                                                                      Table::TYPE_INTEGER,
-                                                                      11,
-                                                                      ['unsigned' => true, 'nullable' => false]
-                                                                  )
-                                                                  ->addColumn(
-                                                                      'method',
-                                                                      Table::TYPE_TEXT,
-                                                                      255,
-                                                                      ['nullable' => false]
-                                                                  )
-                                                                  ->addColumn(
-                                                                      'is_shipping_allowed',
-                                                                      Table::TYPE_TEXT,
-                                                                      255,
-                                                                      ['nullable' => false]
-                                                                  )
-                                                                  ->addColumn(
-                                                                      'region',
-                                                                      Table::TYPE_TEXT,
-                                                                      255,
-                                                                      ['nullable' => false]
-                                                                  )
-                                                                  ->addColumn(
-                                                                      'cost_mode',
-                                                                      Table::TYPE_SMALLINT,
-                                                                      null,
-                                                                      [
-                                                                          'unsigned' => true,
-                                                                          'nullable' => false,
-                                                                          'default' => 0,
-                                                                      ]
-                                                                  )
-                                                                  ->addColumn(
-                                                                      'cost_value',
-                                                                      Table::TYPE_TEXT,
-                                                                      255,
-                                                                      ['nullable' => false]
-                                                                  )
-                                                                  ->addColumn(
-                                                                      'cost_attribute',
-                                                                      Table::TYPE_TEXT,
-                                                                      255,
-                                                                      ['nullable' => false]
-                                                                  )
-                                                                  ->addIndex(
-                                                                      'template_selling_format_id',
-                                                                      'template_selling_format_id'
-                                                                  )
-                                                                  ->setOption('type', 'INNODB')
-                                                                  ->setOption('charset', 'utf8')
-                                                                  ->setOption('collate', 'utf8_general_ci')
-                                                                  ->setOption('row_format', 'dynamic');
-        $this->getConnection()->createTable($walmartTemplateSellingFormatShippingOverrideTable);
 
         /**
          * Create table 'm2epro_walmart_template_synchronization'

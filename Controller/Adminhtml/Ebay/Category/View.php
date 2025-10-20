@@ -31,7 +31,7 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
         $this->setRuleModel();
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Category\View::class));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Edit Category'));
-        $this->setPageHelpLink('display/eBayMagentoV6X/Set+eBay+Categories');
+        $this->setPageHelpLink('docs/category-management/');
 
         return $this->getResult();
     }

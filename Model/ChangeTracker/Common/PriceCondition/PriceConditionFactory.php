@@ -1,39 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ess\M2ePro\Model\ChangeTracker\Common\PriceCondition;
 
 class PriceConditionFactory
 {
-    /** @var \Magento\Framework\ObjectManagerInterface */
-    private $objectManager;
+    private \Magento\Framework\ObjectManagerInterface $objectManager;
 
-    /**
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager
-     */
-    public function __construct(
-        \Magento\Framework\ObjectManagerInterface $objectManager
-    ) {
+    public function __construct(\Magento\Framework\ObjectManagerInterface $objectManager)
+    {
         $this->objectManager = $objectManager;
     }
 
-    /**
-     * @param string $channel
-     *
-     * @return \Ess\M2ePro\Model\ChangeTracker\Common\PriceCondition\AbstractPriceCondition
-     */
     public function create(string $channel): AbstractPriceCondition
     {
         $arguments = ['channel' => $channel];
 
-        if ($channel === 'ebay') {
+        if ($channel === \Ess\M2ePro\Model\ChangeTracker\TrackerInterface::CHANNEL_EBAY) {
             return $this->objectManager->create(Ebay::class, $arguments);
         }
 
-        if ($channel === 'amazon') {
+        if ($channel === \Ess\M2ePro\Model\ChangeTracker\TrackerInterface::CHANNEL_AMAZON) {
             return $this->objectManager->create(Amazon::class, $arguments);
         }
 
-        if ($channel === 'walmart') {
+        if ($channel === \Ess\M2ePro\Model\ChangeTracker\TrackerInterface::CHANNEL_WALMART) {
             return $this->objectManager->create(Walmart::class, $arguments);
         }
 

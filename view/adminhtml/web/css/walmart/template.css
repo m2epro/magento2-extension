@@ -445,19 +445,6 @@ td.specifics-grid {
     margin: 0 !important;
 }
 
-#shipping_override_rule_container #shipping_override_rule_table_main_screen {
-    width: 100%;
-    background-color: #EFEFEF;
-}
-
-#shipping_override_rule_container #shipping_override_rule_table_main_screen td {
-    padding: 1em;
-}
-
-#shipping_override_rule_table [id^="shipping_override_rule_cost_attribute_"] {
-    width: 180px;
-}
-
 .magento-attribute-custom-input {
     width: 180px !important;
     margin-left: 5px;

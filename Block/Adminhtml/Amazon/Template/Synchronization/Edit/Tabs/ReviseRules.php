@@ -1,10 +1,6 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Tabs;
 
@@ -12,22 +8,10 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 class ReviseRules extends AbstractForm
 {
-    /** @var \Ess\M2ePro\Helper\Module\Support */
-    private $supportHelper;
-    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
-    private $globalDataHelper;
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
+    private \Ess\M2ePro\Helper\Module\Support $supportHelper;
+    private \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper;
+    private \Ess\M2ePro\Helper\Data $dataHelper;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
-     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
-     * @param \Ess\M2ePro\Helper\Data $dataHelper
-     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
-     * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Framework\Data\FormFactory $formFactory
-     * @param array $data
-     */
     public function __construct(
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
@@ -49,9 +33,9 @@ class ReviseRules extends AbstractForm
         $formData = $template !== null
             ? array_merge($template->getData(), $template->getChildObject()->getData()) : [];
 
-        $defaults = $this->modelFactory->getObject('Amazon_Template_Synchronization_Builder')->getDefaultData();
-
-        $formData = array_merge($defaults, $formData);
+        /** @var \Ess\M2ePro\Model\Amazon\Template\Synchronization\Builder $synchronizationBuilder */
+        $synchronizationBuilder = $this->modelFactory->getObject('Amazon_Template_Synchronization_Builder');
+        $formData = array_merge($synchronizationBuilder->getDefaultData(), $formData);
 
         $form = $this->_formFactory->create();
 
@@ -60,17 +44,14 @@ class ReviseRules extends AbstractForm
             self::HELP_BLOCK,
             [
                 'content' => __(
-                    <<<HTML
-<p>Specify which Channel data should be automatically revised by M2E Pro.</p><br>
-
-<p>Selected Item Properties will be automatically updated based on the changes in related Magento Attributes or
-Policy Templates.</p><br>
-
-<p>More detailed information on how to work with this Page can be found
-<a href="%url%" target="_blank" class="external-link">here</a>.</p>
-HTML
-                    ,
-                    $this->supportHelper->getDocumentationArticleUrl('revise-rules')
+                    '<p>Specify which Channel data should be automatically revised by M2E Pro.</p><br>' .
+                    '<p>Selected Item Properties will be automatically updated based on the changes in related ' .
+                    'Magento Attributes or Policy Templates.</p><br><p>More detailed information on how to ' .
+                    'work with this Page can be found <a href="%url" target="_blank" ' .
+                    'class="external-link">here</a>.</p>',
+                    [
+                        'url' => $this->supportHelper->getDocumentationArticleUrl('docs/revise-rules'),
+                    ]
                 ),
             ]
         );
@@ -95,8 +76,8 @@ HTML
                 ],
                 'disabled' => true,
                 'tooltip' => __(
-                    'Automatically revises Item Quantity, Production Time and Restock Date in Amazon Listing
-                    when there are changes made in Magento to at least one mentioned parameter.'
+                    'Automatically revises Item Quantity, Production Time and Restock Date in Amazon Listing ' .
+                    'when there are changes made in Magento to at least one mentioned parameter.'
                 ),
             ]
         );
@@ -114,8 +95,8 @@ HTML
                     1 => __('Revise When Less or Equal to'),
                 ],
                 'tooltip' => __(
-                    'Set the Item Quantity limit at which the Revise Action should be triggered.
-                    It is recommended to keep this value relatively low, between 10 and 20 Items.'
+                    'Set the Item Quantity limit at which the Revise Action should be triggered. ' .
+                    'It is recommended to keep this value relatively low, between 10 and 20 Items.'
                 ),
             ]
         )->setAfterElementHtml(
@@ -145,8 +126,8 @@ HTML
                     1 => __('Yes'),
                 ],
                 'tooltip' => __(
-                    'Automatically revises Item Price, Minimum Advertised Price, Sale Price and Business Price
-                    in Amazon Listing when there are changes made in Magento to at least one mentioned parameter.'
+                    'Automatically revises Item Price, Minimum Advertised Price, Sale Price and Business Price ' .
+                    'in Amazon Listing when there are changes made in Magento to at least one mentioned parameter.'
                 ),
             ]
         );
@@ -163,8 +144,8 @@ HTML
                     1 => __('Yes'),
                 ],
                 'tooltip' => __(
-                    'Automatically revises Product Titles, Description, Bullet Points on Amazon when the details are '
-                    . 'updated in Magento or Product Type.'
+                    'Automatically revises Product Titles, Description, Bullet Points on Amazon when the ' .
+                    'details are updated in Magento or Product Type.'
                 ),
             ]
         );
@@ -180,8 +161,8 @@ HTML
                     1 => __('Yes'),
                 ],
                 'tooltip' => __(
-                    'Automatically revises Item Image(s) on Amazon when Product Image(s) or Magento Attribute used '
-                    . 'for Product Image(s) are modified in Magento or Product Type.'
+                    'Automatically revises Item Image(s) on Amazon when Product Image(s) or ' .
+                    'Magento Attribute used for Product Image(s) are modified in Magento or Product Type.'
                 ),
             ]
         );
@@ -198,10 +179,9 @@ HTML
                     1 => __('Yes'),
                 ],
                 'tooltip' => __(
-                    'Automatically revises Condition Note, Gift Message, Gift Wrap settings,
-                    data from Product Type, List Price, Shipping Template Policy and Product Tax Code Policy
-                    in Amazon Listing when there are changes made to Magento Attribute
-                    of at least one mentioned parameter.'
+                    'Automatically revises Condition Note, Gift Message, Gift Wrap settings, data from ' .
+                    'Product Type, List Price, Shipping Template Policy and Product Tax Code Policy in Amazon ' .
+                    'Listing when there are changes made to Magento Attribute of at least one mentioned parameter.'
                 ),
             ]
         );
@@ -211,15 +191,20 @@ HTML
             self::CUSTOM_CONTAINER,
             [
                 'text' => (string)__(
-                    '<br/>Disabling this option might affect synchronization performance. Please read
-             <a href="%1" target="_blank">this article</a> before using the option.',
-                    'https://help.m2epro.com/support/solutions/articles/9000200401'
+                    '<br/>Disabling this option might affect synchronization performance. ' .
+                    'Please read <a href="%url" target="_blank">this article</a> before using the option.',
+                    [
+                        'url' => 'https://help.m2epro.com/support/solutions/articles/9000200401',
+                    ]
                 ),
                 'style' => 'display: none;',
             ]
         );
 
-        $this->jsTranslator->add('Wrong value. Only integer numbers.', __('Wrong value. Only integer numbers.'));
+        $this->jsTranslator->add(
+            'Wrong value. Only integer numbers.',
+            __('Wrong value. Only integer numbers.')
+        );
 
         $jsFormData = [
             'revise_update_qty',

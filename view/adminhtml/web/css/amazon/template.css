@@ -389,29 +389,6 @@ td.specifics-grid {
     top: 4px;
 }
 
-/* Shipping Override */
-/* ================================================ */
-
-#shipping_override_rule_table {
-    margin: 0 auto;
-    table-layout: fixed;
-}
-
-#shipping_override_rule_table td {
-    text-align: center;
-}
-
-#shipping_override_rule_table td input,
-#shipping_override_rule_table td select {
-    width: 100%;
-}
-
-#shipping_override_rule_table .mage-error {
-    position: relative !important;
-    left: auto !important;
-    text-align: left;
-}
-
 .price_change_row {
     margin-bottom: 20px;
 }

@@ -1,11 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ess\M2ePro\Model\ChangeTracker\Ebay;
 
-use Ess\M2ePro\Model\ChangeTracker\Base\BasePriceTracker;
-use Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder;
-
-class PriceTracker extends BasePriceTracker
+class PriceTracker extends \Ess\M2ePro\Model\ChangeTracker\Base\AbstractPriceTracker
 {
     /**
      * @return string
@@ -15,10 +14,7 @@ class PriceTracker extends BasePriceTracker
         return 'COALESCE(c_lpv.online_price, c_lp.online_current_price, 0)';
     }
 
-    /**
-     * @return \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder
-     */
-    protected function productSubQuery(): SelectQueryBuilder
+    protected function productSubQuery(): \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder
     {
         $query = parent::productSubQuery();
 

@@ -438,6 +438,10 @@ class Config extends AbstractConfig
             'y25_m09' => [
                 'EnableAmazonBusinessForAustralia',
             ],
+            'y25_m10' => [
+                'RemoveWalmartShippingOverrides',
+                'RepricerMaxMinPriceUpdateWorkflow',
+            ],
         ];
     }
 
@@ -546,6 +550,7 @@ class Config extends AbstractConfig
             \Ess\M2ePro\Setup\Update\y25_m06\AddReviseConditionsForAmazonTemplateSynchronization::class,
 
             \Ess\M2ePro\Setup\Update\y25_m07\AddOnlineStrikeThroughPriceColumnToEbayListingProductTable::class,
+            \Ess\M2ePro\Setup\Update\y25_m10\RemoveWalmartShippingOverrides::class,
         ];
     }
 

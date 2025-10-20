@@ -1,16 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ess\M2ePro\Model\ChangeTracker\Walmart;
 
-use Ess\M2ePro\Model\ChangeTracker\Base\BaseInventoryTracker;
-use Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder;
-
-class InventoryTracker extends BaseInventoryTracker
+class InventoryTracker extends \Ess\M2ePro\Model\ChangeTracker\Base\AbstractInventoryTracker
 {
-    /**
-     * @return \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder
-     */
-    protected function productSubQuery(): SelectQueryBuilder
+    protected function productSubQuery(): \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder
     {
         return parent::productSubQuery()
                      ->andWhere('c_lp.is_variation_parent = ?', 0);

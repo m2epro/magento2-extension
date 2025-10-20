@@ -11,8 +11,6 @@ namespace Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Walmart;
 use Ess\M2ePro\Model\ResourceModel\Template\SellingFormat\CollectionFactory as TemplateSellingFormatCollectionFactory;
 use Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat\Promotion\CollectionFactory
     as PromotionCollectionFactory;
-use Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat\ShippingOverride\CollectionFactory
-    as ShippingOverrideCollectionFactory;
 
 class TemplateSellingFormat implements \Ess\M2ePro\Model\Servicing\Task\Analytics\CollectorInterface
 {
@@ -20,18 +18,14 @@ class TemplateSellingFormat implements \Ess\M2ePro\Model\Servicing\Task\Analytic
     private $templateSellingFormatEntityCollectionFactory;
     /** @var \Ess\M2ePro\Model\ResourceModel\Template\SellingFormat\Collection|null  */
     private $entityCollection;
-    /** @var ShippingOverrideCollectionFactory */
-    private $shippingOverrideCollectionFactory;
     /** @var PromotionCollectionFactory */
     private $promotionCollectionFactory;
 
     public function __construct(
         TemplateSellingFormatCollectionFactory $templateSellingFormatEntityCollectionFactory,
-        ShippingOverrideCollectionFactory $shippingOverrideCollectionFactory,
         PromotionCollectionFactory $promotionCollectionFactory
     ) {
         $this->templateSellingFormatEntityCollectionFactory = $templateSellingFormatEntityCollectionFactory;
-        $this->shippingOverrideCollectionFactory = $shippingOverrideCollectionFactory;
         $this->promotionCollectionFactory = $promotionCollectionFactory;
     }
 
@@ -100,14 +94,12 @@ class TemplateSellingFormat implements \Ess\M2ePro\Model\Servicing\Task\Analytic
                 'ships_in_original_packaging_value' => $childItem->getData('ships_in_original_packaging_value'),
                 'ships_in_original_packaging_custom_attribute' =>
                     $childItem->getData('ships_in_original_packaging_custom_attribute'),
-                'shipping_override_rule_mode' => $childItem->getData('shipping_override_rule_mode'),
                 'sale_time_start_date_mode' => $childItem->getData('sale_time_start_date_mode'),
                 'sale_time_start_date_value' => $childItem->getData('sale_time_start_date_value'),
                 'sale_time_start_date_custom_attribute' => $childItem->getData('sale_time_start_date_custom_attribute'),
                 'sale_time_end_date_mode' => $childItem->getData('sale_time_end_date_mode'),
                 'sale_time_end_date_value' => $childItem->getData('sale_time_end_date_value'),
                 'sale_time_end_date_custom_attribute' => $childItem->getData('sale_time_end_date_custom_attribute'),
-                'shipping_overrides' => $this->addShippingOverridesData($item->getData('id')),
                 'promotions' => $this->addPromotionData($item->getData('id')),
             ];
 
@@ -122,16 +114,6 @@ class TemplateSellingFormat implements \Ess\M2ePro\Model\Servicing\Task\Analytic
         }
 
         return $this->entityCollection;
-    }
-
-    private function addShippingOverridesData(int $id): array
-    {
-        $shippingOverrides = $this->shippingOverrideCollectionFactory
-            ->create()
-            ->addFieldToFilter('template_selling_format_id', $id)
-            ->toArray();
-
-        return $this->unsetDataInRelatedItems($shippingOverrides['items']);
     }
 
     private function addPromotionData(int $id): array

@@ -28,7 +28,7 @@ class View extends StepAbstract
              ->getTitle()
              ->prepend(__('Add Magento Products'));
 
-        $this->setPageHelpLink('https://docs-m2.m2epro.com/');
+        $this->setPageHelpLink('docs/add-magento-products-manually2/');
 
         return $this->getResult();
     }

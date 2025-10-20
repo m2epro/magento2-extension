@@ -129,9 +129,6 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'ships_in_original_packaging_mode' => WalmartSellingFormat::SHIPS_IN_ORIGINAL_PACKAGING_MODE_NONE,
             'ships_in_original_packaging_value' => '',
             'ships_in_original_packaging_custom_attribute' => '',
-
-            'shipping_override_rule_mode' => WalmartSellingFormat::SHIPPING_OVERRIDE_RULE_MODE_NO,
-            'shipping_override_rule' => [],
         ];
     }
 }

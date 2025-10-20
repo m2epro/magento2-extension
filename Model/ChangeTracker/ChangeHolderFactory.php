@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ess\M2ePro\Model\ChangeTracker\Base;
+namespace Ess\M2ePro\Model\ChangeTracker;
 
 class ChangeHolderFactory
 {

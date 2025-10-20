@@ -1,92 +1,61 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ess\M2ePro\Model\ChangeTracker\Base;
 
-use Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger;
-use Ess\M2ePro\Model\ChangeTracker\Common\PriceCondition\PriceConditionFactory;
-use Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder;
-use Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\QueryBuilderFactory;
-use Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder;
-
-abstract class BasePriceTracker implements TrackerInterface
+abstract class AbstractPriceTracker implements \Ess\M2ePro\Model\ChangeTracker\TrackerInterface
 {
-    private string $channel;
-    protected SelectQueryBuilder $queryBuilder;
-    protected TrackerLogger $logger;
-    protected ProductAttributesQueryBuilder $attributesQueryBuilder;
+    use \Ess\M2ePro\Model\ChangeTracker\Traits\TableNameReplacerTrait;
+    use \Ess\M2ePro\Model\ChangeTracker\Traits\AffectedMagentoProductLoaderTrait;
+
+    private \Ess\M2ePro\Model\ChangeTracker\TrackerConfiguration $configuration;
+    private \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\QueryBuilderFactory $queryBuilderFactory;
+    private \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder $attributesQueryBuilder;
     private \Ess\M2ePro\Model\ChangeTracker\Common\PriceCondition\AbstractPriceCondition $priceConditionBuilder;
-    private int $listingProductIdFrom;
-    private int $listingProductIdTo;
-    private array $magentoProductIds;
+    private \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger $logger;
 
     public function __construct(
-        string $channel,
-        QueryBuilderFactory $queryBuilderFactory,
-        ProductAttributesQueryBuilder $attributesQueryBuilder,
-        PriceConditionFactory $conditionFactory,
-        TrackerLogger $logger,
-        int $listingProductIdFrom,
-        int $listingProductIdTo
+        \Ess\M2ePro\Model\ChangeTracker\TrackerConfiguration $configuration,
+        \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\QueryBuilderFactory $queryBuilderFactory,
+        \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder $attributesQueryBuilder,
+        \Ess\M2ePro\Model\ChangeTracker\Common\PriceCondition\PriceConditionFactory $conditionFactory,
+        \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger $logger
     ) {
-        $this->channel = $channel;
-        $this->queryBuilder = $queryBuilderFactory->make();
+        $this->configuration = $configuration;
+        $this->queryBuilderFactory = $queryBuilderFactory;
         $this->attributesQueryBuilder = $attributesQueryBuilder;
-        $this->priceConditionBuilder = $conditionFactory->create($channel);
+        $this->priceConditionBuilder = $conditionFactory->create($configuration->channel);
         $this->logger = $logger;
-        $this->listingProductIdFrom = $listingProductIdFrom;
-        $this->listingProductIdTo = $listingProductIdTo;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
-        return TrackerInterface::TYPE_PRICE;
+        return \Ess\M2ePro\Model\ChangeTracker\TrackerInterface::TYPE_PRICE;
     }
 
-    /**
-     * @return string
-     */
     public function getChannel(): string
     {
-        return $this->channel;
+        return $this->configuration->channel;
     }
 
     public function getListingProductIdFrom(): int
     {
-        return $this->listingProductIdFrom;
+        return $this->configuration->listingProductIdFrom;
     }
 
     public function getListingProductIdTo(): int
     {
-        return $this->listingProductIdTo;
+        return $this->configuration->listingProductIdTo;
     }
 
-    public function getMagentoProductIds(): array
+    /**
+     * @return array<int>
+     * @throws \Zend_Db_Statement_Exception
+     */
+    public function getAffectedMagentoProductIds(): array
     {
-        if (!isset($this->magentoProductIds)) {
-            $this->magentoProductIds = $this->loadMagentoProductIds();
-        }
-
-        return $this->magentoProductIds;
-    }
-
-    private function loadMagentoProductIds(): array
-    {
-        $queryResult = $this->queryBuilder
-            ->makeSubQuery()
-            ->distinct()
-            ->addSelect('product_id', 'product.product_id')
-            ->from('product', $this->productSubQuery())
-            ->fetchAll();
-
-        $result = [];
-        foreach ($queryResult as $data) {
-            $result[] = (int)$data['product_id'];
-        }
-
-        return $result;
+        return $this->loadAffectedMagentoProductIds();
     }
 
     /**
@@ -104,13 +73,14 @@ abstract class BasePriceTracker implements TrackerInterface
 
     /**
      * @return \Magento\Framework\DB\Select
+     * @throws \Exception
      */
     public function getDataQuery(): \Magento\Framework\DB\Select
     {
         $query = $this->getSelectQuery();
 
-        $mainQuery = $this->queryBuilder
-            ->makeSubQuery()
+        $mainQuery = $this->queryBuilderFactory
+            ->createSelect()
             ->distinct()
             ->addSelect('listing_product_id', 'base.listing_product_id')
             ->from('base', $query);
@@ -122,26 +92,29 @@ abstract class BasePriceTracker implements TrackerInterface
                   ->andWhere('base.status = ?', \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED)
                   ->andWhere('base.revise_update_price = 1');
 
-        $message = sprintf(
-            'Data query %s %s',
-            $this->getType(),
-            $this->getChannel()
-        );
-        $this->logger->debug($message, [
-            'query' => (string)$mainQuery->getQuery(),
-            'type' => $this->getType(),
-            'channel' => $this->getChannel(),
-        ]);
-
         return $mainQuery->getQuery();
+    }
+
+    public function processQueryRow(array $row): ?array
+    {
+        return [
+            'listing_product_id' => $row['listing_product_id'],
+            'type' => \Ess\M2ePro\Model\ChangeTracker\ChangeHolder::INSTRUCTION_TYPE_CHANGE_TRACKER_PRICE,
+            'component' => $this->getChannel(),
+            'initiator' => sprintf('%s_%s', $this->getType(), $this->getChannel()),
+            'additional_data' => $row['additional_data'] ?? null,
+            'priority' => 100,
+            'create_date' => new \Zend_Db_Expr('NOW()'),
+        ];
     }
 
     /**
      * @throws \Zend_Db_Statement_Exception
+     * @throws \Exception
      */
-    protected function productSubQuery(): SelectQueryBuilder
+    protected function productSubQuery(): \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder
     {
-        $query = $this->queryBuilder->makeSubQuery();
+        $query = $this->queryBuilderFactory->createSelect();
         $query->distinct();
 
         $query->addSelect('listing_product_id', 'lp.id');
@@ -156,7 +129,7 @@ abstract class BasePriceTracker implements TrackerInterface
             ->addSelect('selling_template_id', 'c_l.template_selling_format_id');
 
         $query->addSelect('online_price', $this->getOnlinePriceCondition());
-        $query->addSelect('currency_rate', $this->getCurrencyRateSubQuery());
+        $query->addSelect('currency_rate', (string)$this->getCurrencyRateSubQuery());
 
         /* Select base attributes */
         $attributes = [
@@ -174,7 +147,7 @@ abstract class BasePriceTracker implements TrackerInterface
                 $productIdExpression
             );
 
-            $query->addSelect($alias, $attributeQuery);
+            $query->addSelect($alias, (string)$attributeQuery);
         }
 
         $query
@@ -241,13 +214,10 @@ abstract class BasePriceTracker implements TrackerInterface
         return $query;
     }
 
-    /**
-     * @return SelectQueryBuilder
-     */
-    protected function synchronizationPolicySubQuery(): SelectQueryBuilder
+    protected function synchronizationPolicySubQuery(): \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder
     {
-        return $this->queryBuilder
-            ->makeSubQuery()
+        return $this->queryBuilderFactory
+            ->createSelect()
             ->addSelect('template_synchronization_id', 'ts.template_synchronization_id')
             ->addSelect('revise_update_price', 'ts.revise_update_price')
             ->from(
@@ -258,14 +228,15 @@ abstract class BasePriceTracker implements TrackerInterface
 
     /**
      * @inheridoc
+     * @throws \Zend_Db_Statement_Exception
      */
-    protected function getSelectQuery(): SelectQueryBuilder
+    protected function getSelectQuery(): \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder
     {
-        $query = $this->queryBuilder;
+        $query = $this->queryBuilderFactory->createSelect();
 
         /* Required selects */
         $query->addSelect('listing_product_id', 'product.listing_product_id');
-        $query->addSelect('calculated_price', $this->priceConditionBuilder->getCondition($this));
+        $query->addSelect('calculated_price', $this->priceConditionBuilder->getCondition());
 
         $query->addSelect('product_id', 'product.product_id')
               ->addSelect('status', 'product.status')
@@ -293,53 +264,13 @@ abstract class BasePriceTracker implements TrackerInterface
     }
 
     /**
-     * @param string $tableName
-     *
-     * @return string
-     */
-    protected function setChannelToTableName(string $tableName): string
-    {
-        return sprintf($tableName, $this->getChannel());
-    }
-
-    protected function getPriceColumnCondition(int $mode, $modeAttribute): string
-    {
-        if ($mode === \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL) {
-            return '(CASE
-            WHEN product.special_price IS NOT NULL
-                AND product.special_from_date IS NOT NULL
-                AND product.special_to_date IS NOT NULL
-                AND NOW() BETWEEN product.special_from_date AND product.special_to_date
-            THEN product.special_price
-            WHEN product.special_price IS NOT NULL
-                AND product.special_from_date IS NOT NULL
-                AND product.special_from_date + INTERVAL 1 YEAR > NOW()
-            THEN product.special_price
-            ELSE product.price
-          END)';
-        }
-
-        if ($mode === \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE) {
-            $attributeQuery = $this->attributesQueryBuilder
-                ->getQueryForAttribute(
-                    $modeAttribute,
-                    'product.store_id',
-                    'product.product_id'
-                );
-
-            return "($attributeQuery)";
-        }
-
-        return 'product.price';
-    }
-
-    /**
      * @return \Zend_Db_Expr
      * @throws \Zend_Db_Statement_Exception
+     * @throws \Exception
      */
     protected function getCurrencyRateSubQuery(): \Zend_Db_Expr
     {
-        $select = $this->queryBuilder->makeSubQuery();
+        $select = $this->queryBuilderFactory->createSelect();
         $select->distinct();
         $select->addSelect('store', 'listing.store_id');
         $select->addSelect('marketplace', 'marketplace.marketplace_id');
@@ -404,7 +335,7 @@ abstract class BasePriceTracker implements TrackerInterface
         $ratesByStores = $select->fetchAll();
 
         $this->logger->debug('Get Currency Rates', [
-            'sql' => $select->getQuery()->__tostring(),
+            'sql' => (string)$select,
             'result' => $ratesByStores,
             'tracker' => $this,
         ]);

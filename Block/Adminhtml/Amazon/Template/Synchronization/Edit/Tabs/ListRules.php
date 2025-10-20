@@ -1,10 +1,6 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Tabs;
 
@@ -14,22 +10,17 @@ use Ess\M2ePro\Model\Template\Synchronization as TemplateSynchronization;
 
 class ListRules extends AbstractForm
 {
-    /** @var \Ess\M2ePro\Helper\Module\Support */
-    private $supportHelper;
-
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-
-    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
-    private $globalDataHelper;
+    private \Ess\M2ePro\Helper\Module\Support $supportHelper;
+    private \Ess\M2ePro\Helper\Data $dataHelper;
+    private \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper;
 
     public function __construct(
-        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
-        \Magento\Framework\Registry $registry,
-        \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
         $this->supportHelper = $supportHelper;
@@ -44,8 +35,9 @@ class ListRules extends AbstractForm
         $formData = $template !== null
             ? array_merge($template->getData(), $template->getChildObject()->getData()) : [];
 
-        $defaults = $this->modelFactory->getObject('Amazon_Template_Synchronization_Builder')->getDefaultData();
-        $formData = array_merge($defaults, $formData);
+        /** @var \Ess\M2ePro\Model\Amazon\Template\Synchronization\Builder $synchronizationBuilder */
+        $synchronizationBuilder = $this->modelFactory->getObject('Amazon_Template_Synchronization_Builder');
+        $formData = array_merge($synchronizationBuilder->getDefaultData(), $formData);
 
         $form = $this->_formFactory->create();
 
@@ -53,19 +45,17 @@ class ListRules extends AbstractForm
             'amazon_template_synchronization_general',
             self::HELP_BLOCK,
             [
-                'content' => $this->__(
-                    <<<HTML
-                    <p>If <strong>List Action</strong> is enabled, each new Item in M2E Pro Listing, that
-                    has Not Listed status and the settings met specified List Conditions,
-                    will be listed automatically</p><br/>
-                    <p><strong>Note:</strong> M2E Pro Listings Synchronization must be enabled
-                    <strong>(Amazon Integration > Configuration > Settings > Synchronization)</strong>.
-                    Otherwise, Synchronization Policy Rules will not take effect.</p><br/>
-                    <p>More detailed information about how to work with this Page you can find
-                    <a href="%url%" target="_blank" class="external-link">here</a>.</p>
-HTML
-                    ,
-                    $this->supportHelper->getDocumentationArticleUrl('amazon-list-rules')
+                'content' => __(
+                    '<p>If <strong>List Action</strong> is enabled, each new Item in ' .
+                    'M2E Pro Listing, that has Not Listed status and the settings met specified List Conditions, ' .
+                    'will be listed automatically</p><br/><p><strong>Note:</strong> M2E Pro Listings ' .
+                    'Synchronization must be enabled <strong>(Amazon Integration > Configuration > ' .
+                    'Settings > Synchronization)</strong>. Otherwise, Synchronization Policy Rules will not ' .
+                    'take effect.</p><br/><p>More detailed information about how to work with this Page you can find ' .
+                    '<a href="%url" target="_blank" class="external-link">here</a>.</p>',
+                    [
+                        'url' => $this->supportHelper->getDocumentationArticleUrl('docs/amazon-list-rules/'),
+                    ]
                 ),
             ]
         );
@@ -90,8 +80,8 @@ HTML
                     1 => __('Enabled'),
                 ],
                 'tooltip' => __(
-                    'Enables / disables automatic Listing of <i>Not Listed</i> Items,
-                    when they meet the List Conditions.'
+                    'Enables / disables automatic Listing of <i>Not Listed</i> Items, ' .
+                    'when they meet the List Conditions.'
                 ),
             ]
         );
@@ -116,9 +106,9 @@ HTML
                     1 => __('Enabled'),
                 ],
                 'tooltip' => __(
-                    '<p><strong>Enabled:</strong> List Items on Amazon automatically if they have status
-                    Enabled in Magento Product. (Recommended)</p>
-                    <p><strong>Any:</strong> List Items with any Magento Product status on Amazon automatically.</p>'
+                    '<p><strong>Enabled:</strong> List Items on Amazon automatically if they ' .
+                    'have status Enabled in Magento Product. (Recommended)</p><p><strong>Any:</strong> ' .
+                    'List Items with any Magento Product status on Amazon automatically.</p>'
                 ),
             ]
         );
@@ -135,9 +125,9 @@ HTML
                     1 => __('In Stock'),
                 ],
                 'tooltip' => __(
-                    '<p><strong>In Stock:</strong> List Items automatically if Products are
-                    in Stock. (Recommended.)</p>
-                    <p><strong>Any:</strong> List Items automatically, regardless of Stock availability.</p>'
+                    '<p><strong>In Stock:</strong> List Items automatically if ' .
+                    'Products are in Stock. (Recommended.)</p><p><strong>Any:</strong> List Items automatically, ' .
+                    'regardless of Stock availability.</p>'
                 ),
             ]
         );
@@ -154,10 +144,10 @@ HTML
                     TemplateSynchronization::QTY_MODE_YES => __('More or Equal'),
                 ],
                 'tooltip' => __(
-                    '<p><strong>Any:</strong> List Items automatically with any Quantity available.</p>
-                    <p><strong>More or Equal:</strong> List Items automatically if the Quantity is at
-                    least equal to the number you set, according to the Selling Policy.
-                    (Recommended)</p>'
+                    '<p><strong>Any:</strong> List Items automatically with any ' .
+                    'Quantity available.</p><p><strong>More or Equal:</strong> List Items automatically ' .
+                    'if the Quantity is at least equal to the number you set, according to the Selling Policy. ' .
+                    '(Recommended)</p>'
                 ),
             ]
         )->setAfterElementHtml(
@@ -175,8 +165,9 @@ HTML
                 'legend' => __('Advanced Conditions'),
                 'collapsable' => false,
                 'tooltip' => __(
-                    '<p>Define Magento Attribute value(s) based on which a product must be listed on the Channel.<br>
-                    Once both List Conditions and Advanced Conditions are met, the product will be listed.</p>'
+                    '<p>Define Magento Attribute value(s) based on which a product must be listed ' .
+                    'on the Channel.<br>Once both List Conditions and Advanced Conditions are met, ' .
+                    'the product will be listed.</p>'
                 ),
             ]
         );
@@ -189,9 +180,10 @@ HTML
                     [
                         'type' => \Magento\Framework\Message\MessageInterface::TYPE_WARNING,
                         'content' => __(
-                            'Please be very thoughtful before enabling this option as this functionality can have
-                        a negative impact on the Performance of your system.<br> It can decrease the speed of running
-                        in case you have a lot of Products with the high number of changes made to them.'
+                            'Please be very thoughtful before enabling this option as this functionality ' .
+                            'can have a negative impact on the Performance of your system.<br>' .
+                            'It can decrease the speed of running in case you have a lot of Products with the ' .
+                            'high number of changes made to them.'
                         ),
                     ],
                 ],
@@ -212,16 +204,21 @@ HTML
             ]
         );
 
-        $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
-            ['prefix' => Synchronization::LIST_ADVANCED_RULES_PREFIX]
-        );
+        /** @var \Ess\M2ePro\Model\Magento\Product\Rule $ruleModel */
+        $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule');
+        $ruleModel->setData([
+            'prefix' => Synchronization::LIST_ADVANCED_RULES_PREFIX
+        ]);
 
         if (!empty($formData['list_advanced_rules_filters'])) {
             $ruleModel->loadFromSerialized($formData['list_advanced_rules_filters']);
         }
 
-        $ruleBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule::class)
-                          ->setData(['rule_model' => $ruleModel]);
+        /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule $ruleBlock */
+        $ruleBlock = $this
+            ->getLayout()
+            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule::class)
+            ->setData(['rule_model' => $ruleModel]);
 
         $fieldset->addField(
             'advanced_filter',

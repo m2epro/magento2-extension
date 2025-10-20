@@ -94,17 +94,18 @@ class Destination extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     protected function _toHtml()
     {
         $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
-            'content' => $this->__(
-                <<<HTML
-The Sell on Another Marketplace feature allows you to list products on multiple eBay marketplaces.
-To do it, you have to choose From and To Accounts, Marketplaces, Store Views and Listings.
-Click <a href="%url%" target="_blank">here</a> to learn more detailed information.
-HTML
-                ,
-                $this->supportHelper->getDocumentationArticleUrl('display/eBayMagentoV6X/Sell+on+another+eBay+Site')
+            'content' => __(
+                'The Sell on Another Marketplace feature allows you to list products on ' .
+                'multiple eBay marketplaces. To do it, you have to choose From and To Accounts, ' .
+                'Marketplaces, Store Views and Listings. Click <a href="%url" target="_blank">here</a> ' .
+                'to learn more detailed information.',
+                [
+                    'url' => $this->supportHelper
+                        ->getDocumentationArticleUrl('docs/sell-on-another-ebay-marketplace/'),
+                ]
             ),
             'style' => 'margin-top: 15px;',
-            'title' => $this->__('Sell on Another Marketplace'),
+            'title' => __('Sell on Another Marketplace'),
         ]);
 
         $parentHtml = parent::_toHtml();

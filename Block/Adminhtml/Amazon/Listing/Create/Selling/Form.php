@@ -263,12 +263,7 @@ class Form extends AbstractForm
                     'name' => 'template_selling_format_id',
                     'style' => 'width: 50%;' . $style,
                     'no_span' => true,
-                    'values' => array_merge(
-                        [
-                            '' => '',
-                        ],
-                        $sellingFormatTemplates
-                    ),
+                    'values' => $sellingFormatTemplates,
                     'value' => $formData['template_selling_format_id'],
                     'required' => true,
                 ],
@@ -341,12 +336,7 @@ HTML
                     'name' => 'template_synchronization_id',
                     'style' => 'width: 50%;' . $style,
                     'no_span' => true,
-                    'values' => array_merge(
-                        [
-                            '' => '',
-                        ],
-                        $synchronizationTemplates
-                    ),
+                    'values' => $synchronizationTemplates,
                     'value' => $formData['template_synchronization_id'],
                     'required' => true,
                 ],
@@ -412,7 +402,7 @@ HTML
                     'name' => 'template_shipping_id',
                     'style' => 'width: 50%;' . $style,
                     'no_span' => true,
-                    'values' => array_merge(['' => ' '], $shippingTemplates),
+                    'values' => array_merge(['' => ''], $shippingTemplates),
                     'value' => $formData['template_shipping_id'],
                     'required' => false,
                 ],

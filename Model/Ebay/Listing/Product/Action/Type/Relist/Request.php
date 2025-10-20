@@ -57,6 +57,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
         );
 
         if ($this->getConfigurator()->isGeneralAllowed()) {
+            $this->addWarningIfSkuChanged();
             $data['sku'] = $this->getSku();
         }
 

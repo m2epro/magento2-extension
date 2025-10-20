@@ -89,12 +89,12 @@ class Combine extends AbstractModel
         if ($magentoHelper->isMSISupportingVersion()) {
             $conditions[] = [
                 'label' => __('MSI Source QTY'),
-                'value' => $this->getMsiSourceOptions()
+                'value' => $this->getMsiSourceOptions(),
             ];
 
             $conditions[] = [
                 'label' => __('MSI Stock QTY'),
-                'value' => $this->getMsiStockOptions()
+                'value' => $this->getMsiStockOptions(),
             ];
         }
 
@@ -446,17 +446,38 @@ class Combine extends AbstractModel
         return $all ? true : false;
     }
 
-    public function collectValidatedAttributes($productCollection)
+    public function collectValidatedAttributes($productCollection): self
     {
-        foreach ($this->getConditions() as $condition) {
-            if (!$condition->isAttributeExist()) {
+        $this->recursiveCollectValidatedAttributes($this->getConditions(), $productCollection);
+
+        return $this;
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Magento\Product\Rule\Condition\AbstractModel[] $conditions
+     * @param $productCollection
+     *
+     * @return void
+     */
+    private function recursiveCollectValidatedAttributes(array $conditions, $productCollection)
+    {
+        foreach ($conditions as $condition) {
+            if ($condition instanceof \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Combine) {
+                $this->recursiveCollectValidatedAttributes($condition->getConditions(), $productCollection);
                 continue;
             }
 
-            $condition->collectValidatedAttributes($productCollection);
-        }
+            if (
+                method_exists($condition, 'isAttributeExist')
+                && !$condition->isAttributeExist()
+            ) {
+                continue;
+            }
 
-        return $this;
+            if (method_exists($condition, 'collectValidatedAttributes')) {
+                $condition->collectValidatedAttributes($productCollection);
+            }
+        }
     }
 
     public function setJsFormObject($form)

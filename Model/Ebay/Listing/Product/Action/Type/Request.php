@@ -367,12 +367,20 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
 
     //########################################
 
-    /**
-     * @return string
-     */
-    public function getSku()
+    public function getSku(): string
     {
-        return $this->getEbayListingProduct()->getSku();
+        return (string)$this->getEbayListingProduct()->getSku();
+    }
+
+    public function addWarningIfSkuChanged()
+    {
+        $productSku = (string)$this->getEbayListingProduct()->getMagentoProduct()->getSku();
+        if ($productSku !== $this->getSku()) {
+            $this->addWarningMessage(
+                __('Original SKU length exceeded 50 characters. ' .
+                    'A new eBay-compliant SKU was generated automatically.')
+            );
+        }
     }
 
     /**

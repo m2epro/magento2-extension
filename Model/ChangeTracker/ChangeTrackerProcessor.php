@@ -6,26 +6,29 @@ namespace Ess\M2ePro\Model\ChangeTracker;
 
 class ChangeTrackerProcessor
 {
-    private \Ess\M2ePro\Model\ChangeTracker\Base\InventoryTrackerFactory $inventoryTrackerFactory;
-    private \Ess\M2ePro\Model\ChangeTracker\Base\PriceTrackerFactory $priceTrackerFactory;
-    private \Ess\M2ePro\Model\ChangeTracker\Base\ChangeHolderFactory $changeHolderFactory;
-    private \Ess\M2ePro\Model\ChangeTracker\PartManager $partManager;
+    private TrackerRepository $trackerRepository;
+    private TrackerFactory $trackerFactory;
+    private ChangeHolderFactory $changeHolderFactory;
+    private PartManager $partManager;
     private \Magento\Framework\Event\ManagerInterface $eventDispatcher;
 
     public function __construct(
-        \Ess\M2ePro\Model\ChangeTracker\Base\InventoryTrackerFactory $inventoryTrackerFactory,
-        \Ess\M2ePro\Model\ChangeTracker\Base\PriceTrackerFactory $priceTrackerFactory,
-        \Ess\M2ePro\Model\ChangeTracker\Base\ChangeHolderFactory $changeHolderFactory,
-        \Ess\M2ePro\Model\ChangeTracker\PartManager $partManager,
+        TrackerRepository $trackerRepository,
+        TrackerFactory $trackerFactory,
+        ChangeHolderFactory $changeHolderFactory,
+        PartManager $partManager,
         \Magento\Framework\Event\ManagerInterface $eventDispatcher
     ) {
-        $this->inventoryTrackerFactory = $inventoryTrackerFactory;
-        $this->priceTrackerFactory = $priceTrackerFactory;
+        $this->trackerRepository = $trackerRepository;
+        $this->trackerFactory = $trackerFactory;
         $this->changeHolderFactory = $changeHolderFactory;
         $this->partManager = $partManager;
         $this->eventDispatcher = $eventDispatcher;
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function process(): void
     {
         $totalPartsCount = $this->partManager->getPartsCount();
@@ -45,29 +48,16 @@ class ChangeTrackerProcessor
     private function processPart(array $part): void
     {
         foreach ($part as $trackerConfiguration) {
-            $this->trackInventoryChanges($trackerConfiguration);
-            $this->trackPriceChanges($trackerConfiguration);
+            $trackers = $this->trackerRepository->getTrackersByChannel($trackerConfiguration->channel);
+            foreach ($trackers as $trackerClassName) {
+                $tracker = $this->trackerFactory
+                    ->create($trackerClassName, $trackerConfiguration);
+
+                $this->changeHolderFactory
+                    ->create()
+                    ->holdChanges($tracker);
+            }
         }
-    }
-
-    private function trackInventoryChanges(TrackerConfiguration $trackerConfiguration): void
-    {
-        $changeHolder = $this->changeHolderFactory->create();
-        $changeHolder->holdChanges(
-            $this->inventoryTrackerFactory->createByConfiguration(
-                $trackerConfiguration
-            )
-        );
-    }
-
-    private function trackPriceChanges(TrackerConfiguration $trackerConfiguration): void
-    {
-        $changeHolder = $this->changeHolderFactory->create();
-        $changeHolder->holdChanges(
-            $this->priceTrackerFactory->createByConfiguration(
-                $trackerConfiguration
-            )
-        );
     }
 
     private function dispatchKeepAliveEvent(int $totalPartsCount, int $currentPartNumber): void

@@ -1,18 +1,12 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
-use Ess\M2ePro\Helper\Component\Walmart;
 use Ess\M2ePro\Helper\Component\Amazon;
 use Ess\M2ePro\Helper\Component\Ebay;
+use Ess\M2ePro\Helper\Component\Walmart;
 
 class Integration extends Command
 {
@@ -34,13 +28,16 @@ class Integration extends Command
      */
     public function getRequestDataAction()
     {
-        if ($this->getRequest()->getParam('print')) {
-            $listingProductId = (int)$this->getRequest()->getParam('listing_product_id');
-            /** @var \Ess\M2ePro\Model\Listing\Product $lp */
-            $lp = $this->activeRecordFactory->getObjectLoaded('Listing\Product', $listingProductId);
-            $componentMode = $lp->getComponentMode();
-            $requestType = $this->getRequest()->getParam('request_type');
+        $listingProductId = $this->getRequest()->getParam('listing_product_id', '');
+        $requestType = $this->getRequest()->getParam('request_type', '');
 
+        $resultBlockHtml = '';
+        if (!empty($listingProductId) && !empty($requestType)) {
+            /** @var \Ess\M2ePro\Model\Listing\Product $lp */
+            $lp = $this->activeRecordFactory->getObjectLoaded('Listing\Product', (int)$listingProductId);
+            $componentMode = $lp->getComponentMode();
+
+            $result = [];
             if ($componentMode == 'ebay') {
                 /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator $configurator */
                 $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
@@ -53,7 +50,7 @@ class Integration extends Command
                 $request->setConfigurator($configurator);
 
                 // @codingStandardsIgnoreLine
-                return '<pre>' . print_r($request->getRequestData(), true);
+                $result = $request->getRequestData();
             }
 
             if ($componentMode == 'amazon') {
@@ -77,7 +74,7 @@ class Integration extends Command
                 }
 
                 // @codingStandardsIgnoreLine
-                return '<pre>' . print_r($request->getRequestData(), true);
+                $result = $request->getRequestData();
             }
 
             if ($componentMode == 'walmart') {
@@ -98,42 +95,57 @@ class Integration extends Command
                 $request->setConfigurator($configurator);
 
                 // @codingStandardsIgnoreLine
-                return '<pre>' . print_r($request->getRequestData(), true);
+                $result = $request->getRequestData();
             }
 
-            return '';
+            $resultBlockHtml = sprintf(
+                '<pre class="card"><code>%s</code></pre>',
+                htmlentities(
+                    $this->jsonEncode($result),
+                    ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401
+                )
+            );
         }
 
         $formKey = $this->formKey->getFormKey();
         $actionUrl = $this->getUrl('*/*/*', ['action' => 'getRequestData']);
 
-        return <<<HTML
-<form method="get" enctype="multipart/form-data" action="{$actionUrl}">
+        $typeOptions = [
+            ['value' => 'ListAction', 'label' => 'List'],
+            ['value' => 'Relist', 'label' => 'Relist'],
+            ['value' => 'Revise', 'label' => 'Revise'],
+        ];
 
-    <div style="margin: 5px 0; width: 400px;">
-        <label style="width: 170px; display: inline-block;">Listing Product ID: </label>
-        <input name="listing_product_id" style="width: 200px;" required>
+        $requestTypeOptions = implode('', array_map(function (array $type) use ($requestType) {
+            return sprintf(
+                '<option value="%s" %s>%s</option>',
+                $type['value'],
+                $requestType === $type['value'] ? 'selected="selected"' : '',
+                $type['label']
+            );
+        }, $typeOptions));
+
+        $formHtml = <<<HTML
+<form class="card gray" method="get" enctype="multipart/form-data" action="$actionUrl">
+    <input name="form_key" value="$formKey" type="hidden" />
+    <div class="row">
+        <label for="listing_product_id" class="required">Listing Product ID:</label>
+        <input id="listing_product_id" name="listing_product_id" class="form-control" type="text" value="$listingProductId" required>
     </div>
-
-    <div style="margin: 5px 0; width: 400px;">
-        <label style="width: 170px; display: inline-block;">Request Type: </label>
-        <select name="request_type" style="width: 200px;" required>
-            <option style="display: none;"></option>
-            <option value="ListAction">List</option>
-            <option value="Relist">Relist</option>
-            <option value="Revise">Revise</option>
+    <div class="row">
+        <label for="request_type" class="required">Request Type:</label>
+        <select class="form-control" id="request_type" name="request_type" required>
+            <option hidden="hidden"></option>
+            $requestTypeOptions
         </select>
     </div>
-
-    <input name="form_key" value="{$formKey}" type="hidden" />
-    <input name="print" value="1" type="hidden" />
-
-    <div style="margin: 10px 0; width: 365px; text-align: right;">
-        <button type="submit">Show</button>
+    <div class="row">
+        <button type="submit" class="button">Show</button>
     </div>
-
 </form>
 HTML;
+
+        return $this->getStyleHtml() . $formHtml . $resultBlockHtml;
     }
 
     /**
@@ -142,9 +154,9 @@ HTML;
      */
     public function getInspectorDataAction()
     {
-        if ($this->getRequest()->getParam('print')) {
-            $listingProductId = $this->getRequest()->getParam('listing_product_id');
-
+        $listingProductId = $this->getRequest()->getParam('listing_product_id');
+        $resultHtml = '';
+        if (!empty($listingProductId)) {
             /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction\Collection $instructionCollection */
             $instructionCollection = $this->activeRecordFactory->getObject(
                 'Listing_Product_Instruction'
@@ -159,13 +171,9 @@ HTML;
             if ($lp->getComponentMode() == 'ebay') {
                 $lp->setChildMode(Ebay::NICK);
 
-                /**@var \Ess\M2ePro\Model\Listing\Product $lp */
-                // $lp = $this->parentFactory->getObjectLoaded(Ebay::NICK, 'Listing\Product', $listingProductId);
-
                 /** @var \Ess\M2ePro\Model\Listing\Product\Instruction\SynchronizationTemplate\Checker\Input $checkerInput */
-                $checkerInput = $this->modelFactory->getObject(
-                    'Listing_Product_Instruction_SynchronizationTemplate_Checker_Input'
-                );
+                $checkerInput = $this->modelFactory
+                    ->getObject('Listing_Product_Instruction_SynchronizationTemplate_Checker_Input');
                 $checkerInput->setListingProduct($lp);
 
                 $instructions = [];
@@ -176,7 +184,7 @@ HTML;
                 }
                 $checkerInput->setInstructions($instructions);
 
-                $html = '<pre>';
+                $html = '<pre class="card">';
 
                 //--
                 /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker\NotListed $checker */
@@ -238,7 +246,7 @@ HTML;
 
                 //--
 
-                return $this->getResponse()->setBody($html);
+                $resultHtml = $html;
             }
 
             if ($lp->getComponentMode() == 'amazon') {
@@ -295,12 +303,8 @@ HTML;
                 $html .= 'isMeetStop: ' . json_encode($checker->isMeetStopRequirements()) . '<br><br>';
 
                 $html .= 'isMeetReviseQty: ' . json_encode($checker->isMeetReviseQtyRequirements()) . '<br>';
-                $html .= 'isMeetRevisePriceReg: ' . json_encode(
-                    $checker->isMeetRevisePriceRegularRequirements()
-                ) . '<br>';
-                $html .= 'isMeetRevisePriceBus: ' . json_encode(
-                    $checker->isMeetRevisePriceBusinessRequirements()
-                ) . '<br>';
+                $html .= 'isMeetRevisePriceReg: ' . json_encode($checker->isMeetRevisePriceRegularRequirements()) . '<br>';
+                $html .= 'isMeetRevisePriceBus: ' . json_encode($checker->isMeetRevisePriceBusinessRequirements()) . '<br>';
                 $html .= 'isMeetReviseDetails: ' . json_encode($checker->isMeetReviseDetailsRequirements()) . '<br>';
                 //--
 
@@ -311,7 +315,7 @@ HTML;
 
                 //--
 
-                return $this->getResponse()->setBody($html);
+                $resultHtml = $html;
             }
 
             if ($lp->getComponentMode() == 'walmart') {
@@ -370,9 +374,7 @@ HTML;
 
                 $html .= 'isMeetReviseQty: ' . json_encode($checker->isMeetReviseQtyRequirements()) . '<br>';
                 $html .= 'isMeetRevisePrice: ' . json_encode($checker->isMeetRevisePriceRequirements()) . '<br>';
-                $html .= 'isMeetRevisePromotions: ' . json_encode(
-                    $checker->isMeetRevisePromotionsRequirements()
-                ) . '<br>';
+                $html .= 'isMeetRevisePromotions: ' . json_encode($checker->isMeetRevisePromotionsRequirements()) . '<br>';
                 $html .= 'isMeetReviseDetails: ' . json_encode($checker->isMeetReviseDetailsRequirements()) . '<br>';
                 //--
 
@@ -383,32 +385,28 @@ HTML;
 
                 //--
 
-                return $this->getResponse()->setBody($html);
+                $resultHtml = $html;
             }
-
-            return '';
         }
 
         $formKey = $this->formKey->getFormKey();
         $actionUrl = $this->getUrl('*/*/*', ['action' => 'getInspectorData']);
 
-        return <<<HTML
-<form method="get" enctype="multipart/form-data" action="{$actionUrl}">
-
-    <div style="margin: 5px 0; width: 400px;">
-        <label style="width: 170px; display: inline-block;">Listing Product ID: </label>
-        <input name="listing_product_id" style="width: 200px;" required>
-    </div>
-
+        $formHtml = <<<HTML
+<form class="card gray" method="get" enctype="multipart/form-data" action="$actionUrl">
     <input name="form_key" value="{$formKey}" type="hidden" />
-    <input name="print" value="1" type="hidden" />
-
-    <div style="margin: 10px 0; width: 365px; text-align: right;">
-        <button type="submit">Show</button>
+    <div class="row">
+        <label for="listing_product_id" class="required">Listing Product ID: </label>
+        <input id="listing_product_id" name="listing_product_id" type="text" value="$listingProductId" required>
     </div>
 
+    <div class="row">
+        <button type="submit" class="button">Show</button>
+    </div>
 </form>
 HTML;
+
+        return $this->getStyleHtml() . $formHtml . $resultHtml;
     }
 
     //########################################
@@ -419,95 +417,98 @@ HTML;
      */
     public function getPrintOrderQuoteDataAction()
     {
-        if ($this->getRequest()->getParam('print')) {
-            /** @var \Ess\M2ePro\Model\Order $order */
-            $orderId = $this->getRequest()->getParam('order_id');
-            /** @var \Ess\M2ePro\Model\Order $order */
-            $order = $this->activeRecordFactory->getObjectLoaded('Order', $orderId);
+        $orderId = $this->getRequest()->getParam('order_id');
 
-            if (!$order->getId()) {
-                $this->getMessageManager()->addError('Unable to load order instance.');
-                $this->_redirect($this->controlPanelHelper->getPageModuleTabUrl());
-
-                return;
+        $resultHtml = '';
+        if (!empty($orderId)) {
+            try {
+                /** @var \Ess\M2ePro\Model\Order $order */
+                $order = $this->activeRecordFactory->getObjectLoaded('Order', $orderId);
+            } catch (\Ess\M2ePro\Model\Exception\Logic $exception) {
+                $order = false;
+                $resultHtml = sprintf('<div class="card red">%s</div>', $exception->getMessage());
             }
 
-            // Store must be initialized before products
-            // ---------------------------------------
-            $order->associateWithStore();
-            $order->associateItemsWithProducts();
-            // ---------------------------------------
+            if ($order) {
+                // Store must be initialized before products
+                // ---------------------------------------
+                $order->associateWithStore();
+                $order->associateItemsWithProducts();
+                // ---------------------------------------
 
-            $proxy = $order->getProxy()->setStore($order->getStore());
+                $proxy = $order->getProxy()->setStore($order->getStore());
 
-            /** @var \Ess\M2ePro\Model\Magento\Quote\Builder $magentoQuoteBuilder */
-            $magentoQuoteBuilder = $this->modelFactory->getObject('Magento_Quote_Builder', ['proxyOrder' => $proxy]);
-            /** @var  \Ess\M2ePro\Model\Magento\Quote\Manager $magentoQuoteManager */
-            $magentoQuoteManager = $this->modelFactory->getObject('Magento_Quote_Manager');
+                /** @var \Ess\M2ePro\Model\Magento\Quote\Builder $magentoQuoteBuilder */
+                $magentoQuoteBuilder = $this->modelFactory
+                    ->getObject('Magento_Quote_Builder', ['proxyOrder' => $proxy]);
+                /** @var  \Ess\M2ePro\Model\Magento\Quote\Manager $magentoQuoteManager */
+                $magentoQuoteManager = $this->modelFactory
+                    ->getObject('Magento_Quote_Manager');
 
-            $quote = $magentoQuoteBuilder->build();
+                $quote = $magentoQuoteBuilder->build();
 
-            $shippingAddressData = $quote->getShippingAddress()->getData();
-            unset(
-                $shippingAddressData['cached_items_all'],
-                $shippingAddressData['cached_items_nominal'],
-                $shippingAddressData['cached_items_nonnominal']
-            );
-            $billingAddressData = $quote->getBillingAddress()->getData();
-            unset(
-                $billingAddressData['cached_items_all'],
-                $billingAddressData['cached_items_nominal'],
-                $billingAddressData['cached_items_nonnominal']
-            );
-            $quoteData = $quote->getData();
-            unset(
-                $quoteData['items'],
-                $quoteData['extension_attributes']
-            );
+                $shippingAddressData = $quote->getShippingAddress()->getData();
+                unset(
+                    $shippingAddressData['cached_items_all'],
+                    $shippingAddressData['cached_items_nominal'],
+                    $shippingAddressData['cached_items_nonnominal']
+                );
+                $billingAddressData = $quote->getBillingAddress()->getData();
+                unset(
+                    $billingAddressData['cached_items_all'],
+                    $billingAddressData['cached_items_nominal'],
+                    $billingAddressData['cached_items_nonnominal']
+                );
+                $quoteData = $quote->getData();
+                unset(
+                    $quoteData['items'],
+                    $quoteData['extension_attributes']
+                );
 
-            $items = [];
-            foreach ($quote->getAllItems() as $item) {
-                $items[] = $item->getData();
+                $items = [];
+                foreach ($quote->getAllItems() as $item) {
+                    $items[] = $item->getData();
+                }
+
+                $magentoQuoteManager->save($quote->setIsActive(false));
+
+                $resultHtml = '<pre class="card">';
+                $resultHtml .= sprintf('<h3>Grand Total: %s</h3>', $quote->getGrandTotal());
+                $resultHtml .= sprintf(
+                    '<h3>Shipping Amount: %s</h3>',
+                    $quote->getShippingAddress()->getShippingAmount()
+                );
+                $resultHtml .= sprintf('<h3>Quote Data:</h3><code>%s</code>', $this->jsonEncode($quoteData));
+                $resultHtml .= sprintf(
+                    '<h3>Shipping Address Data:</h3><code>%s</code>',
+                    $this->jsonEncode($shippingAddressData)
+                );
+                $resultHtml .= sprintf(
+                    '<h3>Billing Address Data:</h3><code>%s</code>',
+                    $this->jsonEncode($billingAddressData)
+                );
+                $resultHtml .= sprintf('<h3>Items:</h3><code>%s</code>', $this->jsonEncode($items));
+                $resultHtml .= '</pre>';
             }
-
-            $magentoQuoteManager->save($quote->setIsActive(false));
-
-            return print_r(
-                json_decode(
-                    json_encode([
-                        'Grand Total' => $quote->getGrandTotal(),
-                        'Shipping Amount' => $quote->getShippingAddress()->getShippingAmount(),
-                        'Quote Data' => $quoteData,
-                        'Shipping Address Data' => $shippingAddressData,
-                        'Billing Address Data' => $billingAddressData,
-                        'Items' => $items,
-                    ]),
-                    true
-                ),
-                true
-            );
         }
 
         $formKey = $this->formKey->getFormKey();
         $actionUrl = $this->getUrl('*/*/*', ['action' => 'getPrintOrderQuoteData']);
 
-        return <<<HTML
-<form method="get" enctype="multipart/form-data" action="{$actionUrl}">
-
-    <div style="margin: 5px 0; width: 400px;">
-        <label style="width: 170px; display: inline-block;">Order ID: </label>
-        <input name="order_id" style="width: 200px;" required>
+        $formHtml = <<<HTML
+<form class="card gray" method="get" enctype="multipart/form-data" action="$actionUrl">
+    <input name="form_key" value="$formKey" type="hidden" />
+    <div class="row">
+        <label for="order_id" class="required">Order ID:</label>
+        <input id="order_id" name="order_id" type="text" value="$orderId" required>
     </div>
-
-    <input name="form_key" value="{$formKey}" type="hidden" />
-    <input name="print" value="1" type="hidden" />
-
-    <div style="margin: 10px 0; width: 365px; text-align: right;">
-        <button type="submit">Build</button>
+    <div class="row">
+        <button type="submit" class="button">Build</button>
     </div>
-
 </form>
 HTML;
+
+        return $this->getStyleHtml() . $formHtml . $resultHtml;
     }
 
     //########################################

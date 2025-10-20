@@ -715,12 +715,15 @@ HTML
                     Account::MAGENTO_ORDERS_TAX_MODE_MIXED => $this->__('eBay & Magento'),
                 ],
                 'value' => $formData['magento_orders_settings']['tax']['mode'],
-                'tooltip' => $this->__(
-                    'Choose where the tax settings for your Magento Order will be taken from. See
-                    <a href="%url%" target="_blank">this article</a> for more details.',
-                    $this->supportHelper->getDocumentationArticleUrl(
-                        'help/m1/amazon-integration/sales-orders/tax-calculation-settings'
-                    )
+                'tooltip' => __(
+                    'Choose where the tax settings for your Magento Order will be taken from. ' .
+                    'See <a href="%url" target="_blank">this article</a> for more details.',
+                    [
+                        'url' => $this->supportHelper
+                            ->getDocumentationArticleUrl(
+                                'docs/help-m2-ebay-integration-sales-and-orders-settings-for-tax-calculation/'
+                            ),
+                    ]
                 ),
             ]
         );

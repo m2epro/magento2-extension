@@ -51,6 +51,7 @@ class MagentoAttributes
 
     private function getAttributeData(string $attributeCode): array
     {
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
         if (!isset($this->magentoAttributesData)) {
             $this->magentoAttributesData = $this->getMagentoAttributesData();
         }

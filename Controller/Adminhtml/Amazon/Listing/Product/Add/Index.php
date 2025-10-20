@@ -129,7 +129,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         $this->addContent(
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::class)
         );
-        $this->setPageHelpLink('adding-magento-products-manually2');
+        $this->setPageHelpLink('docs/add-magento-products-to-amazon-listing/');
     }
 
     public function stepOneSourceProducts()
@@ -175,7 +175,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             return;
         }
 
-        $this->setPageHelpLink('adding-magento-products-manually2');
+        $this->setPageHelpLink('docs/add-magento-products-to-amazon-listing/');
 
         $this->addContent(
             $this->getLayout()
@@ -237,7 +237,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             return;
         }
 
-        $this->setPageHelpLink('adding-magento-products-manually2');
+        $this->setPageHelpLink('docs/add-magento-products-to-amazon-listing/');
 
         $gridContainer = $this->getLayout()
                               ->createBlock(

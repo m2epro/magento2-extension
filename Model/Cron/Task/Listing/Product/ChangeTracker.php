@@ -12,6 +12,7 @@ class ChangeTracker extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     private \Ess\M2ePro\Model\ChangeTracker\ChangeTrackerProcessor $changeTrackerProcessor;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Module\ChangeTracker $changeTrackerHelper,
         \Ess\M2ePro\Model\ChangeTracker\ChangeTrackerProcessor $changeTrackerProcessor,
         \Ess\M2ePro\Model\Cron\Manager $cronManager,
         \Ess\M2ePro\Helper\Data $helperData,
@@ -21,14 +22,7 @@ class ChangeTracker extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo,
-        \Magento\Framework\App\ResourceConnection $resource,
-        \Ess\M2ePro\Model\ChangeTracker\Base\InventoryTrackerFactory $inventoryTrackerFactory,
-        \Ess\M2ePro\Model\ChangeTracker\Base\PriceTrackerFactory $priceTrackerFactory,
-        \Ess\M2ePro\Model\ChangeTracker\Base\ChangeHolderFactory $changeHolderFactory,
-        \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\Profiler $profiler,
-        \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger $logger,
-        \Ess\M2ePro\Helper\Module\ChangeTracker $changeTrackerHelper,
-        \Ess\M2ePro\Model\ChangeTracker\PartManager $chunkManager
+        \Magento\Framework\App\ResourceConnection $resource
     ) {
         parent::__construct(
             $cronManager,
@@ -41,13 +35,7 @@ class ChangeTracker extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $taskRepo,
             $resource
         );
-        $this->inventoryTrackerFactory = $inventoryTrackerFactory;
-        $this->priceTrackerFactory = $priceTrackerFactory;
-        $this->changeHolderFactory = $changeHolderFactory;
-        $this->profiler = $profiler;
-        $this->logger = $logger;
         $this->changeTrackerHelper = $changeTrackerHelper;
-        $this->chunkManager = $chunkManager;
         $this->changeTrackerProcessor = $changeTrackerProcessor;
     }
 
@@ -59,7 +47,7 @@ class ChangeTracker extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         return $this->changeTrackerHelper->getInterval();
     }
 
-    public function isPossibleToRun()
+    public function isPossibleToRun(): bool
     {
         if (!$this->changeTrackerHelper->isEnabled()) {
             return false;

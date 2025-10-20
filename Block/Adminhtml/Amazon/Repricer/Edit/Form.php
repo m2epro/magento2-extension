@@ -1,10 +1,6 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Repricer\Edit;
 
@@ -13,25 +9,11 @@ use Magento\Framework\Message\MessageInterface;
 
 class Form extends AbstractForm
 {
-    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
-    protected $magentoAttributeHelper;
-    /** @var \Ess\M2ePro\Helper\Module\Support */
-    private $supportHelper;
-    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
-    private $globalDataHelper;
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
+    protected \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper;
+    private \Ess\M2ePro\Helper\Module\Support $supportHelper;
+    private \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper;
+    private \Ess\M2ePro\Helper\Data $dataHelper;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
-     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
-     * @param \Ess\M2ePro\Helper\Data $dataHelper
-     * @param \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper
-     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
-     * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Framework\Data\FormFactory $formFactory
-     * @param array $data
-     */
     public function __construct(
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
@@ -295,11 +277,12 @@ HTML
             );
 
             if (
-                $repricing->getMinPriceMode() == \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_ATTRIBUTE &&
-                !$this->magentoAttributeHelper->isExistInAttributesArray(
+                $repricing->getMinPriceMode() == \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_ATTRIBUTE
+                && !$this->magentoAttributeHelper->isExistInAttributesArray(
                     $repricing->getData('min_price_attribute'),
                     $attributesByInputTypes['text_price']
-                ) && $repricing->getData('min_price_attribute') != ''
+                )
+                && $repricing->getData('min_price_attribute') != ''
             ) {
                 $attrs = [
                     'attribute_code' => $repricing->getData('min_price_attribute'),
@@ -400,6 +383,20 @@ More detailed information on how to work with this option can be found
                         ],
                     ],
                     [
+                        'label' => __('Less than Regular Price by Value from Attribute'),
+                        'value' => \Ess\M2ePro\Model\Amazon\Account\Repricing::MIN_PRICE_MODE_REGULAR_VALUE_ATTRIBUTE,
+                        'attrs' => [
+                            'class' => 'repricing-min-price-mode-regular-depended',
+                        ],
+                    ],
+                    [
+                        'label' => __('Less than Regular Price by Percent from Attribute'),
+                        'value' => \Ess\M2ePro\Model\Amazon\Account\Repricing::MIN_PRICE_MODE_REGULAR_PERCENT_ATTRIBUTE,
+                        'attrs' => [
+                            'class' => 'repricing-min-price-mode-regular-depended',
+                        ],
+                    ],
+                    [
                         'label' => __('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
@@ -450,6 +447,49 @@ More detailed information on how to work with this option can be found
             ]
         );
 
+        $magentoTextPriceAttributes = [];
+        $magentoTextPriceAttributes[] = [
+            'value' => '',
+            'label' => __('Select Attribute'),
+            'attrs' => ['hidden' => 'hidden']
+        ];
+        foreach ($attributesByInputTypes['text_price'] as $attribute) {
+            $magentoTextPriceAttributes[] = [
+                'value' => $attribute['code'],
+                'label' => $attribute['label'],
+            ];
+        }
+
+        $fieldset->addField(
+            'min_price_value_attribute',
+            self::SELECT,
+            [
+                'container_id' => 'min_price_value_attribute_tr',
+                'label' => __('Attribute'),
+                'name' => 'repricing[min_price_value_attribute]',
+                'value' => ($repricing) ? $repricing->getData('min_price_value_attribute') : '',
+                'values' => $magentoTextPriceAttributes,
+                'class' => 'M2ePro-required-when-visible',
+                'required' => true,
+                'create_magento_attribute' => true,
+            ]
+        )->addCustomAttribute('allowed_attribute_types', 'text,price');
+
+        $fieldset->addField(
+            'min_price_percent_attribute',
+            self::SELECT,
+            [
+                'container_id' => 'min_price_percent_attribute_tr',
+                'label' => __('Attribute'),
+                'name' => 'repricing[min_price_percent_attribute]',
+                'value' => ($repricing) ? $repricing->getData('min_price_percent_attribute') : '',
+                'values' => $magentoTextPriceAttributes,
+                'class' => 'M2ePro-required-when-visible',
+                'required' => true,
+                'create_magento_attribute' => true,
+            ]
+        );
+
         $fieldset->addField(
             'min_price_variation_mode',
             self::SELECT,
@@ -467,29 +507,6 @@ More detailed information on how to work with this option can be found
                 'value' => ($repricing) ? $repricing->getMinPriceVariationMode() : '',
                 'tooltip' => __('Choose the source of the price value for Bundle Products variations.'),
                 'field_extra_attributes' => 'style="display: none;"',
-            ]
-        );
-
-        $fieldset->addField(
-            'min_price_warning_tr',
-            self::MESSAGES,
-            [
-                'messages' => [
-                    [
-                        'type' => MessageInterface::TYPE_WARNING,
-                        'content' => __(
-                            'Min Price value is required to be specified to guarantee that M2E
-                            Amazon Repricing Service will never set the Price of your Offer
-                            lower than Min allowed Price. It allows Sellers to automatically
-                            prevent any incorrect Price values to be set for their Items.<br/><br/>
-                            The dynamic updating of the Min Price value cannot give the 100%
-                            assurance that all the data will be properly set and the correct
-                            Price will be used for the Item. Thus, more preferable and reliable
-                            option is Manual updating of the Min Price value.'
-                        ),
-                    ],
-                ],
-                'style' => 'display: none',
             ]
         );
 
@@ -616,6 +633,20 @@ More detailed information on how to work with this option can be found
                         ],
                     ],
                     [
+                        'label' => __('More than Regular Price by Value from Attribute'),
+                        'value' => \Ess\M2ePro\Model\Amazon\Account\Repricing::MAX_PRICE_MODE_REGULAR_VALUE_ATTRIBUTE,
+                        'attrs' => [
+                            'class' => 'repricing-max-price-mode-regular-depended',
+                        ],
+                    ],
+                    [
+                        'label' => __('More than Regular Price by Percent from Attribute'),
+                        'value' => \Ess\M2ePro\Model\Amazon\Account\Repricing::MAX_PRICE_MODE_REGULAR_PERCENT_ATTRIBUTE,
+                        'attrs' => [
+                            'class' => 'repricing-max-price-mode-regular-depended',
+                        ],
+                    ],
+                    [
                         'label' => __('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
@@ -667,6 +698,36 @@ More detailed information on how to work with this option can be found
         );
 
         $fieldset->addField(
+            'max_price_value_attribute',
+            self::SELECT,
+            [
+                'container_id' => 'max_price_value_attribute_tr',
+                'label' => __('Attribute'),
+                'name' => 'repricing[max_price_value_attribute]',
+                'value' => ($repricing) ? $repricing->getData('max_price_value_attribute') : '',
+                'values' => $magentoTextPriceAttributes,
+                'class' => 'M2ePro-required-when-visible',
+                'required' => true,
+                'create_magento_attribute' => true,
+            ]
+        )->addCustomAttribute('allowed_attribute_types', 'text,price');
+
+        $fieldset->addField(
+            'max_price_percent_attribute',
+            self::SELECT,
+            [
+                'container_id' => 'max_price_percent_attribute_tr',
+                'label' => __('Attribute'),
+                'name' => 'repricing[max_price_percent_attribute]',
+                'value' => ($repricing) ? $repricing->getData('max_price_percent_attribute') : '',
+                'values' => $magentoTextPriceAttributes,
+                'class' => 'M2ePro-required-when-visible',
+                'required' => true,
+                'create_magento_attribute' => true,
+            ]
+        );
+
+        $fieldset->addField(
             'max_price_variation_mode',
             self::SELECT,
             [
@@ -683,29 +744,6 @@ More detailed information on how to work with this option can be found
                 'value' => ($repricing) ? $repricing->getMaxPriceVariationMode() : '',
                 'tooltip' => __('Choose the source of the price value for Bundle Products variations.'),
                 'field_extra_attributes' => 'style="display: none;"',
-            ]
-        );
-
-        $fieldset->addField(
-            'max_price_warning_tr',
-            self::MESSAGES,
-            [
-                'messages' => [
-                    [
-                        'type' => MessageInterface::TYPE_WARNING,
-                        'content' => __(
-                            'Max Price value is required to be specified to guarantee that M2E
-                            Amazon Repricing Service will never set the Price of your Offer
-                            higher than Max allowed Price. It allows Sellers to automatically
-                            prevent any incorrect Price values to be set for their Items.<br/><br/>
-                            The dynamic updating of the Max Price value cannot give the 100%
-                            assurance that all the data will be properly set and the correct
-                            Price will be used for the Item. Thus, more preferable and reliable
-                            option is Manual updating of the Max Price value.'
-                        ),
-                    ],
-                ],
-                'style' => 'display: none;',
             ]
         );
 

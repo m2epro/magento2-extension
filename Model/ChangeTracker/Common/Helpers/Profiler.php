@@ -1,28 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ess\M2ePro\Model\ChangeTracker\Common\Helpers;
 
 class Profiler
 {
-    /** @var float */
-    protected $startTime;
-    /** @var float seconds */
-    protected $time;
+    protected ?float $startTime = null;
+    protected float $time;
 
-    /** @var int */
-    private $precision;
+    private int $precision;
 
-    /**
-     * @param int $precision
-     */
     public function __construct(int $precision = 4)
     {
         $this->precision = $precision;
     }
 
-    /**
-     * @return void
-     */
     public function start(): void
     {
         if ($this->startTime !== null) {
@@ -31,31 +24,14 @@ class Profiler
         $this->startTime = microtime(true);
     }
 
-    /**
-     * @return void
-     */
     public function stop(): void
     {
         $this->time = (float)number_format((microtime(true) - $this->startTime), $this->precision);
         $this->startTime = null;
     }
 
-    /**
-     * @return string
-     */
-    public function getTime(): string
+    public function getTime(): float
     {
         return $this->time;
-    }
-
-    /**
-     * @return string
-     */
-    public function logString(): string
-    {
-        return sprintf(
-            'Executed time: %s sec',
-            $this->getTime()
-        );
     }
 }

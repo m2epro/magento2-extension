@@ -1,27 +1,19 @@
 <?php
 
-namespace Ess\M2ePro\Model\ChangeTracker\Base;
+declare(strict_types=1);
+
+namespace Ess\M2ePro\Model\ChangeTracker;
 
 class ChangeHolder
 {
     public const INSTRUCTION_TYPE_CHANGE_TRACKER_QTY = 'change_tracker_qty_changed';
     public const INSTRUCTION_TYPE_CHANGE_TRACKER_PRICE = 'change_tracker_price_changed';
 
-    /** @var \Magento\Framework\App\ResourceConnection */
-    private $resource;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction */
-    private $instruction;
-    /** @var \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\Profiler */
-    private $profiler;
-    /** @var \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger */
-    private $logger;
+    private \Magento\Framework\App\ResourceConnection $resource;
+    private \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction $instruction;
+    private Common\Helpers\Profiler $profiler;
+    private Common\Helpers\TrackerLogger $logger;
 
-    /**
-     * @param \Magento\Framework\App\ResourceConnection $resource
-     * @param \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction $instruction
-     * @param \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\Profiler $profiler
-     * @param \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger $logger
-     */
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resource,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction $instruction,
@@ -35,9 +27,6 @@ class ChangeHolder
     }
 
     /**
-     * @param \Ess\M2ePro\Model\ChangeTracker\Base\TrackerInterface $tracker
-     *
-     * @return void
      * @throws \Throwable
      */
     public function holdChanges(TrackerInterface $tracker): void
@@ -48,6 +37,14 @@ class ChangeHolder
         $this->profiler->start();
         try {
             $trackerQuery = $tracker->getDataQuery();
+
+            $message = sprintf('Data query %s %s', $tracker->getType(), $tracker->getChannel());
+            $this->logger->debug($message, [
+                'query' => (string)$trackerQuery,
+                'type' => $tracker->getType(),
+                'channel' => $tracker->getChannel(),
+                'tracker' => $tracker,
+            ]);
         } catch (\Throwable $exception) {
             $this->processException($exception);
         }
@@ -77,7 +74,7 @@ class ChangeHolder
             $instructionCounter = 0;
             foreach ($this->fetchInstructions($statement, $tracker) as $instructions) {
                 $this->instruction->add($instructions);
-                $instructionCounter += count($instructions);
+                $instructionCounter += \count($instructions);
             }
         } catch (\Throwable $exception) {
             $this->processException($exception);
@@ -94,22 +91,17 @@ class ChangeHolder
         );
     }
 
-    private function fetchInstructions($statement, $tracker): \Generator
+    private function fetchInstructions($statement, TrackerInterface $tracker): \Generator
     {
         $instructions = [];
         $instructionCounter = 0;
         while ($row = $statement->fetch()) {
-            $initiator = "{$tracker->getType()}_{$tracker->getChannel()}";
+            $instructionData = $tracker->processQueryRow($row);
+            if ($instructionData === null) {
+                continue;
+            }
 
-            $instructions[] = [
-                'listing_product_id' => $row['listing_product_id'],
-                'type' => $this->getInstructionType($tracker->getType()),
-                'component' => $tracker->getChannel(),
-                'initiator' => $initiator,
-                'additional_data' => $row['additional_data'] ?? null,
-                'priority' => 100,
-                'create_date' => new \Zend_Db_Expr('NOW()'),
-            ];
+            $instructions[] = $instructionData;
             $instructionCounter++;
 
             if ($instructionCounter % 1000 === 0) {
@@ -119,24 +111,6 @@ class ChangeHolder
         }
 
         yield $instructions;
-    }
-
-    /**
-     * @param string $trackerType
-     *
-     * @return string
-     */
-    private function getInstructionType(string $trackerType): string
-    {
-        if ($trackerType === TrackerInterface::TYPE_INVENTORY) {
-            return self::INSTRUCTION_TYPE_CHANGE_TRACKER_QTY;
-        }
-
-        if ($trackerType === TrackerInterface::TYPE_PRICE) {
-            return self::INSTRUCTION_TYPE_CHANGE_TRACKER_PRICE;
-        }
-
-        throw new \RuntimeException('Unknown change tracker type ' . $trackerType);
     }
 
     /**

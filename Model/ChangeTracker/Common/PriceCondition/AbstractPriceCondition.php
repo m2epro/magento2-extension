@@ -4,30 +4,25 @@ declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\ChangeTracker\Common\PriceCondition;
 
-use Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder;
-use Ess\M2ePro\Model\ChangeTracker\Exceptions\ChangeTrackerException;
 use Ess\M2ePro\Model\Listing\Product\PriceRounder;
 
 abstract class AbstractPriceCondition
 {
-    protected \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder $queryBuilder;
-    private ProductAttributesQueryBuilder $attributesQueryBuilder;
     private string $channel;
+    private \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder $attributesQueryBuilder;
     private \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\MagentoAttributes $magentoAttributes;
     private \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration;
     private \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger $logger;
 
     public function __construct(
         string $channel,
-        ProductAttributesQueryBuilder $attributesQueryBuilder,
-        \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder $queryBuilder,
+        \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder $attributesQueryBuilder,
         \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\MagentoAttributes $magentoAttributes,
         \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
         \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger $logger
     ) {
         $this->channel = $channel;
         $this->attributesQueryBuilder = $attributesQueryBuilder;
-        $this->queryBuilder = $queryBuilder;
         $this->magentoAttributes = $magentoAttributes;
         $this->moduleConfiguration = $moduleConfiguration;
         $this->logger = $logger;
@@ -35,6 +30,9 @@ abstract class AbstractPriceCondition
 
     abstract protected function loadSellingPolicyData(): array;
 
+    /**
+     * @throws \Exception
+     */
     public function getCondition(): string
     {
         $sellingPolicyData = $this->loadSellingPolicyData();
@@ -61,7 +59,7 @@ abstract class AbstractPriceCondition
                     (float)$sellingPolicy['vat'],
                     (int)($sellingPolicy['price_rounding'] ?? PriceRounder::PRICE_ROUNDING_NONE)
                 );
-            } catch (ChangeTrackerException $exception) {
+            } catch (\Ess\M2ePro\Model\ChangeTracker\Exceptions\ChangeTrackerException $exception) {
                 $this->logger->warning($exception->getMessage(), [
                     'selling_policy_data' => $sellingPolicy,
                     'channel' => $this->channel,
@@ -91,6 +89,9 @@ abstract class AbstractPriceCondition
         return "CASE $caseBody END";
     }
 
+    /**
+     * @throws \Exception
+     */
     protected function getPriceColumnCondition(int $mode, string $attributeCode): string
     {
         if ($mode === \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT) {
@@ -129,7 +130,7 @@ abstract class AbstractPriceCondition
             return $condition;
         }
 
-        throw new ChangeTrackerException(
+        throw new \Ess\M2ePro\Model\ChangeTracker\Exceptions\ChangeTrackerException(
             sprintf(
                 'Wrong selling policy mode %s for channel %s',
                 $mode,
@@ -178,12 +179,12 @@ abstract class AbstractPriceCondition
                 );
 
             if ($mode === \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ATTRIBUTE_INCREASE) {
-                $sql = "( $sql + ({$attrQuery}) )";
+                $sql = "( $sql + ($attrQuery) )";
                 continue;
             }
 
             if ($mode === \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ATTRIBUTE_DECREASE) {
-                $sql = "( $sql - ({$attrQuery}) )";
+                $sql = "( $sql - ($attrQuery) )";
                 continue;
             }
 

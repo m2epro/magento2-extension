@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model\Amazon\Repricing;
 
 class Updating extends AbstractModel
 {
-    /** @var \Ess\M2ePro\Model\Amazon\Listing\LogFactory  */
+    /** @var \Ess\M2ePro\Model\Amazon\Listing\LogFactory */
     private $listingLogFactory;
     /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Log */
     private $listingLogResource;
@@ -71,7 +71,17 @@ class Updating extends AbstractModel
         $updatedSkus = [];
 
         foreach ($listingsProductsRepricing as $listingProductRepricing) {
-            $changeData = $this->getChangeData($listingProductRepricing);
+            try {
+                $changeData = $this->getChangeData($listingProductRepricing);
+            } catch (\Ess\M2ePro\Model\Exception\Logic $exception) {
+                $this->logListingProductMessage(
+                    $listingProductRepricing->getListingProduct(),
+                    $exception->getMessage(),
+                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
+                );
+                $changeData = false;
+            }
+
             if ($changeData && !in_array($changeData['sku'], $updatedSkus, true)) {
                 $changesData[] = $changeData;
                 $updatedListingProductsRepricing[] = $listingProductRepricing;
@@ -80,7 +90,7 @@ class Updating extends AbstractModel
             }
         }
 
-        if (empty($changeData) || !$this->sendData($changesData)) {
+        if (empty($changesData) || !$this->sendData($changesData)) {
             return false;
         }
 
@@ -122,7 +132,7 @@ class Updating extends AbstractModel
      * @throws \Ess\M2ePro\Model\Exception
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    private function getChangeData(\Ess\M2ePro\Model\Amazon\Listing\Product\Repricing $listingProductRepricing): ?array
+    public function getChangeData(\Ess\M2ePro\Model\Amazon\Listing\Product\Repricing $listingProductRepricing): ?array
     {
         $isDisabled = $listingProductRepricing->isDisabled();
 
@@ -139,15 +149,11 @@ class Updating extends AbstractModel
             || (($minPrice !== null) && empty($minPrice))
             || (($maxPrice !== null) && empty($maxPrice))
         ) {
-            $this->logListingProductMessage(
-                $listingProductRepricing->getListingProduct(),
+            throw new \Ess\M2ePro\Model\Exception\Logic(
                 __(
                     'Item price was not updated. Incorrect Price value.'
-                ),
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
+                )
             );
-
-            return null;
         }
 
         $_regularPrice = $regularPrice;
@@ -178,28 +184,20 @@ class Updating extends AbstractModel
             ||
             ($minPrice !== null && $regularPrice !== null && $regularPrice < $minPrice)
         ) {
-            $this->logListingProductMessage(
-                $listingProductRepricing->getListingProduct(),
+            throw new \Ess\M2ePro\Model\Exception\Logic(
                 __(
                     'Item price was not updated. Regular Price must be lower than the Max Price value and higher than
                     the Min Price value.'
-                ),
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
+                )
             );
-
-            return null;
         }
 
         if ($minPrice !== null && $maxPrice !== null && $minPrice === $maxPrice) {
-            $this->logListingProductMessage(
-                $listingProductRepricing->getListingProduct(),
+            throw new \Ess\M2ePro\Model\Exception\Logic(
                 __(
                     'Item price was not updated. Min Price and Max Price can\'t be equal.'
-                ),
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
+                )
             );
-
-            return null;
         }
 
         return [

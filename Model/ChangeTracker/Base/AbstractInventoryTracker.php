@@ -1,100 +1,64 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ess\M2ePro\Model\ChangeTracker\Base;
 
-use Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger;
-use Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder;
-use Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\QueryBuilderFactory;
-use Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder;
-
-abstract class BaseInventoryTracker implements TrackerInterface
+abstract class AbstractInventoryTracker implements \Ess\M2ePro\Model\ChangeTracker\TrackerInterface
 {
-    /** @var string */
-    private $channel;
-    /** @var SelectQueryBuilder */
-    protected $queryBuilder;
-    /** @var InventoryStock */
-    protected $inventoryStock;
-    /** @var \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger */
-    protected $logger;
-    /** @var \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder */
-    private $attributesQueryBuilder;
-    /** @var \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\EnterpriseChecker */
-    private $enterpriseChecker;
-    private int $listingProductIdFrom;
-    private int $listingProductIdTo;
-    private array $magentoProductIds;
+    use \Ess\M2ePro\Model\ChangeTracker\Traits\TableNameReplacerTrait;
+    use \Ess\M2ePro\Model\ChangeTracker\Traits\AffectedMagentoProductLoaderTrait;
+
+    private \Ess\M2ePro\Model\ChangeTracker\TrackerConfiguration $configuration;
+    private \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\InventoryStock $inventoryStock;
+    private \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder $attributesQueryBuilder;
+    private \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger $logger;
+    private \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\EnterpriseChecker $enterpriseChecker;
+    private \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\QueryBuilderFactory $queryBuilderFactory;
 
     public function __construct(
-        string $channel,
-        QueryBuilderFactory $queryBuilderFactory,
-        InventoryStock $inventoryStock,
-        ProductAttributesQueryBuilder $attributesQueryBuilder,
-        TrackerLogger $logger,
-        \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\EnterpriseChecker $enterpriseChecker,
-        int $listingProductIdFrom,
-        int $listingProductIdTo
+        \Ess\M2ePro\Model\ChangeTracker\TrackerConfiguration $configuration,
+        \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\QueryBuilderFactory $queryBuilderFactory,
+        \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\InventoryStock $inventoryStock,
+        \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder $attributesQueryBuilder,
+        \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger $logger,
+        \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\EnterpriseChecker $enterpriseChecker
     ) {
-        $this->channel = $channel;
+        $this->configuration = $configuration;
+        $this->queryBuilderFactory = $queryBuilderFactory;
         $this->inventoryStock = $inventoryStock;
-        $this->queryBuilder = $queryBuilderFactory->make();
-        $this->logger = $logger;
         $this->attributesQueryBuilder = $attributesQueryBuilder;
+        $this->logger = $logger;
         $this->enterpriseChecker = $enterpriseChecker;
-        $this->listingProductIdFrom = $listingProductIdFrom;
-        $this->listingProductIdTo = $listingProductIdTo;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
-        return TrackerInterface::TYPE_INVENTORY;
+        return \Ess\M2ePro\Model\ChangeTracker\TrackerInterface::TYPE_INVENTORY;
     }
 
-    /**
-     * @return string
-     */
     public function getChannel(): string
     {
-        return $this->channel;
+        return $this->configuration->channel;
     }
 
     public function getListingProductIdFrom(): int
     {
-        return $this->listingProductIdFrom;
+        return $this->configuration->listingProductIdFrom;
     }
 
     public function getListingProductIdTo(): int
     {
-        return $this->listingProductIdTo;
+        return $this->configuration->listingProductIdTo;
     }
 
-    public function getMagentoProductIds(): array
+    /**
+     * @return array<int>
+     * @throws \Zend_Db_Statement_Exception
+     */
+    public function getAffectedMagentoProductIds(): array
     {
-        if (!isset($this->magentoProductIds)) {
-            $this->magentoProductIds = $this->loadMagentoProductIds();
-        }
-
-        return $this->magentoProductIds;
-    }
-
-    private function loadMagentoProductIds(): array
-    {
-        $queryResult = $this->queryBuilder
-            ->makeSubQuery()
-            ->distinct()
-            ->addSelect('product_id', 'product.product_id')
-            ->from('product', $this->productSubQuery())
-            ->fetchAll();
-
-        $result = [];
-        foreach ($queryResult as $data) {
-            $result[] = (int)$data['product_id'];
-        }
-
-        return $result;
+        return $this->loadAffectedMagentoProductIds();
     }
 
     /**
@@ -105,11 +69,10 @@ abstract class BaseInventoryTracker implements TrackerInterface
     {
         $query = $this->getSelectQuery();
 
-        $mainQuery = $this->queryBuilder
-            ->makeSubQuery()
+        $mainQuery = $this->queryBuilderFactory
+            ->createSelect()
             ->distinct()
             ->addSelect('listing_product_id', 'base.listing_product_id')
-            //->addSelect('additional_data', $this->makeAdditionalDataSelectQuery())
             ->from('base', $query);
 
         /**
@@ -167,7 +130,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
          * @see \Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker\Active::isMeetStopRequirements
          * @see \Ess\M2ePro\Model\Amazon\Listing\Product\Instruction\SynchronizationTemplate\Checker\Active::isMeetStopRequirements
          * @see \Ess\M2ePro\Model\Walmart\Listing\Product\Instruction\SynchronizationTemplate\Checker\Active::isMeetStopRequirements
-        */
+         */
         $activeIsMeetStop = '
             base.status = 2 AND (
                 IF (base.stop_when_product_disabled AND base.product_disabled = 1, TRUE,
@@ -179,30 +142,30 @@ abstract class BaseInventoryTracker implements TrackerInterface
         ';
         $mainQuery->orWhere($activeIsMeetStop);
 
-        $message = sprintf(
-            'Data query %s %s',
-            $this->getType(),
-            $this->getChannel()
-        );
-        $this->logger->debug($message, [
-            'query' => (string)$mainQuery->getQuery(),
-            'type' => $this->getType(),
-            'channel' => $this->getChannel(),
-            'tracker' => $this,
-        ]);
-
         return $mainQuery->getQuery();
+    }
+
+    public function processQueryRow(array $row): ?array
+    {
+        return [
+            'listing_product_id' => $row['listing_product_id'],
+            'type' => \Ess\M2ePro\Model\ChangeTracker\ChangeHolder::INSTRUCTION_TYPE_CHANGE_TRACKER_QTY,
+            'component' => $this->getChannel(),
+            'initiator' => sprintf('%s_%s', $this->getType(), $this->getChannel()),
+            'additional_data' => $row['additional_data'] ?? null,
+            'priority' => 100,
+            'create_date' => new \Zend_Db_Expr('NOW()'),
+        ];
     }
 
     /**
      * Base product sub query.
      * Includes all necessary information regarding the listing product
-     * @return SelectQueryBuilder
      * @throws \Exception
      */
-    protected function productSubQuery(): SelectQueryBuilder
+    protected function productSubQuery(): \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder
     {
-        $query = $this->queryBuilder->makeSubQuery();
+        $query = $this->queryBuilderFactory->createSelect();
         $query->distinct();
 
         $listingProductIdExpression = 'lp.id';
@@ -221,7 +184,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
 
         $query->addSelect(
             'product_enabled',
-            $this->attributesQueryBuilder->getQueryForAttribute(
+            (string)$this->attributesQueryBuilder->getQueryForAttribute(
                 'status',
                 'l.store_id',
                 $productIdExpression
@@ -288,13 +251,10 @@ abstract class BaseInventoryTracker implements TrackerInterface
         return $query;
     }
 
-    /**
-     * @return SelectQueryBuilder
-     */
-    protected function sellingPolicySubQuery(): SelectQueryBuilder
+    protected function sellingPolicySubQuery(): \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder
     {
-        return $this->queryBuilder
-            ->makeSubQuery()
+        return $this->queryBuilderFactory
+            ->createSelect()
             ->addSelect('template_selling_format_id', 'sp.template_selling_format_id')
             ->addSelect('mode', 'sp.qty_mode')
             ->addSelect('percentage', 'sp.qty_percentage')
@@ -315,13 +275,10 @@ abstract class BaseInventoryTracker implements TrackerInterface
             );
     }
 
-    /**
-     * @return SelectQueryBuilder
-     */
-    protected function synchronizationPolicySubQuery(): SelectQueryBuilder
+    protected function synchronizationPolicySubQuery(): \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder
     {
-        return $this->queryBuilder
-            ->makeSubQuery()
+        return $this->queryBuilderFactory
+            ->createSelect()
             ->addSelect('template_synchronization_id', 'ts.template_synchronization_id')
             ->addSelect(
                 'revise_threshold',
@@ -379,10 +336,11 @@ abstract class BaseInventoryTracker implements TrackerInterface
 
     /**
      * @inheridoc
+     * @throws \Exception
      */
-    protected function getSelectQuery(): SelectQueryBuilder
+    protected function getSelectQuery(): \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder
     {
-        $query = $this->queryBuilder;
+        $query = $this->queryBuilderFactory->createSelect();
 
         /* Selects */
         $query
@@ -390,7 +348,10 @@ abstract class BaseInventoryTracker implements TrackerInterface
             ->addSelect('product_id', 'product.product_id')
             ->addSelect('status', 'product.status')
             ->addSelect('status_changer', 'product.status_changer')
-            ->addSelect('product_disabled', new \Zend_Db_Expr('product.product_enabled = 2'))
+            ->addSelect(
+                'product_disabled',
+                (string)(new \Zend_Db_Expr('product.product_enabled = 2'))
+            )
             ->addSelect('store_id', 'product.store_id')
             ->addSelect('sync_template_id', 'product.sync_template_id')
             ->addSelect('selling_template_id', 'product.selling_template_id')
@@ -407,8 +368,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
             ->addSelect('relist_when_stopped_manually', 'sync_policy.relist_when_stopped_manually')
             ->addSelect('relist_when_product_status_enabled', 'sync_policy.relist_when_product_status_enabled')
             ->addSelect('relist_when_product_is_in_stock', 'sync_policy.relist_when_product_is_in_stock')
-            ->addSelect('relist_when_qty_more_or_equal', 'sync_policy.relist_when_qty_more_or_equal')
-        ;
+            ->addSelect('relist_when_qty_more_or_equal', 'sync_policy.relist_when_qty_more_or_equal');
 
         $query->addSelect('online_qty', 'product.online_qty');
         $query->addSelect('calculated_qty', $this->calculatedQtyExpression());
@@ -475,19 +435,6 @@ abstract class BaseInventoryTracker implements TrackerInterface
         return $query;
     }
 
-    /**
-     * @param string $tableName
-     *
-     * @return string
-     */
-    protected function setChannelToTableName(string $tableName): string
-    {
-        return sprintf($tableName, $this->getChannel());
-    }
-
-    /**
-     * @return string
-     */
     protected function calculatedQtyExpression(): string
     {
         $calcQty = '
@@ -511,45 +458,5 @@ abstract class BaseInventoryTracker implements TrackerInterface
                 ELSE $calcQty
             END
         )";
-    }
-
-    protected function getAdditionalDataFields(): array
-    {
-        return [
-            'listing_product_id' => 'base.listing_product_id',
-            'product_id' => 'base.product_id',
-            'status' => 'base.status',
-
-            'calculated_qty' => 'base.calculated_qty',
-            'online_qty' => 'base.online_qty',
-
-            'product_disabled' => 'base.product_disabled',
-            'is_in_stock' => 'base.is_in_stock',
-
-            'revise_threshold' => 'base.revise_threshold',
-
-            'list_with_qty_greater_or_equal_then' => 'base.list_with_qty_greater_or_equal_then',
-            'list_only_enabled_products' => 'base.list_only_enabled_products',
-            'list_only_in_stock_products' => 'base.list_only_in_stock_products',
-
-            'relist_when_qty_more_or_equal' => 'base.relist_when_qty_more_or_equal',
-            'relist_when_product_is_in_stock' => 'base.relist_when_product_is_in_stock',
-            'relist_when_product_status_enabled' => 'base.relist_when_product_status_enabled',
-
-            'stop_when_product_disabled' => 'base.stop_when_product_disabled',
-            'stop_when_product_out_of_stock' => 'base.stop_when_product_out_of_stock',
-            'stop_when_qty_less_than' => 'base.stop_when_qty_less_than',
-        ];
-    }
-
-    private function makeAdditionalDataSelectQuery(): \Zend_Db_Expr
-    {
-        $additionalDataSql = '';
-        foreach ($this->getAdditionalDataFields() as $fieldName => $fieldValue) {
-            $additionalDataSql .= "'$fieldName', $fieldValue, ";
-        }
-        $additionalDataSql = rtrim($additionalDataSql, ' ,');
-
-        return new \Zend_Db_Expr("JSON_OBJECT($additionalDataSql)");
     }
 }

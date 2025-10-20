@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder;
 
 class SelectQueryBuilder
@@ -22,17 +24,16 @@ class SelectQueryBuilder
         self::PART_DISTINCT => false,
     ];
 
-    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
-    private $dbHelper;
+    private \Ess\M2ePro\Helper\Module\Database\Structure $dbHelper;
+    private array $queryParts = self::DEFAULT_PARTS;
+    private \Magento\Framework\App\ResourceConnection $resourceConnection;
 
-    /** @var array */
-    private $queryParts = self::DEFAULT_PARTS;
-
-    /** @var \Magento\Framework\App\ResourceConnection */
-    private $resourceConnection;
+    public function __toString(): string
+    {
+        return (string)$this->getQuery();
+    }
 
     /**
-     * @return array
      * @throws \Zend_Db_Statement_Exception
      */
     public function fetchAll(): array
@@ -44,10 +45,6 @@ class SelectQueryBuilder
         return $stmt->fetchAll();
     }
 
-    /**
-     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
-     * @param \Ess\M2ePro\Helper\Module\Database\Structure $dbHelper
-     */
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Module\Database\Structure $dbHelper
@@ -56,36 +53,14 @@ class SelectQueryBuilder
         $this->resourceConnection = $resourceConnection;
     }
 
-    /**
-     * @return \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder
-     */
-    public function makeSubQuery(): SelectQueryBuilder
-    {
-        $queryBuilder = clone $this;
-        $queryBuilder->queryParts = self::DEFAULT_PARTS;
-
-        return $queryBuilder;
-    }
-
-    /**
-     * @param bool $distinct
-     *
-     * @return SelectQueryBuilder
-     */
-    public function distinct(bool $distinct = true): SelectQueryBuilder
+    public function distinct(bool $distinct = true): self
     {
         $this->queryParts[self::PART_DISTINCT] = $distinct;
 
         return $this;
     }
 
-    /**
-     * @param string $alias
-     * @param string $select
-     *
-     * @return $this
-     */
-    public function addSelect(string $alias, string $select): SelectQueryBuilder
+    public function addSelect(string $alias, string $select): self
     {
         if ($this->isExpressionSelect($select)) {
             $this->queryParts[self::PART_SELECT][$alias] = new \Zend_Db_Expr("( $select )");
@@ -98,21 +73,15 @@ class SelectQueryBuilder
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getSelect(): array
     {
         return $this->queryParts[self::PART_SELECT];
     }
 
     /**
-     * @param string $tableAlias
-     * @param mixed $tableName
-     *
-     * @return $this
+     * @param string|self|\Magento\Framework\DB\Select $tableName
      */
-    public function from(string $tableAlias, $tableName): SelectQueryBuilder
+    public function from(string $tableAlias, $tableName): self
     {
         $this->queryParts[self::PART_FROM] = [
             $tableAlias => $this->getTableName($tableName),
@@ -122,50 +91,39 @@ class SelectQueryBuilder
     }
 
     /**
-     * @param string $tableAlias
-     * @param mixed $tableName
-     * @param string $onCondition
-     *
-     * @return $this
+     * @param string|self|\Magento\Framework\DB\Select $tableName
      */
-    public function leftJoin(string $tableAlias, $tableName, string $onCondition): SelectQueryBuilder
+    public function leftJoin(string $tableAlias, $tableName, string $onCondition): self
     {
-        $this->queryParts[self::PART_JOIN][$tableAlias] = new QueryBuilderJoin(
+        $this->queryParts[self::PART_JOIN][$tableAlias] = new Join(
             $tableAlias,
             $this->getTableName($tableName),
             $onCondition,
-            QueryBuilderJoin::JOIN_LEFT
+            Join::JOIN_LEFT
         );
 
         return $this;
     }
 
     /**
-     * @param string $tableAlias
-     * @param mixed $tableName
-     * @param string $onCondition
-     *
-     * @return $this
+     * @param string|self|\Magento\Framework\DB\Select $tableName
      */
-    public function innerJoin(string $tableAlias, $tableName, string $onCondition): SelectQueryBuilder
+    public function innerJoin(string $tableAlias, $tableName, string $onCondition): self
     {
-        $this->queryParts[self::PART_JOIN][$tableAlias] = new QueryBuilderJoin(
+        $this->queryParts[self::PART_JOIN][$tableAlias] = new Join(
             $tableAlias,
             $this->getTableName($tableName),
             $onCondition,
-            QueryBuilderJoin::JOIN_INNER
+            Join::JOIN_INNER
         );
 
         return $this;
     }
 
     /**
-     * @param string $condition
      * @param mixed $params
-     *
-     * @return SelectQueryBuilder
      */
-    public function andWhere(string $condition, $params = null): SelectQueryBuilder
+    public function andWhere(string $condition, $params = null): self
     {
         $this->queryParts[self::PART_AND_WHERE][] = [$condition, $params];
 
@@ -173,33 +131,22 @@ class SelectQueryBuilder
     }
 
     /**
-     * @param string $condition
      * @param mixed $params
-     *
-     * @return SelectQueryBuilder
      */
-    public function orWhere(string $condition, $params = null): SelectQueryBuilder
+    public function orWhere(string $condition, $params = null): self
     {
         $this->queryParts[self::PART_OR_WHERE][] = [$condition, $params];
 
         return $this;
     }
 
-    /**
-     * @param string $column
-     *
-     * @return SelectQueryBuilder
-     */
-    public function addGroup(string $column): SelectQueryBuilder
+    public function addGroup(string $column): self
     {
         $this->queryParts[self::PART_GROUP][$column] = $column;
 
         return $this;
     }
 
-    /**
-     * @return \Magento\Framework\DB\Select
-     */
     public function getQuery(): \Magento\Framework\DB\Select
     {
         $select = $this->resourceConnection
@@ -211,7 +158,7 @@ class SelectQueryBuilder
         $select->distinct($this->queryParts[self::PART_DISTINCT]);
         $select->group($this->queryParts[self::PART_GROUP]);
 
-        /** @var QueryBuilderJoin $join */
+        /** @var Join $join */
         foreach ($this->queryParts[self::PART_JOIN] as $join) {
             $join->appendToQuery($select);
         }
@@ -228,7 +175,7 @@ class SelectQueryBuilder
     }
 
     /**
-     * @param string|SelectQueryBuilder|\Magento\Framework\DB\Select $table
+     * @param string|self|\Magento\Framework\DB\Select $table
      *
      * @return string|\Magento\Framework\DB\Select
      */
@@ -250,11 +197,6 @@ class SelectQueryBuilder
         return $this->dbHelper->getTableNameWithPrefix($table);
     }
 
-    /**
-     * @param string $select
-     *
-     * @return bool
-     */
     private function isExpressionSelect(string $select): bool
     {
         return (bool)preg_match('/^[a-z_\-.]+$/i', $select) === false;

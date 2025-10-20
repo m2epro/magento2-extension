@@ -8,10 +8,8 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit;
 
-use Ess\M2ePro\Block\Adminhtml\Magento\Button;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit\Form\Promotions;
-use Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit\Form\ShippingOverrideRules;
 use Ess\M2ePro\Model\Walmart\Template\SellingFormat;
 
 class Form extends AbstractForm
@@ -703,39 +701,6 @@ HTML
 
         // ---------------------------------------
 
-        $fieldset->addField(
-            'shipping_override_rule_mode',
-            self::SELECT,
-            [
-                'name' => 'shipping_override_rule_mode',
-                'label' => __('Override Mode'),
-                'class' => 'select-main',
-                'values' => [
-                    SellingFormat::SHIPPING_OVERRIDE_RULE_MODE_NO => __('Disabled'),
-                    SellingFormat::SHIPPING_OVERRIDE_RULE_MODE_YES => __('Enabled'),
-                ],
-                'value' => $this->formData['shipping_override_rule_mode'],
-                'tooltip' => __(
-                    'Enable to add Shipping Overrides.<br>
-                    <strong>Note:</strong> When you set an override for one shipping method,
-                    the other shipping methods will<br>
-                    still be taken from the global shipping settings in your Seller Center.'
-                ),
-            ]
-        );
-
-        $fieldset->addField(
-            'shipping_override_rule_container',
-            self::CUSTOM_CONTAINER,
-            [
-                'text' => $this->getShippingOverrideRuleHtml($form),
-                'css_class' => 'm2epro-fieldset-table',
-                'field_extra_attributes' => 'id="shipping_override_rule_tr"',
-            ]
-        );
-
-        // ---------------------------------------
-
         $fieldset = $form->addFieldset(
             'magento_block_walmart_template_selling_format_sale_time',
             [
@@ -1126,14 +1091,6 @@ HTML
                     ->toHtml();
     }
 
-    public function getShippingOverrideRuleHtml($form)
-    {
-        return $this->getLayout()->createBlock(ShippingOverrideRules::class)
-                    ->setParentForm($form)
-                    ->setAllAttributes($this->allAttributes)
-                    ->toHtml();
-    }
-
     /**
      * @throws \Ess\M2ePro\Model\Exception
      * @throws \ReflectionException
@@ -1152,11 +1109,6 @@ HTML
         $this->jsPhp->addConstants(
             $this->dataHelper
                 ->getClassConstants(\Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion::class)
-        );
-
-        $this->jsPhp->addConstants(
-            $this->dataHelper
-                ->getClassConstants(\Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride::class)
         );
 
         $this->jsPhp->addConstants(
@@ -1228,7 +1180,6 @@ HTML
         $allAttributes = \Ess\M2ePro\Helper\Json::encode($this->magentoAttributeHelper->getAll());
 
         $promotions = \Ess\M2ePro\Helper\Json::encode($this->formData['promotions']);
-        $shippingOverride = \Ess\M2ePro\Helper\Json::encode($this->formData['shipping_override_rule']);
 
         $injectPriceChangeJs = $this->getPriceChangeInjectorJs($this->formData);
 
@@ -1258,7 +1209,6 @@ HTML
 
             if ({$isEdit}) {
                 WalmartTemplateSellingFormatObj.renderPromotions({$promotions});
-                WalmartTemplateSellingFormatObj.renderRules({$shippingOverride});
                 {$injectPriceChangeJs}
             }
         });
@@ -1291,7 +1241,6 @@ JS
             $this->templateModel->getChildObject()->getData()
         );
 
-        $data['shipping_override_rule'] = $this->templateModel->getChildObject()->getShippingOverrides();
         $data['promotions'] = $this->templateModel->getChildObject()->getPromotions();
 
         return array_merge($default, $data);

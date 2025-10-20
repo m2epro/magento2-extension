@@ -6,13 +6,13 @@ namespace Ess\M2ePro\Model\ChangeTracker;
 
 class TrackerConfiguration
 {
-    public string $component;
+    public string $channel;
     public int $listingProductIdFrom;
     public int $listingProductIdTo;
 
-    public function __construct(string $component, int $listingProductIdFrom, int $listingProductIdTo)
+    public function __construct(string $channel, int $listingProductIdFrom, int $listingProductIdTo)
     {
-        $this->component = $component;
+        $this->channel = $channel;
         $this->listingProductIdFrom = $listingProductIdFrom;
         $this->listingProductIdTo = $listingProductIdTo;
     }

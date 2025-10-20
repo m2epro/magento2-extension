@@ -1,25 +1,25 @@
 <?php
 
-namespace Ess\M2ePro\Model\ChangeTracker\Base;
+declare(strict_types=1);
 
-use Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\QueryBuilderFactory;
-use Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder;
+namespace Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder;
 
 class InventoryStock
 {
-    private SelectQueryBuilder $queryBuilder;
     private \Ess\M2ePro\Helper\Magento $magentoHelper;
+    private \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\QueryBuilderFactory $queryBuilderFactory;
 
     public function __construct(
-        QueryBuilderFactory $queryBuilderFactory,
+        \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\QueryBuilderFactory $queryBuilderFactory,
         \Ess\M2ePro\Helper\Magento $magentoHelper
     ) {
-        $this->queryBuilder = $queryBuilderFactory->make();
         $this->magentoHelper = $magentoHelper;
+        $this->queryBuilderFactory = $queryBuilderFactory;
     }
 
-    public function getInventoryStockQuery(TrackerInterface $tracker): SelectQueryBuilder
-    {
+    public function getInventoryStockQuery(
+        \Ess\M2ePro\Model\ChangeTracker\TrackerInterface $tracker
+    ): \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder {
         if ($this->magentoHelper->isMSISupportingVersion()) {
             return $this->getMsiInventoryQuery($tracker);
         }
@@ -36,10 +36,11 @@ class InventoryStock
         return 'product.product_id = stock.product_id';
     }
 
-    private function getMsiInventoryQuery(TrackerInterface $tracker): SelectQueryBuilder
-    {
-        $stockSubQuery = $this->queryBuilder
-            ->makeSubQuery()
+    private function getMsiInventoryQuery(
+        \Ess\M2ePro\Model\ChangeTracker\TrackerInterface $tracker
+    ): \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder {
+        $stockSubQuery = $this->queryBuilderFactory
+            ->createSelect()
             ->addSelect('sku', 'isi.sku')
             ->addSelect('product_id', 'product.entity_id')
             ->addSelect('stock_id', 'issl.stock_id')
@@ -62,13 +63,13 @@ class InventoryStock
                 'isi.sku = product.sku'
             )
             ->andWhere('source.enabled = ?', 1)
-            ->andWhere('product.entity_id IN (?)', $tracker->getMagentoProductIds())
+            ->andWhere('product.entity_id IN (?)', $tracker->getAffectedMagentoProductIds())
             ->addGroup('isi.sku')
             ->addGroup('product.entity_id')
             ->addGroup('issl.stock_id');
 
-        $reservedSubQuery = $this->queryBuilder
-            ->makeSubQuery()
+        $reservedSubQuery = $this->queryBuilderFactory
+            ->createSelect()
             ->addSelect('stock_id', 'ir.stock_id')
             ->addSelect('sku', 'ir.sku')
             ->addSelect('quantity', 'SUM(ir.quantity)')
@@ -76,8 +77,8 @@ class InventoryStock
             ->addGroup('ir.stock_id')
             ->addGroup('ir.sku');
 
-        return $this->queryBuilder
-            ->makeSubQuery()
+        return $this->queryBuilderFactory
+            ->createSelect()
             ->addSelect('product_id', 'stock.product_id')
             ->addSelect('store_id', 'st.store_id')
             ->addSelect('is_in_stock', 'stock.is_in_stock')
@@ -110,17 +111,17 @@ class InventoryStock
             );
     }
 
-    private function getNoMsiInventoryQuery(TrackerInterface $tracker): SelectQueryBuilder
-    {
-        return $this->queryBuilder
-            ->makeSubQuery()
+    private function getNoMsiInventoryQuery(
+        \Ess\M2ePro\Model\ChangeTracker\TrackerInterface $tracker
+    ): \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder {
+        return $this->queryBuilderFactory
+            ->createSelect()
             ->addSelect('product_id', 'stock.product_id')
             ->addSelect('is_in_stock', 'stock.is_in_stock')
             ->addSelect('qty', 'stock.qty')
             ->from('stock', 'cataloginventory_stock_item')
-            ->andWhere('stock.product_id IN (?)', $tracker->getMagentoProductIds())
+            ->andWhere('stock.product_id IN (?)', $tracker->getAffectedMagentoProductIds())
             ->andWhere('stock.stock_id = 1')
-            ->andWhere('stock.website_id = 0')
-        ;
+            ->andWhere('stock.website_id = 0');
     }
 }

@@ -37,28 +37,6 @@ class SnapshotBuilder extends \Ess\M2ePro\Model\ActiveRecord\SnapshotBuilder
         ];
 
         // ---------------------------------------
-        $data['shipping_overrides'] = $childModel->getShippingOverrides();
-
-        if ($data['shipping_overrides'] !== null) {
-            foreach ($data['shipping_overrides'] as &$shippingOverride) {
-                foreach ($shippingOverride as $key => &$value) {
-                    if (in_array($key, $ignoredKeys)) {
-                        unset($shippingOverride[$key]);
-                        continue;
-                    }
-
-                    $value !== null && !is_array($value) && $value = (string)$value;
-                }
-
-                unset($value);
-            }
-
-            unset($shippingOverride);
-        }
-
-        // ---------------------------------------
-
-        // ---------------------------------------
         $data['promotions'] = $childModel->getPromotions();
 
         if ($data['promotions'] !== null) {

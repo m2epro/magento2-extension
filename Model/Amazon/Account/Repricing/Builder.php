@@ -46,6 +46,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'min_price_value' => '',
             'min_price_percent' => '',
             'min_price_variation_mode' => '',
+            'min_price_value_attribute' => '',
+            'min_price_percent_attribute' => '',
 
             'max_price_mode' => '',
             'max_price_attribute' => '',
@@ -53,6 +55,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'max_price_value' => '',
             'max_price_percent' => '',
             'max_price_variation_mode' => '',
+            'max_price_value_attribute' => '',
+            'max_price_percent_attribute' => '',
 
             'disable_mode' => '',
             'disable_mode_attribute' => '',

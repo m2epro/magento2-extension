@@ -87,11 +87,6 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
             $data['is_ship_in_original_packaging'] = $shipsInOriginalPackaging;
         }
 
-        $shippingOverrides = $this->getShippingOverrides();
-        if (!empty($shippingOverrides)) {
-            $data['shipping_overrides'] = $shippingOverrides;
-        }
-
         if ($this->getWalmartListingProduct()->getVariationManager()->isRelationChildType()) {
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Child $typeModel */
             $typeModel = $this->getWalmartListingProduct()->getVariationManager()->getTypeModel();
@@ -360,31 +355,4 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
     }
 
     // ---------------------------------------
-
-    private function getShippingOverrides()
-    {
-        $result = [];
-
-        $shippingOverrides = $this->getWalmartListingProduct()->getWalmartSellingFormatTemplate()
-                                    ->getShippingOverrides(true);
-
-        if (empty($shippingOverrides)) {
-            return $result;
-        }
-
-        foreach ($shippingOverrides as $shippingOverride) {
-            $source = $shippingOverride->getSource(
-                $this->getWalmartListingProduct()->getActualMagentoProduct()
-            );
-
-            $result[] = [
-                'ship_method' => $shippingOverride->getMethod(),
-                'ship_region' => $shippingOverride->getRegion(),
-                'ship_price' => $source->getCost(),
-                'is_shipping_allowed' => (bool)$shippingOverride->getIsShippingAllowed(),
-            ];
-        }
-
-        return $result;
-    }
 }

@@ -19,6 +19,9 @@ class PartManager
         $this->listingProductResource = $listingProductResource;
     }
 
+    /**
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
     public function getPartsCount(): int
     {
         $select = $this->resourceConnection->getConnection()->select();
@@ -34,6 +37,10 @@ class PartManager
         return (int)$select->query()->fetchColumn();
     }
 
+    /**
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Zend_Db_Statement_Exception
+     */
     public function getListingProductParts(): \Generator
     {
         $select = $this->resourceConnection->getConnection()->select();
@@ -64,11 +71,6 @@ class PartManager
         yield $this->createPart($batch);
     }
 
-    /**
-     * @param array $batch
-     *
-     * @return TrackerConfiguration[]
-     */
     private function createPart(array $batch): array
     {
         $part = [];

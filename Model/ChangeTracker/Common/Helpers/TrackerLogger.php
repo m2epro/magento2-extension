@@ -1,21 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ess\M2ePro\Model\ChangeTracker\Common\Helpers;
 
-use Ess\M2ePro\Helper\Date;
-use Monolog\Logger;
-use Psr\Log\LoggerInterface;
-
-class TrackerLogger implements LoggerInterface
+class TrackerLogger implements \Psr\Log\LoggerInterface
 {
     public const REGISTRY_KEY = '/change_tracker/logs';
 
-    /** @var int */
-    private $level;
-    /** @var \Ess\M2ePro\Model\Registry\Manager */
-    private $registry;
-    /** @var array */
-    private $tmpLogs = [];
+    private int $level;
+    private \Ess\M2ePro\Model\Registry\Manager $registry;
+    private array $tmpLogs = [];
 
     /**
      * @param \Ess\M2ePro\Helper\Module\ChangeTracker $changeTrackerHelper
@@ -39,7 +34,7 @@ class TrackerLogger implements LoggerInterface
      */
     public function emergency($message, array $context = []): void
     {
-        $this->log(Logger::EMERGENCY, $message, $context);
+        $this->log(\Monolog\Logger::EMERGENCY, $message, $context);
     }
 
     /**
@@ -47,7 +42,7 @@ class TrackerLogger implements LoggerInterface
      */
     public function alert($message, array $context = []): void
     {
-        $this->log(Logger::ALERT, $message, $context);
+        $this->log(\Monolog\Logger::ALERT, $message, $context);
     }
 
     /**
@@ -55,7 +50,7 @@ class TrackerLogger implements LoggerInterface
      */
     public function critical($message, array $context = []): void
     {
-        $this->log(Logger::CRITICAL, $message, $context);
+        $this->log(\Monolog\Logger::CRITICAL, $message, $context);
     }
 
     /**
@@ -63,7 +58,7 @@ class TrackerLogger implements LoggerInterface
      */
     public function error($message, array $context = []): void
     {
-        $this->log(Logger::ERROR, $message, $context);
+        $this->log(\Monolog\Logger::ERROR, $message, $context);
     }
 
     /**
@@ -71,7 +66,7 @@ class TrackerLogger implements LoggerInterface
      */
     public function warning($message, array $context = []): void
     {
-        $this->log(Logger::WARNING, $message, $context);
+        $this->log(\Monolog\Logger::WARNING, $message, $context);
     }
 
     /**
@@ -79,7 +74,7 @@ class TrackerLogger implements LoggerInterface
      */
     public function notice($message, array $context = []): void
     {
-        $this->log(Logger::NOTICE, $message, $context);
+        $this->log(\Monolog\Logger::NOTICE, $message, $context);
     }
 
     /**
@@ -87,7 +82,7 @@ class TrackerLogger implements LoggerInterface
      */
     public function info($message, array $context = []): void
     {
-        $this->log(Logger::INFO, $message, $context);
+        $this->log(\Monolog\Logger::INFO, $message, $context);
     }
 
     /**
@@ -95,7 +90,7 @@ class TrackerLogger implements LoggerInterface
      */
     public function debug($message, array $context = []): void
     {
-        $this->log(Logger::DEBUG, $message, $context);
+        $this->log(\Monolog\Logger::DEBUG, $message, $context);
     }
 
     /**
@@ -108,7 +103,7 @@ class TrackerLogger implements LoggerInterface
         }
 
         if (array_key_exists('tracker', $context)) {
-            /** @var \Ess\M2ePro\Model\ChangeTracker\Base\TrackerInterface $tracker */
+            /** @var \Ess\M2ePro\Model\ChangeTracker\TrackerInterface $tracker */
             $tracker = $context['tracker'];
             unset($context['tracker']);
 
@@ -124,8 +119,8 @@ class TrackerLogger implements LoggerInterface
         }
 
         $this->tmpLogs[] = [
-            'date' => Date::createCurrentGmt()->format('Y-m-d H:i:s'),
-            'level' => Logger::getLevelName($level),
+            'date' => \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s'),
+            'level' => \Monolog\Logger::getLevelName($level),
             'message' => $message,
             'context' => $this->formatContext($context),
         ];

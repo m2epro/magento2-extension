@@ -527,10 +527,10 @@ abstract class Base extends Action
         /** @var \Magento\Theme\Block\Html\Title $pageTitleBlock */
         $pageTitleBlock = $this->getLayout()->getBlock('page.title');
 
+        /** @var \Ess\M2ePro\Helper\Module\Support $supportHelper */
+        $supportHelper = $this->getHelper('Module\Support');
         $helpLinkBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\PageHelpLink::class)->setData([
-            'page_help_link' => $this->getHelper('Module\Support')->getDocumentationArticleUrl(
-                $tinyLink
-            ),
+            'page_help_link' => $supportHelper->getDocumentationArticleUrl($tinyLink),
         ]);
 
         $pageTitleBlock->setTitleClass('m2epro-page-title');

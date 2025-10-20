@@ -27,9 +27,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     public const PROMOTIONS_MODE_NO = 0;
     public const PROMOTIONS_MODE_YES = 1;
 
-    public const SHIPPING_OVERRIDE_RULE_MODE_NO = 0;
-    public const SHIPPING_OVERRIDE_RULE_MODE_YES = 1;
-
     public const LAG_TIME_MODE_RECOMMENDED = 1;
     public const LAG_TIME_MODE_CUSTOM_ATTRIBUTE = 2;
 
@@ -134,10 +131,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
             $promotion->delete();
         }
 
-        foreach ($this->getShippingOverrides(true) as $service) {
-            $service->delete();
-        }
-
         parent::delete();
         $this->marketplaceModel = null;
 
@@ -219,32 +212,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
         }
 
         return $services;
-    }
-
-    /**
-     * @param bool $asObjects
-     * @param array $filters
-     *
-     * @return array|\Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride[]
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    public function getShippingOverrides($asObjects = false, array $filters = [])
-    {
-        $shippingOverrides = $this->getRelatedSimpleItems(
-            'Walmart_Template_SellingFormat_ShippingOverride',
-            'template_selling_format_id',
-            $asObjects,
-            $filters
-        );
-
-        if ($asObjects) {
-            /** @var \Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride $shippingOverride */
-            foreach ($shippingOverrides as $shippingOverride) {
-                $shippingOverride->setSellingFormatTemplate($this);
-            }
-        }
-
-        return $shippingOverrides;
     }
 
     //########################################
@@ -483,23 +450,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     public function isPromotionsModeYes()
     {
         return $this->getPromotionsMode() == self::PROMOTIONS_MODE_YES;
-    }
-
-    // ---------------------------------------
-
-    public function getShippingOverrideRuleMode()
-    {
-        return (int)$this->getData('shipping_override_rule_mode');
-    }
-
-    public function isShippingOverrideRuleModeNo()
-    {
-        return $this->getShippingOverrideRuleMode() == self::SHIPPING_OVERRIDE_RULE_MODE_NO;
-    }
-
-    public function isShippingOverrideRuleModeYes()
-    {
-        return $this->getShippingOverrideRuleMode() == self::SHIPPING_OVERRIDE_RULE_MODE_YES;
     }
 
     // ---------------------------------------
@@ -967,16 +917,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
                 $isPriceConvertEnabled
                 && $promotion->isPriceModeAttribute()
                 && $attributeHelper->isAttributeInputTypePrice($promotion->getPriceAttribute())
-            ) {
-                return true;
-            }
-        }
-
-        foreach ($this->getShippingOverrides(true) as $service) {
-            if (
-                $isPriceConvertEnabled
-                && $service->isCostModeCustomAttribute()
-                && $attributeHelper->isAttributeInputTypePrice($service->getCostAttribute())
             ) {
                 return true;
             }

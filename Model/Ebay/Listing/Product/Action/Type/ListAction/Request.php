@@ -89,9 +89,11 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
             unset($otherData['product_details']);
         }
 
+        $this->addWarningIfSkuChanged();
+
         $data = array_merge(
             [
-                'sku' => $this->getEbayListingProduct()->getSku(),
+                'sku' => $this->getSku(),
                 'item_uuid' => $uuid,
             ],
             $generalData,

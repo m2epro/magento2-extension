@@ -55,7 +55,6 @@ class Save extends Template
         $this->modelFactory->getObject('Walmart_Template_SellingFormat_Builder')
                            ->build($sellingFormatTemplate, $post->toArray());
 
-        $this->updateServices($post, $sellingFormatTemplate->getId());
         $this->updatePromotions($post, $sellingFormatTemplate->getId());
 
         $snapshotBuilder = $this->modelFactory->getObject('Walmart_Template_SellingFormat_SnapshotBuilder');
@@ -99,33 +98,6 @@ class Save extends Template
                 ],
             ])
         );
-    }
-
-    private function updateServices($data, $templateId)
-    {
-        $collection = $this->activeRecordFactory->getObject('Walmart_Template_SellingFormat_ShippingOverride')
-                                                ->getCollection()
-                                                ->addFieldToFilter('template_selling_format_id', (int)$templateId);
-
-        foreach ($collection as $item) {
-            $item->delete();
-        }
-
-        if (empty($data['shipping_override_rule'])) {
-            return;
-        }
-
-        /** @var \Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride\Builder $builder */
-        $builder = $this->modelFactory
-            ->getObject('Walmart_Template_SellingFormat_ShippingOverride_Builder');
-
-        foreach ($data['shipping_override_rule'] as $serviceData) {
-            /** @var \Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride $shippingOverrideInstance */
-            $shippingOverrideInstance = $this->activeRecordFactory
-                ->getObject('Walmart_Template_SellingFormat_ShippingOverride');
-            $builder->setTemplateSellingFormatId($templateId);
-            $builder->build($shippingOverrideInstance, $serviceData);
-        }
     }
 
     private function updatePromotions($data, $templateId)

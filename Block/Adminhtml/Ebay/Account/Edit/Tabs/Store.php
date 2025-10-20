@@ -60,14 +60,13 @@ class Store extends AbstractForm
             'ebay_accounts_store',
             self::HELP_BLOCK,
             [
-                'content' => $this->__(
-                    <<<HTML
-<p>This tab displays information about your eBay Store and might be helpful for the
-Category settings via M2E Pro.</p><br>
-<p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
-HTML
-                    ,
-                    $this->supportHelper->getDocumentationArticleUrl('display/eBayMagentoV6X/eBay+Store')
+                'content' => __(
+                    '<p>This tab displays information about your eBay Store and might ' .
+                    'be helpful for the Category settings via M2E Pro.</p><br><p>More detailed information ' .
+                    'you can find <a href="%url" target="_blank" class="external-link">here</a>.</p>',
+                    [
+                        'url' => $this->supportHelper->getDocumentationArticleUrl('docs/ebay-store/'),
+                    ]
                 ),
             ]
         );

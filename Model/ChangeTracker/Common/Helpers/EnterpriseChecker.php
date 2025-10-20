@@ -1,17 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ess\M2ePro\Model\ChangeTracker\Common\Helpers;
 
 class EnterpriseChecker
 {
-    /** @var ?bool */
-    private $isEnterpriseEdition = null;
-    /** @var \Magento\Framework\App\ResourceConnection */
-    private $resourceConnection;
+    private bool $isEnterpriseEdition;
+    private \Magento\Framework\App\ResourceConnection $resourceConnection;
 
-    /**
-     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
-     */
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection
     ) {
@@ -24,7 +21,8 @@ class EnterpriseChecker
      */
     public function isEnterpriseEdition(): bool
     {
-        if ($this->isEnterpriseEdition !== null) {
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        if (isset($this->isEnterpriseEdition)) {
             return $this->isEnterpriseEdition;
         }
 

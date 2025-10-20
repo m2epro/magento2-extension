@@ -219,7 +219,7 @@ class Index extends Settings
 
         $this->addContent($block);
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Set Your eBay Categories'));
-        $this->setPageHelpLink('display/eBayMagentoV6X/Set+eBay+Categories');
+        $this->setPageHelpLink('docs/category-management/');
 
         return $this->getResult();
     }

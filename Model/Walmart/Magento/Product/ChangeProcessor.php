@@ -130,14 +130,6 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
             $walmartSellingFormatTemplate->getShipsInOriginalPackagingModeAttributes(),
         );
 
-        foreach ($walmartSellingFormatTemplate->getShippingOverrides(true) as $shippingOverride) {
-            /** @var \Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride $shippingOverride */
-
-            if ($shippingOverride->isCostModeCustomAttribute()) {
-                $trackingAttributes[] = $shippingOverride->getCostAttribute();
-            }
-        }
-
         if ($this->getWalmartListingProduct()->isExistsProductType()) {
             $productType = $this->getWalmartListingProduct()->getProductType();
             foreach ($productType->getAttributesSettings() as $attributesSetting) {

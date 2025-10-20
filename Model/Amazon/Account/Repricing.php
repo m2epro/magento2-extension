@@ -24,9 +24,13 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     public const MIN_PRICE_MODE_REGULAR_VALUE = 4;
     public const MIN_PRICE_MODE_REGULAR_PERCENT = 5;
+    public const MIN_PRICE_MODE_REGULAR_VALUE_ATTRIBUTE = 6;
+    public const MIN_PRICE_MODE_REGULAR_PERCENT_ATTRIBUTE = 7;
 
     public const MAX_PRICE_MODE_REGULAR_VALUE = 4;
     public const MAX_PRICE_MODE_REGULAR_PERCENT = 5;
+    public const MAX_PRICE_MODE_REGULAR_VALUE_ATTRIBUTE = 6;
+    public const MAX_PRICE_MODE_REGULAR_PERCENT_ATTRIBUTE = 7;
 
     public const PRICE_VARIATION_MODE_PARENT = 1;
     public const PRICE_VARIATION_MODE_CHILDREN = 2;
@@ -282,42 +286,37 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     //########################################
 
-    /**
-     * @return int
-     */
-    public function getMinPriceMode()
+    public function getMinPriceMode(): int
     {
         return (int)$this->getData('min_price_mode');
     }
 
-    /**
-     * @return bool
-     */
-    public function isMinPriceModeManual()
+    public function isMinPriceModeManual(): bool
     {
         return $this->getMinPriceMode() == self::PRICE_MODE_MANUAL;
     }
 
-    /**
-     * @return bool
-     */
-    public function isMinPriceModeRegularValue()
+    public function isMinPriceModeRegularValue(): bool
     {
         return $this->getMinPriceMode() == self::MIN_PRICE_MODE_REGULAR_VALUE;
     }
 
-    /**
-     * @return bool
-     */
-    public function isMinPriceModeRegularPercent()
+    public function isMinPriceModeRegularValueAttribute(): bool
+    {
+        return $this->getMinPriceMode() == self::MIN_PRICE_MODE_REGULAR_VALUE_ATTRIBUTE;
+    }
+
+    public function isMinPriceModeRegularPercent(): bool
     {
         return $this->getMinPriceMode() == self::MIN_PRICE_MODE_REGULAR_PERCENT;
     }
 
-    /**
-     * @return bool
-     */
-    public function isMinPriceModeAttribute()
+    public function isMinPriceModeRegularPercentAttribute(): bool
+    {
+        return $this->getMinPriceMode() == self::MIN_PRICE_MODE_REGULAR_PERCENT_ATTRIBUTE;
+    }
+
+    public function isMinPriceModeAttribute(): bool
     {
         return $this->getMinPriceMode() == self::PRICE_MODE_ATTRIBUTE;
     }
@@ -327,10 +326,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return $this->getData('min_price_coefficient');
     }
 
-    /**
-     * @return array
-     */
-    public function getMinPriceSource()
+    public function getMinPriceSource(): array
     {
         return [
             'mode' => $this->getMinPriceMode(),
@@ -338,13 +334,12 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             'attribute' => $this->getData('min_price_attribute'),
             'regular_value' => $this->getData('min_price_value'),
             'regular_percent' => $this->getData('min_price_percent'),
+            'value_attribute' => $this->getData('min_price_value_attribute'),
+            'percent_attribute' => $this->getData('min_price_percent_attribute'),
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function getMinPriceAttributes()
+    public function getMinPriceAttributes(): array
     {
         $attributes = [];
         $src = $this->getMinPriceSource();
@@ -353,73 +348,67 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             $attributes[] = $src['attribute'];
         }
 
+        if ($src['mode'] == self::MIN_PRICE_MODE_REGULAR_VALUE_ATTRIBUTE) {
+            $attributes[] = $src['value_attribute'];
+        }
+
+        if ($src['mode'] == self::MIN_PRICE_MODE_REGULAR_PERCENT_ATTRIBUTE) {
+            $attributes[] = $src['percent_attribute'];
+        }
+
         return $attributes;
     }
 
     //########################################
 
-    /**
-     * @return int
-     */
-    public function getMinPriceVariationMode()
+    public function getMinPriceVariationMode(): int
     {
         return (int)$this->getData('min_price_variation_mode');
     }
 
-    /**
-     * @return bool
-     */
-    public function isMinPriceVariationModeParent()
+    public function isMinPriceVariationModeParent(): bool
     {
         return $this->getMinPriceVariationMode() == self::PRICE_VARIATION_MODE_PARENT;
     }
 
-    /**
-     * @return bool
-     */
-    public function isMinPriceVariationModeChildren()
+    public function isMinPriceVariationModeChildren(): bool
     {
         return $this->getMinPriceVariationMode() == self::PRICE_VARIATION_MODE_CHILDREN;
     }
 
     //########################################
 
-    /**
-     * @return int
-     */
-    public function getMaxPriceMode()
+    public function getMaxPriceMode(): int
     {
         return (int)$this->getData('max_price_mode');
     }
 
-    /**
-     * @return bool
-     */
-    public function isMaxPriceModeManual()
+    public function isMaxPriceModeManual(): bool
     {
         return $this->getMaxPriceMode() == self::PRICE_MODE_MANUAL;
     }
 
-    /**
-     * @return bool
-     */
-    public function isMaxPriceModeRegularValue()
+    public function isMaxPriceModeRegularValue(): bool
     {
         return $this->getMaxPriceMode() == self::MAX_PRICE_MODE_REGULAR_VALUE;
     }
 
-    /**
-     * @return bool
-     */
-    public function isMaxPriceModeRegularPercent()
+    public function isMaxPriceModeRegularPercent(): bool
     {
         return $this->getMaxPriceMode() == self::MAX_PRICE_MODE_REGULAR_PERCENT;
     }
 
-    /**
-     * @return bool
-     */
-    public function isMaxPriceModeAttribute()
+    public function isMaxPriceModeRegularValueAttribute(): bool
+    {
+        return $this->getMaxPriceMode() == self::MAX_PRICE_MODE_REGULAR_VALUE_ATTRIBUTE;
+    }
+
+    public function isMaxPriceModeRegularPercentAttribute(): bool
+    {
+        return $this->getMaxPriceMode() == self::MAX_PRICE_MODE_REGULAR_PERCENT_ATTRIBUTE;
+    }
+
+    public function isMaxPriceModeAttribute(): bool
     {
         return $this->getMaxPriceMode() == self::PRICE_MODE_ATTRIBUTE;
     }
@@ -429,10 +418,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return $this->getData('max_price_coefficient');
     }
 
-    /**
-     * @return array
-     */
-    public function getMaxPriceSource()
+    public function getMaxPriceSource(): array
     {
         return [
             'mode' => $this->getMaxPriceMode(),
@@ -440,13 +426,12 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             'attribute' => $this->getData('max_price_attribute'),
             'regular_value' => $this->getData('max_price_value'),
             'regular_percent' => $this->getData('max_price_percent'),
+            'value_attribute' => $this->getData('max_price_value_attribute'),
+            'percent_attribute' => $this->getData('max_price_percent_attribute'),
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function getMaxPriceAttributes()
+    public function getMaxPriceAttributes(): array
     {
         $attributes = [];
         $src = $this->getMaxPriceSource();
@@ -455,31 +440,30 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             $attributes[] = $src['attribute'];
         }
 
+        if ($src['mode'] == self::MAX_PRICE_MODE_REGULAR_VALUE_ATTRIBUTE) {
+            $attributes[] = $src['value_attribute'];
+        }
+
+        if ($src['mode'] == self::MAX_PRICE_MODE_REGULAR_PERCENT_ATTRIBUTE) {
+            $attributes[] = $src['percent_attribute'];
+        }
+
         return $attributes;
     }
 
     //########################################
 
-    /**
-     * @return int
-     */
-    public function getMaxPriceVariationMode()
+    public function getMaxPriceVariationMode(): int
     {
         return (int)$this->getData('max_price_variation_mode');
     }
 
-    /**
-     * @return bool
-     */
-    public function isMaxPriceVariationModeParent()
+    public function isMaxPriceVariationModeParent(): bool
     {
         return $this->getMaxPriceVariationMode() == self::PRICE_VARIATION_MODE_PARENT;
     }
 
-    /**
-     * @return bool
-     */
-    public function isMaxPriceVariationModeChildren()
+    public function isMaxPriceVariationModeChildren(): bool
     {
         return $this->getMaxPriceVariationMode() == self::PRICE_VARIATION_MODE_CHILDREN;
     }
