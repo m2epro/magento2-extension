@@ -9,21 +9,21 @@ class ChangeHolder
     public const INSTRUCTION_TYPE_CHANGE_TRACKER_QTY = 'change_tracker_qty_changed';
     public const INSTRUCTION_TYPE_CHANGE_TRACKER_PRICE = 'change_tracker_price_changed';
 
-    private \Magento\Framework\App\ResourceConnection $resource;
     private \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction $instruction;
     private Common\Helpers\Profiler $profiler;
     private Common\Helpers\TrackerLogger $logger;
+    private \Magento\Framework\ObjectManagerInterface $objectManager;
 
     public function __construct(
-        \Magento\Framework\App\ResourceConnection $resource,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction $instruction,
         \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\Profiler $profiler,
-        \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger $logger
+        \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger $logger,
+        \Magento\Framework\ObjectManagerInterface $objectManager
     ) {
-        $this->resource = $resource;
         $this->instruction = $instruction;
         $this->profiler = $profiler;
         $this->logger = $logger;
+        $this->objectManager = $objectManager;
     }
 
     /**
@@ -57,7 +57,7 @@ class ChangeHolder
         // Execute SQL query
         $this->profiler->start();
         try {
-            $statement = $this->resource->getConnection()->query($trackerQuery);
+            $statement = $this->createDatabaseConnection()->query($trackerQuery);
             $statement->execute();
         } catch (\Throwable $exception) {
             $this->processException($exception);
@@ -122,10 +122,17 @@ class ChangeHolder
             'message' => $exception->getMessage(),
             'file' => $exception->getFile(),
             'line' => $exception->getLine(),
-            'trace' => $exception->getTrace()
+            'trace' => $exception->getTrace(),
         ]);
         $this->logger->writeLogs();
 
         throw $exception;
+    }
+
+    private function createDatabaseConnection(): \Magento\Framework\DB\Adapter\AdapterInterface
+    {
+        $resource = $this->objectManager->create(\Magento\Framework\App\ResourceConnection::class);
+
+        return $resource->getConnection();
     }
 }

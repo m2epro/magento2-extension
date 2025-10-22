@@ -98,7 +98,7 @@ class BestOfferTracker extends PriceTracker
 
         $select->leftJoin(
             'selling_policy',
-            'pref_m2epro_ebay_template_selling_format',
+            'm2epro_ebay_template_selling_format',
             'product.selling_template_id = selling_policy.template_selling_format_id'
         );
         $select->andWhere('selling_policy.best_offer_mode = 1');
