@@ -39,6 +39,14 @@ class Command extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
             $response->setCarrierCode($carrierCode);
         }
 
+        $carrierUrl = $responseData['package']['carrier_url'] ?? null;
+        if (
+            !empty($carrierUrl)
+            && method_exists($response, 'setCarrierUrl')
+        ) {
+            $response->setCarrierUrl($carrierUrl);
+        }
+
         $this->responseData = $response;
     }
 }
