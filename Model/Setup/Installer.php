@@ -12811,6 +12811,30 @@ class Installer
                                              null,
                                              ['unsigned' => true, 'default' => null]
                                          )
+                                         ->addColumn(
+                                             \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Other::COLUMN_ONLINE_REPRICER_STRATEGY_NAME,
+                                             Table::TYPE_TEXT,
+                                             255,
+                                             ['default' => null]
+                                         )
+                                         ->addColumn(
+                                             \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Other::COLUMN_ONLINE_REPRICER_MIN_PRICE,
+                                             Table::TYPE_DECIMAL,
+                                             [12, 4],
+                                             ['unsigned' => true]
+                                         )
+                                         ->addColumn(
+                                             \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Other::COLUMN_ONLINE_REPRICER_MAX_PRICE,
+                                             Table::TYPE_DECIMAL,
+                                             [12, 4],
+                                             ['unsigned' => true]
+                                         )
+                                         ->addColumn(
+                                             \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Other::COLUMN_ONLINE_REPRICER_STATUS,
+                                             Table::TYPE_TEXT,
+                                             255,
+                                             ['default' => null]
+                                         )
                                          ->addIndex('online_price', 'online_price')
                                          ->addIndex('online_qty', 'online_qty')
                                          ->addIndex('sku', 'sku')
@@ -12828,7 +12852,7 @@ class Installer
 
         # region walmart_listing_product
         $walmartListingProductTable = $this->getConnection()->newTable(
-            $this->getFullTableName('walmart_listing_product')
+            $this->getFullTableName(TablesHelper::TABLE_WALMART_LISTING_PRODUCT)
         );
         $walmartListingProductTable->addColumn(
             'listing_product_id',
@@ -13022,6 +13046,31 @@ class Installer
             null,
             ['unsigned' => true, 'nullable' => false, 'default' => 0]
         );
+        $walmartListingProductTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_ONLINE_REPRICER_STRATEGY_NAME,
+            Table::TYPE_TEXT,
+            255,
+            ['default' => null]
+        );
+        $walmartListingProductTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_ONLINE_REPRICER_MIN_PRICE,
+            Table::TYPE_DECIMAL,
+            [12, 4],
+            ['unsigned' => true, 'default' => null]
+        );
+        $walmartListingProductTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_ONLINE_REPRICER_MAX_PRICE,
+            Table::TYPE_DECIMAL,
+            [12, 4],
+            ['unsigned' => true, 'default' => null]
+        );
+        $walmartListingProductTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_REPRICER_LAST_UPDATE_DATE,
+            Table::TYPE_DATETIME,
+            null,
+            ['default' => null]
+        );
+
         $walmartListingProductTable->addIndex('is_variation_product_matched', 'is_variation_product_matched');
         $walmartListingProductTable->addIndex('is_variation_channel_matched', 'is_variation_channel_matched');
         $walmartListingProductTable->addIndex('is_variation_product', 'is_variation_product');
@@ -14073,6 +14122,36 @@ class Installer
                                                       Table::TYPE_TEXT,
                                                       255,
                                                       ['nullable' => false]
+                                                  )
+                                                  ->addColumn(
+                                                      \Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat::COLUMN_REPRICER_MIN_PRICE_MODE,
+                                                      Table::TYPE_SMALLINT,
+                                                      null,
+                                                      ['unsigned' => true, 'nullable' => false, 'default' => '0']
+                                                  )
+                                                  ->addColumn(
+                                                      \Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat::COLUMN_REPRICER_MIN_PRICE_ATTRIBUTE,
+                                                      Table::TYPE_TEXT,
+                                                      255,
+                                                      ['default' => null]
+                                                  )
+                                                  ->addColumn(
+                                                      \Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat::COLUMN_REPRICER_MAX_PRICE_MODE,
+                                                      Table::TYPE_SMALLINT,
+                                                      null,
+                                                      ['unsigned' => true, 'nullable' => false, 'default' => '0']
+                                                  )
+                                                  ->addColumn(
+                                                      \Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat::COLUMN_REPRICER_MAX_PRICE_ATTRIBUTE,
+                                                      Table::TYPE_TEXT,
+                                                      255,
+                                                      ['default' => null]
+                                                  )
+                                                  ->addColumn(
+                                                      \Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat::COLUMN_REPRICER_ACCOUNT_STRATEGIES,
+                                                      Table::TYPE_TEXT,
+                                                      self::LONG_COLUMN_SIZE,
+                                                      ['default' => null]
                                                   )
                                                   ->addIndex('marketplace_id', 'marketplace_id')
                                                   ->setOption('type', 'INNODB')

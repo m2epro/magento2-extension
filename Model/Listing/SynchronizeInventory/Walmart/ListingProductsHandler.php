@@ -8,8 +8,9 @@
 
 namespace Ess\M2ePro\Model\Listing\SynchronizeInventory\Walmart;
 
-use Ess\M2ePro\Model\Listing\SynchronizeInventory\AbstractExistingProductsHandler;
 use Ess\M2ePro\Model\Cron\Task\Walmart\Listing\SynchronizeInventory\Responser;
+use Ess\M2ePro\Model\Listing\SynchronizeInventory\AbstractExistingProductsHandler;
+use Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product as WalmartListingProductResource;
 use Ess\M2ePro\Model\Walmart\Listing\Product;
 
 class ListingProductsHandler extends AbstractExistingProductsHandler
@@ -78,6 +79,12 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                     'status_change_reasons' => \Ess\M2ePro\Helper\Json::encode($receivedItem['status_change_reason']),
                     'is_online_price_invalid' => $isOnlinePriceInvalid,
                     'is_missed_on_channel' => false,
+                    WalmartListingProductResource::COLUMN_ONLINE_REPRICER_STRATEGY_NAME =>
+                        $receivedItem['repricer']['strategy_name'] ?? null,
+                    WalmartListingProductResource::COLUMN_ONLINE_REPRICER_MIN_PRICE =>
+                        $receivedItem['repricer']['min_price'] ?? null,
+                    WalmartListingProductResource::COLUMN_ONLINE_REPRICER_MAX_PRICE =>
+                        $receivedItem['repricer']['max_price'] ?? null,
                 ];
 
                 $newData['status'] = $componentHelper->getResultProductStatus(
@@ -98,6 +105,12 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                     'status_change_reasons' => (string)$existingItem['status_change_reasons'],
                     'is_online_price_invalid' => (bool)$existingItem['is_online_price_invalid'],
                     'is_missed_on_channel' => (bool)$existingItem['is_missed_on_channel'],
+                    WalmartListingProductResource::COLUMN_ONLINE_REPRICER_STRATEGY_NAME =>
+                        $existingItem[WalmartListingProductResource::COLUMN_ONLINE_REPRICER_STRATEGY_NAME],
+                    WalmartListingProductResource::COLUMN_ONLINE_REPRICER_MIN_PRICE =>
+                        $existingItem[WalmartListingProductResource::COLUMN_ONLINE_REPRICER_MIN_PRICE],
+                    WalmartListingProductResource::COLUMN_ONLINE_REPRICER_MAX_PRICE =>
+                        $existingItem[WalmartListingProductResource::COLUMN_ONLINE_REPRICER_MAX_PRICE],
                 ];
 
                 $existingAdditionalData = \Ess\M2ePro\Helper\Json::decode($existingItem['additional_data']);
@@ -135,6 +148,26 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                             $existingData['lifecycle_status'],
                             $existingData['publish_status'],
                             $existingData['is_online_price_invalid']
+                        );
+                    }
+                }
+
+                if (!empty($existingItem[WalmartListingProductResource::COLUMN_REPRICER_LAST_UPDATE_DATE])) {
+                    $theDayBefore = \Ess\M2ePro\Helper\Date::createCurrentGmt()->modify('-24 hour');
+                    $lastRepricerUpdateDate = \Ess\M2ePro\Helper\Date::createDateGmt(
+                        $existingItem[WalmartListingProductResource::COLUMN_REPRICER_LAST_UPDATE_DATE]
+                    );
+
+                    if ($theDayBefore <= $lastRepricerUpdateDate) {
+                        unset(
+                            $newData[WalmartListingProductResource::COLUMN_ONLINE_REPRICER_STRATEGY_NAME],
+                            $newData[WalmartListingProductResource::COLUMN_ONLINE_REPRICER_MIN_PRICE],
+                            $newData[WalmartListingProductResource::COLUMN_ONLINE_REPRICER_MAX_PRICE]
+                        );
+                        unset(
+                            $existingData[WalmartListingProductResource::COLUMN_ONLINE_REPRICER_STRATEGY_NAME],
+                            $existingData[WalmartListingProductResource::COLUMN_ONLINE_REPRICER_MIN_PRICE],
+                            $existingData[WalmartListingProductResource::COLUMN_ONLINE_REPRICER_MAX_PRICE]
                         );
                     }
                 }
@@ -184,6 +217,68 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                         (int)$existingData['online_qty'],
                         (int)$newData['online_qty']
                     );
+
+                    if (!empty($existingItem['is_variation_product']) && !empty($existingItem['variation_parent_id'])) {
+                        $parentIdsForProcessing[] = (int)$existingItem['variation_parent_id'];
+                    }
+                }
+
+                $isChangedRepricerStrategyName = $this->isDataChanged(
+                    $existingData,
+                    $newData,
+                    WalmartListingProductResource::COLUMN_ONLINE_REPRICER_STRATEGY_NAME
+                );
+                if ($isChangedRepricerStrategyName) {
+                    $tempLogMessages[] = __(
+                        'Repricer Strategy was changed from "%from" to "%to" .',
+                        [
+                            'from' => (string)$existingData[WalmartListingProductResource::COLUMN_ONLINE_REPRICER_STRATEGY_NAME],
+                            'to' => (string)$newData[WalmartListingProductResource::COLUMN_ONLINE_REPRICER_STRATEGY_NAME],
+                        ]
+                    );
+                }
+
+                $isChangedRepricerMinPrice = $this->isDataChanged(
+                    $existingData,
+                    $newData,
+                    WalmartListingProductResource::COLUMN_ONLINE_REPRICER_MIN_PRICE
+                );
+                if ($isChangedRepricerMinPrice) {
+                    $tempLogMessages[] = __(
+                        'Repricer Min Price was changed from "%from" to "%to" .',
+                        [
+                            'from' => (float)$existingData[WalmartListingProductResource::COLUMN_ONLINE_REPRICER_MIN_PRICE],
+                            'to' => (float)$newData[WalmartListingProductResource::COLUMN_ONLINE_REPRICER_MIN_PRICE],
+                        ]
+                    );
+                }
+
+                $isChangedRepricerMaxPrice = $this->isDataChanged(
+                    $existingData,
+                    $newData,
+                    WalmartListingProductResource::COLUMN_ONLINE_REPRICER_MAX_PRICE
+                );
+                if ($isChangedRepricerMaxPrice) {
+                    $tempLogMessages[] = __(
+                        'Repricer Max Price was changed from "%from" to "%to" .',
+                        [
+                            'from' => (float)$existingData[WalmartListingProductResource::COLUMN_ONLINE_REPRICER_MAX_PRICE],
+                            'to' => (float)$newData[WalmartListingProductResource::COLUMN_ONLINE_REPRICER_MAX_PRICE],
+                        ]
+                    );
+                }
+
+                if (
+                    $isChangedRepricerStrategyName
+                    || $isChangedRepricerMinPrice
+                    || $isChangedRepricerMaxPrice
+                ) {
+                    $instructionsData[] = [
+                        'listing_product_id' => $existingItem['listing_product_id'],
+                        'type' => Product::INSTRUCTION_TYPE_CHANNEL_PRICE_CHANGED,
+                        'initiator' => Responser::INSTRUCTION_INITIATOR,
+                        'priority' => 80,
+                    ];
 
                     if (!empty($existingItem['is_variation_product']) && !empty($existingItem['variation_parent_id'])) {
                         $parentIdsForProcessing[] = (int)$existingItem['variation_parent_id'];
@@ -261,6 +356,22 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                 'second_table.lifecycle_status',
                 'second_table.status_change_reasons',
                 'second_table.is_missed_on_channel',
+                sprintf(
+                    'second_table.%s',
+                    WalmartListingProductResource::COLUMN_ONLINE_REPRICER_STRATEGY_NAME
+                ),
+                sprintf(
+                    'second_table.%s',
+                    WalmartListingProductResource::COLUMN_ONLINE_REPRICER_MIN_PRICE
+                ),
+                sprintf(
+                    'second_table.%s',
+                    WalmartListingProductResource::COLUMN_ONLINE_REPRICER_MAX_PRICE
+                ),
+                sprintf(
+                    'second_table.%s',
+                    WalmartListingProductResource::COLUMN_REPRICER_LAST_UPDATE_DATE
+                ),
             ]
         );
 

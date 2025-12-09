@@ -23,6 +23,7 @@ class RunReviseProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
         $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
         $configurator->enableAll();
         $tag = '/qty/lag_time/price/promotions/details/';
+
         $params['status_changer'] = \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER;
 
         return [

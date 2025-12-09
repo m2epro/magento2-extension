@@ -59,7 +59,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     public function _construct()
     {
         parent::_construct();
-        $this->_init(\Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::class);
+        $this->_init(ListingProductResource::class);
     }
 
     /**
@@ -976,5 +976,35 @@ HTML;
         return $matchedAttributes;
     }
 
-    //########################################
+    // ----------------------------------------
+
+    public function getOnlineRepricerStrategyName(): ?string
+    {
+        $strategyName = $this->getData(ListingProductResource::COLUMN_ONLINE_REPRICER_STRATEGY_NAME);
+        if (empty($strategyName)) {
+            return null;
+        }
+
+        return (string)$strategyName;
+    }
+
+    public function getOnlineRepricerMinPrice(): ?float
+    {
+        $minPrice = $this->getData(ListingProductResource::COLUMN_ONLINE_REPRICER_MIN_PRICE);
+        if (empty($minPrice)) {
+            return null;
+        }
+
+        return (float)$minPrice;
+    }
+
+    public function getOnlineRepricerMaxPrice(): ?float
+    {
+        $maxPrice = $this->getData(ListingProductResource::COLUMN_ONLINE_REPRICER_MAX_PRICE);
+        if (empty($maxPrice)) {
+            return null;
+        }
+
+        return (float)$maxPrice;
+    }
 }

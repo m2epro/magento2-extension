@@ -90,7 +90,10 @@ class Integration extends Command
                 $request = $this->modelFactory->getObject(
                     'Walmart_Listing_Product_Action_Type_' . $requestType . '_Request'
                 );
-                $request->setParams(['sku' => $skuResolver->resolve()]);
+                $request->setParams([
+                    'sku' => $skuResolver->resolve(),
+                    'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER,
+                ]);
                 $request->setListingProduct($lp);
                 $request->setConfigurator($configurator);
 
@@ -225,12 +228,8 @@ HTML;
                 $html .= 'isMeetRevisePrice: ' . json_encode($checker->isMeetRevisePriceRequirements()) . '<br>';
                 $html .= 'isMeetReviseTitle: ' . json_encode($checker->isMeetReviseTitleRequirements()) . '<br>';
                 $html .= 'isMeetReviseSubtitle: ' . json_encode($checker->isMeetReviseSubtitleRequirements()) . '<br>';
-                $html .= 'isMeetReviseDescription: ' . json_encode(
-                    $checker->isMeetReviseDescriptionRequirements()
-                ) . '<br>';
-                $html .= 'isMeetReviseCategories: ' . json_encode(
-                    $checker->isMeetReviseCategoriesRequirements()
-                ) . '<br>';
+                $html .= 'isMeetReviseDescription: ' . json_encode($checker->isMeetReviseDescriptionRequirements()) . '<br>';
+                $html .= 'isMeetReviseCategories: ' . json_encode($checker->isMeetReviseCategoriesRequirements()) . '<br>';
                 $html .= 'isMeetReviseShipping: ' . json_encode($checker->isMeetReviseShippingRequirements()) . '<br>';
                 $html .= 'isMeetReviseReturn: ' . json_encode($checker->isMeetReviseReturnRequirements()) . '<br>';
                 $html .= 'isMeetReviseOther: ' . json_encode($checker->isMeetReviseOtherRequirements()) . '<br><br>';
@@ -374,6 +373,7 @@ HTML;
 
                 $html .= 'isMeetReviseQty: ' . json_encode($checker->isMeetReviseQtyRequirements()) . '<br>';
                 $html .= 'isMeetRevisePrice: ' . json_encode($checker->isMeetRevisePriceRequirements()) . '<br>';
+                $html .= 'isMeetReviseRepricer: ' . json_encode($checker->isMeetReviseRepricerRequirements()) . '<br>';
                 $html .= 'isMeetRevisePromotions: ' . json_encode($checker->isMeetRevisePromotionsRequirements()) . '<br>';
                 $html .= 'isMeetReviseDetails: ' . json_encode($checker->isMeetReviseDetailsRequirements()) . '<br>';
                 //--

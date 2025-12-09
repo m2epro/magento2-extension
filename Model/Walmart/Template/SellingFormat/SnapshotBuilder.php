@@ -36,6 +36,8 @@ class SnapshotBuilder extends \Ess\M2ePro\Model\ActiveRecord\SnapshotBuilder
             'template_selling_format_id',
         ];
 
+        $data['repricer_account_strategies'] = $childModel->getRepricerAccountStrategies();
+
         // ---------------------------------------
         $data['promotions'] = $childModel->getPromotions();
 

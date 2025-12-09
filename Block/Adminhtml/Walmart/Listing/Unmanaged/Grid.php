@@ -402,6 +402,16 @@ HTML;
         return $value;
     }
 
+    /**
+     * @param $priceString
+     * @param \Ess\M2ePro\Model\Listing\Other $row
+     * @param $column
+     * @param $isExport
+     *
+     * @return \Magento\Framework\Phrase|string|void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Currency\Exception\CurrencyException
+     */
     public function callbackColumnPrice($value, $row, $column, $isExport)
     {
         $value = $row->getChildObject()->getData('online_price');
@@ -418,32 +428,59 @@ HTML;
             ->getChildObject()
             ->getDefaultCurrency();
 
-        $value = $this->localeCurrency->getCurrency($currency)->toCurrency($value);
+        $priceString = $this->localeCurrency->getCurrency($currency)->toCurrency($value);
 
         if ($isExport) {
-            return $value;
+            return $priceString;
         }
 
         if ($row->getChildObject()->getData('is_online_price_invalid')) {
-            $message = <<<HTML
-Item Price violates Walmart pricing rules. Please adjust the Item Price to comply with the Walmart requirements.<br>
-Once the changes are applied, Walmart Item will become Active automatically.
-HTML;
-            $msg = '<p>' . __($message) . '</p>';
-            if (empty($msg)) {
-                return $value;
-            }
+            $message = __(
+                'Item Price violates Walmart pricing rules. ' .
+                'Please adjust the Item Price to comply with the Walmart requirements.<br>' .
+                'Once the changes are applied, Walmart Item will become Active automatically.'
+            );
 
-            $value .= <<<HTML
-<span class="fix-magento-tooltip">
-    {$this->getTooltipHtml($message, 'map_link_defected_message_icon_' . $row->getId())}
-</span>
-HTML;
+            $invalidPriceTooltipHtml = $this->getTooltipHtml(
+                $message,
+                'map_link_defected_message_icon_' . $row->getId()
+            );
 
-            return $value;
+            $priceString .= sprintf(
+                '<span class="fix-magento-tooltip">%s</span>',
+                $invalidPriceTooltipHtml
+            );
         }
 
-        return $value;
+        /** @var \Ess\M2ePro\Model\Walmart\Listing\Other $walmartListingOther */
+        $walmartListingOther = $row->getChildObject();
+        $repricerStrategyName = $walmartListingOther->getRepricerStrategyName();
+        if (!empty($repricerStrategyName)) {
+            $minPrice = $this->localeCurrency->getCurrency($currency)->toCurrency($walmartListingOther->getRepricerMinPrice());
+            $maxPrice = $this->localeCurrency->getCurrency($currency)->toCurrency($walmartListingOther->getRepricerMaxPrice());
+
+            $repricerText = __(
+                'The product price is managed by the repricer<br><br>' .
+                'Repricer Strategy: %strategy<br>' .
+                'Min price: %min_price<br>' .
+                'Max Price: %max_price',
+                [
+                    'strategy' => $repricerStrategyName,
+                    'min_price' => $minPrice,
+                    'max_price' => $maxPrice
+                ]
+            );
+            $repricerTooltipHtml = $this->getTooltipHtml($repricerText);
+
+            $html = sprintf(
+                '<div class="fix-magento-tooltip m2epro-field-tooltip-repricer">%s</div>',
+                $repricerTooltipHtml
+            );
+
+            $priceString .= $html;
+        }
+
+        return $priceString;
     }
 
     public function callbackColumnStatus($value, $row, $column, $isExport)

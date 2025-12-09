@@ -9,8 +9,6 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Walmart;
 
 use Ess\M2ePro\Model\Listing\Product;
-use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
-use Ess\M2ePro\Model\Listing\Log;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {
@@ -134,6 +132,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'online_start_date' => 'online_start_date',
                 'online_end_date' => 'online_end_date',
                 'status_change_reasons' => 'status_change_reasons',
+                'online_repricer_strategy_name' => \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_ONLINE_REPRICER_STRATEGY_NAME,
+                'online_repricer_min_price' => \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_ONLINE_REPRICER_MIN_PRICE,
+                'online_repricer_max_price' => \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_ONLINE_REPRICER_MAX_PRICE,
             ],
             '{{table}}.variation_parent_id is NULL'
         );
@@ -722,6 +723,32 @@ HTML;
                 ['m2epro-field-tooltip-price-info']
             );
             $resultHtml = $promotionTooltipHtml . '&nbsp;' . $resultHtml;
+        }
+
+        $repricerStrategyName = $row->getData('online_repricer_strategy_name');
+        if (!empty($repricerStrategyName)) {
+            $repricerMinPrice = $row->getData('online_repricer_min_price') ?: 0;
+            $repricerMaxPrice = $row->getData('online_repricer_max_price') ?: 0;
+
+            $repricerText = __(
+                'The product price is managed by the repricer<br><br>' .
+                'Repricer Strategy: %strategy<br>' .
+                'Min price: %min_price<br>' .
+                'Max Price: %max_price',
+                [
+                    'strategy' => $repricerStrategyName,
+                    'min_price' => $this->convertAndFormatPriceCurrency($repricerMinPrice, $currency),
+                    'max_price' => $this->convertAndFormatPriceCurrency($repricerMaxPrice, $currency)
+                ]
+            );
+            $repricerTooltipHtml = $this->getTooltipHtml($repricerText);
+
+            $html = sprintf(
+                '<div class="fix-magento-tooltip m2epro-field-tooltip-repricer">%s</div>',
+                $repricerTooltipHtml
+            );
+
+            $resultHtml = $html . '&nbsp;' . $resultHtml;
         }
 
         return $resultHtml;

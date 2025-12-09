@@ -1,25 +1,22 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\Walmart\Template\SellingFormat;
 
 class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
 {
-    public function isDifferent()
+    public function isDifferent(): bool
     {
-        return $this->isQtyDifferent() ||
-            $this->isLagTimeDifferent() ||
-            $this->isPriceDifferent() ||
-            $this->isPromotionsDifferent() ||
-            $this->isDetailsDifferent();
+        return $this->isQtyDifferent()
+            || $this->isLagTimeDifferent()
+            || $this->isPriceDifferent()
+            || $this->isPromotionsDifferent()
+            || $this->isDetailsDifferent()
+            || $this->isRepricerDifferent();
     }
 
-    public function isQtyDifferent()
+    public function isQtyDifferent(): bool
     {
         $keys = [
             'qty_mode',
@@ -45,7 +42,7 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
         return $this->isSettingsDifferent($keys);
     }
 
-    public function isPriceDifferent()
+    public function isPriceDifferent(): bool
     {
         $keys = [
             'price_mode',
@@ -58,14 +55,14 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
         return $this->isSettingsDifferent($keys);
     }
 
-    public function isPromotionsDifferent()
+    public function isPromotionsDifferent(): bool
     {
         $keys = ['promotions'];
 
         return $this->isSettingsDifferent($keys);
     }
 
-    public function isDetailsDifferent()
+    public function isDetailsDifferent(): bool
     {
         $keys = [
             'sale_time_start_date_mode',
@@ -83,6 +80,19 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
             'ships_in_original_packaging_mode',
             'ships_in_original_packaging_value',
             'ships_in_original_packaging_custom_attribute',
+        ];
+
+        return $this->isSettingsDifferent($keys);
+    }
+
+    public function isRepricerDifferent(): bool
+    {
+        $keys = [
+            'repricer_account_strategies',
+            'repricer_min_price_mode',
+            'repricer_min_price_attribute',
+            'repricer_max_price_mode',
+            'repricer_max_price_attribute',
         ];
 
         return $this->isSettingsDifferent($keys);

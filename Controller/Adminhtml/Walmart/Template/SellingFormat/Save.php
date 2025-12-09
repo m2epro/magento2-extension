@@ -1,10 +1,6 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat;
 
@@ -12,10 +8,27 @@ use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
 class Save extends Template
 {
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
+    private \Ess\M2ePro\Helper\Data $dataHelper;
+    private \Ess\M2ePro\Model\Walmart\Template\SellingFormat\SnapshotBuilderFactory $snapshotBuilderFactory;
+    private \Ess\M2ePro\Model\Walmart\Template\SellingFormat\BuilderFactory $builderFactory;
+    private \Ess\M2ePro\Model\Walmart\Template\SellingFormat\DiffFactory $diffFactory;
+    private \Ess\M2ePro\Model\Walmart\Template\SellingFormat\AffectedListingsProductsFactory $affectedListingsProductsFactory;
+    private \Ess\M2ePro\Model\Walmart\Template\SellingFormat\ChangeProcessorFactory $changeProcessorFactory;
+    private \Ess\M2ePro\Model\Template\SellingFormatFactory $sellingFormatFactory;
+    private \Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion\BuilderFactory $promotionBuilderFactory;
+    private \Ess\M2ePro\Model\Walmart\Template\SellingFormat\PromotionFactory $promotionFactory;
+    private \Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat\Promotion\CollectionFactory $promotionCollectionFactory;
 
     public function __construct(
+        \Ess\M2ePro\Model\Walmart\Template\SellingFormat\SnapshotBuilderFactory $snapshotBuilderFactory,
+        \Ess\M2ePro\Model\Walmart\Template\SellingFormat\BuilderFactory $builderFactory,
+        \Ess\M2ePro\Model\Walmart\Template\SellingFormat\DiffFactory $diffFactory,
+        \Ess\M2ePro\Model\Walmart\Template\SellingFormat\AffectedListingsProductsFactory $affectedListingsProductsFactory,
+        \Ess\M2ePro\Model\Walmart\Template\SellingFormat\ChangeProcessorFactory $changeProcessorFactory,
+        \Ess\M2ePro\Model\Template\SellingFormatFactory $sellingFormatFactory,
+        \Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion\BuilderFactory $promotionBuilderFactory,
+        \Ess\M2ePro\Model\Walmart\Template\SellingFormat\PromotionFactory $promotionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat\Promotion\CollectionFactory $promotionCollectionFactory,
         \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
@@ -23,6 +36,15 @@ class Save extends Template
         parent::__construct($walmartFactory, $context);
 
         $this->dataHelper = $dataHelper;
+        $this->snapshotBuilderFactory = $snapshotBuilderFactory;
+        $this->builderFactory = $builderFactory;
+        $this->diffFactory = $diffFactory;
+        $this->affectedListingsProductsFactory = $affectedListingsProductsFactory;
+        $this->changeProcessorFactory = $changeProcessorFactory;
+        $this->sellingFormatFactory = $sellingFormatFactory;
+        $this->promotionBuilderFactory = $promotionBuilderFactory;
+        $this->promotionFactory = $promotionFactory;
+        $this->promotionCollectionFactory = $promotionCollectionFactory;
     }
 
     public function execute()
@@ -39,38 +61,34 @@ class Save extends Template
 
         // Add or update model
         // ---------------------------------------
-        $sellingFormatTemplate = $this->walmartFactory->getObject('Template\SellingFormat');
-
-        $id && $sellingFormatTemplate->load($id);
+        $sellingFormatTemplate = $this->sellingFormatFactory->createWithWalmartChildMode();
+        if (!empty($id)) {
+            $sellingFormatTemplate->load($id);
+        }
 
         $oldData = [];
-
         if ($sellingFormatTemplate->getId()) {
-            /** @var \Ess\M2ePro\Model\Walmart\Template\SellingFormat\SnapshotBuilder $snapshotBuilder */
-            $snapshotBuilder = $this->modelFactory->getObject('Walmart_Template_SellingFormat_SnapshotBuilder');
+            $snapshotBuilder = $this->snapshotBuilderFactory->create();
             $snapshotBuilder->setModel($sellingFormatTemplate);
             $oldData = $snapshotBuilder->getSnapshot();
         }
 
-        $this->modelFactory->getObject('Walmart_Template_SellingFormat_Builder')
-                           ->build($sellingFormatTemplate, $post->toArray());
+        $this->builderFactory->create()->build($sellingFormatTemplate, $post->toArray());
 
         $this->updatePromotions($post, $sellingFormatTemplate->getId());
 
-        $snapshotBuilder = $this->modelFactory->getObject('Walmart_Template_SellingFormat_SnapshotBuilder');
+        $snapshotBuilder = $this->snapshotBuilderFactory->create();
         $snapshotBuilder->setModel($sellingFormatTemplate);
         $newData = $snapshotBuilder->getSnapshot();
 
-        $diff = $this->modelFactory->getObject('Walmart_Template_SellingFormat_Diff');
+        $diff = $this->diffFactory->create();
         $diff->setNewSnapshot($newData);
         $diff->setOldSnapshot($oldData);
 
-        $affectedListingsProducts = $this->modelFactory->getObject(
-            'Walmart_Template_SellingFormat_AffectedListingsProducts'
-        );
+        $affectedListingsProducts = $this->affectedListingsProductsFactory->create();
         $affectedListingsProducts->setModel($sellingFormatTemplate);
 
-        $changeProcessor = $this->modelFactory->getObject('Walmart_Template_SellingFormat_ChangeProcessor');
+        $changeProcessor = $this->changeProcessorFactory->create();
         $changeProcessor->process(
             $diff,
             $affectedListingsProducts->getObjectsData(['id', 'status'], ['only_physical_units' => true])
@@ -102,11 +120,10 @@ class Save extends Template
 
     private function updatePromotions($data, $templateId)
     {
-        $collection = $this->activeRecordFactory->getObject('Walmart_Template_SellingFormat_Promotion')
-                                                ->getCollection()
-                                                ->addFieldToFilter('template_selling_format_id', (int)$templateId);
+        $collection = $this->promotionCollectionFactory->create();
+        $collection->addFieldToFilter('template_selling_format_id', ['eq' => (int)$templateId]);
 
-        foreach ($collection as $item) {
+        foreach ($collection->getItems() as $item) {
             $item->delete();
         }
 
@@ -114,12 +131,10 @@ class Save extends Template
             return;
         }
 
-        /** @var \Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion\Builder $builder */
-        $builder = $this->modelFactory->getObject('Walmart_Template_SellingFormat_Promotion_Builder');
+        $builder = $this->promotionBuilderFactory->create();
 
         foreach ($data['promotions'] as $promotionData) {
-            /** @var \Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion $promotionInstance */
-            $promotionInstance = $this->activeRecordFactory->getObject('Walmart_Template_SellingFormat_Promotion');
+            $promotionInstance = $this->promotionFactory->create();
             $builder->setTemplateSellingFormatId($templateId);
             $builder->build($promotionInstance, $promotionData);
         }

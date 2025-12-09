@@ -14,41 +14,31 @@ use Ess\M2ePro\Model\Walmart\Template\SellingFormat;
 
 class Form extends AbstractForm
 {
-    /** @var \Magento\Framework\App\ResourceConnection */
-    private $resourceConnection;
+    private \Magento\Framework\App\ResourceConnection $resourceConnection;
 
     public $templateModel;
-    public $formData = [];
+    public array $formData = [];
 
-    public $allAttributesByInputTypes = [];
-    public $allAttributes = [];
+    public array $allAttributesByInputTypes = [];
+    public array $allAttributes = [];
 
-    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
-    protected $magentoAttributeHelper;
-
-    /** @var \Ess\M2ePro\Helper\Module\Support */
-    private $supportHelper;
-
-    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
-    private $databaseHelper;
-
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-
-    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
-    private $globalDataHelper;
-
-    /** @var \Ess\M2ePro\Helper\Component\Walmart */
-    private $walmartHelper;
+    protected \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper;
+    private \Ess\M2ePro\Helper\Module\Support $supportHelper;
+    private \Ess\M2ePro\Helper\Data $dataHelper;
+    private \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper;
+    private \Ess\M2ePro\Helper\Component\Walmart $walmartHelper;
+    private \Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit\Form\RepricerFieldset $repricerFieldset;
+    private \Ess\M2ePro\Model\Walmart\Template\SellingFormat\BuilderFactory $builderFactory;
 
     public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit\Form\RepricerFieldset $repricerFieldset,
+        \Ess\M2ePro\Model\Walmart\Template\SellingFormat\BuilderFactory $builderFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
-        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Helper\Component\Walmart $walmartHelper,
@@ -57,10 +47,11 @@ class Form extends AbstractForm
         $this->resourceConnection = $resourceConnection;
         $this->magentoAttributeHelper = $magentoAttributeHelper;
         $this->supportHelper = $supportHelper;
-        $this->databaseHelper = $databaseHelper;
         $this->dataHelper = $dataHelper;
         $this->globalDataHelper = $globalDataHelper;
         $this->walmartHelper = $walmartHelper;
+        $this->repricerFieldset = $repricerFieldset;
+        $this->builderFactory = $builderFactory;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -112,19 +103,18 @@ class Form extends AbstractForm
             'walmart_template_selling_format_help',
             self::HELP_BLOCK,
             [
-                'content' => $this->__(
-                    <<<HTML
-                    <p>Using Selling Policy, you should define conditions for selling your products on Walmart,
-                    such as Price, Quantity, Shipping settings, etc.</p><br>
-
-                    <p>Selling Policy is created per marketplace and cannot be changed once the Policy is assigned
-                    to M2E Pro Listing.</p><br>
-
-                    <p>Head over to <a href="%url%" target="_blank" class="external-link">docs</a>
-                    for detailed information.</p><br>
-HTML
-                    ,
-                    $this->supportHelper->getDocumentationArticleUrl('selling-policy')
+                'content' => __(
+                    '<p>Using Selling Policy, you should define conditions for selling your products ' .
+                    'on Walmart, such as Price, Quantity, Shipping settings, etc.</p><br>' .
+                    '<p>Selling Policy is created per marketplace and cannot be changed once ' .
+                    'the Policy is assigned to M2E Pro Listing.</p><br>' .
+                    '<p>Head over to <a href="%url" target="_blank" class="external-link">docs</a>' .
+                    'for detailed information.</p><br>' .
+                    '<p>If the Policy is used for products that are being repriced, you can also specify ' .
+                    'a Repricer strategy along with Min and Maxi prices.</p>',
+                    [
+                        'url' => $this->supportHelper->getDocumentationArticleUrl('selling-policy'),
+                    ]
                 ),
             ]
         );
@@ -264,10 +254,10 @@ HTML
                 'values' => $preparedAttributes,
                 'value' => $this->formData['qty_percentage'],
                 'tooltip' => __(
-                    'Specify what percentage of Magento Product Quantity has to be submitted to Walmart.<br>
-                    <strong>For example</strong>, if QTY Percentage is set to 10% and
-                    Magento Product Quantity is 100,<br>
-                    the Item Quantity available on Walmart will be calculated as 100 * 10% = 10.'
+                    'Specify what percentage of Magento Product Quantity has to be ' .
+                    'submitted to Walmart.<br><strong>For example</strong>, if QTY Percentage is set to 10% and ' .
+                    'Magento Product Quantity is 100,<br> the Item Quantity available on Walmart will ' .
+                    'be calculated as 100 * 10% = 10.'
                 ),
             ]
         );
@@ -287,8 +277,8 @@ HTML
                 ],
                 'value' => $this->formData['qty_modification_mode'],
                 'tooltip' => __(
-                    'Enable to set the minimum and maximum Item Quantity
-                                        values that will be submitted to Walmart.'
+                    'Enable to set the minimum and maximum Item Quantity values ' .
+                    'that will be submitted to Walmart.'
                 ),
             ]
         );
@@ -305,10 +295,9 @@ HTML
                 'required' => true,
                 'field_extra_attributes' => 'style="display: none;"',
                 'tooltip' => __(
-                    'If Magento Product QTY is 2 and you set the Minimum Quantity to Be Listed of 5,
-                    the Item will not be listed on Walmart.<br>
-                    To be submitted, Magento Product QTY has to be equal or more than the value set
-                    for Minimum Quantity to Be Listed.'
+                    'If Magento Product QTY is 2 and you set the Minimum Quantity ' .
+                    'to Be Listed of 5, the Item will not be listed on Walmart.<br> To be submitted, Magento ' .
+                    'Product QTY has to be equal or more than the value set for Minimum Quantity to Be Listed.'
                 ),
             ]
         );
@@ -325,10 +314,10 @@ HTML
                 'required' => true,
                 'field_extra_attributes' => 'style="display: none;"',
                 'tooltip' => __(
-                    'If Magento Product QTY is 5 and you set the Maximum Quantity to Be Listed of 2,
-                     the listed Item will have maximum Quantity of 2.<br>
-                     If Magento Product QTY is 1 and you set the Maximum Quantity to Be Listed of 3,
-                     the listed Item will have maximum Quantity of 1.'
+                    'If Magento Product QTY is 5 and you set the Maximum Quantity to ' .
+                    'Be Listed of 2, the listed Item will have maximum Quantity of 2.<br>If Magento Product QTY ' .
+                    'is 1 and you set the Maximum Quantity to Be Listed of 3, the listed Item will ' .
+                    'have maximum Quantity of 1.'
                 ),
             ]
         );
@@ -394,15 +383,33 @@ HTML
                 'name' => 'price_rounding_option',
                 'label' => __('Rounding'),
                 'values' => [
-                    ['value' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NONE, 'label' => __('None')],
-                    ['value' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NEAREST_HUNDREDTH, 'label' => __('Nearest 0.09')],
-                    ['value' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NEAREST_TENTH, 'label' => __('Nearest 0.99')],
-                    ['value' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NEAREST_INT, 'label' => __('Nearest 1.00')],
-                    ['value' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NEAREST_HUNDRED, 'label' => __('Nearest 10.00')],
+                    [
+                        'value' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NONE,
+                        'label' => __('None'),
+                    ],
+                    [
+                        'value' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NEAREST_HUNDREDTH,
+                        'label' => __('Nearest 0.09'),
+                    ],
+                    [
+                        'value' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NEAREST_TENTH,
+                        'label' => __('Nearest 0.99'),
+                    ],
+                    [
+                        'value' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NEAREST_INT,
+                        'label' => __('Nearest 1.00'),
+                    ],
+                    [
+                        'value' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NEAREST_HUNDRED,
+                        'label' => __('Nearest 10.00'),
+                    ],
                 ],
                 'value' => $this->formData['price_rounding_option'],
-                'tooltip' => __('Use <b>Price Rounding</b> to round Product sale prices to convenient numbers like $9.99 or  $10.00<br>
-If the <b>Price Change</b> is used, the <b>Rounding</b> will be applied to the final Price')
+                'tooltip' => __(
+                    'Use <b>Price Rounding</b> to round Product sale prices to convenient numbers ' .
+                    'like $9.99 or  $10.00<br>If the <b>Price Change</b> is used, the <b>Rounding</b> ' .
+                    'will be applied to the final Price'
+                ),
             ]
         );
 
@@ -445,11 +452,10 @@ If the <b>Price Change</b> is used, the <b>Rounding</b> will be applied to the f
                 'value' => $this->formData['promotions_mode'],
                 'required' => true,
                 'tooltip' => __(
-                    'Enable to add up to 10 Promotion rules. Price your Items at
-                    reduced values during the specified period.<br>
-                    Comparison Price is used to calculate savings on Items. Remain the current
-                    Item Prices or submit a new values.<br>
-                    <strong>Note:</strong> Make sure that your Promotion dates do not overlap.'
+                    'Enable to add up to 10 Promotion rules. Price your Items at reduced values during ' .
+                    'the specified period.<br>Comparison Price is used to calculate savings on Items. ' .
+                    'Remain the current Item Prices or submit a new values.<br>' .
+                    '<strong>Note:</strong> Make sure that your Promotion dates do not overlap.'
                 ),
             ]
         );
@@ -479,19 +485,12 @@ If the <b>Price Change</b> is used, the <b>Rounding</b> will be applied to the f
                 'required' => true,
                 'value' => (int)($this->formData['price_vat_percent'] > 0),
                 'tooltip' => __(
-                    <<<HTML
-Enable this option to add a specified VAT percent value to the Price when a Product is listed on Walmart.
-<br/>
-<br/>
-The final product price on Walmart will be calculated according to the following formula:
-<br/>
-<br/>
-(Product Price + Price Change) + VAT Rate
-<br/>
-<br/>
-<strong>Note:</strong> Walmart considers the VAT rate value sent by M2E Pro as an additional price increase,
-not as a proper VAT rate.
-HTML
+                    'Enable this option to add a specified VAT percent value to the Price when a ' .
+                    'Product is listed on Walmart.<br/><br/>The final product price on Walmart will be ' .
+                    'calculated according to the following formula:<br/><br/>' .
+                    '(Product Price + Price Change) + VAT Rate<br/><br/>' .
+                    '<strong>Note:</strong> Walmart considers the VAT rate value sent by M2E Pro as an ' .
+                    'additional price increase, not as a proper VAT rate.'
                 ),
             ]
         );
@@ -551,17 +550,15 @@ HTML
                 'value' => '',
                 'required' => true,
                 'tooltip' => __(
-                    '
-                    The number of days it takes to prepare the Item for shipment.<br><br>
-
-                    <strong>Note:</strong> Sellers are required to provide up to 1 day Lag Time. Otherwise,
-                    the Lag Time Exception must be requested.<br>
-                    The details can be found
-                    <a href="https://sellerhelp.walmart.com/seller/s/guide?article=000005986" target="_blank">here</a>.
-                    <br><br>
-
-                    <strong>Note:</strong> any changes to the Lag Time value may take up to 24 hours to be reflected on
-                    the Channel due to the Walmart limitations.'
+                    'The number of days it takes to prepare the Item for shipment.<br><br>' .
+                    '<strong>Note:</strong> Sellers are required to provide up to 1 day Lag Time. Otherwise, ' .
+                    'the Lag Time Exception must be requested.<br>The details can be found ' .
+                    '<a href="%url" target="_blank">here</a>.<br><br><strong>Note:</strong> ' .
+                    'any changes to the Lag Time value may take up to 24 hours to be reflected on ' .
+                    'the Channel due to the Walmart limitations.',
+                    [
+                        'url' => 'https://sellerhelp.walmart.com/seller/s/guide?article=000005986',
+                    ]
                 ),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,select');
@@ -605,8 +602,8 @@ HTML
                 'class' => 'select',
                 'create_magento_attribute' => true,
                 'tooltip' => __(
-                    'The weight of the Item when it is packaged to ship.<br>
-                                <strong>Note:</strong> The Shipping Weight is set in pounds by default.'
+                    'The weight of the Item when it is packaged to ship.<br>' .
+                    '<strong>Note:</strong> The Shipping Weight is set in pounds by default.'
                 ),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
@@ -653,12 +650,11 @@ HTML
                 'class' => 'select',
                 'create_magento_attribute' => true,
                 'tooltip' => __(
-                    'Specify whether the Item must be shipped alone or not. <br><br>
-                     <strong>Note:</strong> If the option is enabled, Walmart order will be created for each
-                     ordered item. It is because Walmart will recognize each item as a different shipment. For example,
-                     if a buyer orders one product with a quantity of 3,
-                     there will be 3 separate Walmart orders for each item.
-                    '
+                    'Specify whether the Item must be shipped alone or not.<br><br>' .
+                    '<strong>Note:</strong> If the option is enabled, Walmart order will be created for each ' .
+                    'ordered item. It is because Walmart will recognize each item as a different shipment. ' .
+                    'For example, if a buyer orders one product with a quantity of 3, there will be 3 separate ' .
+                    'Walmart orders for each item.'
                 ),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'boolean');
@@ -693,8 +689,8 @@ HTML
                 'class' => 'select',
                 'create_magento_attribute' => true,
                 'tooltip' => __(
-                    'Specify whether the Item can be shipped in original
-                packaging without being put in an outer box or not.'
+                    'Specify whether the Item can be shipped in original packaging without being put ' .
+                    'in an outer box or not.'
                 ),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'boolean');
@@ -707,18 +703,17 @@ HTML
                 'legend' => __('Offer Start/End Date'),
                 'class' => 'm2epro-marketplace-depended-block',
                 'collapsable' => false,
-                'tooltip' => $this->__(
-                    '
-                        It is highly recommended to keep the default Offer Start/End Date values, i.e.
-                        Immediate and Endless. Your offer will become visible on
-                        Walmart as soon as it is in stock.<br><br>
-
-                        Defining an offer start/end date may only be reasonable if you plan
-                        to sell an Item during a certain period, e.g. start selling on
-                        20th November and stop selling on 30th November. <br><br>
-
-                        Read more details <a href="%url%" target="_blank">here</a>.',
-                    $this->supportHelper->getDocumentationArticleUrl('selling-policy')
+                'tooltip' => __(
+                    'It is highly recommended to keep the default Offer Start/End Date values, i.e. ' .
+                    'Immediate and Endless. Your offer will become visible on Walmart as soon ' .
+                    'as it is in stock.<br><br>' .
+                    'Defining an offer start/end date may only be reasonable if you plan to sell an Item during ' .
+                    'a certain period, e.g. start selling on 20th November and stop selling ' .
+                    'on 30th November. <br><br>' .
+                    'Read more details <a href="%url" target="_blank">here</a>.',
+                    [
+                        'url' => $this->supportHelper->getDocumentationArticleUrl('selling-policy'),
+                    ]
                 ),
             ]
         );
@@ -814,6 +809,10 @@ HTML
                 'field_extra_attributes' => 'style="display: none;"',
             ]
         );
+
+        //if ((int)$this->formData['marketplace_id'] === \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_US) {
+            $this->repricerFieldset->add($this->getLayout(), $form, $this->formData);
+        //}
 
         // ---------------------------------------
 
@@ -1115,6 +1114,11 @@ HTML
             $this->dataHelper->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart::class)
         );
 
+        $this->jsPhp->addConstants([
+            'Ess_M2ePro_Model_Walmart_Template_SellingFormat::REPRICER_MIN_MAX_PRICE_MODE_ATTRIBUTE' =>
+                \Ess\M2ePro\Model\Walmart\Template\SellingFormat::REPRICER_MIN_MAX_PRICE_MODE_ATTRIBUTE,
+        ]);
+
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Walmart_Template_SellingFormat'));
         $this->jsUrl->addUrls([
             'formSubmit' => $this->getUrl(
@@ -1223,10 +1227,10 @@ JS
         return '<div id="modal_dialog_message"></div>' . parent::_toHtml();
     }
 
-    public function getFormData()
+    public function getFormData(): array
     {
         $default = array_merge(
-            $this->modelFactory->getObject('Walmart_Template_SellingFormat_Builder')->getDefaultData(),
+            $this->builderFactory->create()->getDefaultData(),
             [
                 'marketplace_id' => $this->getRequest()->getParam('marketplace_id', ''),
             ]
@@ -1241,7 +1245,11 @@ JS
             $this->templateModel->getChildObject()->getData()
         );
 
-        $data['promotions'] = $this->templateModel->getChildObject()->getPromotions();
+        /** @var \Ess\M2ePro\Model\Walmart\Template\SellingFormat $walmartTemplateSellingFormat */
+        $walmartTemplateSellingFormat = $this->templateModel->getChildObject();
+
+        $data['promotions'] = $walmartTemplateSellingFormat->getPromotions();
+        $data['repricer_account_strategies'] = $walmartTemplateSellingFormat->getRepricerAccountStrategies();
 
         return array_merge($default, $data);
     }

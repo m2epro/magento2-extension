@@ -187,6 +187,35 @@ abstract class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\
         return $data;
     }
 
+    public function getRepricerData(): array
+    {
+        if (!$this->getConfigurator()->isPriceAllowed()) {
+            return [];
+        }
+
+        $isChangedRepricerData = $this->modelFactory
+            ->getObjectByClass(\Ess\M2ePro\Model\Walmart\Listing\Product\Repricer\IsChangedRepricerData::class);
+
+        $isStatusChangerUser =
+            ($this->getParams()['status_changer'] ?? \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_UNKNOWN)
+            === \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER;
+
+        if (
+            !$isChangedRepricerData->execute($this->getWalmartListingProduct())
+            && !$isStatusChangerUser
+        ) {
+            return [];
+        }
+
+        /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\Repricer $dataBuilder */
+        $dataBuilder = $this->getDataBuilder('repricer');
+        $data = $dataBuilder->getBuilderData();
+
+        $this->addMetaData('repricer_data', $data);
+
+        return $data;
+    }
+
     //########################################
 
     /**

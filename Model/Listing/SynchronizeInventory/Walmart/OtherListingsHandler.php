@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Model\Listing\SynchronizeInventory\Walmart;
 
 use Ess\M2ePro\Model\Listing\SynchronizeInventory\AbstractExistingProductsHandler;
+use Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Other as WalmartOtherResource;
 
 /**
  * Class \Ess\M2ePro\Model\Listing\SynchronizeInventory\Walmart\OtherListingsHandler
@@ -67,6 +68,14 @@ class OtherListingsHandler extends AbstractExistingProductsHandler
                     'lifecycle_status' => (string)$receivedItem['lifecycle_status'],
                     'status_change_reasons' => \Ess\M2ePro\Helper\Json::encode($receivedItem['status_change_reason']),
                     'is_online_price_invalid' => $isOnlinePriceInvalid,
+                    WalmartOtherResource::COLUMN_ONLINE_REPRICER_STRATEGY_NAME =>
+                        $receivedItem['repricer']['strategy_name'] ?? null,
+                    WalmartOtherResource::COLUMN_ONLINE_REPRICER_MIN_PRICE =>
+                        $receivedItem['repricer']['min_price'] ?? null,
+                    WalmartOtherResource::COLUMN_ONLINE_REPRICER_MAX_PRICE =>
+                        $receivedItem['repricer']['max_price'] ?? null,
+                    WalmartOtherResource::COLUMN_ONLINE_REPRICER_STATUS =>
+                        $receivedItem['repricer']['status'] ?? null,
                 ];
 
                 $newData['status'] = $componentHelper->getResultProductStatus(
@@ -89,6 +98,14 @@ class OtherListingsHandler extends AbstractExistingProductsHandler
                     'status_change_reasons' => (string)$existingItem['status_change_reasons'],
                     'status' => (int)$existingItem['status'],
                     'is_online_price_invalid' => (bool)$existingItem['is_online_price_invalid'],
+                    WalmartOtherResource::COLUMN_ONLINE_REPRICER_STRATEGY_NAME =>
+                        $existingItem[WalmartOtherResource::COLUMN_ONLINE_REPRICER_STRATEGY_NAME],
+                    WalmartOtherResource::COLUMN_ONLINE_REPRICER_MIN_PRICE =>
+                        $existingItem[WalmartOtherResource::COLUMN_ONLINE_REPRICER_MIN_PRICE],
+                    WalmartOtherResource::COLUMN_ONLINE_REPRICER_MAX_PRICE =>
+                        $existingItem[WalmartOtherResource::COLUMN_ONLINE_REPRICER_MAX_PRICE],
+                    WalmartOtherResource::COLUMN_ONLINE_REPRICER_STATUS =>
+                        $existingItem[WalmartOtherResource::COLUMN_ONLINE_REPRICER_STATUS],
                 ];
 
                 if ($newData == $existingData) {
@@ -150,6 +167,15 @@ class OtherListingsHandler extends AbstractExistingProductsHandler
                 'lifecycle_status' => (string)$receivedItem['lifecycle_status'],
                 'status_change_reasons' => \Ess\M2ePro\Helper\Json::encode($receivedItem['status_change_reason']),
                 'is_online_price_invalid' => $isOnlinePriceInvalid,
+
+                WalmartOtherResource::COLUMN_ONLINE_REPRICER_STRATEGY_NAME =>
+                    $receivedItem['repricer']['strategy_name'] ?? null,
+                WalmartOtherResource::COLUMN_ONLINE_REPRICER_MIN_PRICE =>
+                    $receivedItem['repricer']['min_price'] ?? null,
+                WalmartOtherResource::COLUMN_ONLINE_REPRICER_MAX_PRICE =>
+                    $receivedItem['repricer']['max_price'] ?? null,
+                WalmartOtherResource::COLUMN_ONLINE_REPRICER_STATUS =>
+                    $receivedItem['repricer']['status'] ?? null,
             ];
 
             $newData['status'] = $componentHelper->getResultProductStatus(
@@ -201,6 +227,10 @@ class OtherListingsHandler extends AbstractExistingProductsHandler
                 'second_table.item_id',
                 'second_table.listing_other_id',
                 'second_table.is_online_price_invalid',
+                sprintf('second_table.%s', WalmartOtherResource::COLUMN_ONLINE_REPRICER_STRATEGY_NAME),
+                sprintf('second_table.%s', WalmartOtherResource::COLUMN_ONLINE_REPRICER_MIN_PRICE),
+                sprintf('second_table.%s', WalmartOtherResource::COLUMN_ONLINE_REPRICER_MAX_PRICE),
+                sprintf('second_table.%s', WalmartOtherResource::COLUMN_ONLINE_REPRICER_STATUS),
             ]
         );
 

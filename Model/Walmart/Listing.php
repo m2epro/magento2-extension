@@ -375,6 +375,11 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
             'lifecycle_status' => $walmartListingOther->getLifecycleStatus(),
 
             'status_change_reasons' => $walmartListingOther->getData('status_change_reasons'),
+
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_ONLINE_REPRICER_STRATEGY_NAME => $walmartListingOther->getRepricerStrategyName(),
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_ONLINE_REPRICER_MIN_PRICE => $walmartListingOther->getRepricerMinPrice(),
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_ONLINE_REPRICER_MAX_PRICE => $walmartListingOther->getRepricerMaxPrice(),
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_REPRICER_LAST_UPDATE_DATE => null,
         ];
 
         $listingProduct->setSetting(

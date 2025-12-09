@@ -7,6 +7,10 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     public const COLUMN_LISTING_PRODUCT_ID = 'listing_product_id';
     public const COLUMN_PRODUCT_TYPE_ID = 'product_type_id';
     public const COLUMN_IS_NOT_MAPPED_TO_EXISTING_CHANNEL_ITEM = 'is_not_mapped_to_existing_channel_item';
+    public const COLUMN_ONLINE_REPRICER_STRATEGY_NAME = 'online_repricer_strategy_name';
+    public const COLUMN_ONLINE_REPRICER_MIN_PRICE = 'online_repricer_min_price';
+    public const COLUMN_ONLINE_REPRICER_MAX_PRICE = 'online_repricer_max_price';
+    public const COLUMN_REPRICER_LAST_UPDATE_DATE = 'repricer_last_update_date';
 
     private \Ess\M2ePro\Model\ResourceModel\Listing\Product $listingProductResource;
     protected $_isPkAutoIncrement = false;

@@ -168,8 +168,14 @@ class Active extends AbstractModel
             }
         }
 
-        if ($this->input->hasInstructionWithTypes($this->getRevisePriceInstructionTypes())) {
-            if ($this->isMeetRevisePriceRequirements()) {
+        if (
+            $this->input->hasInstructionWithTypes($this->getRevisePriceInstructionTypes())
+            || $this->input->hasInstructionWithTypes($this->getReviseRepricerInstructionTypes())
+        ) {
+            if (
+                $this->isMeetRevisePriceRequirements()
+                || $this->isMeetReviseRepricerRequirements()
+            ) {
                 $configurator->allowPrice();
                 $tags['price'] = true;
             } else {
@@ -408,7 +414,33 @@ class Active extends AbstractModel
         $currentPrice = $walmartListingProduct->getPrice();
         $onlinePrice = $walmartListingProduct->getOnlinePrice();
 
-        if ($walmartListingProduct->getPrice() != $walmartListingProduct->getOnlinePrice()) {
+        if ($currentPrice != $onlinePrice) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isMeetReviseRepricerRequirements(): bool
+    {
+        $listingProduct = $this->input->getListingProduct();
+
+        /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
+        $walmartListingProduct = $listingProduct->getChildObject();
+        $variationManager = $walmartListingProduct->getVariationManager();
+        if ($variationManager->isRelationParentType()) {
+            return false;
+        }
+
+        $walmartSynchronizationTemplate = $walmartListingProduct->getWalmartSynchronizationTemplate();
+        if (!$walmartSynchronizationTemplate->isReviseUpdatePrice()) {
+            return false;
+        }
+
+        $isChangedRepricerData = $this->modelFactory
+            ->getObjectByClass(\Ess\M2ePro\Model\Walmart\Listing\Product\Repricer\IsChangedRepricerData::class);
+
+        if ($isChangedRepricerData->execute($walmartListingProduct)) {
             return true;
         }
 

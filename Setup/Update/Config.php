@@ -442,6 +442,9 @@ class Config extends AbstractConfig
                 'RemoveWalmartShippingOverrides',
                 'RepricerMaxMinPriceUpdateWorkflow',
             ],
+            'y25_m12' => [
+                'AddWalmartRepricer',
+            ],
         ];
     }
 
@@ -551,6 +554,8 @@ class Config extends AbstractConfig
 
             \Ess\M2ePro\Setup\Update\y25_m07\AddOnlineStrikeThroughPriceColumnToEbayListingProductTable::class,
             \Ess\M2ePro\Setup\Update\y25_m10\RemoveWalmartShippingOverrides::class,
+
+            \Ess\M2ePro\Setup\Update\y25_m12\AddWalmartRepricer::class,
         ];
     }
 

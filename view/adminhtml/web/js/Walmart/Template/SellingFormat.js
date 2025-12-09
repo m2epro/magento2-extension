@@ -104,7 +104,7 @@ define([
 
         initObservers: function () {
             $('marketplace_id')
-                .observe('change', WalmartTemplateSellingFormatObj.marketplaceIdOnChange)
+                .observe('change', WalmartTemplateSellingFormatObj.marketplaceIdOnChange.bind(this))
                 .simulate('change');
 
             $('qty_mode')
@@ -158,6 +158,20 @@ define([
             $('lag_time_mode')
                 .observe('change', WalmartTemplateSellingFormatObj.lag_time_mode_change)
                 .simulate('change');
+
+            const repricerMinPriceModeSelect = $('repricer_min_price_mode');
+            if (repricerMinPriceModeSelect) {
+                repricerMinPriceModeSelect
+                    .observe('change', this.repricer_min_price_mode_change.bind(this))
+                    .simulate('change');
+            }
+
+            const repricerMaxPriceModeSelect = $('repricer_max_price_mode');
+            if (repricerMaxPriceModeSelect) {
+                repricerMaxPriceModeSelect
+                    .observe('change', this.repricer_max_price_mode_change.bind(this))
+                    .simulate('change');
+            }
         },
 
         // ---------------------------------------
@@ -178,11 +192,51 @@ define([
 
         // ---------------------------------------
 
-        marketplaceIdOnChange: function () {
-            var input = this;
-            $$('.m2epro-marketplace-depended-block').each(function (el) {
-                input.value ? el.show()
-                    : el.hide();
+        marketplaceIdOnChange: function (event) {
+            const marketplaceId = +jQuery(event.currentTarget).val();
+            const isMarketplaceCanada = marketplaceId
+                    === M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart::MARKETPLACE_CA');
+
+            $$('.m2epro-marketplace-depended-block').each((el) => {
+                el = jQuery(el);
+                if (!marketplaceId) {
+                    this.hideAndDisableFieldset(el);
+                    return;
+                }
+
+                if (el.hasClass('us-only') && isMarketplaceCanada) {
+                    this.hideAndDisableFieldset(el)
+                    return;
+                }
+
+                this.showAndEnableFieldset(el);
+            });
+        },
+
+        hideAndDisableFieldset: function (fieldsetSelector) {
+            const fieldset = jQuery(fieldsetSelector);
+            const formElements = fieldset.find('input, select, textarea, button');
+            formElements.each(function() {
+                const element = jQuery(this);
+                if (!element.prop('disabled')) {
+                    element.data('was-enabled', true);
+                }
+                element.prop('disabled', true);
+            });
+            fieldset.hide();
+        },
+
+        showAndEnableFieldset: function (fieldsetSelector) {
+            const fieldset = jQuery(fieldsetSelector);
+            fieldset.show();
+            const elementsToEnable = fieldset.find('input, select, textarea, button').filter(function() {
+                return jQuery(this).data('was-enabled') === true;
+            });
+
+            elementsToEnable.each(function() {
+                const element = jQuery(this);
+                element.prop('disabled', false);
+                element.removeData('was-enabled');
             });
         },
 
@@ -284,8 +338,6 @@ define([
                 vatPercentTr.show();
                 vatPercent.addClassName('M2ePro-validate-vat-percent');
                 vatPercent.addClassName('required-entry');
-            } else {
-                vatPercent.value = '';
             }
         },
 
@@ -302,6 +354,28 @@ define([
 
             if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_SellingFormat::LAG_TIME_MODE_CUSTOM_ATTRIBUTE')) {
                 self.updateHiddenValue(this, $('lag_time_custom_attribute'));
+            }
+        },
+
+        repricer_min_price_mode_change: function (event) {
+            const repricerMinPriceModeSelect = event.currentTarget
+
+            const repricerMinPriceAttributeInput = $('repricer_min_price_attribute');
+
+            repricerMinPriceAttributeInput.value = '';
+            if (+repricerMinPriceModeSelect.value === M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_SellingFormat::REPRICER_MIN_MAX_PRICE_MODE_ATTRIBUTE')) {
+                this.updateHiddenValue(repricerMinPriceModeSelect, repricerMinPriceAttributeInput);
+            }
+        },
+
+        repricer_max_price_mode_change: function (event) {
+            const repricerMinPriceModeSelect = event.currentTarget
+
+            const repricerMinPriceAttributeInput = $('repricer_max_price_attribute');
+
+            repricerMinPriceAttributeInput.value = '';
+            if (+repricerMinPriceModeSelect.value === M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_SellingFormat::REPRICER_MIN_MAX_PRICE_MODE_ATTRIBUTE')) {
+                this.updateHiddenValue(repricerMinPriceModeSelect, repricerMinPriceAttributeInput);
             }
         },
 

@@ -20,6 +20,7 @@ abstract class ChangeProcessorAbstract extends \Ess\M2ePro\Model\Template\Change
     public const INSTRUCTION_TYPE_PRICE_DATA_CHANGED = 'template_price_data_changed';
     public const INSTRUCTION_TYPE_PROMOTIONS_DATA_CHANGED = 'template_promotions_data_changed';
     public const INSTRUCTION_TYPE_DETAILS_DATA_CHANGED = 'template_details_data_changed';
+    public const INSTRUCTION_TYPE_REPRICER_DATA_CHANGED = 'template_repricer_data_changed';
 
     //########################################
 }

@@ -76,10 +76,23 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             \Ess\M2ePro\Model\Template\SellingFormat\BuilderHelper::getPriceModifierData('price', $this->rawData)
         );
 
+        $preparedStrategies = [];
+        foreach ($data['repricer_account_strategies'] ?? [] as $accountId => $strategyId) {
+            if (empty($strategyId)) {
+                continue;
+            }
+
+            $preparedStrategies[] = [
+                'account_id' => $accountId,
+                'strategy_id' => $strategyId,
+            ];
+        }
+        $data['repricer_account_strategies'] = \Ess\M2ePro\Helper\Json::encode($preparedStrategies);
+
         return $data;
     }
 
-    public function getDefaultData()
+    public function getDefaultData(): array
     {
         return [
             'title' => '',
@@ -129,6 +142,12 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'ships_in_original_packaging_mode' => WalmartSellingFormat::SHIPS_IN_ORIGINAL_PACKAGING_MODE_NONE,
             'ships_in_original_packaging_value' => '',
             'ships_in_original_packaging_custom_attribute' => '',
+
+            'repricer_min_price_mode' => WalmartSellingFormat::REPRICER_MIN_MAX_PRICE_MODE_NONE,
+            'repricer_min_price_attribute' => '',
+            'repricer_max_price_mode' => WalmartSellingFormat::REPRICER_MIN_MAX_PRICE_MODE_NONE,
+            'repricer_max_price_attribute' => '',
+            'repricer_account_strategies' => [],
         ];
     }
 }

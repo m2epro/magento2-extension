@@ -39,6 +39,9 @@ class Factory
     //########################################
 
     /**
+     * @deprecated
+     * @see self::getObjectByClass
+     *
      * @param $modelName
      * @param array $arguments
      *
@@ -53,6 +56,20 @@ class Factory
         $model = $this->objectManager->create('\Ess\M2ePro\Model\\' . $modelName, $arguments);
 
         return $model;
+    }
+
+    /**
+     * @psalm-template T
+     * @psalm-param T $className
+     *
+     * @param string $className
+     * @param array $arguments
+     *
+     * @return T
+     */
+    public function getObjectByClass(string $className, array $arguments = [])
+    {
+        return $this->objectManager->create($className, $arguments);
     }
 
     /**

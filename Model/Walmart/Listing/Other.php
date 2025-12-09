@@ -12,6 +12,8 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing;
 
+use Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Other as WalmartListingOtherResource;
+
 /**
  * Class \Ess\M2ePro\Model\Walmart\Listing\Other
  */
@@ -53,7 +55,7 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
     public function _construct()
     {
         parent::_construct();
-        $this->_init(\Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Other::class);
+        $this->_init(WalmartListingOtherResource::class);
     }
 
     /**
@@ -258,5 +260,35 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
                                          '`product_id` = ?' => $this->getParentObject()->getProductId(),
                                      ]
                                  );
+    }
+
+    public function getRepricerStrategyName(): ?string
+    {
+        $strategyName = $this->getData(WalmartListingOtherResource::COLUMN_ONLINE_REPRICER_STRATEGY_NAME);
+        if (empty($strategyName)) {
+            return null;
+        }
+
+        return (string)$strategyName;
+    }
+
+    public function getRepricerMinPrice(): ?float
+    {
+        $minPrice = $this->getData(WalmartListingOtherResource::COLUMN_ONLINE_REPRICER_MIN_PRICE);
+        if (empty($minPrice)) {
+            return null;
+        }
+
+        return (float)$minPrice;
+    }
+
+    public function getRepricerMaxPrice(): ?float
+    {
+        $maxPrice = $this->getData(WalmartListingOtherResource::COLUMN_ONLINE_REPRICER_MAX_PRICE);
+        if (empty($maxPrice)) {
+            return null;
+        }
+
+        return (float)$maxPrice;
     }
 }

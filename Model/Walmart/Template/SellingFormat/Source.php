@@ -99,6 +99,38 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         return $result;
     }
 
+    public function getRepricerMinPrice(): ?float
+    {
+        $src = $this->getWalmartSellingFormatTemplate()->getRepricerMinPriceSource();
+
+        if ($src['mode'] == WalmartSellingFormat::REPRICER_MIN_MAX_PRICE_MODE_ATTRIBUTE) {
+            $result = $this->getMagentoProduct()->getAttributeValue($src['attribute']);
+            if (empty($result)) {
+                return null;
+            }
+
+            return (float)$result;
+        }
+
+        return null;
+    }
+
+    public function getRepricerMaxPrice(): ?float
+    {
+        $src = $this->getWalmartSellingFormatTemplate()->getRepricerMaxPriceSource();
+
+        if ($src['mode'] == WalmartSellingFormat::REPRICER_MIN_MAX_PRICE_MODE_ATTRIBUTE) {
+            $result = $this->getMagentoProduct()->getAttributeValue($src['attribute']);
+            if (empty($result)) {
+                return null;
+            }
+
+            return (float)$result;
+        }
+
+        return null;
+    }
+
     public function getItemWeight()
     {
         $result = 0;

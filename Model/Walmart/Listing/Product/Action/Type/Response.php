@@ -268,6 +268,27 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         return $data;
     }
 
+    protected function appendRepricerValues($data)
+    {
+        $requestMetadata = $this->getRequestMetaData();
+        if (!isset($requestMetadata['repricer_data'])) {
+            return $data;
+        }
+
+        $repricerMetaData = $requestMetadata['repricer_data']['repricer'];
+
+        $data[\Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_ONLINE_REPRICER_STRATEGY_NAME]
+            = $repricerMetaData['strategy_name'];
+        $data[\Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_ONLINE_REPRICER_MIN_PRICE]
+            = $repricerMetaData['min_price'];
+        $data[\Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_ONLINE_REPRICER_MAX_PRICE]
+            = $repricerMetaData['max_price'];
+        $data[\Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_REPRICER_LAST_UPDATE_DATE]
+            = \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s');
+
+        return $data;
+    }
+
     protected function appendDetailsValues($data)
     {
         $requestMetadata = $this->getRequestMetaData();

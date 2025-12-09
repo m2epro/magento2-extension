@@ -19,7 +19,8 @@ abstract class AbstractModel extends BaseAbstractModel
                 $this->getReviseLagTimeInstructionTypes(),
                 $this->getRevisePriceInstructionTypes(),
                 $this->getRevisePromotionsInstructionTypes(),
-                $this->getReviseDetailsInstructionTypes()
+                $this->getReviseDetailsInstructionTypes(),
+                $this->getReviseRepricerInstructionTypes(),
             )
         );
     }
@@ -123,6 +124,22 @@ abstract class AbstractModel extends BaseAbstractModel
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_REMAP_FROM_LISTING,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_CHANGE_LISTING_STORE_VIEW,
             \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Relist\Response::INSTRUCTION_TYPE_CHECK_DETAILS,
+            \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_PRODUCT_CHANGED,
+            ChangeProcessorAbstract::INSTRUCTION_TYPE_MAGMI_PLUGIN_PRODUCT_CHANGED,
+            \Ess\M2ePro\Model\Cron\Task\Listing\Product\InspectDirectChanges::INSTRUCTION_TYPE,
+        ];
+    }
+
+    protected function getReviseRepricerInstructionTypes(): array
+    {
+        return [
+            \Ess\M2ePro\Model\Walmart\Listing\ChangeProcessor::INSTRUCTION_TYPE_CONDITION_DATA_CHANGED,
+            \Ess\M2ePro\Model\Walmart\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_REPRICER_DATA_CHANGED,
+            TemplateChangeProcessorAbstract::INSTRUCTION_TYPE_REPRICER_DATA_CHANGED,
+            \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
+            \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING,
+            \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_REMAP_FROM_LISTING,
+            \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_CHANGE_LISTING_STORE_VIEW,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_PRODUCT_CHANGED,
             ChangeProcessorAbstract::INSTRUCTION_TYPE_MAGMI_PLUGIN_PRODUCT_CHANGED,
             \Ess\M2ePro\Model\Cron\Task\Listing\Product\InspectDirectChanges::INSTRUCTION_TYPE,

@@ -1,21 +1,14 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
-/**
- * @method \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Revise\Response getResponseObject()
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\Walmart\Connector\Product\Revise;
 
+use Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product as WalmartListingProductResource;
 use Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Revise\Request as ReviseRequest;
 
 /**
- * Class \Ess\M2ePro\Model\Walmart\Connector\Product\Revise\Responser
+ * @method \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Revise\Response getResponseObject()
  */
 class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
 {
@@ -100,6 +93,7 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
 
         $this->processSuccessRevisePrice();
         $this->processSuccessReviseQty();
+        $this->processSuccessReviseRepricer();
     }
 
     protected function processSuccessRevisePrice()
@@ -108,25 +102,21 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
             return;
         }
 
-        $currency = $this->localeCurrency->getCurrency(
-            $this->listingProduct->getMarketplace()->getChildObject()->getCurrency()
-        );
+        $currency = $this->localeCurrency
+            ->getCurrency($this->getWalmartListingProduct()->getWalmartMarketplace()->getCurrency());
 
-        $from = $this->listingProduct->getChildObject()->getOrigData('online_price');
-        $to = $this->listingProduct->getChildObject()->getOnlinePrice();
+        $from = $this->getWalmartListingProduct()->getOrigData('online_price');
+        $to = $this->getWalmartListingProduct()->getOnlinePrice();
         if ($from == $to) {
             return;
         }
 
-        /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
-        $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
-        $message->initFromPreparedData(
+        $message = $this->createSuccessMessage(
             sprintf(
                 'Price was revised from %s to %s',
                 $currency->toCurrency($from),
                 $currency->toCurrency($to)
-            ),
-            \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_SUCCESS
+            )
         );
 
         $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
@@ -138,21 +128,96 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
             return;
         }
 
-        $from = $this->listingProduct->getChildObject()->getOrigData('online_qty');
-        $to = $this->listingProduct->getChildObject()->getOnlineQty();
+        $from = $this->getWalmartListingProduct()->getOrigData('online_qty');
+        $to = $this->getWalmartListingProduct()->getOnlineQty();
         if ($from == $to) {
             return;
         }
 
-        /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
-        $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
-        $message->initFromPreparedData(
-            sprintf('QTY was revised from %s to %s', $from, $to),
-            \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_SUCCESS
+        $message = $this->createSuccessMessage(
+            sprintf('QTY was revised from %s to %s', $from, $to)
         );
 
         $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
     }
 
-    //########################################
+    private function processSuccessReviseRepricer(): void
+    {
+        if (!$this->getConfigurator()->isPriceAllowed()) {
+            return;
+        }
+
+        $currency = $this->localeCurrency
+            ->getCurrency($this->getWalmartListingProduct()->getWalmartMarketplace()->getCurrency());
+
+        $messages = [];
+
+        $oldRepricerStrategyName = (string)$this
+            ->getWalmartListingProduct()
+            ->getOrigData(WalmartListingProductResource::COLUMN_ONLINE_REPRICER_STRATEGY_NAME);
+        $newRepricerStrategyName = (string)$this->getWalmartListingProduct()->getOnlineRepricerStrategyName();
+
+        if ($oldRepricerStrategyName !== $newRepricerStrategyName) {
+            $messages[] = $this->createSuccessMessage(
+                sprintf(
+                    'Repricer Strategy was revised from "%s" to "%s"',
+                    $oldRepricerStrategyName,
+                    $newRepricerStrategyName
+                )
+            );
+        }
+
+        $oldMinPrice = (float)$this
+            ->getWalmartListingProduct()
+            ->getOrigData(WalmartListingProductResource::COLUMN_ONLINE_REPRICER_MIN_PRICE);
+        $newMinPrice = (float)$this->getWalmartListingProduct()->getOnlineRepricerMinPrice();
+
+        if ($oldMinPrice !== $newMinPrice) {
+            $messages[] = $this->createSuccessMessage(
+                sprintf(
+                    'Repricer Min Price was revised from %s to %s',
+                    $currency->toCurrency($oldMinPrice),
+                    $currency->toCurrency($newMinPrice)
+                )
+            );
+        }
+
+        $oldMaxPrice = (float)$this
+            ->getWalmartListingProduct()
+            ->getOrigData(WalmartListingProductResource::COLUMN_ONLINE_REPRICER_MAX_PRICE);
+        $newMaxPrice = (float)$this->getWalmartListingProduct()->getOnlineRepricerMaxPrice();
+        if ($oldMaxPrice !== $newMaxPrice) {
+            $messages[] = $this->createSuccessMessage(
+                sprintf(
+                    'Repricer Max Price was revised from %s to %s',
+                    $currency->toCurrency($oldMaxPrice),
+                    $currency->toCurrency($newMaxPrice)
+                )
+            );
+        }
+
+        foreach ($messages as $message) {
+            $this
+                ->getLogger()
+                ->logListingProductMessage($this->listingProduct, $message);
+        }
+    }
+
+    private function getWalmartListingProduct(): \Ess\M2ePro\Model\Walmart\Listing\Product
+    {
+        return $this->listingProduct->getChildObject();
+    }
+
+    private function createSuccessMessage(string $text): \Ess\M2ePro\Model\Connector\Connection\Response\Message
+    {
+        $message = $this->modelFactory
+            ->getObjectByClass(\Ess\M2ePro\Model\Connector\Connection\Response\Message::class);
+
+        $message->initFromPreparedData(
+            $text,
+            \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_SUCCESS
+        );
+
+        return $message;
+    }
 }

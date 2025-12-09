@@ -47,6 +47,9 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     public const DATE_VALUE = 1;
     public const DATE_ATTRIBUTE = 2;
 
+    public const REPRICER_MIN_MAX_PRICE_MODE_NONE = 0;
+    public const REPRICER_MIN_MAX_PRICE_MODE_ATTRIBUTE = 1;
+
     /**
      * @var \Ess\M2ePro\Model\Marketplace
      */
@@ -214,7 +217,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
         return $services;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return int
@@ -684,6 +687,63 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     }
 
     // ---------------------------------------
+
+    public function getRepricerMinPriceSource(): array
+    {
+        return [
+            'mode' => $this->getData('repricer_min_price_mode'),
+            'attribute' => $this->getData('repricer_min_price_attribute'),
+        ];
+    }
+
+    public function getRepricerMaxPriceSource(): array
+    {
+        return [
+            'mode' => $this->getData('repricer_max_price_mode'),
+            'attribute' => $this->getData('repricer_max_price_attribute'),
+        ];
+    }
+
+    public function getRepricerAttributes(): array
+    {
+        $attributes = [];
+
+        $minPriceSrc = $this->getRepricerMinPriceSource();
+        if ($minPriceSrc['mode'] == self::REPRICER_MIN_MAX_PRICE_MODE_ATTRIBUTE) {
+            $attributes[] = $minPriceSrc['attribute'];
+        }
+
+        $maxPriceSrc = $this->getRepricerMaxPriceSource();
+        if ($maxPriceSrc['mode'] == self::REPRICER_MIN_MAX_PRICE_MODE_ATTRIBUTE) {
+            $attributes[] = $maxPriceSrc['attribute'];
+        }
+
+        return array_unique($attributes);
+    }
+
+    public function getRepricerAccountStrategies(): array
+    {
+        $strategies = $this->getData('repricer_account_strategies');
+        if (empty($strategies)) {
+            return [];
+        }
+
+        return \Ess\M2ePro\Helper\Json::decode($strategies);
+    }
+
+    public function getRepricerStrategyByAccountId(int $accountId): ?string
+    {
+        $strategies = $this->getRepricerAccountStrategies();
+        foreach ($strategies as $strategy) {
+            if ((int)$strategy['account_id'] === $accountId) {
+                return (string)$strategy['strategy_id'];
+            }
+        }
+
+        return null;
+    }
+
+    // ----------------------------------------
 
     /**
      * @return int

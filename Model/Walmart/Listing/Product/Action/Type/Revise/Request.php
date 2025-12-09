@@ -27,6 +27,7 @@ class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Requ
             $this->getQtyData(),
             $this->getLagTimeData(),
             $this->getPriceData(),
+            $this->getRepricerData(),
             $this->getPromotionsData(),
             $this->getRequestDetailsData()
         );

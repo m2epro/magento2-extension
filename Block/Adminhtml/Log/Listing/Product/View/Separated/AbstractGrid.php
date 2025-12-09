@@ -59,7 +59,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Prod
         parent::_prepareColumns();
 
         $this->getColumn('create_date')
-             ->setData('filter_index', 'greatest_create_date')
+             ->setData('filter_index', 'main_table.create_date')
              ->setData('index', 'greatest_create_date');
 
         return $this;

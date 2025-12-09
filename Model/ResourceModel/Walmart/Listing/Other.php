@@ -12,6 +12,12 @@ use Ess\M2ePro\Helper\Component\Walmart as WalmartHelper;
 
 class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
+    public const COLUMN_LISTING_OTHER_ID = 'listing_other_id';
+    public const COLUMN_ONLINE_REPRICER_STRATEGY_NAME = 'online_repricer_strategy_name';
+    public const COLUMN_ONLINE_REPRICER_MIN_PRICE = 'online_repricer_min_price';
+    public const COLUMN_ONLINE_REPRICER_MAX_PRICE = 'online_repricer_max_price';
+    public const COLUMN_ONLINE_REPRICER_STATUS = 'online_repricer_status';
+
     /** @var bool */
     protected $_isPkAutoIncrement = false;
     /** @var \Magento\Framework\App\ResourceConnection */
@@ -40,7 +46,10 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
 
     public function _construct()
     {
-        $this->_init('m2epro_walmart_listing_other', 'listing_other_id');
+        $this->_init(
+            'm2epro_walmart_listing_other',
+            self::COLUMN_LISTING_OTHER_ID
+        );
         $this->_isPkAutoIncrement = false;
     }
 

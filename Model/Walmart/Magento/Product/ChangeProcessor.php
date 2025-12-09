@@ -16,27 +16,42 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
     public const INSTRUCTION_TYPE_PROMOTIONS_DATA_CHANGED = 'magento_product_promotions_data_changed';
     public const INSTRUCTION_TYPE_LAG_TIME_DATA_CHANGED = 'magento_product_lag_time_data_changed';
     public const INSTRUCTION_TYPE_DETAILS_DATA_CHANGED = 'magento_product_details_data_changed';
+    public const INSTRUCTION_TYPE_REPRICER_DATA_CHANGED = 'magento_product_repricer_data_changed';
 
     //########################################
 
-    public function getTrackingAttributes()
+    public function getTrackingAttributes(): array
     {
         return array_unique(
             array_merge(
                 $this->getLagTimeTrackingAttributes(),
                 $this->getPromotionsTrackingAttributes(),
-                $this->getDetailsTrackingAttributes()
+                $this->getDetailsTrackingAttributes(),
+                $this->getRepricerTrackingAttributes(),
             )
         );
     }
 
-    public function getInstructionsDataByAttributes(array $attributes)
+    public function getInstructionsDataByAttributes(array $attributes): array
     {
         if (empty($attributes)) {
             return [];
         }
 
         $data = [];
+
+        if (array_intersect($attributes, $this->getRepricerTrackingAttributes())) {
+            $priority = 5;
+
+            if ($this->getListingProduct()->isListed()) {
+                $priority = 60;
+            }
+
+            $data[] = [
+                'type' => self::INSTRUCTION_TYPE_REPRICER_DATA_CHANGED,
+                'priority' => $priority,
+            ];
+        }
 
         if (array_intersect($attributes, $this->getLagTimeTrackingAttributes())) {
             $priority = 5;
@@ -82,7 +97,7 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
 
     //########################################
 
-    public function getLagTimeTrackingAttributes()
+    private function getLagTimeTrackingAttributes(): array
     {
         $walmartSellingFormatTemplate = $this->getWalmartListingProduct()->getWalmartSellingFormatTemplate();
 
@@ -93,7 +108,7 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
         return array_unique($trackingAttributes);
     }
 
-    public function getPromotionsTrackingAttributes()
+    private function getPromotionsTrackingAttributes(): array
     {
         $trackingAttributes = [];
 
@@ -115,7 +130,7 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
         return array_unique($trackingAttributes);
     }
 
-    public function getDetailsTrackingAttributes()
+    private function getDetailsTrackingAttributes(): array
     {
         $trackingAttributes = [];
 
@@ -158,6 +173,15 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
             $walmartDescriptionTemplate->getGalleryImagesAttributes(),
             $walmartDescriptionTemplate->getImageVariationDifferenceAttributes()
         );
+
+        return array_unique($trackingAttributes);
+    }
+
+    private function getRepricerTrackingAttributes(): array
+    {
+        $trackingAttributes = $this->getWalmartListingProduct()
+                                   ->getWalmartSellingFormatTemplate()
+                                   ->getRepricerAttributes();
 
         return array_unique($trackingAttributes);
     }

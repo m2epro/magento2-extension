@@ -34,6 +34,7 @@ class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Res
         $data = $this->appendQtyValues($data);
         $data = $this->appendLagTimeValues($data);
         $data = $this->appendPriceValues($data);
+        $data = $this->appendRepricerValues($data);
         $data = $this->appendPromotionsValues($data);
         $data = $this->appendDetailsValues($data);
         $data = $this->appendStartDate($data);
