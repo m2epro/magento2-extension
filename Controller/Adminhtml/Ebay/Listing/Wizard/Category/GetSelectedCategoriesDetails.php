@@ -12,28 +12,16 @@ use Ess\M2ePro\Helper\Component\Ebay\Category as CategoryHelper;
 
 class GetSelectedCategoriesDetails extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 {
-    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Store */
-    private $componentEbayCategoryStore;
-    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category */
-    private $componentEbayCategory;
-    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
-    private $componentEbayCategoryEbay;
-    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
-    private $magentoAttributeHelper;
-
-    private $accountFactory;
-
-    private $accountResource;
-
+    private \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory;
+    private \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper;
+    private AccountFactory $accountFactory;
+    private AccountResource $accountResource;
     private MarketplaceFactory $marketplaceModelFactory;
-
     private MarketplaceResource $marketplaceResource;
 
     public function __construct(
         \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
-        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory,
-        \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore,
         \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewState\Manager $ruleViewStateManager,
         \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewStateFactory $viewStateFactory,
         \Ess\M2ePro\Model\Ebay\Magento\Product\RuleFactory $ebayProductRuleFactory,
@@ -57,9 +45,7 @@ class GetSelectedCategoriesDetails extends \Ess\M2ePro\Controller\Adminhtml\Ebay
         );
 
         $this->magentoAttributeHelper = $magentoAttributeHelper;
-        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
         $this->componentEbayCategory = $componentEbayCategory;
-        $this->componentEbayCategoryStore = $componentEbayCategoryStore;
         $this->marketplaceResource = $marketplaceResource;
         $this->marketplaceModelFactory = $marketplaceModelFactory;
         $this->accountFactory = $accountFactory;
@@ -103,8 +89,10 @@ class GetSelectedCategoriesDetails extends \Ess\M2ePro\Controller\Adminhtml\Ebay
         if (in_array($categoryType, [CategoryHelper::TYPE_EBAY_MAIN, CategoryHelper::TYPE_EBAY_SECONDARY])) {
             $template = $this->activeRecordFactory->getObject('Ebay_Template_Category');
             $template->loadByCategoryValue($value, $mode, $marketplaceId, 0);
-            $details['is_custom_template'] = $template->getIsCustomTemplate();
-            $details['template_id'] = $template->getId();
+            if (!$template->isObjectNew()) {
+                $details['is_custom_template'] = $template->getIsCustomTemplate();
+                $details['template_id'] = $template->getId();
+            }
         } elseif (in_array($categoryType, [CategoryHelper::TYPE_STORE_MAIN, CategoryHelper::TYPE_STORE_SECONDARY])) {
             $template = $this->activeRecordFactory->getObject('Ebay_Template_StoreCategory');
             $template->loadByCategoryValue($value, $mode, $marketplaceId);

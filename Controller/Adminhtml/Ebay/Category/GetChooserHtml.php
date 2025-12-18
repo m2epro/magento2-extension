@@ -6,8 +6,7 @@ use Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
 
 class GetChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 {
-    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category */
-    private $componentEbayCategory;
+    private \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory;
 
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory,
@@ -45,18 +44,31 @@ class GetChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
         }
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser $chooserBlock */
-        $chooserBlock = $this->getLayout()
-                             ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser::class);
-        $marketplaceId && $chooserBlock->setMarketplaceId($marketplaceId);
-        $accountId && $chooserBlock->setAccountId($accountId);
+        $chooserBlock = $this
+            ->getLayout()
+            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser::class);
+
+        if ($marketplaceId) {
+            $chooserBlock->setMarketplaceId($marketplaceId);
+        }
+
+        if ($accountId) {
+            $chooserBlock->setAccountId($accountId);
+        }
         $chooserBlock->setCategoryMode($categoryMode);
         $chooserBlock->setIsEditCategoryAllowed($isEditAllowed);
 
         if (!empty($selectedCategories)) {
-            /** @var \Ess\M2ePro\Model\Ebay\Template\Category\Chooser\Converter $converter */
-            $converter = $this->modelFactory->getObject('Ebay_Template_Category_Chooser_Converter');
-            $marketplaceId && $converter->setMarketplaceId($marketplaceId);
-            $accountId && $converter->setAccountId($accountId);
+            $converter = $this->modelFactory
+                ->getObjectByClass(\Ess\M2ePro\Model\Ebay\Template\Category\Chooser\Converter::class);
+
+            if ($marketplaceId) {
+                $converter->setMarketplaceId($marketplaceId);
+            }
+
+            if ($accountId) {
+                $converter->setAccountId($accountId);
+            }
 
             $helper = $this->componentEbayCategory;
             foreach ($selectedCategories as $type => $selectedCategory) {

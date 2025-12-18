@@ -81,8 +81,10 @@ class GetSelectedCategoryDetails extends \Ess\M2ePro\Controller\Adminhtml\Ebay\C
             $template = $this->activeRecordFactory->getObject('Ebay_Template_Category');
             $template->loadByCategoryValue($value, $mode, $marketplaceId, 0);
 
-            $details['is_custom_template'] = $template->getIsCustomTemplate();
-            $details['template_id'] = $template->getId();
+            if (!$template->isObjectNew()) {
+                $details['is_custom_template'] = $template->getIsCustomTemplate();
+                $details['template_id'] = $template->getId();
+            }
         }
 
         $this->setJsonContent($details);
