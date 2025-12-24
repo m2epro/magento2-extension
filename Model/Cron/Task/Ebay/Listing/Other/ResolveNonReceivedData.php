@@ -110,7 +110,10 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'Listing\Other'
         )->getCollection();
-        $listingOtherCollection->addFieldToFilter('main_table.account_id', ['eq' => 2]);
+        $listingOtherCollection->addFieldToFilter(
+            'main_table.account_id',
+            ['eq' => (int)$account->getId()]
+        );
         $listingOtherCollection->addFieldToFilter(
             [
                 'second_table.sku',
@@ -230,7 +233,8 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 continue;
             }
 
-            $startDateTimestamp = (int)\Ess\M2ePro\Helper\Date::createDateGmt($ebayListingOther->getStartDate())->format('U');
+            $startDateTimestamp = (int)\Ess\M2ePro\Helper\Date::createDateGmt($ebayListingOther->getStartDate())
+                                                              ->format('U');
             if (
                 $toTimeReceived !== null &&
                 $startDateTimestamp >= (int)\Ess\M2ePro\Helper\Date::createDateGmt($toTimeReceived)->format('U')
