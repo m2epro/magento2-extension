@@ -44,7 +44,7 @@ class DefaultObject extends AbstractModel implements ItemToShipLoaderInterface
         parent::__construct($helperFactory, $modelFactory, $data);
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return array
@@ -52,40 +52,53 @@ class DefaultObject extends AbstractModel implements ItemToShipLoaderInterface
      */
     public function loadItem()
     {
-        $additionalData = $this->getHelper('Data')->unserialize(
-            $this->shipmentItem->getOrderItem()->getAdditionalData()
-        );
+        $additionalData = $this
+            ->getHelper('Data')
+            ->unserialize($this->shipmentItem->getOrderItem()->getAdditionalData());
 
         if ($cache = $this->getAlreadyProcessed($additionalData)) {
             return $cache;
         }
 
-        if (!$this->validate($additionalData)) {
+        $additionalDataItems = $additionalData[Helper::CUSTOM_IDENTIFIER]['items'] ?? [];
+
+        $qtyShipped = (int)$this->shipmentItem->getQty();
+        if ($qtyShipped <= 0) {
             return [];
         }
 
-        $orderItem = $this->getOrderItem($additionalData);
-        $itemQty = $orderItem->getChildObject()->getQtyPurchased();
-        $qtyAvailable = (int)$this->shipmentItem->getQty();
+        $resultItems = [];
+        $totalQtyPurchased = 0;
+        foreach ($additionalDataItems as $additionalDataItem) {
+            $orderItem = $this
+                ->getOrderItemById((string)($additionalDataItem['order_item_id'] ?? ''));
+            if ($orderItem === null) {
+                continue;
+            }
 
-        if ($itemQty > $qtyAvailable) {
-            $itemQty = $qtyAvailable;
-        }
+            $itemQty = $orderItem->getChildObject()->getQtyPurchased();
+            $totalQtyPurchased += $itemQty;
+            if ($totalQtyPurchased > $qtyShipped) {
+                break;
+            }
 
-        $items = [
-            [
+            $resultItems[] =  [
                 'amazon_order_item_id' => $orderItem->getChildObject()->getAmazonOrderItemId(),
                 'qty' => $itemQty,
-            ],
-        ];
+            ];
+        }
 
-        $additionalData[Helper::CUSTOM_IDENTIFIER]['shipments'][$this->shipmentItem->getId()] = $items;
+        if (empty($resultItems)) {
+            return [];
+        }
+
+        $additionalData[Helper::CUSTOM_IDENTIFIER]['shipments'][$this->shipmentItem->getId()] = $resultItems;
         $this->saveAdditionalDataInShipmentItem($additionalData);
 
-        return $items;
+        return $resultItems;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @param array $additionalData
@@ -104,36 +117,6 @@ class DefaultObject extends AbstractModel implements ItemToShipLoaderInterface
     /**
      * @param array $additionalData
      *
-     * @return bool
-     */
-    protected function validate(array $additionalData)
-    {
-        if (
-            !isset($additionalData[Helper::CUSTOM_IDENTIFIER]['items']) ||
-            !is_array($additionalData[Helper::CUSTOM_IDENTIFIER]['items'])
-        ) {
-            return false;
-        }
-
-        if ($this->shipmentItem->getQty() <= 0) {
-            return false;
-        }
-
-        if (!isset($additionalData[Helper::CUSTOM_IDENTIFIER]['items'][0]['order_item_id'])) {
-            return false;
-        }
-
-        $orderItem = $this->getOrderItem($additionalData);
-        if (!$orderItem->getId()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * @param array $additionalData
-     *
      * @throws \Exception
      */
     protected function saveAdditionalDataInShipmentItem(array $additionalData)
@@ -142,31 +125,29 @@ class DefaultObject extends AbstractModel implements ItemToShipLoaderInterface
         $this->shipmentItem->getOrderItem()->save();
     }
 
-    //########################################
+    // ----------------------------------------
 
-    /**
-     * @param array $additionalData
-     *
-     * @return \Ess\M2ePro\Model\Order\Item
-     */
-    protected function getOrderItem(array $additionalData)
+    private function getOrderItemById(string $orderItemId): ?\Ess\M2ePro\Model\Order\Item
     {
-        if ($this->orderItem !== null) {
-            return $this->orderItem;
+        if (empty($orderItemId)) {
+            return null;
         }
 
-        $this->orderItem = $this->amazonFactory
+        /** @var \Ess\M2ePro\Model\Order\Item $result */
+        $result = $this->amazonFactory
             ->getObject('Order_Item')
             ->getCollection()
             ->addFieldToFilter('order_id', $this->order->getId())
             ->addFieldToFilter(
                 'amazon_order_item_id',
-                $additionalData[Helper::CUSTOM_IDENTIFIER]['items'][0]['order_item_id']
+                ['eq' => $orderItemId]
             )
             ->getFirstItem();
 
-        return $this->orderItem;
-    }
+        if ($result->isObjectNew()) {
+            return null;
+        }
 
-    //########################################
+        return $result;
+    }
 }

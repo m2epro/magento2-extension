@@ -80,4 +80,53 @@ class PretendedToBeSimple extends DefaultObject implements ItemToShipLoaderInter
     }
 
     //########################################
+
+    protected function validate(array $additionalData)
+    {
+        if (
+            !isset($additionalData[Helper::CUSTOM_IDENTIFIER]['items']) ||
+            !is_array($additionalData[Helper::CUSTOM_IDENTIFIER]['items'])
+        ) {
+            return false;
+        }
+
+        if ($this->shipmentItem->getQty() <= 0) {
+            return false;
+        }
+
+        if (!isset($additionalData[Helper::CUSTOM_IDENTIFIER]['items'][0]['order_item_id'])) {
+            return false;
+        }
+
+        $orderItem = $this->getOrderItem($additionalData);
+        if (!$orderItem->getId()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param array $additionalData
+     *
+     * @return \Ess\M2ePro\Model\Order\Item
+     */
+    protected function getOrderItem(array $additionalData)
+    {
+        if ($this->orderItem !== null) {
+            return $this->orderItem;
+        }
+
+        $this->orderItem = $this->amazonFactory
+            ->getObject('Order_Item')
+            ->getCollection()
+            ->addFieldToFilter('order_id', $this->order->getId())
+            ->addFieldToFilter(
+                'amazon_order_item_id',
+                $additionalData[Helper::CUSTOM_IDENTIFIER]['items'][0]['order_item_id']
+            )
+            ->getFirstItem();
+
+        return $this->orderItem;
+    }
 }

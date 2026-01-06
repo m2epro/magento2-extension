@@ -9,6 +9,8 @@ use Ess\M2ePro\Model\Tag\ValidatorIssues;
 
 abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 {
+    public const MAX_EBAY_VARIATIONS_COUNT = 250;
+
     private \Ess\M2ePro\Model\Connector\Connection\Response\MessageFactory $messageFactory;
     /** @var array */
     protected $params = [];
@@ -375,7 +377,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
             }
 
             // Not more than 250 possible variations
-            if ($totalVariationsCountWithoutDeleted > 250) {
+            if ($totalVariationsCountWithoutDeleted > self::MAX_EBAY_VARIATIONS_COUNT) {
                 $this->addMessage(
                     'Variations of this Magento Product are out of the eBay Variational Item limits.
                     The Number of Variations is more than 250. That is why, this Product cannot be updated on eBay.

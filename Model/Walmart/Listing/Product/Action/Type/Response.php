@@ -275,14 +275,14 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             return $data;
         }
 
-        $repricerMetaData = $requestMetadata['repricer_data']['repricer'];
+        $repricerMetaData = $requestMetadata['repricer_data']['repricer'] ?? [];
 
         $data[\Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_ONLINE_REPRICER_STRATEGY_NAME]
-            = $repricerMetaData['strategy_name'];
+            = $repricerMetaData['strategy_name'] ?? null;
         $data[\Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_ONLINE_REPRICER_MIN_PRICE]
-            = $repricerMetaData['min_price'];
+            = $repricerMetaData['min_price'] ?? null;
         $data[\Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_ONLINE_REPRICER_MAX_PRICE]
-            = $repricerMetaData['max_price'];
+            = $repricerMetaData['max_price'] ?? null;
         $data[\Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_REPRICER_LAST_UPDATE_DATE]
             = \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s');
 

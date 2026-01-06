@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Wizard\Review;
 
-use Ess\M2ePro\Model\Ebay\Listing\Wizard\CompleteProcessor;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Listing as EbayListingController;
-use Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Wizard\WizardTrait;
-use Ess\M2ePro\Model\Ebay\Listing\Wizard\ManagerFactory;
 use Ess\M2ePro\Helper\Data\Session;
+use Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory;
+use Ess\M2ePro\Model\Ebay\Listing\Wizard\CompleteProcessor;
+use Ess\M2ePro\Model\Ebay\Listing\Wizard\ManagerFactory;
 use Ess\M2ePro\Model\Ebay\Listing\Wizard\StepDeclarationCollectionFactory;
 
 class Complete extends EbayListingController
@@ -46,7 +46,8 @@ class Complete extends EbayListingController
         $id = $this->getWizardIdFromRequest();
         $wizardManager = $this->wizardManagerFactory->createById($id);
 
-        $listingProducts = $this->completeProcessor->process($wizardManager);
+        $completeResult = $this->completeProcessor->process($wizardManager);
+        $listingProducts = $completeResult->getAddedListingProducts();
 
         $wizardManager->completeStep(StepDeclarationCollectionFactory::STEP_REVIEW);
         $wizardManager->setProductCountTotal(count($listingProducts));
@@ -57,6 +58,12 @@ class Complete extends EbayListingController
                 return $product->getId();
             }, $listingProducts);
             $this->sessionHelper->setValue('added_products_ids', $ids);
+        }
+
+        if ($completeResult->hasNotAddedProducts()) {
+            $this->addExtendedWarningMessage(
+                __("Some products weren't added due to an excessive number of variations.")
+            );
         }
 
         return $this->_redirect($backUrl);

@@ -14,27 +14,29 @@ use Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory as EbayFactory;
 class CompleteProcessor
 {
     private ActiveRecordFactory $activeRecordFactory;
-
     private ValidationErrorsProcessor $validationErrorsProcessor;
-
     private EbayFactory $ebayFactory;
+    private \Ess\M2ePro\Model\Ebay\Listing\Wizard\VariationCountValidator $variationCountValidator;
 
     public function __construct(
         ActiveRecordFactory $activeRecordFactory,
         ValidationErrorsProcessor $validationErrorsProcessor,
-        EbayFactory $ebayFactory
+        EbayFactory $ebayFactory,
+        VariationCountValidator $variationCountValidator
     ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->validationErrorsProcessor = $validationErrorsProcessor;
         $this->ebayFactory = $ebayFactory;
+        $this->variationCountValidator = $variationCountValidator;
     }
 
-    public function process(Manager $wizardManager): array
+    public function process(Manager $wizardManager): \Ess\M2ePro\Model\Ebay\Listing\Wizard\CompleteProcessor\Result
     {
         $listing = $wizardManager->getListing();
 
         $processedWizardProductIds = [];
-        $listingProducts = [];
+        $addedListingProducts = [];
+        $notAddedProducts = [];
 
         /**
          * @var WizardProduct $wizardProduct
@@ -43,6 +45,7 @@ class CompleteProcessor
             $listingProduct = $this->addProduct($wizardManager, $wizardProduct, $listing);
 
             if ($listingProduct === null) {
+                $notAddedProducts[] = $wizardProduct;
                 continue;
             }
 
@@ -63,7 +66,7 @@ class CompleteProcessor
             }
 
             $processedWizardProductIds[] = $wizardProduct->getId();
-            $listingProducts[] = $listingProduct;
+            $addedListingProducts[] = $listingProduct;
         }
 
         if (!empty($processedWizardProductIds)) {
@@ -72,7 +75,7 @@ class CompleteProcessor
 
         $this->rememberSelectedModeInListingSettings($wizardManager);
 
-        return $listingProducts;
+        return new \Ess\M2ePro\Model\Ebay\Listing\Wizard\CompleteProcessor\Result($addedListingProducts, $notAddedProducts);
     }
 
     private function addProduct(
@@ -86,6 +89,10 @@ class CompleteProcessor
         $listingProduct = null;
 
         if ($wizardManager->isWizardTypeGeneral()) {
+            if (!$this->variationCountValidator->execute($wizardProduct->getMagentoProduct())) {
+                return null;
+            }
+
             $listingProduct = $listing
                 ->addProduct(
                     $wizardProduct->getMagentoProductId(),
