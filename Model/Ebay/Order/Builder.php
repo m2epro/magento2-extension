@@ -140,6 +140,14 @@ class Builder extends AbstractModel
         $this->setData('buyer_message', $data['buyer']['message']);
         $this->setData('buyer_tax_id', trim($data['buyer']['tax_id']));
 
+        $this->setData(
+            \Ess\M2ePro\Model\ResourceModel\Ebay\Order::COLUMN_IS_FULL_REFUNDED,
+            $this->helper->isFullRefunded(
+                (float)$data['selling']['paid_amount'],
+                $data['payment']['external_transactions']
+            )
+        );
+
         $this->externalTransactions = $data['payment']['external_transactions'];
         unset($data['payment']['external_transactions']);
 

@@ -6,24 +6,29 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Other\ProductCreate;
 
 class ChannelItem
 {
-    private int $attributeSetId;
-    private string $magentoProductType;
-    private int $storeId;
-    private int $taxClassId;
-    private int $visibility;
-    private string $title;
-    private string $description;
-    private string $sku;
-    private int $quantity;
-    private float $price;
-    private string $currencyCode;
-    private int $stockStatus;
-    /** @var ChannelAttributeItem[] */
-    private array $variationSet = [];
-    /** @var ChannelItem[] */
-    private array $variations = [];
-    private array $specifics = [];
+    public int $attributeSetId;
+    public string $magentoProductType;
+    public int $storeId;
+    public int $taxClassId;
+    public int $visibility;
+    public string $title;
+    public string $sku;
+    public int $quantity;
+    public float $price;
+    public string $currencyCode;
+    public int $stockStatus;
+    public array $variationSet;
+    public array $variations;
+    public array $specifics;
+    public string $description;
+    public array $images;
 
+    /**
+     * @param ChannelAttributeItem[] $variationSet
+     * @param ChannelItem[] $variations
+     * @param array<string, string> $specifics
+     * @param string[] $images
+     */
     public function __construct(
         int $attributeSetId,
         string $magentoProductType,
@@ -31,12 +36,16 @@ class ChannelItem
         int $taxClassId,
         int $visibility,
         string $title,
-        string $description,
         string $sku,
         int $quantity,
         float $price,
         string $currencyCode,
-        int $stockStatus
+        int $stockStatus,
+        string $description = '',
+        array $variationSet = [],
+        array $variations = [],
+        array $specifics = [],
+        array $images = []
     ) {
         $this->attributeSetId = $attributeSetId;
         $this->magentoProductType = $magentoProductType;
@@ -50,106 +59,14 @@ class ChannelItem
         $this->price = $price;
         $this->currencyCode = $currencyCode;
         $this->stockStatus = $stockStatus;
+        $this->variationSet = $variationSet;
+        $this->variations = $variations;
+        $this->specifics = $specifics;
+        $this->images = $images;
     }
 
     public function isConfigurableProduct(): bool
     {
-        return !empty($this->getVariations());
-    }
-
-    public function getAttributeSetId(): int
-    {
-        return $this->attributeSetId;
-    }
-
-    public function getMagentoProductType(): string
-    {
-        return $this->magentoProductType;
-    }
-
-    public function getStoreId(): int
-    {
-        return $this->storeId;
-    }
-
-    public function getTaxClassId(): int
-    {
-        return $this->taxClassId;
-    }
-
-    public function getVisibility(): int
-    {
-        return $this->visibility;
-    }
-
-    public function getTitle(): string
-    {
-        return $this->title;
-    }
-
-    public function getDescription(): string
-    {
-        return $this->description;
-    }
-
-    public function getSku(): string
-    {
-        return $this->sku;
-    }
-
-    public function getQuantity(): int
-    {
-        return $this->quantity;
-    }
-
-    public function getPrice(): float
-    {
-        return $this->price;
-    }
-
-    public function getCurrencyCode(): string
-    {
-        return $this->currencyCode;
-    }
-
-    public function getStockStatus(): int
-    {
-        return $this->stockStatus;
-    }
-
-    public function getSpecifics(): array
-    {
-        return $this->specifics;
-    }
-
-    /**
-     * @return ChannelAttributeItem[]
-     */
-    public function getVariationSet(): array
-    {
-        return $this->variationSet;
-    }
-
-    /**
-     * @return ChannelItem[]
-     */
-    public function getVariations(): array
-    {
-        return $this->variations;
-    }
-
-    public function setSpecifics(array $specifics): void
-    {
-        $this->specifics = $specifics;
-    }
-
-    public function setVariations(array $variations): void
-    {
-        $this->variations = $variations;
-    }
-
-    public function setVariationSet(array $variationSet): void
-    {
-        $this->variationSet = $variationSet;
+        return !empty($this->variations);
     }
 }

@@ -288,7 +288,10 @@ class Form extends AbstractContainer
      */
     public function getStatus()
     {
-        if ($this->order->getChildObject()->isCanceled()) {
+        if (
+            $this->order->getChildObject()->isCanceled()
+            || $this->order->getChildObject()->isFullRefunded()
+        ) {
             $status = [
                 'value' => $this->__('Canceled'),
                 'color' => 'red',

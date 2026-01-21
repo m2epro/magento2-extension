@@ -21,6 +21,10 @@ class ProductCreateService
     private \Magento\CatalogInventory\Api\StockItemRepositoryInterface $stockItemRepository;
     private \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration;
     private \Magento\Framework\App\ResourceConnection $resourceConnection;
+    /**
+     * @var \Ess\M2ePro\Model\Ebay\Listing\Other\ProductCreate\ImageDownloader
+     */
+    private ProductCreate\ImageDownloader $imageDownloader;
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -32,7 +36,8 @@ class ProductCreateService
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
         \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
         \Magento\CatalogInventory\Api\StockItemRepositoryInterface $stockItemRepository,
-        \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration
+        \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration,
+        \Ess\M2ePro\Model\Ebay\Listing\Other\ProductCreate\ImageDownloader $imageDownloader
     ) {
         $this->channelItemProvider = $channelItemProvider;
         $this->attributesProcessor = $attributesProcessor;
@@ -44,6 +49,7 @@ class ProductCreateService
         $this->stockItemRepository = $stockItemRepository;
         $this->stockConfiguration = $stockConfiguration;
         $this->resourceConnection = $resourceConnection;
+        $this->imageDownloader = $imageDownloader;
     }
 
     public function execute(
@@ -63,7 +69,7 @@ class ProductCreateService
         $connection->beginTransaction();
 
         try {
-            $product = $this->initMagentoProduct($channelItem);
+            $product = $this->createMagentoProduct($channelItem);
             $this->createStockItem(
                 $product,
                 $channelItem
@@ -84,11 +90,17 @@ class ProductCreateService
         $connection->beginTransaction();
 
         try {
-            $product = $this->initMagentoProduct($channelItem);
-            $this->buildConfigurableProduct(
-                $product,
-                $channelItem
-            );
+            $parentProduct = $this->createMagentoProduct($channelItem);
+            $parentProduct = $this->attributesProcessor
+                ->setSuperAttributesToProduct($parentProduct, $channelItem);
+            $parentProduct->setCanSaveConfigurableAttributes(true);
+
+            $childProducts = $this->createChildProducts($channelItem);
+
+            $extensionAttributes = $parentProduct->getExtensionAttributes();
+            $extensionAttributes->setConfigurableProductLinks(array_keys($childProducts));
+
+            $this->productRepository->save($parentProduct);
         } catch (\Throwable $exception) {
             $connection->rollBack();
             throw $exception;
@@ -96,37 +108,58 @@ class ProductCreateService
 
         $connection->commit();
 
-        return $product;
+        return $parentProduct;
     }
 
-    private function initMagentoProduct(ChannelItem $channelItem): \Magento\Catalog\Api\Data\ProductInterface
+    private function createMagentoProduct(ChannelItem $channelItem): \Magento\Catalog\Api\Data\ProductInterface
     {
-        if ($this->isExistProduct($channelItem->getSku())) {
+        if ($this->isExistProduct($channelItem->sku)) {
             throw new \Ess\M2ePro\Model\Exception\Logic(
-                sprintf('Product with sku "%s" exists', $channelItem->getSku())
+                sprintf('Product with sku "%s" exists', $channelItem->sku)
             );
         }
 
         $product = $this->productFactory->create();
-        $product->setTypeId($channelItem->getMagentoProductType());
-        $product->setAttributeSetId($channelItem->getAttributeSetId());
-        $product->setStoreId($channelItem->getStoreId());
-        $product->setSku($channelItem->getSku());
-        $product->setName($channelItem->getTitle());
-        $product->setPrice($channelItem->getPrice());
-        $product->setVisibility($channelItem->getVisibility());
-        $product->setTaxClassId($channelItem->getTaxClassId());
+        $product->setTypeId($channelItem->magentoProductType);
+        $product->setAttributeSetId($channelItem->attributeSetId);
+        $product->setStoreId($channelItem->storeId);
+        $product->setSku($channelItem->sku);
+        $product->setName($channelItem->title);
+        $product->setPrice($channelItem->price);
+        $product->setVisibility($channelItem->visibility);
+        $product->setTaxClassId($channelItem->taxClassId);
         $product->setStatus(\Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED);
         $product->setStockData(
             [
                 'use_config_manage_stock' => 0,
                 'manage_stock' => 1,
-                'is_in_stock' => $channelItem->getStockStatus(),
-                'qty' => $channelItem->getQuantity(),
+                'is_in_stock' => $channelItem->stockStatus,
+                'qty' => $channelItem->quantity,
             ]
         );
+        $product->setDescription($channelItem->description);
 
-        $store = $this->storeFactory->create()->load($channelItem->getStoreId());
+        $firstImageIndex = array_key_first($channelItem->images);
+        foreach ($channelItem->images as $index => $imageUrl) {
+            $imagePath = $this->imageDownloader->execute($imageUrl);
+            if (empty($imagePath)) {
+                continue;
+            }
+
+            $mediaAttribute = null;
+            if ($index === $firstImageIndex) {
+                $mediaAttribute = ['image', 'small_image', 'thumbnail'];
+            }
+
+            $product->addImageToMediaGallery(
+                $imagePath,
+                $mediaAttribute,
+                true,
+                false
+            );
+        }
+
+        $store = $this->storeFactory->create()->load($channelItem->storeId);
         $websiteIds = [$store->getWebsiteId()];
 
         if (empty($websiteIds)) {
@@ -138,30 +171,12 @@ class ProductCreateService
         return $this->productRepository->save($product);
     }
 
-    private function buildConfigurableProduct(
-        \Magento\Catalog\Api\Data\ProductInterface $parentProduct,
-        ChannelItem $channelItem
-    ): void {
-        $parentProduct = $this->attributesProcessor->setSuperAttributesToProduct(
-            $parentProduct,
-            $channelItem
-        );
-
-        $childProducts = $this->createChildProducts($channelItem);
-        $extensionAttributes = $parentProduct->getExtensionAttributes();
-        $parentProduct->setCanSaveConfigurableAttributes(true);
-
-        $extensionAttributes->setConfigurableProductLinks(array_keys($childProducts));
-
-        $this->productRepository->save($parentProduct);
-    }
-
     private function createChildProducts(ChannelItem $channelItem): array
     {
         $simpleProducts = [];
 
-        foreach ($channelItem->getVariations() as $variationItem) {
-            $newProduct = $this->initMagentoProduct($variationItem);
+        foreach ($channelItem->variations as $variationItem) {
+            $newProduct = $this->createMagentoProduct($variationItem);
             $this->attributesProcessor->setOptionAttributeToChild(
                 $newProduct,
                 $variationItem,
@@ -193,9 +208,9 @@ class ProductCreateService
             );
         $stockItem->setProduct($product);
 
-        $stockItem->setQty($channelItem->getQuantity())
+        $stockItem->setQty($channelItem->quantity)
                   ->setStockId(\Magento\CatalogInventory\Model\Stock::DEFAULT_STOCK_ID)
-                  ->setIsInStock($channelItem->getStockStatus())
+                  ->setIsInStock($channelItem->stockStatus)
                   ->setUseConfigMinQty(true)
                   ->setUseConfigMinSaleQty(true)
                   ->setUseConfigMaxSaleQty(true)

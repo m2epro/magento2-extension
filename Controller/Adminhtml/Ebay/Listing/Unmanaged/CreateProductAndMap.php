@@ -10,12 +10,15 @@ use Ess\M2ePro\Helper\Component\Ebay;
 class CreateProductAndMap extends \Ess\M2ePro\Controller\Adminhtml\Listing
 {
     private \Ess\M2ePro\Model\Ebay\Listing\Other\ProductCreateService $productCreateService;
+    private \Ess\M2ePro\Helper\Module\Exception $exceptionHelper;
 
     public function __construct(
         Context $context,
-        \Ess\M2ePro\Model\Ebay\Listing\Other\ProductCreateService $productCreateService
+        \Ess\M2ePro\Model\Ebay\Listing\Other\ProductCreateService $productCreateService,
+        \Ess\M2ePro\Helper\Module\Exception $exceptionHelper
     ) {
         $this->productCreateService = $productCreateService;
+        $this->exceptionHelper = $exceptionHelper;
 
         parent::__construct($context);
     }
@@ -44,6 +47,7 @@ class CreateProductAndMap extends \Ess\M2ePro\Controller\Adminhtml\Listing
             try {
                 $magentoProduct = $this->productCreateService->execute($listingOther);
             } catch (\Throwable $exception) {
+                $this->exceptionHelper->process($exception);
                 $failCount++;
                 $failMessages[] = sprintf(
                     'Product creation fail. Unmanaged product id: %s; Fail reason: %s',

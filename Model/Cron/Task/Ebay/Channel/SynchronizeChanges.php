@@ -43,8 +43,8 @@ class SynchronizeChanges extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function processItemsChanges()
     {
-        /** @var \Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges\ItemsProcessor $itemsProcessor */
-        $itemsProcessor = $this->modelFactory->getObject('Cron_Task_Ebay_Channel_SynchronizeChanges_ItemsProcessor');
+        $itemsProcessor = $this->modelFactory
+            ->getObjectByClass(\Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges\ItemsProcessor::class);
         $synchronizationLog = $this->getSynchronizationLog();
         $synchronizationLog->setSynchronizationTask(\Ess\M2ePro\Model\Synchronization\Log::TASK_OTHER);
 
@@ -60,8 +60,8 @@ class SynchronizeChanges extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function processOrdersChanges()
     {
-        /** @var \Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges\OrdersProcessor $ordersProcessor */
-        $ordersProcessor = $this->modelFactory->getObject('Cron_Task_Ebay_Channel_SynchronizeChanges_OrdersProcessor');
+        $ordersProcessor = $this->modelFactory
+            ->getObjectByClass(\Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges\OrdersProcessor::class);
 
         $synchronizationLog = $this->getSynchronizationLog();
         $synchronizationLog->setSynchronizationTask(\Ess\M2ePro\Model\Synchronization\Log::TASK_ORDERS);

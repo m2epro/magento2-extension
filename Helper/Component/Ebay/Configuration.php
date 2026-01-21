@@ -419,6 +419,14 @@ class Configuration
         );
     }
 
+    public function getImportChannelInfo(): bool
+    {
+        return (bool)$this->config->getGroupValue(
+            self::CONFIG_GROUP,
+            'import_channel_info'
+        );
+    }
+
     // ----------------------------------------
 
     /**

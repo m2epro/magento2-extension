@@ -8,7 +8,7 @@ use Ess\M2ePro\Model\ResourceModel\Ebay\Order as ResourceEbayOrder;
 
 /**
  * @method \Ess\M2ePro\Model\Order getParentObject()
- * @method \Ess\M2ePro\Model\ResourceModel\Ebay\Order getResource()
+ * @method ResourceEbayOrder getResource()
  */
 class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
@@ -107,7 +107,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     public function _construct()
     {
         parent::_construct();
-        $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Order::class);
+        $this->_init(ResourceEbayOrder::class);
     }
 
     /**
@@ -615,6 +615,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return (bool)$this->getData('cancellation_status');
     }
 
+    public function isFullRefunded(): bool
+    {
+        return (bool)$this->getData(ResourceEbayOrder::COLUMN_IS_FULL_REFUNDED);
+    }
+
     public function getBuyerCancellationStatus(): int
     {
         return (int)$this->getData('buyer_cancellation_status');
@@ -762,12 +767,18 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
             return false;
         }
 
+        if ($this->isFullRefunded()) {
+            return false;
+        }
+
         $ebayAccount = $this->getEbayAccount();
 
         if (
-            !$this->isCheckoutCompleted() &&
-            ($ebayAccount->shouldCreateMagentoOrderWhenCheckedOut() ||
-                $ebayAccount->shouldCreateMagentoOrderWhenCheckedOutAndPaid())
+            !$this->isCheckoutCompleted()
+            && (
+                $ebayAccount->shouldCreateMagentoOrderWhenCheckedOut()
+                || $ebayAccount->shouldCreateMagentoOrderWhenCheckedOutAndPaid()
+            )
         ) {
             return false;
         }
@@ -784,7 +795,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
      */
     public function isReservable()
     {
-        return !$this->isCanceled();
+        return !$this->isCanceled() && !$this->isFullRefunded();
     }
 
     public function beforeCreateMagentoOrder()

@@ -131,4 +131,25 @@ class Helper extends \Ess\M2ePro\Model\AbstractModel
     }
 
     //########################################
+
+    public function isFullRefunded(float $paidAmount, array $externalTransactions): bool
+    {
+        if (count($externalTransactions) === 0) {
+            return false;
+        }
+
+        $hasAnyRefund = false;
+        foreach ($externalTransactions as $externalTransaction) {
+            if ((bool)$externalTransaction['is_refund'] === false) {
+                $hasAnyRefund = true;
+                break;
+            }
+        }
+
+        if (!$hasAnyRefund) {
+            return false;
+        }
+
+        return $paidAmount === 0.0;
+    }
 }

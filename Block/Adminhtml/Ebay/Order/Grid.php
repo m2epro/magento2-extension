@@ -116,20 +116,21 @@ class Grid extends AbstractGrid
             'returned' => \Ess\M2ePro\Model\Ebay\Order::STATUS_RETURNED,
         ];
 
+        $isFullRefundedColumnName = \Ess\M2ePro\Model\ResourceModel\Ebay\Order::COLUMN_IS_FULL_REFUNDED;
         $collection->getSelect()->columns(
             [
                 'status' => new \Zend_Db_Expr(
                     "IF (
-                `cancellation_status` = 1,
+                `cancellation_status` = 1 OR `$isFullRefundedColumnName` = 1,
                 {$statusList['canceled']},
                 IF (
-                    `buyer_return_requested` = {$returnedCompleted},
+                    `buyer_return_requested` = $returnedCompleted,
                     {$statusList['returned']},
                     IF (
-                        `shipping_status` = {$shippingCompleted},
+                        `shipping_status` = $shippingCompleted,
                         {$statusList['shipped']},
                         IF (
-                            `payment_status` = {$paymentCompleted},
+                            `payment_status` = $paymentCompleted,
                             {$statusList['unshipped']},
                             {$statusList['pending']}
                         )

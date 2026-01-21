@@ -11,7 +11,7 @@
 echo $block->getChildHtml('item_edit');
 
 $shippingDateTo = $block->order->getChildObject()->getShippingDateTo();
-$status = $this->getStatus();
+$status = $block->getStatus();
 
 $ebayOrder = $block->order->getChildObject();
 $isBuyerCancellationAvailable = $ebayOrder->isBuyerCancellationStatusRequested()

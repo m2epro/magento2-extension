@@ -79,8 +79,8 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
                     continue;
                 }
 
-                /** @var \Ess\M2ePro\Model\Ebay\Order\Builder $orderBuilder */
-                $orderBuilder = $this->modelFactory->getObject('Ebay_Order_Builder');
+                $orderBuilder = $this->modelFactory
+                    ->getObjectByClass(\Ess\M2ePro\Model\Ebay\Order\Builder::class);
                 $orderBuilder->initialize($account, $ebayOrderData);
 
                 $order = $orderBuilder->process();

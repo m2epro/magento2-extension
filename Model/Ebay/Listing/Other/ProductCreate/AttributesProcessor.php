@@ -35,7 +35,7 @@ class AttributesProcessor
         /**
          * @var ChannelAttributeItem $channelAttribute
          */
-        foreach ($channelItem->getVariationSet() as $channelAttribute) {
+        foreach ($channelItem->variationSet as $channelAttribute) {
             $attributeCode = $channelAttribute->getAttributeCode();
             try {
                 $attribute = $this->productAttributeRepository->get($attributeCode);
@@ -70,7 +70,7 @@ class AttributesProcessor
         \Magento\Catalog\Api\Data\ProductInterface $product,
         ChannelItem $channelItem
     ): void {
-        foreach ($channelItem->getSpecifics() as $attributeCode => $value) {
+        foreach ($channelItem->specifics as $attributeCode => $value) {
             $attribute = $this->productResource->getAttribute($attributeCode);
             $optionId = $attribute->getSource()->getOptionId($value);
             if ($optionId) {

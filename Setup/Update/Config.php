@@ -445,6 +445,10 @@ class Config extends AbstractConfig
             'y25_m12' => [
                 'AddWalmartRepricer',
             ],
+            'y26_m01' => [
+                'EbayAddImportChannelInfo',
+                'EbayAddIsFullRefundToOrder',
+            ],
         ];
     }
 
@@ -556,6 +560,9 @@ class Config extends AbstractConfig
             \Ess\M2ePro\Setup\Update\y25_m10\RemoveWalmartShippingOverrides::class,
 
             \Ess\M2ePro\Setup\Update\y25_m12\AddWalmartRepricer::class,
+
+            \Ess\M2ePro\Setup\Update\y26_m01\EbayAddImportChannelInfo::class,
+            \Ess\M2ePro\Setup\Update\y26_m01\EbayAddIsFullRefundToOrder::class,
         ];
     }
 

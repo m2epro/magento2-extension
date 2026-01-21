@@ -5553,172 +5553,186 @@ class Installer
                                             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($ebayMotorFilterToGroupTable);
 
-        $ebayOrderTable = $this->getConnection()->newTable($this->getFullTableName('ebay_order'))
-                               ->addColumn(
-                                   'order_id',
-                                   Table::TYPE_INTEGER,
-                                   null,
-                                   ['unsigned' => true, 'primary' => true, 'nullable' => false]
-                               )
-                               ->addColumn(
-                                   'ebay_order_id',
-                                   Table::TYPE_TEXT,
-                                   255,
-                                   ['nullable' => false]
-                               )
-                               ->addColumn(
-                                   'selling_manager_id',
-                                   Table::TYPE_INTEGER,
-                                   null,
-                                   ['unsigned' => true, 'default' => null]
-                               )
-                               ->addColumn(
-                                   'buyer_name',
-                                   Table::TYPE_TEXT,
-                                   255,
-                                   ['nullable' => false]
-                               )
-                               ->addColumn(
-                                   'buyer_email',
-                                   Table::TYPE_TEXT,
-                                   255,
-                                   ['nullable' => false]
-                               )
-                               ->addColumn(
-                                   'buyer_user_id',
-                                   Table::TYPE_TEXT,
-                                   255,
-                                   ['nullable' => false]
-                               )
-                               ->addColumn(
-                                   'buyer_message',
-                                   Table::TYPE_TEXT,
-                                   null,
-                                   ['default' => null]
-                               )
-                               ->addColumn(
-                                   'buyer_tax_id',
-                                   Table::TYPE_TEXT,
-                                   64,
-                                   ['default' => null]
-                               )
-                               ->addColumn(
-                                   'paid_amount',
-                                   Table::TYPE_DECIMAL,
-                                   [12, 4],
-                                   ['nullable' => false, 'default' => '0.0000']
-                               )
-                               ->addColumn(
-                                   'saved_amount',
-                                   Table::TYPE_DECIMAL,
-                                   [12, 4],
-                                   ['unsigned' => true, 'nullable' => false, 'default' => '0.0000']
-                               )
-                               ->addColumn(
-                                   'final_fee',
-                                   Table::TYPE_DECIMAL,
-                                   [10, 2],
-                                   ['unsigned' => true, 'nullable' => true, 'default' => null]
-                               )
-                               ->addColumn(
-                                   'currency',
-                                   Table::TYPE_TEXT,
-                                   10,
-                                   ['nullable' => false]
-                               )
-                               ->addColumn(
-                                   'checkout_status',
-                                   Table::TYPE_SMALLINT,
-                                   null,
-                                   ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                               )
-                               ->addColumn(
-                                   'shipping_status',
-                                   Table::TYPE_SMALLINT,
-                                   null,
-                                   ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                               )
-                               ->addColumn(
-                                   'payment_status',
-                                   Table::TYPE_SMALLINT,
-                                   null,
-                                   ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                               )
-                               ->addColumn(
-                                   'cancellation_status',
-                                   Table::TYPE_SMALLINT,
-                                   null,
-                                   ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                               )
-                               ->addColumn(
-                                   'buyer_cancellation_status',
-                                   Table::TYPE_SMALLINT,
-                                   null,
-                                   ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                               )
-                               ->addColumn(
-                                   'buyer_return_requested',
-                                   Table::TYPE_SMALLINT,
-                                   null,
-                                   ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                               )
-                               ->addColumn(
-                                   'shipping_details',
-                                   Table::TYPE_TEXT,
-                                   null,
-                                   ['default' => null]
-                               )
-                               ->addColumn(
-                                   'shipping_date_to',
-                                   Table::TYPE_DATETIME,
-                                   null,
-                                   ['default' => null]
-                               )
-                               ->addColumn(
-                                   'payment_details',
-                                   Table::TYPE_TEXT,
-                                   null,
-                                   ['default' => null]
-                               )
-                               ->addColumn(
-                                   'tax_details',
-                                   Table::TYPE_TEXT,
-                                   null,
-                                   ['default' => null]
-                               )
-                               ->addColumn(
-                                   'tax_reference',
-                                   Table::TYPE_TEXT,
-                                   72,
-                                   ['default' => null]
-                               )
-                               ->addColumn(
-                                   'purchase_update_date',
-                                   Table::TYPE_DATETIME,
-                                   null,
-                                   ['default' => null]
-                               )
-                               ->addColumn(
-                                   'purchase_create_date',
-                                   Table::TYPE_DATETIME,
-                                   null,
-                                   ['default' => null]
-                               )
-                               ->addIndex('ebay_order_id', 'ebay_order_id')
-                               ->addIndex('selling_manager_id', 'selling_manager_id')
-                               ->addIndex('buyer_email', 'buyer_email')
-                               ->addIndex('buyer_name', 'buyer_name')
-                               ->addIndex('buyer_user_id', 'buyer_user_id')
-                               ->addIndex('paid_amount', 'paid_amount')
-                               ->addIndex('checkout_status', 'checkout_status')
-                               ->addIndex('payment_status', 'payment_status')
-                               ->addIndex('shipping_status', 'shipping_status')
-                               ->addIndex('purchase_create_date', 'purchase_create_date')
-                               ->addIndex('shipping_date_to', 'shipping_date_to')
-                               ->setOption('type', 'INNODB')
-                               ->setOption('charset', 'utf8')
-                               ->setOption('collate', 'utf8_general_ci')
-                               ->setOption('row_format', 'dynamic');
+        $ebayOrderTable = $this
+            ->getConnection()
+            ->newTable(
+                $this->getFullTableName(\Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_ORDER)
+            )
+            ->addColumn(
+                \Ess\M2ePro\Model\ResourceModel\Ebay\Order::COLUMN_ORDER_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'ebay_order_id',
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'selling_manager_id',
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
+                'buyer_name',
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'buyer_email',
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'buyer_user_id',
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'buyer_message',
+                Table::TYPE_TEXT,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'buyer_tax_id',
+                Table::TYPE_TEXT,
+                64,
+                ['default' => null]
+            )
+            ->addColumn(
+                'paid_amount',
+                Table::TYPE_DECIMAL,
+                [12, 4],
+                ['nullable' => false, 'default' => '0.0000']
+            )
+            ->addColumn(
+                'saved_amount',
+                Table::TYPE_DECIMAL,
+                [12, 4],
+                ['unsigned' => true, 'nullable' => false, 'default' => '0.0000']
+            )
+            ->addColumn(
+                'final_fee',
+                Table::TYPE_DECIMAL,
+                [10, 2],
+                ['unsigned' => true, 'nullable' => true, 'default' => null]
+            )
+            ->addColumn(
+                'currency',
+                Table::TYPE_TEXT,
+                10,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'checkout_status',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'shipping_status',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'payment_status',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'cancellation_status',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'buyer_cancellation_status',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'buyer_return_requested',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'shipping_details',
+                Table::TYPE_TEXT,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'shipping_date_to',
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'payment_details',
+                Table::TYPE_TEXT,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'tax_details',
+                Table::TYPE_TEXT,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'tax_reference',
+                Table::TYPE_TEXT,
+                72,
+                ['default' => null]
+            )
+            ->addColumn(
+                \Ess\M2ePro\Model\ResourceModel\Ebay\Order::COLUMN_IS_FULL_REFUNDED,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => '0', ]
+            )
+            ->addColumn(
+                'purchase_update_date',
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                \Ess\M2ePro\Model\ResourceModel\Ebay\Order::COLUMN_PURCHASE_CREATE_DATE,
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addIndex('ebay_order_id', 'ebay_order_id')
+            ->addIndex('selling_manager_id', 'selling_manager_id')
+            ->addIndex('buyer_email', 'buyer_email')
+            ->addIndex('buyer_name', 'buyer_name')
+            ->addIndex('buyer_user_id', 'buyer_user_id')
+            ->addIndex('paid_amount', 'paid_amount')
+            ->addIndex('checkout_status', 'checkout_status')
+            ->addIndex('payment_status', 'payment_status')
+            ->addIndex('shipping_status', 'shipping_status')
+            ->addIndex(
+                'purchase_create_date',
+                \Ess\M2ePro\Model\ResourceModel\Ebay\Order::COLUMN_PURCHASE_CREATE_DATE
+            )
+            ->addIndex('shipping_date_to', 'shipping_date_to')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci')
+            ->setOption('row_format', 'dynamic');
+
         $this->getConnection()->createTable($ebayOrderTable);
 
         $ebayOrderExternalTransactionTable = $this->getConnection()->newTable(
@@ -7980,6 +7994,8 @@ class Installer
         $moduleConfig->insert('/ebay/configuration/', 'isbn_custom_attribute');
         $moduleConfig->insert('/ebay/configuration/', 'epid_mode', '0');
         $moduleConfig->insert('/ebay/configuration/', 'epid_custom_attribute');
+        $moduleConfig->insert('/ebay/configuration/', 'epid_custom_attribute', 1);
+        $moduleConfig->insert('/ebay/configuration/', 'import_channel_info', 0);
 
         $this->getConnection()->insertMultiple(
             $this->getFullTableName('marketplace'),

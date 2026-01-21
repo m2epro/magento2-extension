@@ -12,75 +12,113 @@ class ChannelItemProvideUnmanaged implements ProviderInterface
 {
     private const DEFAULT_TAX_CLASS_NAME = 'Taxable Goods';
 
+    private int $defaultAttributeSetId;
+    private int $defaultTaxClassId;
+
     private \Magento\Catalog\Model\ProductFactory $productFactory;
     private \Magento\Catalog\Model\Product\Url $url;
     private \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder;
     private \Magento\Tax\Api\TaxClassRepositoryInterface $taxClassRepository;
+    private \Ess\M2ePro\Model\Ebay\Listing\Other\ProductCreate\ItemInfoLoader $itemInfoLoader;
 
     public function __construct(
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Magento\Catalog\Model\Product\Url $url,
         \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder,
-        \Magento\Tax\Api\TaxClassRepositoryInterface $taxClassRepository
+        \Magento\Tax\Api\TaxClassRepositoryInterface $taxClassRepository,
+        \Ess\M2ePro\Model\Ebay\Listing\Other\ProductCreate\ItemInfoLoader $itemInfoLoader
     ) {
         $this->productFactory = $productFactory;
         $this->url = $url;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->taxClassRepository = $taxClassRepository;
+        $this->itemInfoLoader = $itemInfoLoader;
     }
 
     public function getItem(\Ess\M2ePro\Model\Listing\Other $unmanagedProduct): ChannelItem
     {
-        if (!empty($unmanagedProduct->getChildObject()->getOnlineVariations())) {
-            return $this->buildConfigurableProductItem($unmanagedProduct);
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Other $ebayUnmanagedProduct */
+        $ebayUnmanagedProduct = $unmanagedProduct->getChildObject();
+        $channelItemInfo = $this->itemInfoLoader->loadByListingOther($unmanagedProduct);
+
+        if (!empty($ebayUnmanagedProduct->getOnlineVariations())) {
+            return $this->buildConfigurableProductItem($unmanagedProduct, $channelItemInfo);
         }
 
-        return $this->buildSimpleProductItem($unmanagedProduct);
+        return $this->buildSimpleProductItem($unmanagedProduct, $channelItemInfo);
     }
 
-    private function buildSimpleProductItem(\Ess\M2ePro\Model\Listing\Other $unmanagedProduct): ChannelItem
-    {
-        $stockStatus = $unmanagedProduct->getChildObject()->getOnlineQty() > 0 ? 1 : 0;
+    private function buildSimpleProductItem(
+        \Ess\M2ePro\Model\Listing\Other $unmanagedProduct,
+        \Ess\M2ePro\Model\Ebay\Listing\Other\ProductCreate\ItemInfoLoader\ChannelItemInfo $channelItemInfo
+    ): ChannelItem {
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Other $ebayUnmanagedProduct */
+        $ebayUnmanagedProduct = $unmanagedProduct->getChildObject();
 
-        return $this->initProductDataModel(
+        return new ChannelItem(
+            $this->getDefaultAttributeSetId(),
             \Ess\M2ePro\Model\Magento\Product::TYPE_SIMPLE_ORIGIN,
-            \Magento\Catalog\Model\Product\Visibility::VISIBILITY_NOT_VISIBLE,
-            $unmanagedProduct,
-            $stockStatus
-        );
-    }
-
-    private function buildConfigurableProductItem(\Ess\M2ePro\Model\Listing\Other $unmanagedProduct): ChannelItem
-    {
-        $stockStatus = $unmanagedProduct->getChildObject()->getOnlineQty() > 0 ? 1 : 0;
-        $parenDataModel = $this->initProductDataModel(
-            \Ess\M2ePro\Model\Magento\Product::TYPE_CONFIGURABLE_ORIGIN,
+            $ebayUnmanagedProduct->getRelatedStoreId(),
+            $this->getTaxClassId(),
             \Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH,
-            $unmanagedProduct,
-            $stockStatus
+            $ebayUnmanagedProduct->getTitle(),
+            $this->truncateSku($ebayUnmanagedProduct->getSku() ?: $ebayUnmanagedProduct->getTitle()),
+            $ebayUnmanagedProduct->getOnlineQty(),
+            $ebayUnmanagedProduct->getOnlinePrice(),
+            $ebayUnmanagedProduct->getCurrency(),
+            $ebayUnmanagedProduct->getOnlineQty() > 0 ? 1 : 0,
+            $channelItemInfo->description,
+            [],
+            [],
+            [],
+            $channelItemInfo->pictureUrls
         );
-        $variationsData = $this->getVariationsData(
-            $parenDataModel,
-            $unmanagedProduct
-        );
-
-        $parenDataModel->setVariationSet($variationsData['variationSet'] ?? []);
-        $parenDataModel->setVariations($variationsData['variations'] ?? []);
-
-        return $parenDataModel;
     }
 
-    private function getVariationsData(
-        ChannelItem $parentItem,
-        \Ess\M2ePro\Model\Listing\Other $unmanagedProduct
+    private function buildConfigurableProductItem(
+        \Ess\M2ePro\Model\Listing\Other $unmanagedProduct,
+        \Ess\M2ePro\Model\Ebay\Listing\Other\ProductCreate\ItemInfoLoader\ChannelItemInfo $channelItemInfo
+    ): ChannelItem {
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Other $ebayUnmanagedProduct */
+        $ebayUnmanagedProduct = $unmanagedProduct->getChildObject();
+
+        $parentSku = $this->truncateSku($ebayUnmanagedProduct->getSku() ?: $ebayUnmanagedProduct->getTitle());
+        [$variations, $variationSet] = $this
+            ->createChildProducts($unmanagedProduct, $parentSku, $channelItemInfo);
+
+        return new ChannelItem(
+            $this->getDefaultAttributeSetId(),
+            \Ess\M2ePro\Model\Magento\Product::TYPE_CONFIGURABLE_ORIGIN,
+            $ebayUnmanagedProduct->getRelatedStoreId(),
+            $this->getTaxClassId(),
+            \Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH,
+            $ebayUnmanagedProduct->getTitle(),
+            $parentSku,
+            $ebayUnmanagedProduct->getOnlineQty(),
+            $ebayUnmanagedProduct->getOnlinePrice(),
+            $ebayUnmanagedProduct->getCurrency(),
+            $ebayUnmanagedProduct->getOnlineQty() > 0 ? 1 : 0,
+            $channelItemInfo->description,
+            $variationSet,
+            $variations,
+            [],
+            $channelItemInfo->pictureUrls
+        );
+    }
+
+    private function createChildProducts(
+        \Ess\M2ePro\Model\Listing\Other $unmanagedProduct,
+        string $parentSku,
+        \Ess\M2ePro\Model\Ebay\Listing\Other\ProductCreate\ItemInfoLoader\ChannelItemInfo $channelItemInfo
     ): array {
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Other $ebayUnmanagedProduct */
+        $ebayUnmanagedProduct = $unmanagedProduct->getChildObject();
+
         $variations = [];
         $variationSet = [];
-
-        foreach ($unmanagedProduct->getChildObject()->getOnlineVariations() as $item) {
+        foreach ($ebayUnmanagedProduct->getOnlineVariations() as $variation) {
             $specifics = [];
-
-            foreach ($item['specifics'] as $attributeName => $attributeValue) {
+            foreach ($variation['specifics'] as $attributeName => $attributeValue) {
                 $generatedAttributeCode = $this->generateCode($attributeName);
 
                 $specifics[$generatedAttributeCode] = $attributeValue;
@@ -95,32 +133,42 @@ class ChannelItemProvideUnmanaged implements ProviderInterface
                 );
             }
 
-            $sku = $item['sku'] ?: $parentItem->getSku() . ' ' . implode(' ', array_values($specifics));
+            $childSku = $variation['sku'];
+            if (empty($childSku)) {
+                $childSku = $parentSku . ' ' . implode(' ', array_values($specifics));
+            }
 
-            $childDataArray = [
-                'sku' => $sku,
-                'quantity' => $item['quantity'],
-                'price' => $item['price'],
-                'specifics' => $item['specifics'],
-            ];
-            $stockStatus = $item['quantity'] > 0 ? 1 : 0;
-
-            $childDataModel = $this->initProductDataModel(
-                \Ess\M2ePro\Model\Magento\Product::TYPE_SIMPLE_ORIGIN,
-                \Magento\Catalog\Model\Product\Visibility::VISIBILITY_NOT_VISIBLE,
-                $unmanagedProduct,
-                $stockStatus,
-                $childDataArray
+            $childTitle = sprintf(
+                '%s %s',
+                $ebayUnmanagedProduct->getTitle(),
+                implode(' ', array_values($variation['specifics']))
             );
-            $childDataModel->setSpecifics($specifics);
+
+            $childDataModel = new ChannelItem(
+                $this->getDefaultAttributeSetId(),
+                \Ess\M2ePro\Model\Magento\Product::TYPE_SIMPLE_ORIGIN,
+                $ebayUnmanagedProduct->getRelatedStoreId(),
+                $this->getTaxClassId(),
+                \Magento\Catalog\Model\Product\Visibility::VISIBILITY_NOT_VISIBLE,
+                $childTitle,
+                $this->truncateSku($childSku),
+                $variation['quantity'],
+                $variation['price'],
+                $ebayUnmanagedProduct->getCurrency(),
+                $variation['quantity'] > 0 ? 1 : 0,
+                '',
+                [],
+                [],
+                $specifics,
+                $this->findImagesInChannelInfo($channelItemInfo, $variation)
+            );
 
             $variations[] = $childDataModel;
         }
 
-        return [
-            'variationSet' => $this->getVariationSet($variationSet),
-            'variations' => $variations,
-        ];
+        $variationSet = $this->getVariationSet($variationSet);
+
+        return [$variations, $variationSet];
     }
 
     /**
@@ -147,78 +195,23 @@ class ChannelItemProvideUnmanaged implements ProviderInterface
         return $code;
     }
 
-    private function initProductDataModel(
-        string $productType,
-        int $visibility,
-        \Ess\M2ePro\Model\Listing\Other $unmanagedProduct,
-        int $stockStatus,
-        ?array $variationItemData = null
-    ): ChannelItem {
-        return new ChannelItem(
-            (int)$this->productFactory->create()->getDefaultAttributeSetId(),
-            $productType,
-            $unmanagedProduct->getChildObject()->getRelatedStoreId(),
-            (int)$this->getTaxClass(self::DEFAULT_TAX_CLASS_NAME)->getClassId(),
-            $visibility,
-            $this->getItemTitle(
-                $unmanagedProduct,
-                $variationItemData
-            ),
-            $unmanagedProduct->getChildObject()->getTitle(),
-            $this->getItemSku(
-                $unmanagedProduct,
-                $variationItemData
-            ),
-            $variationItemData['quantity'] ?? $unmanagedProduct->getChildObject()->getOnlineQty(),
-            $variationItemData['price'] ?? $unmanagedProduct->getChildObject()->getOnlinePrice(),
-            $unmanagedProduct->getChildObject()->getCurrency(),
-            $stockStatus
-        );
-    }
-
-    private function getTaxClass(string $name): ?TaxClassInterface
+    private function getTaxClassId(): int
     {
-        $searchCriteria = $this->searchCriteriaBuilder
-            ->addFilter(ClassModel::KEY_NAME, $name)
-            ->create();
-        $searchResults = $this->taxClassRepository
-            ->getList($searchCriteria)
-            ->getItems();
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        if (!isset($this->defaultTaxClassId)) {
+            $searchCriteria = $this->searchCriteriaBuilder
+                ->addFilter(ClassModel::KEY_NAME, self::DEFAULT_TAX_CLASS_NAME)
+                ->create();
+            $searchResults = $this->taxClassRepository
+                ->getList($searchCriteria)
+                ->getItems();
 
-        return array_shift($searchResults);
-    }
+            $taxClass = array_shift($searchResults);
 
-    private function getItemTitle(
-        \Ess\M2ePro\Model\Listing\Other $unmanagedProduct,
-        ?array $variationItemData = null
-    ): string {
-        $title = $unmanagedProduct->getChildObject()->getTitle();
-        if (!$variationItemData) {
-            return $title;
+            $this->defaultTaxClassId = (int)$taxClass->getId();
         }
 
-        return $title
-            . ' '
-            . implode(' ', array_values($variationItemData['specifics']));
-    }
-
-    private function getItemSku(
-        \Ess\M2ePro\Model\Listing\Other $unmanagedProduct,
-        ?array $variationItemData = null
-    ): string {
-        if (!isset($variationItemData['sku'])) {
-            return substr(
-                $unmanagedProduct->getChildObject()->getSku() ?: $unmanagedProduct->getChildObject()->getTitle(),
-                0,
-                64
-            );
-        }
-
-        return substr(
-            $variationItemData['sku'],
-            0,
-            64
-        );
+        return $this->defaultTaxClassId;
     }
 
     private function getVariationSet(array $specifics): array
@@ -233,5 +226,46 @@ class ChannelItemProvideUnmanaged implements ProviderInterface
         }
 
         return $variationSet;
+    }
+
+    private function getDefaultAttributeSetId(): int
+    {
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        if (!isset($this->defaultAttributeSetId)) {
+            $this->defaultAttributeSetId = (int)$this->productFactory->create()->getDefaultAttributeSetId();
+        }
+
+        return $this->defaultAttributeSetId;
+    }
+
+    private function truncateSku(string $sku): string
+    {
+        return substr($sku, 0, 64);
+    }
+
+    private function findImagesInChannelInfo(
+        ItemInfoLoader\ChannelItemInfo $channelItemInfo,
+        array $variation
+    ): array {
+        if (empty($channelItemInfo->variations)) {
+            return [];
+        }
+
+        $searchSpecificHash = $this->makeSpecificHash($variation['specifics']);
+        foreach ($channelItemInfo->variations as $variationInfo) {
+            $specificHash = $this->makeSpecificHash($variationInfo->specifics);
+            if ($searchSpecificHash === $specificHash) {
+                return $variationInfo->images;
+            }
+        }
+
+        return [];
+    }
+
+    private function makeSpecificHash(array $variationSpecifics): string
+    {
+        ksort($variationSpecifics);
+
+        return implode('::', array_values($variationSpecifics));
     }
 }
