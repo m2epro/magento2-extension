@@ -15,10 +15,9 @@ class RefreshCampaigns
     private RetrieveCampaignItemsFromChannel $retrieveCampaignItemsFromChannel;
     private \Ess\M2ePro\Model\Ebay\PromotedListing\Campaign\Repository $promotedListingCampaignRepository;
     private CampaignFactory $campaignFactory;
-    /** @var \Ess\M2ePro\Model\Ebay\PromotedListing\Campaign\ItemsService */
-    private Campaign\ItemsService $itemsService;
-    /** @var \Ess\M2ePro\Model\Ebay\PromotedListing\DeleteCampaign */
-    private DeleteCampaign $deleteCampaign;
+    private \Ess\M2ePro\Model\Ebay\PromotedListing\Campaign\ItemsService $itemsService;
+    private \Ess\M2ePro\Model\Ebay\PromotedListing\DeleteCampaign $deleteCampaign;
+    private \Ess\M2ePro\Model\Cron\Task\Ebay\SynchronizePromotedListingCampaigns\KeepAliveEventDispatcher $keepAliveEventDispatcher;
 
     public function __construct(
         RetrieveCampaignsFromChannel $retrieveCampaignsFromChannel,
@@ -26,7 +25,8 @@ class RefreshCampaigns
         \Ess\M2ePro\Model\Ebay\PromotedListing\Campaign\Repository $campaignRepository,
         CampaignFactory $campaignFactory,
         \Ess\M2ePro\Model\Ebay\PromotedListing\Campaign\ItemsService $itemsService,
-        \Ess\M2ePro\Model\Ebay\PromotedListing\DeleteCampaign $deleteCampaign
+        \Ess\M2ePro\Model\Ebay\PromotedListing\DeleteCampaign $deleteCampaign,
+        \Ess\M2ePro\Model\Cron\Task\Ebay\SynchronizePromotedListingCampaigns\KeepAliveEventDispatcher $keepAliveEventDispatcher
     ) {
         $this->retrieveCampaignsFromChannel = $retrieveCampaignsFromChannel;
         $this->retrieveCampaignItemsFromChannel = $retrieveCampaignItemsFromChannel;
@@ -34,6 +34,7 @@ class RefreshCampaigns
         $this->campaignFactory = $campaignFactory;
         $this->itemsService = $itemsService;
         $this->deleteCampaign = $deleteCampaign;
+        $this->keepAliveEventDispatcher = $keepAliveEventDispatcher;
     }
 
     public function execute(
@@ -150,13 +151,15 @@ class RefreshCampaigns
         \Ess\M2ePro\Model\Ebay\Account $ebayAccount,
         Campaign $campaign
     ): void {
+        $this->itemsService->unassignAll($campaign);
+
         $nextPage = 1;
         while ($nextPage > 0) {
             $result = $this->retrieveCampaignItemsFromChannel
                 ->process($ebayAccount, $campaign->getEbayCampaignId(), $nextPage);
 
-            $this->itemsService->unassignAll($campaign);
             $this->itemsService->assignChannelItems($campaign, $result->getItems());
+            $this->keepAliveEventDispatcher->process($nextPage);
 
             $nextPage = $result->getNextPage();
         }

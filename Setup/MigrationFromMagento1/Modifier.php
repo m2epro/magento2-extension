@@ -40,7 +40,6 @@ class Modifier
     {
         $this->migrateConfig();
         $this->migrateWizards();
-        $this->migrateWalmartAccount();
         $this->actualizeConfigs();
         $this->executeFeatures();
     }
@@ -174,16 +173,6 @@ class Modifier
         ];
 
         $this->getConnection()->insertMultiple($this->getFullTableName('wizard'), $wizardsData);
-    }
-
-    /**
-     * todo temporary
-     */
-    private function migrateWalmartAccount()
-    {
-        $this->getTableModifier('walmart_account')
-            ->changeColumn('consumer_id', 'VARCHAR(255)', 'NULL', 'marketplace_id')
-            ->renameColumn('old_private_key', 'private_key');
     }
 
     /**

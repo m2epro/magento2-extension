@@ -194,6 +194,7 @@ class Repository extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Cron\Task\Ebay\SynchronizePromotedListingCampaigns::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'group' => self::GROUP_EBAY,
+            'can-work-parallel' => true,
         ],
 
         //----------------------------------------
