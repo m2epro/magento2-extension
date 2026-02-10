@@ -7,12 +7,9 @@ use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProc
 
 class Active extends AbstractModel
 {
-    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise\Checker */
-    private $ebayReviseChecker;
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory */
-    private $parentFactory;
-    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\ConfiguratorFactory */
-    private $configuratorFactory;
+    private \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise\Checker $ebayReviseChecker;
+    private \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory;
+    private \Ess\M2ePro\Model\Ebay\Listing\Product\Action\ConfiguratorFactory $configuratorFactory;
 
     public function __construct(
         \Ess\M2ePro\Model\Ebay\Listing\Product\Action\ConfiguratorFactory $configuratorFactory,

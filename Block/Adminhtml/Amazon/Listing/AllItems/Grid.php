@@ -105,6 +105,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'url' => '',
         ], 'actions');
 
+        $this->getMassactionBlock()->addItem('deleteAndRemove', [
+            'label' => __('Remove from Channel & Listing'),
+            'url' => '',
+        ], 'actions');
+
         return parent::_prepareMassaction();
     }
 
@@ -1591,6 +1596,7 @@ JS
             'runReviseProducts' => $this->getUrl('*/amazon_listing_allItems_actions/runReviseProducts'),
             'runStopProducts' => $this->getUrl('*/amazon_listing_allItems_actions/runStopProducts'),
             'runStopAndRemoveProducts' => $this->getUrl('*/amazon_listing_allItems_actions/runStopAndRemoveProducts'),
+            'runDeleteAndRemoveProducts' => $this->getUrl('*/amazon_listing_allItems_actions/runDeleteAndRemoveProducts'),
         ]);
 
         $this->jsUrl->add($this->getUrl('*/listing/getErrorsSummary'), 'getErrorsSummary');

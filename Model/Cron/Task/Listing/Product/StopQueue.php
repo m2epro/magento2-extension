@@ -20,7 +20,6 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     public const AMAZON_REQUEST_MAX_ITEMS_COUNT = 10000;
     public const WALMART_REQUEST_MAX_ITEMS_COUNT = 10000;
 
-    private \Ess\M2ePro\Model\Amazon\ThrottlingManager $amazonThrottlingManager;
     private \Ess\M2ePro\Model\Walmart\ThrottlingManager $walmartThrottlingManager;
     private \Ess\M2ePro\Model\ResourceModel\StopQueue $stopQueueResource;
     private \Ess\M2ePro\Model\ResourceModel\StopQueue\CollectionFactory $collectionFactory;
@@ -28,7 +27,6 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     public function __construct(
         \Ess\M2ePro\Model\Walmart\ThrottlingManager $walmartThrottlingManager,
-        \Ess\M2ePro\Model\Amazon\ThrottlingManager $amazonThrottlingManager,
         \Ess\M2ePro\Model\ResourceModel\StopQueue $stopQueueResource,
         \Ess\M2ePro\Model\ResourceModel\StopQueue\CollectionFactory $collectionFactory,
         \Ess\M2ePro\Helper\Server\Maintenance $maintenanceHelper,
@@ -53,7 +51,6 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $taskRepo,
             $resource
         );
-        $this->amazonThrottlingManager = $amazonThrottlingManager;
         $this->walmartThrottlingManager = $walmartThrottlingManager;
         $this->stopQueueResource = $stopQueueResource;
         $this->collectionFactory = $collectionFactory;
@@ -222,18 +219,6 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         foreach ($accountsRequestData as $account => $accountRequestData) {
             $requestDataPacks = array_chunk($accountRequestData, self::AMAZON_REQUEST_MAX_ITEMS_COUNT);
 
-            $accountObject = $accountsCollection->getItemByColumnValue('server_hash', $account);
-
-            if (
-                $accountObject !== null &&
-                $this->amazonThrottlingManager->getAvailableRequestsCount(
-                    $accountObject->getChildObject()->getMerchantId(),
-                    \Ess\M2ePro\Model\Amazon\ThrottlingManager::REQUEST_TYPE_FEED
-                ) <= 0
-            ) {
-                continue;
-            }
-
             foreach ($requestDataPacks as $requestDataPack) {
                 $requestData = [
                     'account' => $account,
@@ -244,14 +229,6 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 $dispatcher = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
                 $connector = $dispatcher->getVirtualConnector('product', 'update', 'entities', $requestData);
                 $dispatcher->process($connector);
-
-                if ($accountObject !== null) {
-                    $this->amazonThrottlingManager->registerRequests(
-                        $accountObject->getChildObject()->getMerchantId(),
-                        \Ess\M2ePro\Model\Amazon\ThrottlingManager::REQUEST_TYPE_FEED,
-                        1
-                    );
-                }
             }
         }
 

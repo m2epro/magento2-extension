@@ -100,14 +100,6 @@ class RequestData extends \Ess\M2ePro\Model\Listing\Product\Action\RequestData
         return isset($this->getData()['subtitle']);
     }
 
-    /**
-     * @return bool
-     */
-    public function hasDescription()
-    {
-        return isset($this->getData()['description']);
-    }
-
     // ---------------------------------------
 
     /**
@@ -207,21 +199,6 @@ class RequestData extends \Ess\M2ePro\Model\Listing\Product\Action\RequestData
     public function getSubtitle()
     {
         return $this->hasSubtitle() ? $this->getData()['subtitle'] : null;
-    }
-
-    public function getDescription()
-    {
-        return $this->hasDescription() ? $this->getData()['description'] : null;
-    }
-
-    public function getProductDetailsIncludeEbayDetails(): ?string
-    {
-        return $this->getProductDetails()['include_ebay_details'] ?? null;
-    }
-
-    public function getProductDetailsIncludeImage(): ?string
-    {
-        return $this->getProductDetails()['include_image'] ?? null;
     }
 
     // ---------------------------------------

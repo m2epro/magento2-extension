@@ -13,8 +13,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     public const PENDING_REQUEST_MAX_LIFE_TIME = 86400;
     public const MAX_ITEMS_PER_REQUEST = 10000;
 
-    /** @var \Ess\M2ePro\Model\Amazon\ThrottlingManager */
-    private $amazonThrottlingManager;
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     private $amazonFactory;
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
@@ -31,7 +29,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     public function __construct(
         \Ess\M2ePro\Model\Amazon\Order\Action\TimeManager $timeManager,
         \Ess\M2ePro\Helper\Module\Exception $helperModuleException,
-        \Ess\M2ePro\Model\Amazon\ThrottlingManager $amazonThrottlingManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Data $helperData,
@@ -43,7 +40,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         parent::__construct($helperFactory, $modelFactory, $data);
         $this->timeManager = $timeManager;
         $this->helperModuleException = $helperModuleException;
-        $this->amazonThrottlingManager = $amazonThrottlingManager;
         $this->amazonFactory = $amazonFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->helperData = $helperData;
@@ -88,15 +84,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
         $processingActions = $this->getNotProcessedActions($merchantId);
         if (empty($processingActions)) {
-            return;
-        }
-
-        if (
-            $this->amazonThrottlingManager->getAvailableRequestsCount(
-                $merchantId,
-                \Ess\M2ePro\Model\Amazon\ThrottlingManager::REQUEST_TYPE_FEED
-            ) < 1
-        ) {
             return;
         }
 
@@ -148,12 +135,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
             return;
         }
-
-        $this->amazonThrottlingManager->registerRequests(
-            $merchantId,
-            \Ess\M2ePro\Model\Amazon\ThrottlingManager::REQUEST_TYPE_FEED,
-            1
-        );
 
         $responseData = $connector->getResponseData();
         $responseMessages = $connector->getResponseMessages();

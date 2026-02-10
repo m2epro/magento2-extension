@@ -5,34 +5,20 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise;
 class Checker
 {
     private \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DescriptionHasher $descriptionHasher;
-    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataHasher */
-    private $dataHasher;
-    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\TitleFactory */
-    private $titleDataBuilderFactory;
-    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\SubtitleFactory */
-    private $subtitleDataBuilderFactory;
-    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\DescriptionFactory */
-    private $descriptionDataBuilderFactory;
-    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\ImagesFactory */
-    private $imagesDataBuilderFactory;
-    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\GeneralFactory */
-    private $generalDataBuilderFactory;
-    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\CategoriesFactory */
-    private $categoriesDataBuilderFactory;
-    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\PartsFactory */
-    private $partsDataBuilderFactory;
-    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\ShippingFactory */
-    private $shippingDataBuilderFactory;
-    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\ReturnPolicyFactory */
-    private $returnPolicyDataBuilderFactory;
-    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\OtherFactory */
-    private $otherDataBuilderFactory;
-    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\PriceFactory */
-    private $priceDataBuilderFactory;
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $helperData;
-    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\ConfiguratorFactory */
-    private $configuratorFactory;
+    private \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataHasher $dataHasher;
+    private \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\TitleFactory $titleDataBuilderFactory;
+    private \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\SubtitleFactory $subtitleDataBuilderFactory;
+    private \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\DescriptionFactory $descriptionDataBuilderFactory;
+    private \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\ImagesFactory $imagesDataBuilderFactory;
+    private \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\GeneralFactory $generalDataBuilderFactory;
+    private \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\CategoriesFactory $categoriesDataBuilderFactory;
+    private \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\PartsFactory $partsDataBuilderFactory;
+    private \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\ShippingFactory $shippingDataBuilderFactory;
+    private \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\ReturnPolicyFactory $returnPolicyDataBuilderFactory;
+    private \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\OtherFactory $otherDataBuilderFactory;
+    private \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\PriceFactory $priceDataBuilderFactory;
+    private \Ess\M2ePro\Helper\Data $helperData;
+    private \Ess\M2ePro\Model\Ebay\Listing\Product\Action\ConfiguratorFactory $configuratorFactory;
 
     public function __construct(
         \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DescriptionHasher $descriptionHasher,
@@ -343,10 +329,10 @@ class Checker
 
         $actionData = $actionDataBuilder->getBuilderData();
 
-        $hash = $this->descriptionHasher->hashProductDescriptionFields(
-            $actionData['description'] ?? null,
-            $actionData['product_details']['include_ebay_details'] ?? null,
-            $actionData['product_details']['include_image'] ?? null
+        $hash = $this->descriptionHasher->process(
+            (string)$actionData['description'],
+            (bool)$actionData['product_details']['include_ebay_details'],
+            (bool)$actionData['product_details']['include_image']
         );
 
         return $hash !== $ebayListingProduct->getOnlineDescription();

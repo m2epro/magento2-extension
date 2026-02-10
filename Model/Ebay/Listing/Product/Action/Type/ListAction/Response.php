@@ -11,7 +11,6 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
     private \Ess\M2ePro\Model\Ebay\ComplianceDocuments\ProductProcessor $documentProductProcessor;
 
     public function __construct(
-        \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DescriptionHasher $descriptionHasher,
         \Ess\M2ePro\Model\Ebay\Video\ProductProcessor $videoProductProcessor,
         \Ess\M2ePro\Model\Ebay\ComplianceDocuments\ProductProcessor $documentProductProcessor,
         RemoveEpcHostedImagesWithWatermarkService $removeEpcHostedImagesWithWatermark,
@@ -22,7 +21,6 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
         parent::__construct(
-            $descriptionHasher,
             $dataHasher,
             $componentEbayCategoryEbay,
             $activeRecordFactory,

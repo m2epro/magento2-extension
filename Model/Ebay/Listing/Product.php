@@ -768,7 +768,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     public function getOnlineDescription()
     {
-        return $this->getData('online_description');
+        return $this->getData(EbayProductResource::COLUMN_ONLINE_DESCRIPTION);
     }
 
     public function getOnlineImages()

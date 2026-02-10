@@ -90,18 +90,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             return;
         }
 
-        /** @var \Ess\M2ePro\Model\Amazon\ThrottlingManager $throttlingManager */
-        $throttlingManager = $this->modelFactory->getObject('Amazon_ThrottlingManager');
-
         foreach ($merchantIds as $merchantId) {
-            $availableRequestsCount = $throttlingManager->getAvailableRequestsCount(
-                $merchantId,
-                \Ess\M2ePro\Model\Amazon\ThrottlingManager::REQUEST_TYPE_FEED
-            );
-            if ($availableRequestsCount <= 0) {
-                continue;
-            }
-
             $this->feedsPacks = [
                 self::FEED_TYPE_ADD => [],
                 self::FEED_TYPE_DELETE => [],
@@ -110,10 +99,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 self::FEED_TYPE_UPDATE_DETAILS => [],
             ];
 
-            $this->fillFeedsPacks(
-                $this->getScheduledActionsDataStatement($merchantId),
-                $availableRequestsCount
-            );
+            $this->fillFeedsPacks($this->getScheduledActionsDataStatement($merchantId));
 
             $actionsDataForProcessing = $this->prepareAccountsActions();
 
@@ -190,15 +176,12 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Zend_Db_Statement $scheduledActionsDataStatement
-     * @param int $availableRequestsCount
      *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Zend_Db_Statement_Exception
      */
-    protected function fillFeedsPacks(
-        \Zend_Db_Statement $scheduledActionsDataStatement,
-        $availableRequestsCount = null
-    ) {
+    protected function fillFeedsPacks(\Zend_Db_Statement $scheduledActionsDataStatement)
+    {
         $canCreateNewPacks = true;
 
         while ($scheduledActionData = $scheduledActionsDataStatement->fetch()) {
@@ -212,7 +195,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                     continue;
                 }
 
-                if (!$canCreateNewPacks || ($availableRequestsCount !== null && $availableRequestsCount <= 0)) {
+                if (!$canCreateNewPacks) {
                     $canBeAdded = false;
                     break;
                 }
@@ -236,7 +219,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 }
 
                 $this->addToNewPack($feedType, $scheduledActionData);
-                $availableRequestsCount--;
             }
         }
     }

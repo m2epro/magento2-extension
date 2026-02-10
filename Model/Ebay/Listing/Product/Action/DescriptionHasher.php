@@ -13,10 +13,10 @@ class DescriptionHasher
         $this->dataHelper = $dataHelper;
     }
 
-    public function hashProductDescriptionFields(
-        ?string $description = null,
-        ?string $includeEbayDetails = null,
-        ?string $includeImage = null
+    public function process(
+        string $description,
+        bool $includeEbayDetails,
+        bool $includeImage
     ): string {
         $productDescriptionFields = [
             'description' => $description,

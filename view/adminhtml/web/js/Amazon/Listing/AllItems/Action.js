@@ -53,6 +53,14 @@ define([
                     $t('Stopping On Amazon And Removing From Listing Selected Items'),
                     M2ePro.url.get('runStopAndRemoveProducts'),
             );
+        },
+
+        deleteAndRemoveAction: function()
+        {
+            this.actionProcessor.processActions(
+                    $t('Removing From Amazon And Listing Selected Items'),
+                    M2ePro.url.get('runDeleteAndRemoveProducts'),
+            );
         }
     });
 });

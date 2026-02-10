@@ -33,8 +33,10 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
 
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Configuration */
     private $componentEbayConfiguration;
+    private \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DescriptionHasher $descriptionHasher;
 
     public function __construct(
+        \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DescriptionHasher $descriptionHasher,
         \Ess\M2ePro\Helper\Component\Ebay\Configuration $componentEbayConfiguration,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -43,9 +45,10 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
     ) {
         parent::__construct($helperFactory, $modelFactory);
 
+        $this->descriptionHasher = $descriptionHasher;
+        $this->componentEbayConfiguration = $componentEbayConfiguration;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->ebayFactory = $ebayFactory;
-        $this->componentEbayConfiguration = $componentEbayConfiguration;
     }
 
     //########################################
@@ -377,8 +380,10 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         $productSku = (string)$this->getEbayListingProduct()->getMagentoProduct()->getSku();
         if ($productSku !== $this->getSku()) {
             $this->addWarningMessage(
-                __('Original SKU length exceeded 50 characters. ' .
-                    'A new eBay-compliant SKU was generated automatically.')
+                __(
+                    'Original SKU length exceeded 50 characters. ' .
+                    'A new eBay-compliant SKU was generated automatically.'
+                )
             );
         }
     }
@@ -467,8 +472,17 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
 
         /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Description $dataBuilder */
         $dataBuilder = $this->getDataBuilder('description');
+        $data = $dataBuilder->getBuilderData();
 
-        return $dataBuilder->getBuilderData();
+        $descriptionDataHash = $this->descriptionHasher->process(
+            (string)$data['description'],
+            (bool)$data['product_details']['include_ebay_details'],
+            (bool)$data['product_details']['include_image']
+        );
+
+        $this->addMetaData('description_data_hash', $descriptionDataHash);
+
+        return $data;
     }
 
     /**
