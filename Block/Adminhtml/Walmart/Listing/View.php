@@ -230,6 +230,33 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'saveListingAdditionalData'
         );
 
+        $this->jsUrl->add(
+            $this->getUrl('*/walmart_listing_product_template_repricer/viewPopup'),
+            'template_repricer/viewPopup'
+        );
+
+        $this->jsUrl->add(
+            $this->getUrl('*/walmart_listing_product_template_repricer/viewGrid'),
+            'template_repricer/viewGrid'
+        );
+
+        $this->jsUrl->add(
+            $this->getUrl('*/walmart_listing_product_template_repricer/assign'),
+            'template_repricer/assign'
+        );
+
+        $this->jsUrl->add(
+            $this->getUrl('*/walmart_listing_product_template_repricer/unassign'),
+            'template_repricer/unassign'
+        );
+
+        $this->jsUrl->add(
+            $this->getUrl('*/walmart_template_repricer/new', [
+                'close_on_save' => true,
+            ]),
+            'template_repricer/newTemplate'
+        );
+
         $component = \Ess\M2ePro\Helper\Component\Walmart::NICK;
         $gridId = $this->getChildBlock('grid')->getId();
         $ignoreListings = \Ess\M2ePro\Helper\Json::encode([$this->listing['id']]);

@@ -12,6 +12,7 @@ use Ess\M2ePro\Model\ResourceModel\Listing\Product as ListingProductResource;
 
 /**
  * @method \Ess\M2ePro\Model\Listing\Product[] getItems()
+ * @method \Ess\M2ePro\Model\Listing\Product getFirstItem()
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Parent\AbstractModel
 {

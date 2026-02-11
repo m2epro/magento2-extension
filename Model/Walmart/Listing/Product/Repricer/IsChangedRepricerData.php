@@ -16,9 +16,11 @@ class IsChangedRepricerData
     private function isChangedStrategyName(\Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct): bool
     {
         $onlineValue = $walmartListingProduct->getOnlineRepricerStrategyName();
-        $currentValue = $walmartListingProduct
-            ->getWalmartSellingFormatTemplate()
-            ->getRepricerStrategyByAccountId((int)$walmartListingProduct->getAccount()->getId());
+
+        $repricerTemplateSource = $walmartListingProduct->getRepricerTemplateSource();
+        $currentValue = $repricerTemplateSource !== null
+            ? $repricerTemplateSource->getStrategyName()
+            : null;
 
         return $onlineValue !== $currentValue;
     }
@@ -26,7 +28,11 @@ class IsChangedRepricerData
     private function isChangedMinPrice(\Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct): bool
     {
         $onlineValue = $walmartListingProduct->getOnlineRepricerMinPrice();
-        $currentValue = $walmartListingProduct->getSellingFormatTemplateSource()->getRepricerMinPrice();
+
+        $repricerTemplateSource = $walmartListingProduct->getRepricerTemplateSource();
+        $currentValue = $repricerTemplateSource !== null
+            ? $repricerTemplateSource->getRepricerMinPrice()
+            : null;
 
         return $onlineValue !== $currentValue;
     }
@@ -34,7 +40,11 @@ class IsChangedRepricerData
     private function isChangedMaxPrice(\Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct): bool
     {
         $onlineValue = $walmartListingProduct->getOnlineRepricerMaxPrice();
-        $currentValue = $walmartListingProduct->getSellingFormatTemplateSource()->getRepricerMaxPrice();
+
+        $repricerTemplateSource = $walmartListingProduct->getRepricerTemplateSource();
+        $currentValue = $repricerTemplateSource !== null
+            ? $repricerTemplateSource->getRepricerMaxPrice()
+            : null;
 
         return $onlineValue !== $currentValue;
     }

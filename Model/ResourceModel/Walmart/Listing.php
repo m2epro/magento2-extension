@@ -13,6 +13,7 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     public const COLUMN_TEMPLATE_SELLING_FORMAT_ID = 'template_selling_format_id';
     public const COLUMN_TEMPLATE_DESCRIPTION_ID = 'template_description_id';
     public const COLUMN_TEMPLATE_SYNCHRONIZATION_ID = 'template_synchronization_id';
+    public const COLUMN_TEMPLATE_REPRICER_ID = 'template_repricer_id';
 
     public const COLUMN_CONDITION_MODE = 'condition_mode';
     public const COLUMN_CONDITION_VALUE = 'condition_value';

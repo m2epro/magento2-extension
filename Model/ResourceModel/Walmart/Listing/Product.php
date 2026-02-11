@@ -11,6 +11,7 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     public const COLUMN_ONLINE_REPRICER_MIN_PRICE = 'online_repricer_min_price';
     public const COLUMN_ONLINE_REPRICER_MAX_PRICE = 'online_repricer_max_price';
     public const COLUMN_REPRICER_LAST_UPDATE_DATE = 'repricer_last_update_date';
+    public const COLUMN_TEMPLATE_REPRICER_ID = 'template_repricer_id';
 
     private \Ess\M2ePro\Model\ResourceModel\Listing\Product $listingProductResource;
     protected $_isPkAutoIncrement = false;

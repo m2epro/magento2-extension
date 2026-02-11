@@ -22,11 +22,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     private $vocabularyHelper;
     /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculatorFactory */
     private $walmartPriceCalculatorFactory;
+    private \Ess\M2ePro\Model\Walmart\Template\Repricer\Repository $templateRepricerRepository;
 
     public function __construct(
         \Ess\M2ePro\Model\Walmart\ProductType\Repository $productTypeRepository,
         \Ess\M2ePro\Helper\Component\Walmart\Vocabulary $vocabularyHelper,
         \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculatorFactory $walmartPriceCalculatorFactory,
+        \Ess\M2ePro\Model\Walmart\Template\Repricer\Repository $templateRepricerRepository,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
@@ -54,6 +56,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         $this->productTypeRepository = $productTypeRepository;
         $this->vocabularyHelper = $vocabularyHelper;
         $this->walmartPriceCalculatorFactory = $walmartPriceCalculatorFactory;
+        $this->templateRepricerRepository = $templateRepricerRepository;
     }
 
     public function _construct()
@@ -1006,5 +1009,45 @@ HTML;
         }
 
         return (float)$maxPrice;
+    }
+
+    public function getTemplateRepricerId(): ?int
+    {
+        $templateId = $this->getData(ListingProductResource::COLUMN_TEMPLATE_REPRICER_ID);
+        if (empty($templateId)) {
+            return null;
+        }
+
+        return (int)$templateId;
+    }
+
+    public function setTemplateRepricerId(?int $templateId): void
+    {
+        $this->setData(ListingProductResource::COLUMN_TEMPLATE_REPRICER_ID, $templateId);
+    }
+
+    public function getRepricerTemplate(): ?\Ess\M2ePro\Model\Walmart\Template\Repricer
+    {
+        $listingProductTemplateRepricerId = $this->getTemplateRepricerId();
+        if ($listingProductTemplateRepricerId !== null) {
+            return $this->templateRepricerRepository->get($listingProductTemplateRepricerId);
+        }
+
+        $listingTemplateRepricerId = $this->getWalmartListing()->getTemplateRepricerId();
+        if ($listingTemplateRepricerId !== null) {
+            return $this->templateRepricerRepository->get($listingTemplateRepricerId);
+        }
+
+        return null;
+    }
+
+    public function getRepricerTemplateSource(): ?\Ess\M2ePro\Model\Walmart\Template\Repricer\Source
+    {
+        $repricerTemplate = $this->getRepricerTemplate();
+        if ($repricerTemplate === null) {
+            return null;
+        }
+
+        return $repricerTemplate->getSource($this->getActualMagentoProduct());
     }
 }

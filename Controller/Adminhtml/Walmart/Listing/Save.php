@@ -54,10 +54,11 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
             \Ess\M2ePro\Model\ResourceModel\Walmart\Listing::COLUMN_TEMPLATE_SELLING_FORMAT_ID,
             \Ess\M2ePro\Model\ResourceModel\Walmart\Listing::COLUMN_TEMPLATE_DESCRIPTION_ID,
             \Ess\M2ePro\Model\ResourceModel\Walmart\Listing::COLUMN_TEMPLATE_SYNCHRONIZATION_ID,
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing::COLUMN_TEMPLATE_REPRICER_ID,
         ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
-                $data[$key] = $post[$key];
+                $data[$key] = $post[$key] ?: null ;
             }
         }
 

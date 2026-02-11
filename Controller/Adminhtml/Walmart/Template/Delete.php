@@ -12,6 +12,17 @@ use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
 class Delete extends Template
 {
+    private \Ess\M2ePro\Model\Walmart\Template\Repricer\Repository $repricerTemplateRepository;
+
+    public function __construct(
+        \Ess\M2ePro\Model\Walmart\Template\Repricer\Repository $repricerTemplateRepository,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+        $this->repricerTemplateRepository = $repricerTemplateRepository;
+    }
+
     public function execute()
     {
         $ids = $this->getRequestIds();
@@ -36,7 +47,11 @@ class Delete extends Template
             if ($template->isLocked()) {
                 $locked++;
             } else {
-                $template->delete();
+                if ($type === \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::TEMPLATE_REPRICER) {
+                    $this->repricerTemplateRepository->delete($template);
+                } else {
+                    $template->delete();
+                }
                 $deleted++;
             }
         }
@@ -54,6 +69,9 @@ class Delete extends Template
     private function getTemplateObject($type, $id)
     {
         switch ($type) {
+            case \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::TEMPLATE_REPRICER:
+                $model = $this->repricerTemplateRepository->get($id);
+                break;
             case \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::TEMPLATE_SELLING_FORMAT:
                 $model = $this->walmartFactory->getObjectLoaded('Template\SellingFormat', $id);
                 break;

@@ -19,7 +19,7 @@ class AddWalmartRepricer extends \Ess\M2ePro\Model\Setup\Upgrade\Entity\Abstract
     {
         $modifier = $this->getTableModifier(Tables::TABLE_WALMART_TEMPLATE_SELLING_FORMAT);
         $modifier->addColumn(
-            \Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat::COLUMN_REPRICER_MIN_PRICE_MODE,
+            'repricer_min_price_mode',
             'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
             null,
             null,
@@ -27,7 +27,7 @@ class AddWalmartRepricer extends \Ess\M2ePro\Model\Setup\Upgrade\Entity\Abstract
             false
         );
         $modifier->addColumn(
-            \Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat::COLUMN_REPRICER_MIN_PRICE_ATTRIBUTE,
+            'repricer_min_price_attribute',
             'VARCHAR(255)',
             null,
             null,
@@ -35,7 +35,7 @@ class AddWalmartRepricer extends \Ess\M2ePro\Model\Setup\Upgrade\Entity\Abstract
             false
         );
         $modifier->addColumn(
-            \Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat::COLUMN_REPRICER_MAX_PRICE_MODE,
+            'repricer_max_price_mode',
             'SMALLINT UNSIGNED NOT NULL DEFAULT 0',
             null,
             null,
@@ -43,7 +43,7 @@ class AddWalmartRepricer extends \Ess\M2ePro\Model\Setup\Upgrade\Entity\Abstract
             false
         );
         $modifier->addColumn(
-            \Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat::COLUMN_REPRICER_MAX_PRICE_ATTRIBUTE,
+            'repricer_max_price_attribute',
             'VARCHAR(255)',
             null,
             null,
@@ -51,7 +51,7 @@ class AddWalmartRepricer extends \Ess\M2ePro\Model\Setup\Upgrade\Entity\Abstract
             false
         );
         $modifier->addColumn(
-            \Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat::COLUMN_REPRICER_ACCOUNT_STRATEGIES,
+            'repricer_account_strategies',
             'LONGTEXT',
             null,
             null,

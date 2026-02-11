@@ -57,19 +57,6 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Walmart\Template\ChangeProcessor
             ];
         }
 
-        if ($diff->isRepricerDifferent()) {
-            $priority = 5;
-
-            if ($status == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED) {
-                $priority = 50;
-            }
-
-            $data[] = [
-                'type' => self::INSTRUCTION_TYPE_REPRICER_DATA_CHANGED,
-                'priority' => $priority,
-            ];
-        }
-
         if ($diff->isPromotionsDifferent()) {
             $priority = 5;
 

@@ -13,21 +13,24 @@ class Form extends AbstractForm
     private \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory;
     private \Ess\M2ePro\Helper\Data $dataHelper;
     private \Ess\M2ePro\Model\Walmart\Marketplace\Repository $marketplaceRepository;
+    private \Ess\M2ePro\Model\Walmart\Template\Repricer\Repository $repricerTemplateRepository;
 
     public function __construct(
         \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Model\Walmart\Marketplace\Repository $marketplaceRepository,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Model\Walmart\Template\Repricer\Repository $repricerTemplateRepository,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
-        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->magentoAttributeHelper = $magentoAttributeHelper;
+        $this->marketplaceRepository = $marketplaceRepository;
         $this->walmartFactory = $walmartFactory;
         $this->dataHelper = $dataHelper;
-        $this->marketplaceRepository = $marketplaceRepository;
+        $this->repricerTemplateRepository = $repricerTemplateRepository;
 
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -384,7 +387,6 @@ HTML
             [
                 'label' => __('Synchronization Policy'),
                 'style' => 'line-height: 34px;display: initial;',
-                'field_extra_attributes' => 'style="margin-bottom: 5px"',
                 'required' => true,
                 'text' => <<<HTML
     <span id="template_synchronization_label" style="padding-right: 25px; {$style}">
@@ -421,6 +423,74 @@ HTML
 </span>
 HTML
             ,
+            ]
+        );
+
+        // ----------------------------------------
+
+        $repricerTemplates = $this->getRepricerTemplates();
+        $style = count($repricerTemplates) === 0 ? 'display: none' : '';
+
+        $templateRepricer = $this->elementFactory->create(
+            'select',
+            [
+                'data' => [
+                    'html_id' => 'template_repricer_id',
+                    'name' => 'template_repricer_id',
+                    'style' => 'width: 50%;' . $style,
+                    'no_span' => true,
+                    'values' => $repricerTemplates,
+                    'value' => $formData['template_repricer_id'] ?? '',
+                    'required' => false,
+                ],
+            ]
+        );
+        $templateRepricer->setForm($form);
+
+        $style = count($repricerTemplates) === 0 ? '' : 'display: none';
+        $fieldset->addField(
+            'template_repricer_container',
+            self::CUSTOM_CONTAINER,
+            [
+                'label' => __('Repricer Policy'),
+                'style' => 'line-height: 34px;display: initial;',
+                'field_extra_attributes' => 'style="margin-bottom: 5px"',
+                'required' => false,
+                'text' => <<<HTML
+    <span id="template_repricer_label" style="padding-right: 25px; {$style}">
+        {$this->__('No Policies available.')}
+    </span>
+    {$templateRepricer->toHtml()}
+HTML
+                ,
+                'after_element_html' => <<<HTML
+&nbsp;
+<span style="line-height: 30px;">
+    <span id="edit_repricer_template_link" style="color:#41362f">
+        <a href="javascript: void(0);" onclick="WalmartListingSettingsObj.editTemplate(
+            M2ePro.url.get('editRepricerTemplate'),
+            $('template_repricer_id').value,
+            WalmartListingSettingsObj.newRepricerTemplateCallback
+        );">
+            {$this->__('View')}&nbsp;/&nbsp;{$this->__('Edit')}
+        </a>
+        <div style="width: 45px;
+                    display: inline-block;
+                    margin-left: -10px;
+                    margin-right: 5px;
+                    position: relative;
+                    bottom: 5px;">
+        {$editPolicyTooltip}</div>
+        <span>{$this->__('or')}</span>
+    </span>
+    <a id="add_repricer_template_link" href="javascript: void(0);"
+        onclick="WalmartListingSettingsObj.addNewTemplate(
+            M2ePro.url.get('addNewRepricerTemplate'),
+            WalmartListingSettingsObj.newRepricerTemplateCallback
+    );">{$this->__('Add New')}</a>
+</span>
+HTML
+                ,
             ]
         );
 
@@ -548,7 +618,7 @@ HTML
                 'label' => __($condition),
             ];
 
-            if ($condition === $formData[\Ess\M2ePro\Model\ResourceModel\Walmart\Listing::COLUMN_CONDITION_VALUE]) {
+            if ($condition === $formData[WalmartListingResource::COLUMN_CONDITION_VALUE]) {
                 $value['attrs']['selected'] = 'selected';
             }
 
@@ -566,6 +636,8 @@ HTML
                     ->addConstants([
                         '\Ess\M2ePro\Model\Walmart\Listing::CONDITION_MODE_RECOMMENDED'
                         => \Ess\M2ePro\Model\Walmart\Listing::CONDITION_MODE_RECOMMENDED,
+                        'Ess_M2ePro_Helper_Component_Walmart::MARKETPLACE_CA'
+                        => \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_CA,
                     ]);
 
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Walmart\Account'));
@@ -668,6 +740,21 @@ HTML
                         'component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
                     ]
                 ),
+                'addNewRepricerTemplate' => $this->getUrl(
+                    '*/walmart_template_repricer/new',
+                    [
+                        'wizard' => $this->getRequest()->getParam('wizard'),
+                        'close_on_save' => 1,
+                    ]
+                ),
+                'editRepricerTemplate' => $this->getUrl(
+                    '*/walmart_template_repricer/edit',
+                    [
+                        'wizard' => $this->getRequest()->getParam('wizard'),
+                        'close_on_save' => 1,
+                    ]
+                ),
+                'getRepricerTemplates' => $this->getUrl('*/walmart_template_repricer/getTemplatesList'),
             ]
         );
 
@@ -765,6 +852,24 @@ JS
         return $result['items'];
     }
 
+    protected function getRepricerTemplates(): array
+    {
+        $repricerTemplates = $this->repricerTemplateRepository->getAllSortedByTitle();
+
+        $result = [
+            ['value' => '', 'label' => __('None')],
+        ];
+
+        foreach ($repricerTemplates as $repricerTemplate) {
+            $result[] = [
+                'value' => $repricerTemplate->getId(),
+                'label' => $repricerTemplate->getTitle(),
+            ];
+        }
+
+        return $result;
+    }
+
     // ---------------------------------------
 
     public function getDefaultFieldsValues(): array
@@ -778,6 +883,7 @@ JS
             'template_selling_format_id' => '',
             'template_description_id' => '',
             'template_synchronization_id' => '',
+            WalmartListingResource::COLUMN_TEMPLATE_REPRICER_ID => '',
 
             WalmartListingResource::COLUMN_CONDITION_MODE => WalmartListing::CONDITION_MODE_NONE,
             WalmartListingResource::COLUMN_CONDITION_VALUE => '',

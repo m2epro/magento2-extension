@@ -12,8 +12,7 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
             || $this->isLagTimeDifferent()
             || $this->isPriceDifferent()
             || $this->isPromotionsDifferent()
-            || $this->isDetailsDifferent()
-            || $this->isRepricerDifferent();
+            || $this->isDetailsDifferent();
     }
 
     public function isQtyDifferent(): bool
@@ -80,19 +79,6 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
             'ships_in_original_packaging_mode',
             'ships_in_original_packaging_value',
             'ships_in_original_packaging_custom_attribute',
-        ];
-
-        return $this->isSettingsDifferent($keys);
-    }
-
-    public function isRepricerDifferent(): bool
-    {
-        $keys = [
-            'repricer_account_strategies',
-            'repricer_min_price_mode',
-            'repricer_min_price_attribute',
-            'repricer_max_price_mode',
-            'repricer_max_price_attribute',
         ];
 
         return $this->isSettingsDifferent($keys);

@@ -1,10 +1,6 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit;
 
@@ -14,8 +10,6 @@ use Ess\M2ePro\Model\Walmart\Template\SellingFormat;
 
 class Form extends AbstractForm
 {
-    private \Magento\Framework\App\ResourceConnection $resourceConnection;
-
     public $templateModel;
     public array $formData = [];
 
@@ -27,13 +21,10 @@ class Form extends AbstractForm
     private \Ess\M2ePro\Helper\Data $dataHelper;
     private \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper;
     private \Ess\M2ePro\Helper\Component\Walmart $walmartHelper;
-    private \Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit\Form\RepricerFieldset $repricerFieldset;
     private \Ess\M2ePro\Model\Walmart\Template\SellingFormat\BuilderFactory $builderFactory;
 
     public function __construct(
-        \Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit\Form\RepricerFieldset $repricerFieldset,
         \Ess\M2ePro\Model\Walmart\Template\SellingFormat\BuilderFactory $builderFactory,
-        \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
@@ -44,13 +35,11 @@ class Form extends AbstractForm
         \Ess\M2ePro\Helper\Component\Walmart $walmartHelper,
         array $data = []
     ) {
-        $this->resourceConnection = $resourceConnection;
         $this->magentoAttributeHelper = $magentoAttributeHelper;
         $this->supportHelper = $supportHelper;
         $this->dataHelper = $dataHelper;
         $this->globalDataHelper = $globalDataHelper;
         $this->walmartHelper = $walmartHelper;
-        $this->repricerFieldset = $repricerFieldset;
         $this->builderFactory = $builderFactory;
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -810,10 +799,6 @@ class Form extends AbstractForm
             ]
         );
 
-        //if ((int)$this->formData['marketplace_id'] === \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_US) {
-            $this->repricerFieldset->add($this->getLayout(), $form, $this->formData);
-        //}
-
         // ---------------------------------------
 
         $form->setUseContainer(true);
@@ -1114,11 +1099,6 @@ class Form extends AbstractForm
             $this->dataHelper->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart::class)
         );
 
-        $this->jsPhp->addConstants([
-            'Ess_M2ePro_Model_Walmart_Template_SellingFormat::REPRICER_MIN_MAX_PRICE_MODE_ATTRIBUTE' =>
-                \Ess\M2ePro\Model\Walmart\Template\SellingFormat::REPRICER_MIN_MAX_PRICE_MODE_ATTRIBUTE,
-        ]);
-
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Walmart_Template_SellingFormat'));
         $this->jsUrl->addUrls([
             'formSubmit' => $this->getUrl(
@@ -1249,7 +1229,6 @@ JS
         $walmartTemplateSellingFormat = $this->templateModel->getChildObject();
 
         $data['promotions'] = $walmartTemplateSellingFormat->getPromotions();
-        $data['repricer_account_strategies'] = $walmartTemplateSellingFormat->getRepricerAccountStrategies();
 
         return array_merge($default, $data);
     }

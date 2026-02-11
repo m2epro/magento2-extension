@@ -467,8 +467,8 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
                 [
                     'brand' => ['mode' => Description::PRODUCT_DETAILS_MODE_NONE, 'attribute' => ''],
                     'mpn' => ['mode' => Description::PRODUCT_DETAILS_MODE_DOES_NOT_APPLY, 'attribute' => ''],
-                    'include_ebay_details' => 1,
-                    'include_image' => 1,
+                    'include_ebay_details' => 0,
+                    'include_image' => 0,
                 ]
             ),
 

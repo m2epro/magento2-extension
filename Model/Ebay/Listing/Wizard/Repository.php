@@ -300,7 +300,7 @@ class Repository
     /**
      * @param \Ess\M2ePro\Model\Ebay\Listing\Wizard $wizard
      *
-     * @return array
+     * @return \Ess\M2ePro\Model\Ebay\Listing\Wizard\Product[]
      */
     public function findAllProducts(WizardModel $wizard): array
     {

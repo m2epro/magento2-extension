@@ -1,0 +1,18 @@
+<?php
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Template\Repricer $block */
+
+?>
+
+<div id="template_repricer_pop_up_content">
+    <div>
+        <?php if (!empty($block->getMessages())) : ?>
+            <div id="template_repricer_error_block">
+                <?= /* @noEscape */ $block->getWarnings(); ?>
+            </div>
+        <?php endif; ?>
+        <?= /* @noEscape */ $block->getHelpBlockHtml() ?>
+        <div id="template_repricer_grid"></div>
+
+    </div>
+</div>

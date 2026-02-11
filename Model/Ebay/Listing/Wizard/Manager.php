@@ -280,6 +280,11 @@ class Manager
         $this->repository->addOrUpdateProducts($products);
     }
 
+    public function removeProduct(Product $product): void
+    {
+        $this->repository->removeProduct($product);
+    }
+
     public function addUnmanagedProduct(Other $unmanagedProduct, ?int $mainTemplateEbayCategoryId): ?Product
     {
         if ($this->findProductByMagentoId($unmanagedProduct->getProductId())) {
@@ -304,6 +309,9 @@ class Manager
         return $this->repository->findProductByMagentoId($magentoProductId, $this->wizard);
     }
 
+    /**
+     * @return \Ess\M2ePro\Model\Ebay\Listing\Wizard\Product[]
+     */
     public function getProducts(): array
     {
         return $this->repository->findAllProducts($this->wizard);

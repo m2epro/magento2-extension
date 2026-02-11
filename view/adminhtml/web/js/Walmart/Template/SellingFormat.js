@@ -158,20 +158,6 @@ define([
             $('lag_time_mode')
                 .observe('change', WalmartTemplateSellingFormatObj.lag_time_mode_change)
                 .simulate('change');
-
-            const repricerMinPriceModeSelect = $('repricer_min_price_mode');
-            if (repricerMinPriceModeSelect) {
-                repricerMinPriceModeSelect
-                    .observe('change', this.repricer_min_price_mode_change.bind(this))
-                    .simulate('change');
-            }
-
-            const repricerMaxPriceModeSelect = $('repricer_max_price_mode');
-            if (repricerMaxPriceModeSelect) {
-                repricerMaxPriceModeSelect
-                    .observe('change', this.repricer_max_price_mode_change.bind(this))
-                    .simulate('change');
-            }
         },
 
         // ---------------------------------------
@@ -354,28 +340,6 @@ define([
 
             if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_SellingFormat::LAG_TIME_MODE_CUSTOM_ATTRIBUTE')) {
                 self.updateHiddenValue(this, $('lag_time_custom_attribute'));
-            }
-        },
-
-        repricer_min_price_mode_change: function (event) {
-            const repricerMinPriceModeSelect = event.currentTarget
-
-            const repricerMinPriceAttributeInput = $('repricer_min_price_attribute');
-
-            repricerMinPriceAttributeInput.value = '';
-            if (+repricerMinPriceModeSelect.value === M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_SellingFormat::REPRICER_MIN_MAX_PRICE_MODE_ATTRIBUTE')) {
-                this.updateHiddenValue(repricerMinPriceModeSelect, repricerMinPriceAttributeInput);
-            }
-        },
-
-        repricer_max_price_mode_change: function (event) {
-            const repricerMinPriceModeSelect = event.currentTarget
-
-            const repricerMinPriceAttributeInput = $('repricer_max_price_attribute');
-
-            repricerMinPriceAttributeInput.value = '';
-            if (+repricerMinPriceModeSelect.value === M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_SellingFormat::REPRICER_MIN_MAX_PRICE_MODE_ATTRIBUTE')) {
-                this.updateHiddenValue(repricerMinPriceModeSelect, repricerMinPriceAttributeInput);
             }
         },
 

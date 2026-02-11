@@ -58,6 +58,26 @@ define([
                 $('template_synchronization_id').simulate('change');
             }
 
+            if ($('template_repricer_id')) {
+                $('template_repricer_id').observe('change', function() {
+                    if ($('template_repricer_id').value) {
+                        $('edit_repricer_template_link').show();
+                    } else {
+                        $('edit_repricer_template_link').hide();
+                    }
+                });
+
+                $('template_repricer_id').simulate('change');
+
+                $('template_repricer_id').observe('change', function() {
+                    WalmartListingSettingsObj.hideEmptyOption(this);
+                });
+
+                if ($('template_repricer_id').value) {
+                    $('template_repricer_id').simulate('change');
+                }
+            }
+
             $('condition_mode')
                 .observe('change', WalmartListingSettingsObj.conditionModeChange)
                 .simulate('change');
@@ -240,6 +260,21 @@ define([
                 $('template_synchronization_id').hide();
                 noteEl && $('template_synchronization_note').hide();
                 $('template_synchronization_label').show();
+            }
+        },
+
+        newRepricerTemplateCallback: function() {
+            var noteEl = $('template_repricer_note');
+
+            WalmartListingSettingsObj.reload(M2ePro.url.get('getRepricerTemplates'), 'template_repricer_id');
+            if ($('template_repricer_id').children.length > 0) {
+                $('template_repricer_id').show();
+                noteEl && $('template_repricer_note').show();
+                $('template_repricer_label').hide();
+            } else {
+                $('template_repricer_id').hide();
+                noteEl && $('template_repricer_note').hide();
+                $('template_repricer_label').show();
             }
         },
 

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat;
+namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Repricer;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
-class GetRepricerStrategies extends Template
+class GetStrategies extends Template
 {
     private \Ess\M2ePro\Model\Walmart\Template\SellingFormat\Repricer\AccountStrategiesLoader $accountStrategiesLoader;
     private \Ess\M2ePro\Model\Walmart\Account\Repository $walmartAccountRepository;
@@ -26,7 +26,7 @@ class GetRepricerStrategies extends Template
     {
         $accountRepricerStrategies = $this->accountStrategiesLoader->execute(
             $this->walmartAccountRepository->get((int)$this->getRequest()->getParam('accountId')),
-            true
+            (bool)$this->getRequest()->getParam('force_load')
         );
 
         $this->setJsonContent(array_map(function ($strategy) {

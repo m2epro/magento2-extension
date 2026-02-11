@@ -62,6 +62,14 @@ define([
                     $('marketplace_id').value = account.marketplace_id;
                     $('marketplace_title').innerHTML = account.marketplace_title;
                     $('marketplace_url').innerHTML = account.marketplace_url;
+
+                    let repricerTemplateContainer = jQuery('.field-template_repricer_container');
+                    const marketplaceCanadaId = M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart::MARKETPLACE_CA');
+                    if (parseInt(account.marketplace_id) === marketplaceCanadaId) {
+                        repricerTemplateContainer.hide()
+                    } else {
+                        repricerTemplateContainer.show();
+                    }
                 }
 
                 WalmartListingSettingsObj.checkSellingFormatMessages();

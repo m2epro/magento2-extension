@@ -15,6 +15,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public const TEMPLATE_SELLING_FORMAT = 'selling_format';
     public const TEMPLATE_SYNCHRONIZATION = 'synchronization';
     public const TEMPLATE_DESCRIPTION = 'description';
+    public const TEMPLATE_REPRICER = 'repricer';
 
     /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory */
     private $marketplaceCollectionFactory;
@@ -26,8 +27,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     private $resourceConnection;
     /** @var \Ess\M2ePro\Model\MarketplaceFactory */
     private $marketplaceFactory;
+    private \Ess\M2ePro\Model\ResourceModel\Walmart\Template\Repricer\CollectionFactory $repricerCollectionFactory;
 
     public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Walmart\Template\Repricer\CollectionFactory $repricerCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory $marketplaceCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory $wrapperCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
@@ -42,6 +45,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->walmartFactory = $walmartFactory;
         $this->resourceConnection = $resourceConnection;
         $this->marketplaceFactory = $marketplaceFactory;
+        $this->repricerCollectionFactory = $repricerCollectionFactory;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -136,12 +140,33 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         );
         // ---------------------------------------
 
+        // ----------------------------------------
+
+        $collectionRepricer = $this->repricerCollectionFactory->create();
+        $collectionRepricer->getSelect()->reset(Select::COLUMNS);
+        $collectionRepricer->getSelect()->columns(
+            [
+                'id as template_id',
+                'title',
+                new \Zend_Db_Expr('\'' . self::TEMPLATE_REPRICER . '\' as `type`'),
+                new \Zend_Db_Expr('NULL as `marketplace_title`'),
+                new \Zend_Db_Expr('\'0\' as `marketplace_id`'),
+                'create_date',
+                'update_date',
+                new \Zend_Db_Expr('NULL as `category_path`'),
+                new \Zend_Db_Expr('NULL as `browsenode_id`'),
+            ]
+        );
+
+        // ----------------------------------------
+
         // Prepare union select
         // ---------------------------------------
         $collectionsArray = [
             $collectionSellingFormat->getSelect(),
             $collectionSynchronization->getSelect(),
             $collectionDescription->getSelect(),
+            $collectionRepricer->getSelect(),
         ];
 
         $unionSelect = $this->resourceConnection->getConnection()->select();
@@ -192,6 +217,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             self::TEMPLATE_SELLING_FORMAT => __('Selling'),
             self::TEMPLATE_DESCRIPTION => __('Description'),
             self::TEMPLATE_SYNCHRONIZATION => __('Synchronization'),
+            self::TEMPLATE_REPRICER => __('Repricer'),
         ];
         $this->addColumn('type', [
             'header' => __('Type'),

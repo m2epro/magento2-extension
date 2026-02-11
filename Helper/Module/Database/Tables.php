@@ -75,6 +75,7 @@ class Tables
     public const TABLE_WALMART_DICTIONARY_PRODUCT_TYPE = self::PREFIX . 'walmart_dictionary_product_type';
     public const TABLE_WALMART_TEMPLATE_SELLING_FORMAT = self::PREFIX . 'walmart_template_selling_format';
     public const TABLE_WALMART_TEMPLATE_DESCRIPTION = self::PREFIX . 'walmart_template_description';
+    public const TABLE_WALMART_TEMPLATE_REPRICER = self::PREFIX . 'walmart_template_repricer';
 
     public const TABLE_STOP_QUEUE = self::PREFIX . 'stop_queue';
 

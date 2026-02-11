@@ -9,13 +9,20 @@ class Repricer extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuil
     public function getBuilderData(): array
     {
         $walmartListingProduct = $this->getWalmartListingProduct();
-        $walmartSellingFormatTemplate = $walmartListingProduct->getWalmartSellingFormatTemplate();
-        $sellingFormatTemplateSource = $walmartListingProduct->getSellingFormatTemplateSource();
 
-        $strategy = $walmartSellingFormatTemplate
-            ->getRepricerStrategyByAccountId((int)$walmartListingProduct->getAccount()->getId());
-        $minPrice = $sellingFormatTemplateSource->getRepricerMinPrice();
-        $maxPrice = $sellingFormatTemplateSource->getRepricerMaxPrice();
+        $repricerTemplateSource = $walmartListingProduct->getRepricerTemplateSource();
+
+        if (empty($repricerTemplateSource)) {
+            if ($this->isNeedRemoveProductFromRepricer(null)) {
+                return ['repricer' => null];
+            }
+
+            return [];
+        }
+
+        $strategy = $repricerTemplateSource->getStrategyName();
+        $minPrice = $repricerTemplateSource->getRepricerMinPrice();
+        $maxPrice = $repricerTemplateSource->getRepricerMaxPrice();
 
         if (!$this->isValidRepricerData($strategy, $minPrice, $maxPrice)) {
             if ($this->isNeedRemoveProductFromRepricer($strategy)) {
@@ -27,7 +34,7 @@ class Repricer extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuil
 
         return [
             'repricer' => [
-                'strategy_name' => (string)$strategy,
+                'strategy_name' => $strategy,
                 'min_price' => (float)$minPrice,
                 'max_price' => (float)$maxPrice,
             ],
@@ -36,7 +43,7 @@ class Repricer extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuil
 
     private function isNeedRemoveProductFromRepricer(?string $strategy): bool
     {
-        if (empty($this->getWalmartListingProduct()->getOnlineRepricerData())) {
+        if (empty($this->getWalmartListingProduct()->getOnlineRepricerStrategyName())) {
             return false;
         }
 

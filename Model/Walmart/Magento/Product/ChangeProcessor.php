@@ -1,16 +1,9 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\Walmart\Magento\Product;
 
-/**
- * Class \Ess\M2ePro\Model\Walmart\Magento\Product\ChangeProcessor
- */
 class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel
 {
     public const INSTRUCTION_TYPE_PROMOTIONS_DATA_CHANGED = 'magento_product_promotions_data_changed';
@@ -179,11 +172,12 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
 
     private function getRepricerTrackingAttributes(): array
     {
-        $trackingAttributes = $this->getWalmartListingProduct()
-                                   ->getWalmartSellingFormatTemplate()
-                                   ->getRepricerAttributes();
+        $repricerTemplate = $this->getWalmartListingProduct()->getRepricerTemplate();
+        if ($repricerTemplate === null) {
+            return [];
+        }
 
-        return array_unique($trackingAttributes);
+        return array_unique($repricerTemplate->getRepricerAttributes());
     }
 
     //########################################

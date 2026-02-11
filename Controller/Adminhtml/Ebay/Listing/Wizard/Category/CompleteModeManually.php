@@ -31,8 +31,19 @@ class CompleteModeManually extends EbayListingController
         $id = $this->getWizardIdFromRequest();
         $manager = $this->wizardManagerFactory->createById($id);
 
+        $this->removeProductsWithoutTemplateCategory($manager);
+
         $manager->completeStep(StepDeclarationCollectionFactory::STEP_GENERAL_SELECT_CATEGORY_STEP);
 
         return $this->redirectToIndex($manager->getWizardId());
+    }
+
+    private function removeProductsWithoutTemplateCategory(\Ess\M2ePro\Model\Ebay\Listing\Wizard\Manager $manager): void
+    {
+        foreach ($manager->getProducts() as $product) {
+            if (empty($product->getTemplateCategoryId())) {
+                $manager->removeProduct($product);
+            }
+        }
     }
 }

@@ -89,6 +89,11 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
                 'id' => 'synchronization',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SYNCHRONIZATION) . "')",
             ],
+            Grid::TEMPLATE_REPRICER => [
+                'label' => __('Repricer'),
+                'id' => 'repricer',
+                'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_REPRICER) . "')",
+            ],
         ];
 
         return $data;

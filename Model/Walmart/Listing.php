@@ -2,6 +2,8 @@
 
 namespace Ess\M2ePro\Model\Walmart;
 
+use Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product as WalmartListingProductResource;
+
 /**
  * @method \Ess\M2ePro\Model\Listing getParentObject()
  * @method \Ess\M2ePro\Model\ResourceModel\Walmart\Listing getResource()
@@ -376,10 +378,10 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
 
             'status_change_reasons' => $walmartListingOther->getData('status_change_reasons'),
 
-            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_ONLINE_REPRICER_STRATEGY_NAME => $walmartListingOther->getRepricerStrategyName(),
-            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_ONLINE_REPRICER_MIN_PRICE => $walmartListingOther->getRepricerMinPrice(),
-            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_ONLINE_REPRICER_MAX_PRICE => $walmartListingOther->getRepricerMaxPrice(),
-            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_REPRICER_LAST_UPDATE_DATE => null,
+            WalmartListingProductResource::COLUMN_ONLINE_REPRICER_STRATEGY_NAME => $walmartListingOther->getRepricerStrategyName(),
+            WalmartListingProductResource::COLUMN_ONLINE_REPRICER_MIN_PRICE => $walmartListingOther->getRepricerMinPrice(),
+            WalmartListingProductResource::COLUMN_ONLINE_REPRICER_MAX_PRICE => $walmartListingOther->getRepricerMaxPrice(),
+            WalmartListingProductResource::COLUMN_REPRICER_LAST_UPDATE_DATE => null,
         ];
 
         $listingProduct->setSetting(
@@ -455,7 +457,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         $variationManager = $walmartListingProduct->getVariationManager();
 
         if ($variationManager->isRelationParentType()) {
-            /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product $resourceModel */
+            /** @var WalmartListingProductResource $resourceModel */
             $resourceModel = $this->activeRecordFactory->getObject('Walmart_Listing_Product')->getResource();
             $resourceModel->moveChildrenToListing($listingProduct);
         }
@@ -471,4 +473,14 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     }
 
     // ---------------------------------------
+
+    public function getTemplateRepricerId(): ?int
+    {
+        $templateRepricerId = $this->getData(WalmartListingProductResource::COLUMN_TEMPLATE_REPRICER_ID);
+        if (empty($templateRepricerId)) {
+            return null;
+        }
+
+        return (int)$templateRepricerId;
+    }
 }

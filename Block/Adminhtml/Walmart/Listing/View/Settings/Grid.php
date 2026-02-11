@@ -2,6 +2,9 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Settings;
 
+use Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product as WalmartListingProductResource;
+use Ess\M2ePro\Model\ResourceModel\Walmart\Template\Repricer as TemplateRepricerResource;
+
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {
     /** @var \Ess\M2ePro\Model\Listing */
@@ -11,12 +14,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected $walmartFactory;
     protected $resourceConnection;
     private \Ess\M2ePro\Model\ResourceModel\Walmart\ProductType $productTypeResource;
+    private TemplateRepricerResource $repricerResource;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Model\ResourceModel\Walmart\ProductType $productTypeResource,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        TemplateRepricerResource $repricerResource,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
@@ -27,6 +32,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->walmartFactory = $walmartFactory;
         $this->productTypeResource = $productTypeResource;
         $this->resourceConnection = $resourceConnection;
+        $this->repricerResource = $repricerResource;
+
         parent::__construct($context, $backendHelper, $dataHelper, $globalDataHelper, $data);
     }
 
@@ -80,6 +87,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             [
                 'product_type_id' => 'product_type_id',
                 'variation_child_statuses' => 'variation_child_statuses',
+                'template_repricer_id' => WalmartListingProductResource::COLUMN_TEMPLATE_REPRICER_ID,
                 'walmart_sku' => 'sku',
                 'gtin' => 'gtin',
                 'upc' => 'upc',
@@ -103,6 +111,20 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'id = product_type_id',
             [
                 'product_type_title' => 'title',
+            ],
+            null,
+            'left'
+        );
+
+        $collection->joinTable(
+            ['repricer_policy' => $this->repricerResource->getMainTable()],
+            sprintf(
+                '%s = %s',
+                TemplateRepricerResource::COLUMN_ID,
+                WalmartListingProductResource::COLUMN_TEMPLATE_REPRICER_ID
+            ),
+            [
+                'template_repricer_title' => TemplateRepricerResource::COLUMN_TITLE,
             ],
             null,
             'left'
@@ -183,6 +205,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'filter_condition_callback' => [$this, 'callbackFilterProductType'],
         ]);
 
+        $this->addColumn('repricer_policy', [
+            'header' => __('Repricer Policy'),
+            'align' => 'left',
+            'width' => '250px',
+            'type' => 'text',
+            'index' => 'template_category_title',
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Filter\PolicySettings::class,
+            'filter_index' => 'template_category_title',
+            'frame_callback' => [$this, 'callbackColumnTemplateRepricer'],
+            'filter_condition_callback' => [$this, 'callbackFilterRepricerPolicy'],
+        ]);
+
         $this->addColumn('actions', [
             'header' => __('Actions'),
             'align' => 'left',
@@ -204,6 +238,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected function getGroupOrder()
     {
         $groups = [
+            'edit_repricer_policy' => __('Repricer Policy'),
             'edit_product_type' => __('Product Type'),
             'other' => __('Other'),
         ];
@@ -225,6 +260,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'group' => 'edit_product_type',
                 'field' => 'id',
                 'onclick_action' => 'ListingGridObj.actions[\'unassignProductTypeAction\']',
+            ],
+            'assignRepricerPolicy' => [
+                'caption' => __('Assign'),
+                'group' => 'edit_repricer_policy',
+                'field' => 'id',
+                'onclick_action' => 'ListingGridObj.actions[\'changeRepricerPolicyAction\']',
+            ],
+            'unassignRepricerPolicy' => [
+                'caption' => __('Unassign'),
+                'group' => 'edit_repricer_policy',
+                'field' => 'id',
+                'onclick_action' => 'ListingGridObj.actions[\'unassignRepricerPolicyAction\']',
             ],
             'remapProduct' => [
                 'caption' => __('Link to another Magento Product'),
@@ -255,6 +302,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'other' => __('Other'),
         ];
 
+        if (!$this->isCanadaMarketplace()) {
+            $groups['edit_repricer_policy'] = __('Repricer Policy');
+        }
+
         if ($isSupportedPt) {
             $groups['product_type'] = __('Product Type');
         }
@@ -271,6 +322,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'label' => __('Unassign'),
                 'url' => '',
             ], 'product_type');
+        }
+
+        if (!$this->isCanadaMarketplace()) {
+            $this->getMassactionBlock()->addItem('changeRepricerPolicy', [
+                'label' => __('Assign'),
+                'url' => '',
+            ], 'edit_repricer_policy');
+            $this->getMassactionBlock()->addItem('unassignRepricerPolicy', [
+                'label' => __('Unassign'),
+                'url' => '',
+            ], 'edit_repricer_policy');
         }
 
         $this->getMassactionBlock()->addItem('moving', [
@@ -404,6 +466,65 @@ HTML;
         }
     }
 
+    protected function callbackFilterRepricerPolicy($collection, $column)
+    {
+        $value = $column->getFilter()->getValue();
+        $inputValue = null;
+
+        if (
+            is_array($value)
+            && isset($value['input'])
+        ) {
+            $inputValue = $value['input'];
+        } elseif (is_string($value)) {
+            $inputValue = $value;
+        }
+
+        if ($inputValue !== null) {
+            $collection->addAttributeToFilter(
+                'template_repricer_title',
+                ['like' => '%' . $inputValue . '%']
+            );
+        }
+
+        if (isset($value['select'])) {
+            switch ($value['select']) {
+                case '0':
+                    $collection->addAttributeToFilter('template_repricer_id', ['null' => true]);
+                    break;
+                case '1':
+                    $collection->addAttributeToFilter('template_repricer_id', ['notnull' => true]);
+                    break;
+            }
+        }
+    }
+
+    public function callbackColumnTemplateRepricer($value, $row, $column, $isExport)
+    {
+        $productTemplateRepricerId = (int)$row->getData('template_repricer_id');
+        if ($productTemplateRepricerId > 0) {
+            return sprintf(
+                '<a target="_blank" href="%s">%s</a>',
+                $this->getUrl('*/walmart_template_repricer/edit', [
+                    'id' => $productTemplateRepricerId,
+                    'close_on_save' => true,
+                ]),
+                $this->_escaper->escapeHtml($row->getData('template_repricer_title'))
+            );
+        }
+
+        /** @var \Ess\M2ePro\Model\Walmart\Listing $walmartListing */
+        $walmartListing = $this->listing->getChildObject();
+        if ($walmartListing->getTemplateRepricerId() !== null) {
+            return sprintf(
+                '<div style="padding: 4px"><span style="color: #666666">%s</span></div>',
+                __('Use from Listing Settings')
+            );
+        }
+
+        return (string)__('N/A');
+    }
+
     protected function callbackFilterTitle($collection, $column)
     {
         $value = $column->getFilter()->getValue();
@@ -456,5 +577,10 @@ JS
         }
 
         return parent::_toHtml();
+    }
+
+    private function isCanadaMarketplace(): bool
+    {
+        return $this->listing->getMarketplaceId() === \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_CA;
     }
 }

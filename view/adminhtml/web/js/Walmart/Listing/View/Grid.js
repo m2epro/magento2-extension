@@ -5,6 +5,7 @@ define([
     'M2ePro/Listing/Mapping',
     'M2ePro/Walmart/Listing/View/Action',
     'M2ePro/Walmart/Listing/Product/ProductType',
+    'M2ePro/Walmart/Listing/Product/Repricer',
     'M2ePro/Walmart/Listing/Product/Variation/Manage',
     'M2ePro/Walmart/Listing/Product/EditChannelData'
 ], function (MessageObj) {
@@ -52,6 +53,7 @@ define([
             this.mappingHandler = new ListingMapping(this, 'walmart');
 
             this.productTypeHandler = new WalmartListingProductProductType(this);
+            this.repricerHandler = new WalmartListingProductRepricer(this);
 
             this.variationProductManageHandler = new WalmartListingProductVariationManage(this);
             this.editChannelDataHandler = new WalmartListingProductEditChannelData(this);
@@ -71,6 +73,21 @@ define([
                     this.confirm({
                         actions: {
                             confirm: () => this.productTypeHandler.unassign(id),
+                            cancel: () => false
+                        }
+                    });
+                }).bind(this),
+
+                changeRepricerPolicyAction: (function(id) {
+                    id = id || this.getSelectedProductsString();
+                    this.repricerHandler.openPopUp(id)
+                }).bind(this),
+
+                unassignRepricerPolicyAction: (function (id) {
+                    id = id || this.getSelectedProductsString();
+                    this.confirm({
+                        actions: {
+                            confirm: () => this.repricerHandler.unassign(id),
                             cancel: () => false
                         }
                     });

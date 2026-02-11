@@ -58,6 +58,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
         );
 
         $post['marketplace_id'] = $account->getChildObject()->getMarketplaceId();
+        if (empty($post[\Ess\M2ePro\Model\ResourceModel\Walmart\Listing::COLUMN_TEMPLATE_REPRICER_ID])) {
+            $post[\Ess\M2ePro\Model\ResourceModel\Walmart\Listing::COLUMN_TEMPLATE_REPRICER_ID] = null;
+        }
 
         $listing = $this->walmartFactory->getObject('Listing')
                                         ->addData($post)
