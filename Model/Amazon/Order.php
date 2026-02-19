@@ -840,6 +840,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             ->addFieldToFilter('order_id', $this->getParentObject()->getId())
             ->addFieldToFilter('action', \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING)
             ->addFieldToFilter('processing_attempt_count', 0)
+            ->setOrder('id', \Magento\Framework\Data\Collection::SORT_ORDER_DESC)
             ->getFirstItem();
 
         $existingParams = $change->getParams();

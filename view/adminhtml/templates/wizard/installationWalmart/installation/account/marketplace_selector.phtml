@@ -13,7 +13,7 @@ $button = $block->getConnectButton();
         <select id="marketplace_id" name="marketplace_id" class="admin__control-select"
                 onchange="InstallationWalmartWizardObj.changeMarketplace(this.value);"
                 style="min-width: 200px;">
-            <option value=""><?= $block->escapeHtml(__('')) ?></option>
+            <option value=""></option>
             <?php foreach ($marketplaces as $item): ?>
                 <?php $m = array_merge($item->getData(), $item->getChildObject()->getData()); ?>
                 <option value="<?= $block->escapeHtml($m['id']) ?>">
