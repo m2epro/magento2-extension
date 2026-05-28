@@ -63,7 +63,15 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
         if ($amazonListingProduct->getVariationManager()->isRelationParentType()) {
             $parts[] = 'Parent Product was Listed';
         } else {
-            $parts[] = sprintf('Product was Listed with QTY %d', $amazonListingProduct->getOnlineQty());
+            if ($amazonListingProduct->isMultiLocationInventory()) {
+                $parts[] = sprintf(
+                    'Product was Listed with QTY %d (%s)',
+                    $amazonListingProduct->getOnlineQty(),
+                    $amazonListingProduct->getOnlineMultiLocationInventory()->toString()
+                );
+            } else {
+                $parts[] = sprintf('Product was Listed with QTY %d', $amazonListingProduct->getOnlineQty());
+            }
         }
 
         if ($regularPrice = $amazonListingProduct->getOnlineRegularPrice()) {

@@ -1,0 +1,26 @@
+<?php
+/**
+ * @var $block \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\MultiLocationInventory\MappingFieldRender
+ */
+?>
+
+<div class="admin__field field-mapping-table">
+    <div class="admin__field-control">
+        <table class="border data-grid data-grid-not-hovered">
+            <thead>
+            <tr>
+                <th class="data-grid-th"><?= /* @noEscape */ __('Magento MSI Source') ?></th>
+                <th class="data-grid-th"><?= /* @noEscape */ __('Amazon Location') ?></th>
+            </tr>
+            </thead>
+            <tbody style="width: 100%">
+            <?php foreach ($block->getMagentoSources() as $magentoSource): ?>
+                <tr style="border-top: 1px solid #d6d6d6">
+                    <td><?= /* @noEscape */ $magentoSource->getName() ?></td>
+                    <td><?= /* @noEscape */ $block->getAmazonLocationSelect($magentoSource) ?></td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>

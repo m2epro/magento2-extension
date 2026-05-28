@@ -111,7 +111,13 @@ abstract class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\R
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Qty $dataBuilder */
         $dataBuilder = $this->getDataBuilder('qty');
 
-        return $dataBuilder->getBuilderData();
+        $data = $dataBuilder->getBuilderData();
+        if (isset($data['multi_location_inventory_metadata'])) {
+            $this->addMetaData('multi_location_inventory_metadata', $data['multi_location_inventory_metadata']);
+            unset($data['multi_location_inventory_metadata']);
+        }
+
+        return $data;
     }
 
     /**

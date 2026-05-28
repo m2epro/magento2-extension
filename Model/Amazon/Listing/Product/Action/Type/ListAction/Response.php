@@ -56,6 +56,7 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
             $data['is_afn_channel'] = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_AFN_CHANNEL_NO;
 
             $data = $this->appendQtyValues($data, null);
+            $data = $this->appendMultiLocationInventory($data);
             $data = $this->appendRegularPriceValues($data);
             $data = $this->appendBusinessPriceValues($data);
             $data = $this->appendGiftSettingsStatus($data);

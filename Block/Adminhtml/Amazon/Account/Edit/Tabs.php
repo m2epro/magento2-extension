@@ -1,15 +1,10 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs;
-use Ess\M2ePro\Helper\Component\Amazon;
 
 class Tabs extends AbstractTabs
 {
@@ -18,18 +13,14 @@ class Tabs extends AbstractTabs
     public const TAB_ID_ORDERS = 'orders';
     public const TAB_ID_INVOICES_AND_SHIPMENTS = 'invoices_and_shipments';
     public const TAB_ID_FBA_INVENTORY = 'fba_inventory';
+    public const TAB_MULTI_LOCATION_INVENTORY = 'multi_location_inventory';
 
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
+    private \Ess\M2ePro\Helper\Magento $magentoHelper;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
-     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
-     * @param \Magento\Framework\Json\EncoderInterface $jsonEncoder
-     * @param \Magento\Backend\Model\Auth\Session $authSession
-     * @param array $data
-     */
     public function __construct(
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Json\EncoderInterface $jsonEncoder,
@@ -38,6 +29,7 @@ class Tabs extends AbstractTabs
     ) {
         $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $jsonEncoder, $authSession, $data);
+        $this->magentoHelper = $magentoHelper;
     }
 
     protected function _construct()
@@ -50,8 +42,7 @@ class Tabs extends AbstractTabs
 
     protected function _prepareLayout()
     {
-        /** @var \Ess\M2ePro\Model\Account $account */
-        $account = $this->globalDataHelper->getValue('edit_account');
+        $account = $this->getAccount();
 
         $this->addTab(self::TAB_ID_GENERAL, [
             'label' => __('General'),
@@ -77,7 +68,7 @@ class Tabs extends AbstractTabs
                               ->toHtml(),
         ]);
 
-        if ($account !== null && $account->getId()) {
+        if ($account !== null) {
             $this->addTab(self::TAB_ID_INVOICES_AND_SHIPMENTS, [
                 'label' => __('Invoices & Shipments'),
                 'title' => __('Invoices & Shipments'),
@@ -97,8 +88,54 @@ class Tabs extends AbstractTabs
                               ->toHtml(),
         ]);
 
+        $this->addMultiLocationInventoryTab($account);
+
         $this->setActiveTab($this->getRequest()->getParam('tab', self::TAB_ID_GENERAL));
 
         return parent::_prepareLayout();
+    }
+
+    private function addMultiLocationInventoryTab(?\Ess\M2ePro\Model\Account $account): void
+    {
+        if (!$this->magentoHelper->isMSISupportingVersion()) {
+            return;
+        }
+
+        if ($account === null) {
+            return;
+        }
+
+        $marketplaceId = $account->getChildObject()->getMarketplaceId();
+        if ($marketplaceId !== \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_US) {
+            return;
+        }
+
+        $tabContent = $this
+            ->getLayout()
+            ->createBlock(
+                \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\MultiLocationInventory::class,
+                '',
+                ['account' => $account]
+            )
+            ->toHtml();
+
+        $this->addTab(self::TAB_MULTI_LOCATION_INVENTORY, [
+            'label' => __('Multi-Location Inventory'),
+            'title' => __('Multi-Location Inventory'),
+            'content' => $tabContent,
+        ]);
+    }
+
+    private function getAccount(): ?\Ess\M2ePro\Model\Account
+    {
+        $account = $this->globalDataHelper->getValue('edit_account');
+        if (
+            empty($account)
+            || empty($account->getId())
+        ) {
+            return null;
+        }
+
+        return $account;
     }
 }

@@ -53,6 +53,12 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public const CONDITION_DESCRIPTOR_ID_CERTIFICATION_NUMBER = 27503;
     public const CONDITION_DESCRIPTOR_ID_CARD_CONDITION = 40001;
 
+    public const CONDITION_DESCRIPTOR_ID_COIN_PROFESSIONAL_GRADER = 1;
+    public const CONDITION_DESCRIPTOR_ID_COIN_CONDITION = 2;
+    public const CONDITION_DESCRIPTOR_ID_COIN_GRADE_LETTER = 3;
+    public const CONDITION_DESCRIPTOR_ID_COIN_GRADE_NUMERICAL = 4;
+    public const CONDITION_DESCRIPTOR_ID_COIN_CERTIFICATION_NUMBER = 5;
+
     public const CONDITION_NOTE_MODE_NONE = 0;
     public const CONDITION_NOTE_MODE_CUSTOM = 1;
 
@@ -466,15 +472,12 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
             throw new \RuntimeException('Invalid Professional Graded ID mode');
         }
 
-        $val = $this->getDataByKey(
-            DescriptionResource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_VALUE
-        );
-
-        if ($val === null) {
+        $value = $this->getDataByKey(DescriptionResource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_VALUE);
+        if ($value === null) {
             throw new \RuntimeException('Condition Professional Grader ID Value not found');
         }
 
-        return (int)$val;
+        return (int)$value;
     }
 
     private function getConditionProfessionalGraderIdMode(): int
@@ -482,7 +485,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         return (int)$this->getDataByKey(DescriptionResource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_MODE);
     }
 
-    public static function getConditionalProfessionalGraderIdLabelMap(): array
+    public static function getConditionalProfessionalGraderCardIdLabelMap(): array
     {
         return [
             275010 => 'Professional Sports Authenticator (PSA)',
@@ -509,6 +512,28 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
             2750121 => 'Trading Card Grading (TCG)',
             2750122 => 'ARK Grading (ARK)',
             2750123 => 'Other',
+        ];
+    }
+
+    public static function getConditionalProfessionalGraderCoinIdLabelMap(): array
+    {
+        return [
+            14 => 'Professional Coin Grading Service (PCGS)',
+            15 => 'Numismatic Guaranty Company (NGC)',
+            16 => 'Certified Acceptance Corporation / CAC Grading (CAC / CACG)',
+            34 => 'American Numismatic Association Certification Service (ANACS)',
+            35 => 'Independent Coin Graders (ICG)',
+            36 => 'International Coin Certification Service (ICCS)',
+            37 => 'Canadian Coin Certification Service (CCCS)',
+            38 => 'London Coin Grading Service (LCGS)',
+            39 => 'Coin Grading Service - UK (CGS-UK)',
+            40 => 'Sovereign Entities Grading Service (SEGS)',
+            41 => 'Numismatic Certification Company - varies (NNC)',
+            42 => 'NumisTrust Corporation (NTC)',
+            43 => 'Photo Certified Institute (PCI)',
+            44 => 'Accugrade, Inc. (ACG)',
+            45 => 'American Standards Association (ASA)',
+            76 => 'Other',
         ];
     }
 
@@ -563,7 +588,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         return (int)$this->getDataByKey(DescriptionResource::COLUMN_CONDITION_GRADE_ID_MODE);
     }
 
-    public static function getConditionalGradeIdLabelMap(): array
+    public static function getConditionalCardGradeIdLabelMap(): array
     {
         return [
             275020 => '10',
@@ -589,6 +614,104 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
             2750220 => 'Authentic Altered',
             2750221 => 'Authentic - Trimmed',
             2750222 => 'Authentic - Coloured',
+        ];
+    }
+
+    public static function getConditionalCoinGradeNumericIdLabelMap(): array
+    {
+        return [
+            32 => '70',
+            25 => '69',
+            26 => '68',
+            53 => '67',
+            54 => '66',
+            55 => '65',
+            56 => '64',
+            57 => '63',
+            58 => '62',
+            59 => '61',
+            60 => '60',
+            27 => '58',
+            28 => '55',
+            29 => '53',
+            61 => '50',
+            30 => '45',
+            31 => '40',
+            62 => '35',
+            63 => '30',
+            64 => '25',
+            65 => '20',
+            66 => '15',
+            67 => '12',
+            68 => '10',
+            69 => '8',
+            70 => '6',
+            71 => '4',
+            72 => '3',
+            73 => '2',
+            74 => '1',
+            77 => 'None',
+        ];
+    }
+
+    // ----------------------------------------
+
+    public function isConditionGradeLetterIdModeAttribute(): bool
+    {
+        return $this->getConditionGradeLetterIdMode() === self::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE;
+    }
+
+    public function getConditionGradeLetterIdAttribute(): string
+    {
+        if (!$this->isConditionGradeLetterIdModeAttribute()) {
+            throw new \RuntimeException('Invalid Condition Grade Letter ID mode');
+        }
+
+        $attr = $this->getDataByKey(DescriptionResource::COLUMN_CONDITION_GRADE_LETTER_ID_ATTRIBUTE);
+        if ($attr === null) {
+            throw new \RuntimeException('Condition Grade Letter ID Attribute not found');
+        }
+
+        return $attr;
+    }
+
+    public function isConditionGradeLetterIdModeEbay(): bool
+    {
+        return $this->getConditionGradeLetterIdMode() === self::CONDITION_DESCRIPTOR_MODE_EBAY;
+    }
+
+    public function getConditionGradeLetterIdValue(): int
+    {
+        if (!$this->isConditionGradeLetterIdModeEbay()) {
+            throw new \RuntimeException('Invalid Condition Grade Letter ID mode');
+        }
+
+        $val = $this->getDataByKey(DescriptionResource::COLUMN_CONDITION_GRADE_LETTER_ID_VALUE);
+        if ($val === null) {
+            throw new \RuntimeException('Condition Grade Letter ID Value not found');
+        }
+
+        return (int)$val;
+    }
+
+    private function getConditionGradeLetterIdMode(): int
+    {
+        return (int)$this->getDataByKey(DescriptionResource::COLUMN_CONDITION_GRADE_LETTER_ID_MODE);
+    }
+
+    public static function getConditionalCoinGradeLetterIdLabelMap(): array
+    {
+        return [
+            18 => 'MS/PR',
+            19 => 'AU',
+            20 => 'EX/XF',
+            46 => 'VF',
+            47 => 'F',
+            48 => 'VG',
+            49 => 'G',
+            50 => 'AG',
+            51 => 'FR',
+            52 => 'P',
         ];
     }
 
@@ -688,7 +811,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         return (int)$this->getDataByKey(DescriptionResource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_MODE);
     }
 
-    public static function getConditionalCardConditionIdLabelMap(): array
+    public static function getUngradedCardConditionDescriptorMap(): array
     {
         return [
             400010 => 'Near Mint or Better',
@@ -698,6 +821,16 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
             400015 => 'Lightly Played (Excellent)',
             400016 => 'Moderately Played (Very Good)',
             400017 => 'Heavily Played (Poor)',
+        ];
+    }
+
+    public static function getUngradedCoinConditionDescriptorMap(): array
+    {
+        return [
+            7 => 'Uncirculated',
+            8 => 'Extra Fine to About Uncirculated',
+            9 => 'Fine to Very Fine',
+            10 => 'Below Fine',
         ];
     }
 

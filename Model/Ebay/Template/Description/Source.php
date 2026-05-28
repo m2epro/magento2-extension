@@ -255,15 +255,56 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         $template = $this->getEbayDescriptionTemplate();
 
         $professionalGraderId = $this->retrieveConditionDescriptorProfessionalGraderId($template);
-        $gradeId = $this->retrieveConditionDescriptorGradeId($template);
 
-        // ----------------------------------------
-
-        $notFound = [];
         if ($professionalGraderId === null) {
-            $notFound[] = 'Professional Grader';
+            $descriptors['not_found'][] = 'Grader';
+
+            return $descriptors;
         }
 
+        if ($this->isConditionDescriptorProfessionalGraderForCard($professionalGraderId)) {
+            return $this->getDescriptorsForGradeCardCondition($descriptors, $professionalGraderId, $template);
+        }
+
+        return $this->getDescriptorsForGradeCoinCondition($descriptors, $professionalGraderId, $template);
+    }
+
+    private function getDescriptorsForGradeCoinCondition(array $descriptors, string $professionalGraderId, $template): array
+    {
+        $gradeLetter = $this->retrieveConditionDescriptorGradeLetterId($template);
+        $gradeNumerical = $this->retrieveConditionDescriptorGradeId($template);
+
+        $notFound = [];
+        if ($gradeLetter === null) {
+            $notFound[] = 'Grade Letter';
+        }
+
+        if ($gradeNumerical === null) {
+            $notFound[] = 'Grade Numerical';
+        }
+
+        if (!empty($notFound)) {
+            $descriptors['not_found'] = $notFound;
+
+            return $descriptors;
+        }
+
+        $descriptors['required'][Description::CONDITION_DESCRIPTOR_ID_COIN_PROFESSIONAL_GRADER] = $professionalGraderId;
+        $descriptors['required'][Description::CONDITION_DESCRIPTOR_ID_COIN_GRADE_LETTER] = $gradeLetter;
+        $descriptors['required'][Description::CONDITION_DESCRIPTOR_ID_COIN_GRADE_NUMERICAL] = $gradeNumerical;
+
+        if ($certNumber = $this->retrieveConditionDescriptorCertificationNumber($template)) {
+            $descriptors['optional'][Description::CONDITION_DESCRIPTOR_ID_COIN_CERTIFICATION_NUMBER] = $certNumber;
+        }
+
+        return $descriptors;
+    }
+
+    private function getDescriptorsForGradeCardCondition(array $descriptors, string $professionalGraderId, $template): array
+    {
+        $gradeId = $this->retrieveConditionDescriptorGradeId($template);
+
+        $notFound = [];
         if ($gradeId === null) {
             $notFound[] = 'Grade';
         }
@@ -289,23 +330,42 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     private function getDescriptorsForUngradedCondition(array $descriptors): array
     {
         $template = $this->getEbayDescriptionTemplate();
-        $cardConditionId = $this->retrieveConditionGradeCardConditionId($template);
+        $conditionDescriptorValueId = $this->retrieveConditionGradeCardConditionId($template);
 
-        if ($cardConditionId === null) {
-            $descriptors['not_found'][] = 'Card Condition';
+        if ($conditionDescriptorValueId === null) {
+            $descriptors['not_found'][] = 'Card/Coin Condition';
 
             return $descriptors;
         }
 
-        $descriptors['required'][Description::CONDITION_DESCRIPTOR_ID_CARD_CONDITION] = $cardConditionId;
+        $isCardConditionDescriptorValueId = in_array(
+            (int)$conditionDescriptorValueId,
+            array_keys(Description::getUngradedCardConditionDescriptorMap()),
+            true
+        );
+
+        $descriptorId = $isCardConditionDescriptorValueId
+            ? Description::CONDITION_DESCRIPTOR_ID_CARD_CONDITION
+            : Description::CONDITION_DESCRIPTOR_ID_COIN_CONDITION;
+
+        $descriptors['required'][$descriptorId] = $conditionDescriptorValueId;
 
         return $descriptors;
+    }
+
+    private function isConditionDescriptorProfessionalGraderForCard(string $descriptorValueId): bool
+    {
+        return in_array(
+            (int)$descriptorValueId,
+            array_keys(Description::getConditionalProfessionalGraderCardIdLabelMap()),
+            true
+        );
     }
 
     private function retrieveConditionDescriptorProfessionalGraderId(Description $template): ?string
     {
         if ($template->isConditionProfessionalGraderIdModeEbay()) {
-            return $template->getConditionProfessionalGraderIdValue();
+            return (string)$template->getConditionProfessionalGraderIdValue();
         }
 
         if ($template->isConditionProfessionalGraderIdModeAttribute()) {
@@ -313,9 +373,12 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                 $template->getConditionProfessionalGraderIdAttribute()
             );
 
-            $flippedMap = array_flip(
-                Description::getConditionalProfessionalGraderIdLabelMap()
+            $availableDescriptorValues = array_merge(
+                Description::getConditionalProfessionalGraderCardIdLabelMap(),
+                Description::getConditionalProfessionalGraderCoinIdLabelMap(),
             );
+
+            $flippedMap = array_flip($availableDescriptorValues);
 
             return $flippedMap[$attribute] ?? null;
         }
@@ -326,19 +389,41 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     private function retrieveConditionDescriptorGradeId(Description $template): ?string
     {
         if ($template->isConditionGradeIdModeEbay()) {
-            return $template->getConditionGradeIdValue();
+            return (string)$template->getConditionGradeIdValue();
         }
 
         if ($template->isConditionGradeIdModeAttribute()) {
-            $attribute = $this->findProductAttributeValue(
-                $template->getConditionGradeIdAttribute()
-            );
+            $attribute = $this->findProductAttributeValue($template->getConditionGradeIdAttribute());
 
-            $flippedMap = array_flip(
-                Description::getConditionalGradeIdLabelMap()
-            );
+            $flippedMap = array_flip(Description::getConditionalCardGradeIdLabelMap());
 
             return $flippedMap[$attribute] ?? null;
+        }
+
+        return null;
+    }
+
+    private function retrieveConditionDescriptorGradeLetterId(Description $template): ?int
+    {
+        if ($template->isConditionGradeLetterIdModeEbay()) {
+            return $template->getConditionGradeLetterIdValue();
+        }
+
+        if ($template->isConditionGradeLetterIdModeAttribute()) {
+            $attributeValue = $this->findProductAttributeValue(
+                $template->getConditionGradeLetterIdAttribute()
+            );
+
+            $availableDescriptorValues = array_merge(
+                Description::getConditionalCoinGradeLetterIdLabelMap(),
+            );
+            $flippedMap = array_flip($availableDescriptorValues);
+
+            if (isset($flippedMap[$attributeValue])) {
+                return (int)$flippedMap[$attributeValue];
+            }
+
+            return null;
         }
 
         return null;
@@ -362,7 +447,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     private function retrieveConditionGradeCardConditionId(Description $template): ?string
     {
         if ($template->isConditionGradeCardConditionEbay()) {
-            return $template->getConditionGradeCardConditionIdValue();
+            return (string)$template->getConditionGradeCardConditionIdValue();
         }
 
         if ($template->isConditionGradeCardConditionModeAttribute()) {
@@ -370,9 +455,12 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                 $template->getConditionGradeCardConditionIdAttribute()
             );
 
-            $flippedMap = array_flip(
-                Description::getConditionalCardConditionIdLabelMap()
+            $conditions = array_merge(
+                Description::getUngradedCardConditionDescriptorMap(),
+                Description::getUngradedCoinConditionDescriptorMap(),
             );
+
+            $flippedMap = array_flip($conditions);
 
             return $flippedMap[$attribute] ?? null;
         }

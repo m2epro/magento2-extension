@@ -91,6 +91,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->showAdvancedFilterProductsOption = false;
     }
 
+    protected function _prepareLayout()
+    {
+        $this->css->addFile('amazon/multi_location_inventory.css');
+
+        return parent::_prepareLayout();
+    }
+
     //########################################
 
     protected function _prepareCollection()
@@ -161,6 +168,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'defected_messages' => 'defected_messages',
                 'variation_parent_afn_state' => 'variation_parent_afn_state',
                 'variation_parent_repricing_state' => 'variation_parent_repricing_state',
+                'online_multi_location_inventory' => \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product::COLUMN_ONLINE_MULTI_LOCATION_INVENTORY
             ],
             '{{table}}.variation_parent_id is NULL'
         );

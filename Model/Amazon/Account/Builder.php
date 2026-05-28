@@ -2,7 +2,9 @@
 
 namespace Ess\M2ePro\Model\Amazon\Account;
 
+use Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\MultiLocationInventory;
 use Ess\M2ePro\Model\Amazon\Account;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Account as AmazonAccountResource;
 
 class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 {
@@ -432,6 +434,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
         // endregion
 
+        $data[AmazonAccountResource::COLUMN_MULTI_LOCATION_INVENTORY_MAPPING] = $this->appendMultiLocationInventoryMapping();
+
         return $data;
     }
 
@@ -548,6 +552,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             // fba_inventory
             'fba_inventory_mode' => 0,
             'fba_inventory_source_name' => null,
+
+            AmazonAccountResource::COLUMN_MULTI_LOCATION_INVENTORY_MAPPING => [],
         ];
     }
 
@@ -622,5 +628,42 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'WI',
             'WY',
         ];
+    }
+
+    private function appendMultiLocationInventoryMapping(): string
+    {
+        $collection = $this->createMultiLocationInventoryMapping();
+        $value = [];
+
+        foreach ($collection->getItems() as $item) {
+            $value[] = [
+                'magento_source_code' => $item->magentoSourceCode,
+                'amazon_location_code' => $item->amazonLocationCode,
+                'amazon_location_title' => $item->amazonLocationTitle,
+            ];
+        }
+
+        return json_encode($value);
+    }
+
+    private function createMultiLocationInventoryMapping(): MultiLocationInventoryMapping
+    {
+        $rawMapping = $this->rawData[MultiLocationInventory::FORM_KEY_MULTI_LOCATION_INVENTORY] ?? [];
+
+        $items = [];
+        foreach ($rawMapping as $magentoSourceCode => $amazonLocationData) {
+            $amazonLocationCode = $amazonLocationData['id'] ?? null;
+            if (empty($amazonLocationCode)) {
+                continue;
+            }
+
+            $items[] = new MultiLocationInventoryMapping\Item(
+                $magentoSourceCode,
+                $amazonLocationCode,
+                $amazonLocationData['title']
+            );
+        }
+
+        return new MultiLocationInventoryMapping($items);
     }
 }

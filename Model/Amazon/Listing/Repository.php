@@ -23,4 +23,19 @@ class Repository
 
         return array_values($listingsCollection->getItems());
     }
+
+    public function isSellingPolicyUseOnlyForUsMarketplaces(int $sellingPolicyId): bool
+    {
+        $collection = $this->listingCollectionFactory->createWithAmazonChildMode();
+        $collection->addFieldToFilter(
+            'template_selling_format_id',
+            ['eq' => $sellingPolicyId]
+        );
+        $collection->addFieldToFilter(
+            'marketplace_id',
+            ['neq' => \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_US]
+        );
+
+        return $collection->getSize() === 0;
+    }
 }

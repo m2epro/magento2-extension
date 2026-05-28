@@ -194,7 +194,18 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
         $qtyFrom = $amazonListingProduct->getOrigData(AmazonListingProductResource::COLUMN_ONLINE_QTY);
         $qtyTo = $amazonListingProduct->getOnlineQty();
         if ($qtyFrom != $qtyTo) {
-            $this->logSuccessMessage(sprintf('QTY was revised from %s to %s', $qtyFrom, $qtyTo));
+            if ($amazonListingProduct->isMultiLocationInventory()) {
+                $this->logSuccessMessage(
+                    sprintf(
+                        'QTY was revised from %s to %s (%s)',
+                        $qtyFrom,
+                        $qtyTo,
+                        $amazonListingProduct->getOnlineMultiLocationInventory()->toString()
+                    )
+                );
+            } else {
+                $this->logSuccessMessage(sprintf('QTY was revised from %s to %s', $qtyFrom, $qtyTo));
+            }
         }
     }
 

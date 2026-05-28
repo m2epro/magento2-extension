@@ -247,6 +247,8 @@ class Form extends AbstractForm
             ];
         }
 
+        $noticeText = 'Product quantity will be calculated based on your Magento Inventory Source and Amazon Location mapping.';
+
         $fieldset->addField(
             'qty_mode',
             self::SELECT,
@@ -257,6 +259,7 @@ class Form extends AbstractForm
                 'values' => [
                     \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT => __('Product Quantity'),
                     \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_NUMBER => __('Custom Value'),
+                    \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_MULTI_LOCATION_INVENTORY => __('Use Multi-Location Inventory'),
                     [
                         'label' => __('Magento Attributes'),
                         'value' => $preparedAttributes,
@@ -272,6 +275,21 @@ class Form extends AbstractForm
                 'tooltip' => __('Product Quantity for Amazon Listing(s).'),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
+
+        $fieldset->addField(
+            'multi_location_inventory_notice',
+            self::MESSAGES,
+            [
+                'container_id' => 'multi_location_inventory_notice',
+                'style' => 'display: none',
+                'messages' => [
+                    [
+                        'type' => \Magento\Framework\Message\MessageInterface::TYPE_NOTICE,
+                        'content' => $noticeText,
+                    ],
+                ],
+            ],
+        );
 
         $fieldset->addField(
             'qty_custom_attribute',
@@ -1099,6 +1117,15 @@ HTML
             $this->dataHelper->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class)
         );
 
+        $checkMultiLocationInventoryModeRequirementsParams = [];
+        /** @var \Ess\M2ePro\Model\Template\SellingFormat $template */
+        $template = $this->globalDataHelper->getValue('tmp_template');
+        if (!empty($template) && !$template->isObjectNew()) {
+            $checkMultiLocationInventoryModeRequirementsParams = [
+                'selling_template_id' => $template->getId(),
+            ];
+        }
+
         $this->jsUrl->addUrls([
             'formSubmit' => $this->getUrl(
                 '*/amazon_template_sellingFormat/save',
@@ -1108,6 +1135,10 @@ HTML
             'deleteAction' => $this->getUrl(
                 '*/amazon_template_sellingFormat/delete',
                 ['_current' => true]
+            ),
+            'checkMultiLocationInventoryModeRequirements' => $this->getUrl(
+                '*/amazon_template_sellingFormat/checkMultiLocationInventoryModeRequirements',
+                $checkMultiLocationInventoryModeRequirementsParams
             ),
         ]);
 

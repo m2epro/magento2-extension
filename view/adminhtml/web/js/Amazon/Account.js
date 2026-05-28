@@ -167,6 +167,19 @@ define([
                         .observe('change', AmazonAccountObj.fbaInventoryModeChange)
                         .simulate('change')
             }
+
+            $$('.amazon_location_select').each(function (select) {
+                select.observe('change', function() {
+                    let locationTitle = '';
+                    if (this.options[this.selectedIndex].value) {
+                        locationTitle = this.options[this.selectedIndex].text;
+                    }
+
+                    const titleInput = $(`${this.dataset.for}_title`);
+                    titleInput.value = locationTitle;
+                }).simulate('change')
+            });
+
         },
 
         // ---------------------------------------

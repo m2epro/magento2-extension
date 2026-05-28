@@ -303,6 +303,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             $result,
             $this->prepareProfessionalGraderData($input),
             $this->prepareGradeIdData($input),
+            $this->prepareGradeLetterIdData($input),
             $this->prepareCertificationNumberData($input)
         );
     }
@@ -358,6 +359,33 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             ResourceModel::COLUMN_CONDITION_GRADE_ID_MODE => $gradeMode,
             ResourceModel::COLUMN_CONDITION_GRADE_ID_ATTRIBUTE => $grades['attr'],
             ResourceModel::COLUMN_CONDITION_GRADE_ID_VALUE => $grades['val'],
+        ];
+    }
+
+    private function prepareGradeLetterIdData(array $input): array
+    {
+        $modeFieldsMap = [
+            Description::CONDITION_DESCRIPTOR_MODE_NONE => [
+                'attr' => null,
+                'val' => null,
+            ],
+            Description::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE => [
+                'attr' => $input[ResourceModel::COLUMN_CONDITION_GRADE_LETTER_ID_ATTRIBUTE],
+                'val' => null,
+            ],
+            Description::CONDITION_DESCRIPTOR_MODE_EBAY => [
+                'attr' => null,
+                'val' => (int)$input[ResourceModel::COLUMN_CONDITION_GRADE_LETTER_ID_VALUE],
+            ],
+        ];
+
+        $gradeMode = (int)$input[ResourceModel::COLUMN_CONDITION_GRADE_LETTER_ID_MODE];
+        $grades = $modeFieldsMap[$gradeMode];
+
+        return [
+            ResourceModel::COLUMN_CONDITION_GRADE_LETTER_ID_MODE => $gradeMode,
+            ResourceModel::COLUMN_CONDITION_GRADE_LETTER_ID_ATTRIBUTE => $grades['attr'],
+            ResourceModel::COLUMN_CONDITION_GRADE_LETTER_ID_VALUE => $grades['val'],
         ];
     }
 
@@ -451,6 +479,10 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             ResourceModel::COLUMN_CONDITION_GRADE_ID_MODE => Description::CONDITION_DESCRIPTOR_MODE_NONE,
             ResourceModel::COLUMN_CONDITION_GRADE_ID_VALUE => null,
             ResourceModel::COLUMN_CONDITION_GRADE_ID_ATTRIBUTE => null,
+
+            ResourceModel::COLUMN_CONDITION_GRADE_LETTER_ID_MODE => Description::CONDITION_DESCRIPTOR_MODE_NONE,
+            ResourceModel::COLUMN_CONDITION_GRADE_LETTER_ID_VALUE => null,
+            ResourceModel::COLUMN_CONDITION_GRADE_LETTER_ID_ATTRIBUTE => null,
 
             ResourceModel::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_MODE => Description::CONDITION_DESCRIPTOR_MODE_NONE,
             ResourceModel::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_CUSTOM_VALUE => '',

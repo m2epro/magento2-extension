@@ -474,5 +474,21 @@ class RequestData extends \Ess\M2ePro\Model\Listing\Product\Action\RequestData
         return $this->hasVariationAttributes() ? $this->getData()['variation_data']['attributes'] : null;
     }
 
+    // ----------------------------------------
+
+    public function hasMultiLocationInventory(): bool
+    {
+        return isset($this->getData()['multi_location_inventory']);
+    }
+
+    public function getMultiLocationInventory(): ?array
+    {
+        if (!$this->hasMultiLocationInventory()) {
+            return null;
+        }
+
+        return $this->getData()['multi_location_inventory'];
+    }
+
     //########################################
 }

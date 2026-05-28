@@ -27,6 +27,7 @@ class Builder extends AbstractModel
     public const UPDATE_SHIPPING_TAX_DATA = 'shipping_tax_data';
     public const UPDATE_ITEMS_COUNT = 'items_count';
     public const UPDATE_EMAIL = 'email';
+    public const UPDATE_SHIPPING_DATE_TO = 'shipping_date_to';
 
     /** @var \Ess\M2ePro\Model\Ebay\Order\Helper */
     private $helper;
@@ -859,6 +860,10 @@ class Builder extends AbstractModel
         if ($this->hasUpdatedEmail()) {
             $this->updates[] = self::UPDATE_EMAIL;
         }
+
+        if ($this->hasUpdatedShippingDateTo()) {
+            $this->updates[] = self::UPDATE_SHIPPING_DATE_TO;
+        }
     }
 
     // ---------------------------------------
@@ -1038,6 +1043,22 @@ class Builder extends AbstractModel
         return filter_var($newEmail, FILTER_VALIDATE_EMAIL) !== false;
     }
 
+    protected function hasUpdatedShippingDateTo(): bool
+    {
+        if (!$this->isUpdated()) {
+            return false;
+        }
+
+        $old = $this->order->getChildObject()->getShippingDateTo();
+        if (!empty($old)) {
+            return false;
+        }
+
+        $new = $this->getData('shipping_date_to');
+
+        return !empty($new);
+    }
+
     //########################################
 
     /**
@@ -1133,6 +1154,12 @@ class Builder extends AbstractModel
 
         if ($this->hasUpdate(self::UPDATE_EMAIL)) {
             $magentoOrderUpdater->updateCustomerEmail($this->order->getChildObject()->getBuyerEmail());
+        }
+
+        if ($this->hasUpdate(self::UPDATE_SHIPPING_DATE_TO)) {
+            $shippingData = $proxy->getShippingData();
+            $newShippingDescription = $shippingData['carrier_title'] . ' - ' . $shippingData['shipping_method'];
+            $magentoOrderUpdater->updateShippingDescription($newShippingDescription);
         }
 
         $magentoOrderUpdater->finishUpdate();

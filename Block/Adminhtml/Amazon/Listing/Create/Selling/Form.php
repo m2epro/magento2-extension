@@ -4,8 +4,8 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Selling;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Amazon\Listing as AmazonListing;
-use Ess\M2ePro\Model\ResourceModel\Amazon\Listing as ResourceAmazonListing;
 use Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku\General as ValidatorSkuGeneral;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Listing as ResourceAmazonListing;
 
 class Form extends AbstractForm
 {
@@ -1138,6 +1138,9 @@ HTML
                         'sort_field' => 'title',
                         'sort_dir' => 'ASC',
                     ]
+                ),
+                'checkMultiLocationInventoryRequirements' => $this->getUrl(
+                    '*/amazon_listing/checkMultiLocationInventoryRequirements'
                 ),
             ]
         );

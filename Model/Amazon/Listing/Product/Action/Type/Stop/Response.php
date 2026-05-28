@@ -1,14 +1,11 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Stop;
 
 use Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract as ChangeProcessor;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product as AmazonListingProductResource;
 
 class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Response
 {
@@ -32,6 +29,13 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
 
         $this->setLastSynchronizationDates();
         $this->getListingProduct()->save();
+    }
+
+    protected function appendMultiLocationInventory($data): array
+    {
+        $data[AmazonListingProductResource::COLUMN_ONLINE_MULTI_LOCATION_INVENTORY] = null;
+
+        return $data;
     }
 
     protected function setLastSynchronizationDates()

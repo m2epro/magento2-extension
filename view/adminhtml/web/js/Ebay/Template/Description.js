@@ -93,6 +93,9 @@ define([
             $('condition_descriptor_grade')
                     .observe('change', EbayTemplateDescriptionObj.conditionDescriptorGradeChange);
 
+            $('condition_descriptor_grade_letter')
+                    .observe('change', EbayTemplateDescriptionObj.conditionDescriptorGradeLetterChange);
+
             $('condition_descriptor_grade_card_condition')
                     .observe('change', EbayTemplateDescriptionObj.conditionDescriptorGradeCardConditionChange);
 
@@ -272,6 +275,7 @@ define([
         hideAllConditionDescriptors: function () {
             this.hideConditionDescriptorProfessionalGrader();
             this.hideConditionDescriptorGrade();
+            this.hideConditionDescriptorGradeLetter();
             this.hideConditionDescriptorCertificationNumber()
 
             this.hideConditionDescriptorGradeCardCondition();
@@ -280,6 +284,7 @@ define([
         showGradedConditionDescriptors: function () {
             this.showConditionDescriptorProfessionalGrader();
             this.showConditionDescriptorGrade();
+            this.showConditionDescriptorGradeLetter();
             this.showConditionDescriptorCertificationNumber();
 
             this.hideConditionDescriptorGradeCardCondition();
@@ -288,6 +293,7 @@ define([
         showUngradedConditionDescriptors: function () {
             this.hideConditionDescriptorProfessionalGrader();
             this.hideConditionDescriptorGrade();
+            this.hideConditionDescriptorGradeLetter();
             this.hideConditionDescriptorCertificationNumber();
 
             this.showConditionDescriptorGradeCardCondition();
@@ -353,6 +359,27 @@ define([
             }
         },
 
+        conditionDescriptorGradeLetterChange: function() {
+            const self = EbayTemplateDescriptionObj;
+            const gradeValue = $('condition_descriptor_grade_letter_value');
+            const gradeAttribute = $('condition_descriptor_grade_letter_attribute');
+
+            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE')) {
+                self.updateHiddenValue(this, gradeAttribute);
+                gradeValue.update('');
+            }
+
+            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::CONDITION_DESCRIPTOR_MODE_EBAY')) {
+                self.updateHiddenValue(this, gradeValue);
+                gradeAttribute.update('');
+            }
+
+            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::CONDITION_DESCRIPTOR_MODE_NONE')) {
+                gradeAttribute.update('');
+                gradeValue.update('');
+            }
+        },
+
         hideConditionDescriptorGrade: function () {
             $('condition_descriptor_grade_value').value = M2ePro.php.constant(
                     'Ess_M2ePro_Model_Ebay_Template_Description::CONDITION_DESCRIPTOR_MODE_NONE'
@@ -361,9 +388,22 @@ define([
             $('condition_descriptor_grade').simulate('change');
         },
 
+        hideConditionDescriptorGradeLetter: function () {
+            $('condition_descriptor_grade_letter_value').value = M2ePro.php.constant(
+                    'Ess_M2ePro_Model_Ebay_Template_Description::CONDITION_DESCRIPTOR_MODE_NONE'
+            );
+            $('condition_descriptor_grade_letter_tr').hide();
+            $('condition_descriptor_grade_letter').simulate('change');
+        },
+
         showConditionDescriptorGrade: function () {
             $('condition_descriptor_grade_tr').show();
             $('condition_descriptor_grade').simulate('change');
+        },
+
+        showConditionDescriptorGradeLetter: function () {
+            $('condition_descriptor_grade_letter_tr').show();
+            $('condition_descriptor_grade_letter').simulate('change');
         },
 
         // endregion
@@ -411,10 +451,7 @@ define([
             const gradeValueContainer = $('condition_descriptor_certification_number_value_tr');
             const gradeAttribute =  $('condition_descriptor_certification_number_attribute');
 
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::CONDITION_DESCRIPTOR_MODE_NONE')) {
-                gradeValueContainer.hide();
-            }
-
+            gradeValueContainer.hide();
             if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::CONDITION_DESCRIPTOR_MODE_CUSTOM')) {
                 gradeValueContainer.show();
             }

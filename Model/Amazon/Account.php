@@ -3,6 +3,7 @@
 namespace Ess\M2ePro\Model\Amazon;
 
 use Ess\M2ePro\Model\ResourceModel\Amazon\Account as ResourceAccount;
+use Ess\M2ePro\Model\Amazon\Account\MultiLocationInventoryMapping;
 
 class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
@@ -98,7 +99,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function _construct()
     {
         parent::_construct();
-        $this->_init(\Ess\M2ePro\Model\ResourceModel\Amazon\Account::class);
+        $this->_init(ResourceAccount::class);
     }
 
     public function save()
@@ -1173,5 +1174,25 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             ['shipping_information', 'shipping_address_region_override'],
             1
         );
+    }
+
+    public function getMultiLocationInventoryMapping(): MultiLocationInventoryMapping
+    {
+        $data = $this->getData(ResourceAccount::COLUMN_MULTI_LOCATION_INVENTORY_MAPPING);
+        if (empty($data)) {
+            return new MultiLocationInventoryMapping([]);
+        }
+
+        $rawItems = json_decode($data, true);
+        $items = [];
+        foreach ($rawItems as $rawItem) {
+            $items[] = new \Ess\M2ePro\Model\Amazon\Account\MultiLocationInventoryMapping\Item(
+                $rawItem['magento_source_code'],
+                $rawItem['amazon_location_code'],
+                $rawItem['amazon_location_title'],
+            );
+        }
+
+        return new MultiLocationInventoryMapping($items);
     }
 }

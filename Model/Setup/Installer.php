@@ -6154,6 +6154,24 @@ class Installer
             ['nullable' => true]
         );
         $ebayTemplateDescriptionTable->addColumn(
+            EbayTemplateDescription::COLUMN_CONDITION_GRADE_LETTER_ID_VALUE,
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'nullable' => true]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            EbayTemplateDescription::COLUMN_CONDITION_GRADE_LETTER_ID_MODE,
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
+            EbayTemplateDescription::COLUMN_CONDITION_GRADE_LETTER_ID_ATTRIBUTE,
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => true]
+        );
+        $ebayTemplateDescriptionTable->addColumn(
             EbayTemplateDescription::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_CUSTOM_VALUE,
             Table::TYPE_TEXT,
             255,
@@ -8809,125 +8827,135 @@ class Installer
     private function installAmazonSchema()
     {
         # region account
-        $amazonAccountTable = $this->getConnection()->newTable($this->getFullTableName('amazon_account'))
-                                   ->addColumn(
-                                       'account_id',
-                                       Table::TYPE_INTEGER,
-                                       null,
-                                       ['unsigned' => true, 'primary' => true, 'nullable' => false]
-                                   )
-                                   ->addColumn(
-                                       'server_hash',
-                                       Table::TYPE_TEXT,
-                                       255,
-                                       ['nullable' => false]
-                                   )
-                                   ->addColumn(
-                                       'marketplace_id',
-                                       Table::TYPE_INTEGER,
-                                       null,
-                                       ['unsigned' => true, 'nullable' => false]
-                                   )
-                                   ->addColumn(
-                                       'merchant_id',
-                                       Table::TYPE_TEXT,
-                                       255,
-                                       ['nullable' => false]
-                                   )
-                                   ->addColumn(
-                                       'related_store_id',
-                                       Table::TYPE_INTEGER,
-                                       null,
-                                       ['nullable' => false, 'default' => 0]
-                                   )
-                                   ->addColumn(
-                                       'other_listings_synchronization',
-                                       Table::TYPE_SMALLINT,
-                                       null,
-                                       ['unsigned' => true, 'nullable' => false, 'default' => 1]
-                                   )
-                                   ->addColumn(
-                                       'other_listings_mapping_mode',
-                                       Table::TYPE_SMALLINT,
-                                       null,
-                                       ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                   )
-                                   ->addColumn(
-                                       'other_listings_mapping_settings',
-                                       Table::TYPE_TEXT,
-                                       255,
-                                       ['default' => null]
-                                   )
-                                   ->addColumn(
-                                       'inventory_last_synchronization',
-                                       Table::TYPE_DATETIME,
-                                       null,
-                                       ['default' => null]
-                                   )
-                                   ->addColumn(
-                                       'magento_orders_settings',
-                                       Table::TYPE_TEXT,
-                                       null,
-                                       ['nullable' => false]
-                                   )
-                                   ->addColumn(
-                                       'auto_invoicing',
-                                       Table::TYPE_SMALLINT,
-                                       null,
-                                       ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                   )
-                                   ->addColumn(
-                                       'invoice_generation',
-                                       Table::TYPE_SMALLINT,
-                                       null,
-                                       ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                   )
-                                   ->addColumn(
-                                       'create_magento_invoice',
-                                       Table::TYPE_SMALLINT,
-                                       null,
-                                       ['unsigned' => true, 'nullable' => false, 'default' => 1]
-                                   )
-                                   ->addColumn(
-                                       'create_magento_shipment',
-                                       Table::TYPE_SMALLINT,
-                                       null,
-                                       ['unsigned' => true, 'nullable' => false, 'default' => 1]
-                                   )
-                                   ->addColumn(
-                                       'create_magento_shipment_fba_orders',
-                                       Table::TYPE_SMALLINT,
-                                       null,
-                                       ['unsigned' => true, 'nullable' => false, 'default' => 1]
-                                   )
-                                   ->addColumn(
-                                       'remote_fulfillment_program_mode',
-                                       Table::TYPE_SMALLINT,
-                                       null,
-                                       ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                   )
-                                   ->addColumn(
-                                       'info',
-                                       Table::TYPE_TEXT,
-                                       null,
-                                       ['default' => null]
-                                   )
-                                   ->addColumn(
-                                       AmazonAccountResource::COLUMN_FBA_INVENTORY_MODE,
-                                       Table::TYPE_SMALLINT,
-                                       null,
-                                       ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                   )
-                                   ->addColumn(
-                                       AmazonAccountResource::COLUMN_FBA_INVENTORY_SOURCE_NAME,
-                                       Table::TYPE_TEXT,
-                                       255,
-                                       ['default' => null]
-                                   )
-                                   ->setOption('type', 'INNODB')
-                                   ->setOption('charset', 'utf8')
-                                   ->setOption('collate', 'utf8_general_ci')
-                                   ->setOption('row_format', 'dynamic');
+        $amazonAccountTableName = $this->getFullTableName(TablesHelper::TABLE_AMAZON_ACCOUNT);
+        $amazonAccountTable = $this
+            ->getConnection()
+            ->newTable($amazonAccountTableName)
+            ->addColumn(
+                AmazonAccountResource::COLUMN_ACCOUNT_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'server_hash',
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                AmazonAccountResource::COLUMN_MARKETPLACE_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                AmazonAccountResource::COLUMN_MERCHANT_ID,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'related_store_id',
+                Table::TYPE_INTEGER,
+                null,
+                ['nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'other_listings_synchronization',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 1]
+            )
+            ->addColumn(
+                'other_listings_mapping_mode',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'other_listings_mapping_settings',
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'inventory_last_synchronization',
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'magento_orders_settings',
+                Table::TYPE_TEXT,
+                null,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'auto_invoicing',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'invoice_generation',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'create_magento_invoice',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 1]
+            )
+            ->addColumn(
+                'create_magento_shipment',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 1]
+            )
+            ->addColumn(
+                'create_magento_shipment_fba_orders',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 1]
+            )
+            ->addColumn(
+                'remote_fulfillment_program_mode',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'info',
+                Table::TYPE_TEXT,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                AmazonAccountResource::COLUMN_FBA_INVENTORY_MODE,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                AmazonAccountResource::COLUMN_FBA_INVENTORY_SOURCE_NAME,
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
+            )
+            ->addColumn(
+                AmazonAccountResource::COLUMN_MULTI_LOCATION_INVENTORY_MAPPING,
+                Table::TYPE_TEXT,
+                self::LONG_COLUMN_SIZE,
+                ['default' => null]
+            )
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci')
+            ->setOption('row_format', 'dynamic');
+
         $this->getConnection()->createTable($amazonAccountTable);
         # endregion
 
@@ -9914,6 +9942,12 @@ class Installer
             'online_details_data',
             Table::TYPE_TEXT,
             40,
+            ['default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product::COLUMN_ONLINE_MULTI_LOCATION_INVENTORY,
+            Table::TYPE_TEXT,
+            self::LONG_COLUMN_SIZE,
             ['default' => null]
         );
         $amazonListingProductTable->addColumn(

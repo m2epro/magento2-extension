@@ -123,6 +123,11 @@ define([
                 url = M2ePro.url.formSubmit + 'back/' + base64_encode('list') + '/';
             }
 
+            const isValid = this.validateListingSellingPolicy();
+            if (!isValid) {
+                return;
+            }
+
             this.submitForm(url);
         },
 
@@ -139,7 +144,37 @@ define([
                 url = url + 'back/' + base64_encode(backUrl) + '/';
             }
 
+            const isValid = this.validateListingSellingPolicy();
+            if (!isValid) {
+                return;
+            }
+
             this.submitForm(url);
+        },
+
+        validateListingSellingPolicy: function () {
+            let checkResult = false;
+
+            new Ajax.Request(M2ePro.url.get('checkMultiLocationInventoryRequirements'), {
+                method: 'post',
+                asynchronous: false,
+                parameters: {
+                    selling_policy_id: $('template_selling_format_id').value,
+                    marketplace_id: $('marketplace_id').value
+                },
+                onSuccess: (transport) => {
+                    const response = transport.responseText.evalJSON(true);
+                    if (response.success === false) {
+                        this.alert(response.message);
+
+                        return;
+                    }
+
+                    checkResult = true;
+                }
+            });
+
+            return checkResult
         },
 
         // ---------------------------------------

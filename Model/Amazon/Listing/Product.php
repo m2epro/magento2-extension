@@ -46,6 +46,8 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     public const BUSINESS_DISCOUNTS_MAX_RULES_COUNT_ALLOWED = 5;
 
+    private Product\MultiLocationInventory $multiLocationInventory;
+
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculatorFactory */
     private $amazonPriceCalculatorFactory;
     private Product\RetrieveIdentifiers $retrieveIdentifiers;
@@ -61,8 +63,11 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     private $repricingModel = null;
     private \Ess\M2ePro\Model\Amazon\Template\ProductType\Repository $productTypeTemplateRepository;
     private \Ess\M2ePro\Model\Amazon\Template\Shipping\Repository $shippingTemplateRepository;
+    private Product\MultiLocationInventoryFactory $multiLocationInventoryFactory;
+    private \Ess\M2ePro\Helper\Magento $magentoHelper;
 
     public function __construct(
+        Product\MultiLocationInventoryFactory $multiLocationInventoryFactory,
         \Ess\M2ePro\Model\Amazon\Template\Shipping\Repository $shippingTemplateRepository,
         \Ess\M2ePro\Model\Amazon\Template\ProductType\Repository $productTypeTemplateRepository,
         \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculatorFactory $amazonPriceCalculatorFactory,
@@ -70,6 +75,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         \Ess\M2ePro\Model\Amazon\Search\Dispatcher $searchDispatcher,
         \Ess\M2ePro\Helper\Component\Amazon\Configuration $configuration,
         \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -92,6 +98,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             $data
         );
 
+        $this->multiLocationInventoryFactory = $multiLocationInventoryFactory;
         $this->amazonPriceCalculatorFactory = $amazonPriceCalculatorFactory;
         $this->retrieveIdentifiers = $retrieveIdentifiers;
         $this->searchDispatcher = $searchDispatcher;
@@ -99,6 +106,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $this->helperData = $helperData;
         $this->productTypeTemplateRepository = $productTypeTemplateRepository;
         $this->shippingTemplateRepository = $shippingTemplateRepository;
+        $this->magentoHelper = $magentoHelper;
     }
 
     public function _construct(): void
@@ -346,7 +354,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         }
 
         return $this->getShippingTemplate()
-            ->getSource($this->getActualMagentoProduct());
+                    ->getSource($this->getActualMagentoProduct());
     }
 
     // ---------------------------------------
@@ -889,6 +897,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getQty($magentoMode = false)
     {
+        if ($this->isMultiLocationInventory()) {
+            return $this->getMultiLocationInventory()->getTotalQuantity();
+        }
+
         if (
             $this->getVariationManager()->isPhysicalUnit()
             && $this->getVariationManager()->getTypeModel()->isVariationProductMatched()
@@ -914,6 +926,49 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $calculator->setIsMagentoMode($magentoMode);
 
         return $calculator->getProductValue();
+    }
+
+    public function isMultiLocationInventory(): bool
+    {
+        return $this->magentoHelper->isMSISupportingVersion()
+            && $this->getAmazonListing()->getAmazonSellingFormatTemplate()->isQtyModeMultiLocationInventory();
+    }
+
+    public function getOnlineMultiLocationInventory(): Product\MultiLocationInventory
+    {
+        $json = (string)$this->getData(AmazonListingProductResource::COLUMN_ONLINE_MULTI_LOCATION_INVENTORY);
+
+        return self::createMultiLocationInventoryFromJson($json);
+    }
+
+    public static function createMultiLocationInventoryFromJson(string $json): Product\MultiLocationInventory
+    {
+        if (empty($json)) {
+            return new \Ess\M2ePro\Model\Amazon\Listing\Product\MultiLocationInventory([]);
+        }
+
+        $locationsData = json_decode($json, true);
+
+        $locations = [];
+        foreach ($locationsData as $locationData) {
+            $locations[] = new Product\MultiLocationInventory\LocationInventory(
+                $locationData['amazon_location_code'],
+                $locationData['amazon_location_title'],
+                $locationData['quantity']
+            );
+        }
+
+        return new Product\MultiLocationInventory($locations);
+    }
+
+    public function getMultiLocationInventory(): Product\MultiLocationInventory
+    {
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        if (!isset($this->multiLocationInventory)) {
+            $this->multiLocationInventory = $this->multiLocationInventoryFactory->create($this);
+        }
+
+        return $this->multiLocationInventory;
     }
 
     //########################################

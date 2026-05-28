@@ -248,6 +248,22 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         return $data;
     }
 
+    protected function appendMultiLocationInventory($data): array
+    {
+        $metadata = $this->getRequestMetaData();
+        if (!isset($metadata['multi_location_inventory_metadata'])) {
+            return $data;
+        }
+
+        $mliData = $metadata['multi_location_inventory_metadata'];
+
+        $value = empty($mliData) ? null : json_encode($mliData);
+
+        $data[AmazonListingProductResource::COLUMN_ONLINE_MULTI_LOCATION_INVENTORY] = $value;
+
+        return $data;
+    }
+
     protected function appendRegularPriceValues($data)
     {
         if (!$this->getRequestData()->hasRegularPrice()) {

@@ -29,6 +29,10 @@ class Description extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component
     public const COLUMN_CONDITION_GRADE_ID_ATTRIBUTE = 'condition_grade_id_attribute';
     public const COLUMN_CONDITION_GRADE_ID_VALUE = 'condition_grade_id_value';
 
+    public const COLUMN_CONDITION_GRADE_LETTER_ID_MODE = 'condition_grade_letter_id_mode';
+    public const COLUMN_CONDITION_GRADE_LETTER_ID_ATTRIBUTE = 'condition_grade_letter_id_attribute';
+    public const COLUMN_CONDITION_GRADE_LETTER_ID_VALUE = 'condition_grade_letter_id_value';
+
     public const COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_MODE = 'condition_grade_certification_number_mode';
     public const COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_ATTRIBUTE = 'condition_grade_certification_attribute';
     public const COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_CUSTOM_VALUE

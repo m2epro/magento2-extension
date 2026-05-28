@@ -456,6 +456,10 @@ class Config extends AbstractConfig
             'y26_m04' => [
                 'FixAmazonTemplateShippingTableModeDefaultValue',
             ],
+            'y26_m05' => [
+                'AmazonAddMultiLocationInventory',
+                'AddEbayCoinGrades',
+            ],
         ];
     }
 
@@ -575,6 +579,9 @@ class Config extends AbstractConfig
             \Ess\M2ePro\Setup\Update\y26_m03\AmazonUseMagentoAttributeAsSourceOfShippingTemplates::class,
 
             \Ess\M2ePro\Setup\Update\y26_m04\FixAmazonTemplateShippingTableModeDefaultValue::class,
+
+            \Ess\M2ePro\Setup\Update\y26_m05\AmazonAddMultiLocationInventory::class,
+            \Ess\M2ePro\Setup\Update\y26_m05\AddEbayCoinGrades::class,
         ];
     }
 

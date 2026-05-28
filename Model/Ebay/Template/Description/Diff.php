@@ -110,6 +110,10 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
             DescriptionResource::COLUMN_CONDITION_GRADE_ID_VALUE,
             DescriptionResource::COLUMN_CONDITION_GRADE_ID_ATTRIBUTE,
 
+            DescriptionResource::COLUMN_CONDITION_GRADE_LETTER_ID_MODE,
+            DescriptionResource::COLUMN_CONDITION_GRADE_LETTER_ID_VALUE,
+            DescriptionResource::COLUMN_CONDITION_GRADE_LETTER_ID_ATTRIBUTE,
+
             DescriptionResource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_MODE,
             DescriptionResource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_CUSTOM_VALUE,
             DescriptionResource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER_ATTRIBUTE,

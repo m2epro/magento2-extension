@@ -142,6 +142,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
         return (int)$this->getData('qty_mode');
     }
 
+    public function isQtyModeMultiLocationInventory(): bool
+    {
+        return $this->getQtyMode() === \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_MULTI_LOCATION_INVENTORY;
+    }
+
     /**
      * @return bool
      */

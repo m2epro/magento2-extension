@@ -16,8 +16,8 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
     private $dataHelper;
 
     public function __construct(
-        \Magento\Backend\Block\Context $context,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Magento\Backend\Block\Context $context,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -91,7 +91,14 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
                 return '<span style="color: red;">0</span>';
             }
 
-            return $value;
+            $onlineMultiLocationInventoryData = (string)$rowObject->getData('online_multi_location_inventory');
+            if (empty($onlineMultiLocationInventoryData)) {
+                return $value;
+            }
+
+            $onlineMultiLocationInventory = \Ess\M2ePro\Model\Amazon\Listing\Product::createMultiLocationInventoryFromJson($onlineMultiLocationInventoryData);
+
+            return $this->renderMultiLocationInventoryBlock((int)$value, $onlineMultiLocationInventory);
         }
 
         if ($row->getData('general_id') == '') {
@@ -154,5 +161,43 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
     <div>{$value}</div>
     <div>{$resultValue}</div>
 HTML;
+    }
+
+    private function renderMultiLocationInventoryBlock(
+        int $totalQty,
+        \Ess\M2ePro\Model\Amazon\Listing\Product\MultiLocationInventory $onlineMultiLocationInventory
+    ): string {
+        $onlineMultiLocationInventoryHtml = '<div class="multi-location-inventory-block">';
+
+        foreach ($onlineMultiLocationInventory->getLocations() as $location) {
+            $onlineMultiLocationInventoryHtml .= '<p class="location-column">';
+            $onlineMultiLocationInventoryHtml .= sprintf(
+                '<span class="location-title" title="%s">%s:</span><span class="location-quantity">%s</span>',
+                $location->amazonLocationTitle,
+                $this->truncate($location->amazonLocationTitle, 15),
+                $location->quantity
+            );
+            $onlineMultiLocationInventoryHtml .= '</p>';
+        }
+
+        $onlineMultiLocationInventoryHtml .= '<p class="location-column total">';
+        $onlineMultiLocationInventoryHtml .= sprintf(
+            '<span class="location-title">%s:</span><span class="location-quantity">%s</span>',
+            __('Total Quantity'),
+            $totalQty
+        );
+        $onlineMultiLocationInventoryHtml .= '</p>';
+
+        $onlineMultiLocationInventoryHtml .= '</div>';
+
+        return $onlineMultiLocationInventoryHtml;
+    }
+
+    private function truncate(string $value, int $length): string
+    {
+        /** @var \Magento\Framework\Filter\TruncateFilter\Result $result */
+        $result = $this->filterManager->truncateFilter($value, ['length' => $length]);
+
+        return $result->getValue();
     }
 }

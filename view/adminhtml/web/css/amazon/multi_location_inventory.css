@@ -1,0 +1,27 @@
+.multi-location-inventory-block {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.multi-location-inventory-block .location-column {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.multi-location-inventory-block .location-column.total {
+    border-top: 1px dashed #d6d6d6;
+    padding-top: 5px;
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+.multi-location-inventory-block .location-title {
+
+}
+
+.multi-location-inventory-block .location-quantity {
+
+}

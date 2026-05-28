@@ -37,6 +37,25 @@ class Qty extends AbstractModel
 
         $data = ['qty' => $this->cachedData['qty']];
 
+        if ($this->getAmazonListingProduct()->isMultiLocationInventory()) {
+            foreach ($this->getAmazonListingProduct()->getMultiLocationInventory()->getLocations() as $location) {
+                $data['multi_location_inventory'][] = [
+                    'supply_source_id' => $location->amazonLocationCode,
+                    'qty' => $location->quantity,
+                ];
+
+                $data['multi_location_inventory_metadata'][] = [
+                    'amazon_location_code' => $location->amazonLocationCode,
+                    'amazon_location_title' => $location->amazonLocationTitle,
+                    'quantity' => $location->quantity,
+                ];
+            }
+        } else {
+            if (!$this->getAmazonListingProduct()->getOnlineMultiLocationInventory()->isEmpty()) {
+                $data['multi_location_inventory_metadata'] = [];
+            }
+        }
+
         $this->checkQtyWarnings();
 
         if (!isset($this->validatorsData['handling_time'])) {

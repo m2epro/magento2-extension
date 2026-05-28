@@ -33,6 +33,7 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
 
         $data = $this->appendStatusChangerValue($data);
         $data = $this->appendQtyValues($data, $updateRequestDate);
+        $data = $this->appendMultiLocationInventory($data);
         $data = $this->appendRegularPriceValues($data);
         $data = $this->appendBusinessPriceValues($data);
         $data = $this->appendGiftSettingsStatus($data);

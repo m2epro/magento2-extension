@@ -326,7 +326,8 @@ class Data extends AbstractForm
 
         // for Graded Condition
         $this->addToFieldsetConditionDescriptorIdProfessionalGraderId($fieldset, $formData);
-        $this->addToFieldsetConditionDescriptorGradeId($fieldset, $formData);
+        $this->addToFieldsetConditionDescriptorGradeNumericId($fieldset, $formData);
+        $this->addToFieldsetConditionDescriptorGradeLetterId($fieldset, $formData);
         $this->addToFieldsetConditionDescriptorCertificationNumber($fieldset, $formData);
 
         // for Ungraded Condition
@@ -1493,69 +1494,15 @@ JS
         \Magento\Framework\Data\Form\Element\Fieldset $fieldset,
         array $formData
     ): void {
-        $this->addToFieldsetTypeSelectConditionDescriptorGrader(
-            'Professional Grader',
-            'condition_descriptor_professional_grader',
-            'M2ePro-validate-condition-descriptor-for-graded',
-            Description::getConditionalProfessionalGraderIdLabelMap(),
-            ResourceDescription::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_MODE,
-            ResourceDescription::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_VALUE,
-            ResourceDescription::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_ATTRIBUTE,
-            $fieldset,
-            $formData
-        );
-    }
+        $fieldNameMode = ResourceDescription::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_MODE;
+        $fieldNameValue = ResourceDescription::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_VALUE;
+        $fieldAttributeValue = ResourceDescription::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID_ATTRIBUTE;
 
-    private function addToFieldsetConditionDescriptorGradeId(
-        \Magento\Framework\Data\Form\Element\Fieldset $fieldset,
-        array $formData
-    ): void {
-        $this->addToFieldsetTypeSelectConditionDescriptorGrader(
-            'Grade',
-            'condition_descriptor_grade',
-            'M2ePro-validate-condition-descriptor-for-graded',
-            Description::getConditionalGradeIdLabelMap(),
-            ResourceDescription::COLUMN_CONDITION_GRADE_ID_MODE,
-            ResourceDescription::COLUMN_CONDITION_GRADE_ID_VALUE,
-            ResourceDescription::COLUMN_CONDITION_GRADE_ID_ATTRIBUTE,
-            $fieldset,
-            $formData
-        );
-    }
-
-    private function addToFieldsetConditionDescriptorGradeCardConditionId(
-        \Magento\Framework\Data\Form\Element\Fieldset $fieldset,
-        array $formData
-    ): void {
-        $this->addToFieldsetTypeSelectConditionDescriptorGrader(
-            'Card Condition',
-            'condition_descriptor_grade_card_condition',
-            'M2ePro-validate-condition-descriptor-for-ungraded',
-            Description::getConditionalCardConditionIdLabelMap(),
-            ResourceDescription::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_MODE,
-            ResourceDescription::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_VALUE,
-            ResourceDescription::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_ATTRIBUTE,
-            $fieldset,
-            $formData
-        );
-    }
-
-    private function addToFieldsetTypeSelectConditionDescriptorGrader(
-        string $gradeLabel,
-        string $elementId,
-        string $className,
-        array $idLabelMap,
-        string $fieldNameMode,
-        string $fieldNameValue,
-        string $fieldAttributeValue,
-        \Magento\Framework\Data\Form\Element\Fieldset $fieldset,
-        $formData
-    ): void {
         $mode = (int)$formData[$fieldNameMode];
 
-        $descriptors = [];
+        $cardGraderDescriptors = [];
         $isEbayMode = $mode === Description::CONDITION_DESCRIPTOR_MODE_EBAY;
-        foreach ($idLabelMap as $id => $label) {
+        foreach (Description::getConditionalProfessionalGraderCardIdLabelMap() as $id => $label) {
             $item = [
                 'label' => __($label),
                 'value' => Description::CONDITION_DESCRIPTOR_MODE_EBAY,
@@ -1571,7 +1518,27 @@ JS
                 $item['attrs']['selected'] = 'selected';
             }
 
-            $descriptors[] = $item;
+            $cardGraderDescriptors[] = $item;
+        }
+
+        $coinGraderDescriptors = [];
+        foreach (Description::getConditionalProfessionalGraderCoinIdLabelMap() as $id => $label) {
+            $item = [
+                'label' => __($label),
+                'value' => Description::CONDITION_DESCRIPTOR_MODE_EBAY,
+                'attrs' => [
+                    'attribute_code' => $id,
+                ],
+            ];
+
+            if (
+                $isEbayMode
+                && (int)$formData[$fieldNameValue] === $id
+            ) {
+                $item['attrs']['selected'] = 'selected';
+            }
+
+            $coinGraderDescriptors[] = $item;
         }
 
         $attributes = [];
@@ -1596,17 +1563,21 @@ JS
         }
 
         $fieldset->addField(
-            $elementId,
+            'condition_descriptor_professional_grader',
             self::SELECT,
             [
-                'container_id' => $elementId . '_tr',
-                'label' => __($gradeLabel),
+                'container_id' => 'condition_descriptor_professional_grader_tr',
+                'label' => __('Grader'),
                 'name' => sprintf('description[%s]', $fieldNameMode),
                 'values' => [
                     Description::CONDITION_DESCRIPTOR_MODE_NONE => __('None'),
                     [
-                        'label' => __('Select ' . $gradeLabel),
-                        'value' => $descriptors,
+                        'label' => __('Select Card Grader'),
+                        'value' => $cardGraderDescriptors,
+                    ],
+                    [
+                        'label' => __('Select Coin Grader'),
+                        'value' => $coinGraderDescriptors,
                     ],
                     [
                         'label' => __('Magento Attribute'),
@@ -1621,7 +1592,7 @@ JS
                     ? (int)$formData[$fieldNameMode]
                     : -1,
                 'create_magento_attribute' => true,
-                'class' => $className,
+                'class' => 'M2ePro-validate-condition-descriptor-for-graded',
                 'required' => true,
                 'hidden' => true,
             ],
@@ -1631,7 +1602,7 @@ JS
         );
 
         $fieldset->addField(
-            $elementId . '_attribute',
+            'condition_descriptor_professional_grader_attribute',
             'hidden',
             [
                 'name' => sprintf('description[%s]', $fieldAttributeValue),
@@ -1640,7 +1611,376 @@ JS
         );
 
         $fieldset->addField(
-            $elementId . '_value',
+            'condition_descriptor_professional_grader_value',
+            'hidden',
+            [
+                'name' => sprintf('description[%s]', $fieldNameValue),
+                'value' => $formData[$fieldNameValue],
+            ]
+        );
+    }
+
+    private function addToFieldsetConditionDescriptorGradeNumericId(
+        \Magento\Framework\Data\Form\Element\Fieldset $fieldset,
+        array $formData
+    ): void {
+        $fieldNameMode = ResourceDescription::COLUMN_CONDITION_GRADE_ID_MODE;
+        $fieldNameValue = ResourceDescription::COLUMN_CONDITION_GRADE_ID_VALUE;
+        $fieldAttributeValue = ResourceDescription::COLUMN_CONDITION_GRADE_ID_ATTRIBUTE;
+
+        $mode = (int)$formData[$fieldNameMode];
+
+        $isEbayMode = $mode === Description::CONDITION_DESCRIPTOR_MODE_EBAY;
+
+        $cardGradeDescriptors = [];
+        foreach (Description::getConditionalCardGradeIdLabelMap() as $id => $label) {
+            $item = [
+                'label' => __($label),
+                'value' => Description::CONDITION_DESCRIPTOR_MODE_EBAY,
+                'attrs' => [
+                    'attribute_code' => $id,
+                ],
+            ];
+
+            if (
+                $isEbayMode
+                && (int)$formData[$fieldNameValue] === $id
+            ) {
+                $item['attrs']['selected'] = 'selected';
+            }
+
+            $cardGradeDescriptors[] = $item;
+        }
+
+        $coinGradeDescriptors = [];
+        foreach (Description::getConditionalCoinGradeNumericIdLabelMap() as $id => $label) {
+            $item = [
+                'label' => __($label),
+                'value' => Description::CONDITION_DESCRIPTOR_MODE_EBAY,
+                'attrs' => [
+                    'attribute_code' => $id,
+                ],
+            ];
+
+            if (
+                $isEbayMode
+                && (int)$formData[$fieldNameValue] === $id
+            ) {
+                $item['attrs']['selected'] = 'selected';
+            }
+
+            $coinGradeDescriptors[] = $item;
+        }
+
+        $attributes = [];
+        $isAttributeMode = $mode === Description::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE;
+        foreach ($this->getAllAttributesByTypes()['text_select'] as $attribute) {
+            $item = [
+                'value' => Description::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE,
+                'label' => $attribute['label'],
+                'attrs' => [
+                    'attribute_code' => $attribute['code'],
+                ],
+            ];
+
+            if (
+                $isAttributeMode
+                && $formData[$fieldAttributeValue] === $attribute['code']
+            ) {
+                $item['attrs']['selected'] = 'selected';
+            }
+
+            $attributes[] = $item;
+        }
+
+        $fieldset->addField(
+            'condition_descriptor_grade',
+            self::SELECT,
+            [
+                'container_id' => 'condition_descriptor_grade_tr',
+                'label' => __('Grade: Numeric'),
+                'name' => sprintf('description[%s]', $fieldNameMode),
+                'values' => [
+                    Description::CONDITION_DESCRIPTOR_MODE_NONE => __('None'),
+                    [
+                        'label' => __('Select Card Grade'),
+                        'value' => $cardGradeDescriptors,
+                    ],
+                    [
+                        'label' => __('Select Coin Grade'),
+                        'value' => $coinGradeDescriptors,
+                    ],
+                    [
+                        'label' => __('Magento Attribute'),
+                        'value' => $attributes,
+                        'attrs' => [
+                            'is_magento_attribute' => true,
+                            'class' => 'duration_attribute',
+                        ],
+                    ],
+                ],
+                'value' => (int)$formData[$fieldNameMode] === Description::CONDITION_DESCRIPTOR_MODE_NONE
+                    ? (int)$formData[$fieldNameMode]
+                    : -1,
+                'create_magento_attribute' => true,
+                'class' => 'M2ePro-validate-condition-descriptor-for-graded',
+                'required' => true,
+                'hidden' => true,
+            ],
+        )->addCustomAttribute(
+            'allowed_attribute_types',
+            'text,select'
+        );
+
+        $fieldset->addField(
+            'condition_descriptor_grade_attribute',
+            'hidden',
+            [
+                'name' => sprintf('description[%s]', $fieldAttributeValue),
+                'value' => $formData[$fieldAttributeValue],
+            ]
+        );
+
+        $fieldset->addField(
+            'condition_descriptor_grade_value',
+            'hidden',
+            [
+                'name' => sprintf('description[%s]', $fieldNameValue),
+                'value' => $formData[$fieldNameValue],
+            ]
+        );
+    }
+
+    private function addToFieldsetConditionDescriptorGradeLetterId(
+        \Magento\Framework\Data\Form\Element\Fieldset $fieldset,
+        array $formData
+    ): void {
+        $fieldNameMode = ResourceDescription::COLUMN_CONDITION_GRADE_LETTER_ID_MODE;
+        $fieldNameValue = ResourceDescription::COLUMN_CONDITION_GRADE_LETTER_ID_VALUE;
+        $fieldAttributeValue = ResourceDescription::COLUMN_CONDITION_GRADE_LETTER_ID_ATTRIBUTE;
+
+        $mode = (int)$formData[$fieldNameMode];
+
+        $isEbayMode = $mode === Description::CONDITION_DESCRIPTOR_MODE_EBAY;
+
+        $coinGradeDescriptors = [];
+        foreach (Description::getConditionalCoinGradeLetterIdLabelMap() as $id => $label) {
+            $item = [
+                'label' => __($label),
+                'value' => Description::CONDITION_DESCRIPTOR_MODE_EBAY,
+                'attrs' => [
+                    'attribute_code' => $id,
+                ],
+            ];
+
+            if (
+                $isEbayMode
+                && (int)$formData[$fieldNameValue] === $id
+            ) {
+                $item['attrs']['selected'] = 'selected';
+            }
+
+            $coinGradeDescriptors[] = $item;
+        }
+
+        $attributes = [];
+        $isAttributeMode = $mode === Description::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE;
+        foreach ($this->getAllAttributesByTypes()['text_select'] as $attribute) {
+            $item = [
+                'value' => Description::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE,
+                'label' => $attribute['label'],
+                'attrs' => [
+                    'attribute_code' => $attribute['code'],
+                ],
+            ];
+
+            if (
+                $isAttributeMode
+                && $formData[$fieldAttributeValue] === $attribute['code']
+            ) {
+                $item['attrs']['selected'] = 'selected';
+            }
+
+            $attributes[] = $item;
+        }
+
+        $fieldset->addField(
+            'condition_descriptor_grade_letter',
+            self::SELECT,
+            [
+                'container_id' => 'condition_descriptor_grade_letter_tr',
+                'label' => __('Grade: Letter'),
+                'name' => sprintf('description[%s]', $fieldNameMode),
+                'values' => [
+                    Description::CONDITION_DESCRIPTOR_MODE_NONE => __('None'),
+                    [
+                        'label' => __('Select Coin Grade'),
+                        'value' => $coinGradeDescriptors,
+                    ],
+                    [
+                        'label' => __('Magento Attribute'),
+                        'value' => $attributes,
+                        'attrs' => [
+                            'is_magento_attribute' => true,
+                            'class' => 'duration_attribute',
+                        ],
+                    ],
+                ],
+                'value' => (int)$formData[$fieldNameMode] === Description::CONDITION_DESCRIPTOR_MODE_NONE
+                    ? (int)$formData[$fieldNameMode]
+                    : -1,
+                'create_magento_attribute' => true,
+                'class' => 'M2ePro-validate-condition-descriptor-for-graded',
+                'required' => true,
+                'hidden' => true,
+            ],
+        )->addCustomAttribute(
+            'allowed_attribute_types',
+            'text,select'
+        );
+
+        $fieldset->addField(
+            'condition_descriptor_grade_letter_attribute',
+            'hidden',
+            [
+                'name' => sprintf('description[%s]', $fieldAttributeValue),
+                'value' => $formData[$fieldAttributeValue],
+            ]
+        );
+
+        $fieldset->addField(
+            'condition_descriptor_grade_letter_value',
+            'hidden',
+            [
+                'name' => sprintf('description[%s]', $fieldNameValue),
+                'value' => $formData[$fieldNameValue],
+            ]
+        );
+    }
+
+    private function addToFieldsetConditionDescriptorGradeCardConditionId(
+        \Magento\Framework\Data\Form\Element\Fieldset $fieldset,
+        array $formData
+    ): void {
+        $fieldNameMode = ResourceDescription::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_MODE;
+        $fieldNameValue = ResourceDescription::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_VALUE;
+        $fieldAttributeValue = ResourceDescription::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID_ATTRIBUTE;
+
+        $mode = (int)$formData[$fieldNameMode];
+
+        $isEbayMode = $mode === Description::CONDITION_DESCRIPTOR_MODE_EBAY;
+
+        $cardConditions = [];
+        foreach (Description::getUngradedCardConditionDescriptorMap() as $id => $label) {
+            $item = [
+                'label' => __($label),
+                'value' => Description::CONDITION_DESCRIPTOR_MODE_EBAY,
+                'attrs' => [
+                    'attribute_code' => $id,
+                ],
+            ];
+
+            if (
+                $isEbayMode
+                && (int)$formData[$fieldNameValue] === $id
+            ) {
+                $item['attrs']['selected'] = 'selected';
+            }
+
+            $cardConditions[] = $item;
+        }
+
+        $coinConditions = [];
+        foreach (Description::getUngradedCoinConditionDescriptorMap() as $id => $label) {
+            $item = [
+                'label' => __($label),
+                'value' => Description::CONDITION_DESCRIPTOR_MODE_EBAY,
+                'attrs' => [
+                    'attribute_code' => $id,
+                ],
+            ];
+
+            if (
+                $isEbayMode
+                && (int)$formData[$fieldNameValue] === $id
+            ) {
+                $item['attrs']['selected'] = 'selected';
+            }
+
+            $coinConditions[] = $item;
+        }
+
+        $attributes = [];
+        $isAttributeMode = $mode === Description::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE;
+        foreach ($this->getAllAttributesByTypes()['text_select'] as $attribute) {
+            $item = [
+                'value' => Description::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE,
+                'label' => $attribute['label'],
+                'attrs' => [
+                    'attribute_code' => $attribute['code'],
+                ],
+            ];
+
+            if (
+                $isAttributeMode
+                && $formData[$fieldAttributeValue] === $attribute['code']
+            ) {
+                $item['attrs']['selected'] = 'selected';
+            }
+
+            $attributes[] = $item;
+        }
+
+        $fieldset->addField(
+            'condition_descriptor_grade_card_condition',
+            self::SELECT,
+            [
+                'container_id' => 'condition_descriptor_grade_card_condition_tr',
+                'label' => __('Card/Coin Condition'),
+                'name' => sprintf('description[%s]', $fieldNameMode),
+                'values' => [
+                    Description::CONDITION_DESCRIPTOR_MODE_NONE => __('None'),
+                    [
+                        'label' => __('Select Card Condition'),
+                        'value' => $cardConditions,
+                    ],
+                    [
+                        'label' => __('Select Coin Condition'),
+                        'value' => $coinConditions,
+                    ],
+                    [
+                        'label' => __('Magento Attribute'),
+                        'value' => $attributes,
+                        'attrs' => [
+                            'is_magento_attribute' => true,
+                            'class' => 'duration_attribute',
+                        ],
+                    ],
+                ],
+                'value' => (int)$formData[$fieldNameMode] === Description::CONDITION_DESCRIPTOR_MODE_NONE
+                    ? (int)$formData[$fieldNameMode]
+                    : -1,
+                'create_magento_attribute' => true,
+                'class' => 'M2ePro-validate-condition-descriptor-for-ungraded',
+                'required' => true,
+                'hidden' => true,
+            ],
+        )->addCustomAttribute(
+            'allowed_attribute_types',
+            'text,select'
+        );
+
+        $fieldset->addField(
+            'condition_descriptor_grade_card_condition_attribute',
+            'hidden',
+            [
+                'name' => sprintf('description[%s]', $fieldAttributeValue),
+                'value' => $formData[$fieldAttributeValue],
+            ]
+        );
+
+        $fieldset->addField(
+            'condition_descriptor_grade_card_condition_value',
             'hidden',
             [
                 'name' => sprintf('description[%s]', $fieldNameValue),

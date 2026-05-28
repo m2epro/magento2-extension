@@ -271,6 +271,23 @@ define([
 
         qty_mode_change: function()
         {
+            const multiLocationInventoryNotice = $('multi_location_inventory_notice');
+            multiLocationInventoryNotice.hide();
+            if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Template\\SellingFormat::QTY_MODE_MULTI_LOCATION_INVENTORY')) {
+                multiLocationInventoryNotice.show();
+                new Ajax.Request(M2ePro.url.get('checkMultiLocationInventoryModeRequirements'), {
+                    method: 'post',
+                    onSuccess: (transport) => {
+                        const response = transport.responseText.evalJSON();
+                        if (!response.success) {
+                            AmazonTemplateSellingFormatObj.alert(response.message);
+                            $('qty_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Template\\SellingFormat::QTY_MODE_PRODUCT');
+                            $('qty_mode').simulate('change');
+                        }
+                    }
+                })
+            }
+
             $('qty_custom_value_tr', 'qty_percentage_tr', 'qty_modification_mode_tr').invoke('hide');
 
             $('qty_custom_attribute').value = '';

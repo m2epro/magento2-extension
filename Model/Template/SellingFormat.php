@@ -15,6 +15,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abst
     public const QTY_MODE_NUMBER = 3;
     public const QTY_MODE_ATTRIBUTE = 4;
     public const QTY_MODE_PRODUCT_FIXED = 5;
+    public const QTY_MODE_MULTI_LOCATION_INVENTORY = 6;
 
     public const PRICE_MODE_NONE = 0;
     public const PRICE_MODE_PRODUCT = 1;
