@@ -6,23 +6,28 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Cron;
 
 class Run extends \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Main
 {
+    private \Ess\M2ePro\Model\Cron\Runner\Developer $cronRunner;
+
+    public function __construct(
+        \Ess\M2ePro\Model\Cron\Runner\Developer $cronRunner,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($context);
+        $this->cronRunner = $cronRunner;
+    }
+
     public function execute()
     {
-        $cronRunner = $this->modelFactory
-            ->getObjectByClass(\Ess\M2ePro\Model\Cron\Runner\Developer::class);
+        $taskCodes = array_filter($this->getRequest()->getParam('task_codes', []));
 
-        $taskCode = $this->getRequest()->getParam('task_code');
-        if (!empty($taskCode)) {
-            $cronRunner->setAllowedTasks([$taskCode]);
+        if (!empty($taskCodes)) {
+            $this->cronRunner->setAllowedTasks($taskCodes);
         }
 
-        $cronRunner->process();
+        $this->cronRunner->process();
 
-        $cronRunInfo = sprintf(
-            '<pre>%s</pre>',
-            $cronRunner->getOperationHistory()->getFullDataInfo()
-        );
-
-        $this->getResponse()->setBody($cronRunInfo);
+        $this
+            ->getResponse()
+            ->setBody($this->cronRunner->getOperationHistory()->getFullDataInfo());
     }
 }

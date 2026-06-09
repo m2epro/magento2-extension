@@ -1195,4 +1195,24 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
         return new MultiLocationInventoryMapping($items);
     }
+
+    public function setOrderReturnDataLastSynchronization(\DateTime $date): self
+    {
+        $this->setData(
+            ResourceAccount::COLUMN_ORDER_RETURN_DATA_LAST_SYNCHRONIZATION,
+            $date->format('Y-m-d H:i:s')
+        );
+
+        return $this;
+    }
+
+    public function getOrderReturnDataLastSynchronization(): ?\DateTime
+    {
+        $value = $this->getData(ResourceAccount::COLUMN_ORDER_RETURN_DATA_LAST_SYNCHRONIZATION);
+        if (empty($value)) {
+            return null;
+        }
+
+        return \Ess\M2ePro\Helper\Date::createDateGmt($value);
+    }
 }

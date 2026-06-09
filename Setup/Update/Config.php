@@ -459,6 +459,7 @@ class Config extends AbstractConfig
             'y26_m05' => [
                 'AmazonAddMultiLocationInventory',
                 'AddEbayCoinGrades',
+                'AmazonAddReturnFlow',
             ],
         ];
     }
@@ -582,6 +583,7 @@ class Config extends AbstractConfig
 
             \Ess\M2ePro\Setup\Update\y26_m05\AmazonAddMultiLocationInventory::class,
             \Ess\M2ePro\Setup\Update\y26_m05\AddEbayCoinGrades::class,
+            \Ess\M2ePro\Setup\Update\y26_m05\AmazonAddReturnFlow::class,
         ];
     }
 

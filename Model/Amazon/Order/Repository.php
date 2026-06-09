@@ -31,6 +31,23 @@ class Repository
         return $entity;
     }
 
+    public function findByAmazonOrderId(string $amazonOrderId): ?\Ess\M2ePro\Model\Order
+    {
+        $collection = $this->orderCollectionFactory->createWithAmazonChildMode();
+        $collection->addFieldToFilter(
+            AmazonOrderResource::COLUMN_AMAZON_ORDER_ID,
+            $amazonOrderId
+        );
+
+        /** @var \Ess\M2ePro\Model\Order $order */
+        $order = $collection->getFirstItem();
+        if ($order->isObjectNew()) {
+            return null;
+        }
+
+        return $order;
+    }
+
     /**
      * @return \Ess\M2ePro\Model\Order[]
      */

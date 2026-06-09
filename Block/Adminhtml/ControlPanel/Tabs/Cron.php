@@ -6,7 +6,19 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 class Cron extends AbstractForm
 {
-    public array $tasks = [];
+    private array $tasks;
+    private \Ess\M2ePro\Model\Cron\Task\Repository $taskRepository;
+
+    public function __construct(
+        \Ess\M2ePro\Model\Cron\Task\Repository $taskRepository,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        parent::__construct($context, $registry, $formFactory, $data);
+        $this->taskRepository = $taskRepository;
+    }
 
     public function _construct()
     {
@@ -14,54 +26,68 @@ class Cron extends AbstractForm
 
         $this->setId('controlPanelCron');
         $this->setTemplate('control_panel/tabs/cron.phtml');
+        $this->css->addFile('controlPanel/cronTab.css');
     }
 
-    protected function _beforeToHtml()
+    public function getModuleIdentifier(): string
     {
-        /** @var \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo */
-        $taskRepo = $this->modelFactory->getObject('Cron_Task_Repository');
+        return \Ess\M2ePro\Helper\Module::IDENTIFIER;
+    }
 
+    public function getCronRunUrl(): string
+    {
+        return $this->getUrl('*/controlPanel_cron/run');
+    }
+
+    public function getTasks(): array
+    {
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        if (!isset($this->tasks)) {
+            $tasks = [];
+            $extensionTasks = $this->getExtensionTasks();
+            foreach ($extensionTasks as $task) {
+                $group = $task->group;
+                $nick = $task->nick;
+                $tasks[ucfirst($group)][$task->code] = $this->generateTaskTitle($group, $nick);
+            }
+
+            foreach ($tasks as &$tasksByGroup) {
+                asort($tasksByGroup);
+            }
+
+            unset($tasksByGroup);
+            $this->tasks = $tasks;
+        }
+
+        return $this->tasks;
+    }
+
+    private function getExtensionTasks(): array
+    {
         $tasks = [];
-        foreach ($taskRepo->getRegisteredTasks() as $taskNick) {
-            $group = $taskRepo->getTaskGroup($taskNick);
-            $titleParts = explode('/', $taskNick);
-            reset($titleParts) === $group && array_shift($titleParts);
-
-            $taskTitle = preg_replace_callback(
-                '/_([a-z])/i',
-                function ($matches) {
-                    return ucfirst($matches[1]);
-                },
-                implode(' > ', array_map('ucfirst', $titleParts))
-            );
-
-            $tasks[ucfirst($group)][$taskNick] = $taskTitle;
+        foreach ($this->taskRepository->getRegisteredTasks() as $taskNick) {
+            $tasks[] = (object)[
+                'group' => $this->taskRepository->getTaskGroup($taskNick),
+                'nick' => $taskNick,
+                'code' => $taskNick,
+            ];
         }
 
-        foreach ($tasks as $group => &$tasksByGroup) {
-            asort($tasksByGroup);
+        return $tasks;
+    }
+
+    private function generateTaskTitle(string $group, string $nick): string
+    {
+        $titleParts = explode('/', $nick);
+
+        if (reset($titleParts) === $group) {
+            array_shift($titleParts);
         }
 
-        unset($tasksByGroup);
-        $this->tasks = $tasks;
-
-        return parent::_beforeToHtml();
-    }
-
-    public function getRunAllUrl(): string
-    {
-        return $this->getTaskUrl('');
-    }
-
-    public function getTaskUrl(string $taskCode): string
-    {
-        return $this->getUrl(
-            '*/controlPanel_cron/run',
-            [
-                '_query' => [
-                    'task_code' => $taskCode,
-                ],
-            ]
+        return preg_replace_callback(
+            '/_([a-z])/i',
+            static fn($matches) => ucfirst($matches[1]),
+            implode(' > ', array_map('ucfirst', $titleParts))
         );
     }
 }

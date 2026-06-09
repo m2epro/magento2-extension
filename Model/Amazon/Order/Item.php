@@ -8,6 +8,7 @@ namespace Ess\M2ePro\Model\Amazon\Order;
 
 use Ess\M2ePro\Model\Amazon\Order\Item\CustomizationDetails\TextPrintingCustomization;
 use Ess\M2ePro\Model\Order\Exception\ProductCreationDisabled;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Order\Item as AmazonOrderItemResource;
 
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
@@ -56,7 +57,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     public function _construct()
     {
         parent::_construct();
-        $this->_init(\Ess\M2ePro\Model\ResourceModel\Amazon\Order\Item::class);
+        $this->_init(AmazonOrderItemResource::class);
     }
 
     public function getProxy()
@@ -209,7 +210,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     public function isShippingPalletDelivery(): bool
     {
         return (bool)$this->getData(
-            \Ess\M2ePro\Model\ResourceModel\Amazon\Order\Item::COLUMN_IS_SHIPPING_PALLET_DELIVERY
+            AmazonOrderItemResource::COLUMN_IS_SHIPPING_PALLET_DELIVERY
         );
     }
 
@@ -550,11 +551,42 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
 
     private function getCustomizationDetails(): array
     {
-        $value = $this->getData(\Ess\M2ePro\Model\ResourceModel\Amazon\Order\Item::COLUMN_CUSTOMIZATION_DETAILS);
+        $value = $this->getData(AmazonOrderItemResource::COLUMN_CUSTOMIZATION_DETAILS);
         if (empty($value)) {
             return [];
         }
 
         return json_decode($value, true);
+    }
+
+    public function getReturnRequestStatus(): string
+    {
+        return (string)$this->getData(AmazonOrderItemResource::COLUMN_RETURN_REQUEST_STATUS);
+    }
+
+    public function isReturnRequestStatusApproved(): bool
+    {
+        return $this->getReturnRequestStatus() === \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\ReturnDetails\Item::STATUS_APPROVED;
+    }
+
+    public function setReturnDetails(
+        \DateTime $returnRequestDate,
+        string $returnRequestStatus,
+        string $trackingId,
+        int $returnQty,
+        string $resolution
+    ): self {
+        $this->setData(AmazonOrderItemResource::COLUMN_RETURN_REQUEST_DATE, $returnRequestDate->format('Y-m-d'));
+        $this->setData(AmazonOrderItemResource::COLUMN_RETURN_REQUEST_STATUS, $returnRequestStatus);
+        $this->setData(AmazonOrderItemResource::COLUMN_RETURN_TRACKING_ID, $trackingId);
+        $this->setData(AmazonOrderItemResource::COLUMN_RETURN_QTY, $returnQty);
+        $this->setData(AmazonOrderItemResource::COLUMN_RETURN_RESOLUTION, $resolution);
+
+        return $this;
+    }
+
+    public function getOriginReturnRequestStatus(): string
+    {
+        return (string)$this->getOrigData(AmazonOrderItemResource::COLUMN_RETURN_REQUEST_STATUS);
     }
 }

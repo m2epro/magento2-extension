@@ -582,6 +582,8 @@ HTML;
         $gridId = $this->getId();
 
         foreach ($items as $item) {
+            /** @var \Ess\M2ePro\Model\Amazon\Order\Item $amazonOrderItem **/
+            $amazonOrderItem = $item->getChildObject();
             if ($html != '') {
                 $html .= '<br/>';
             }
@@ -633,9 +635,9 @@ HTML;
             }
 
             $skuHtml = '';
-            if ($item->getChildObject()->getSku()) {
+            if ($amazonOrderItem->getSku()) {
                 $skuLabel = __('SKU');
-                $sku = $this->dataHelper->escapeHtml($item->getChildObject()->getSku());
+                $sku = $this->dataHelper->escapeHtml($amazonOrderItem->getSku());
                 if ($product !== null) {
                     $productUrl = $this->getUrl('catalog/product/edit', ['id' => $product->getId()]);
                     $sku = <<<STRING
@@ -648,11 +650,11 @@ STRING;
 STRING;
             }
 
-            $generalIdLabel = __($item->getChildObject()->getIsIsbnGeneralId() ? 'ISBN' : 'ASIN');
-            $generalId = $this->dataHelper->escapeHtml($item->getChildObject()->getGeneralId());
+            $generalIdLabel = __($amazonOrderItem->getIsIsbnGeneralId() ? 'ISBN' : 'ASIN');
+            $generalId = $this->dataHelper->escapeHtml($amazonOrderItem->getGeneralId());
 
             $itemUrl = $this->amazonHelper->getItemUrl(
-                $item->getChildObject()->getGeneralId(),
+                $amazonOrderItem->getGeneralId(),
                 $row->getData('marketplace_id')
             );
 
@@ -662,10 +664,18 @@ STRING;
 <span style="padding-left: 10px;"><b>{$generalIdLabel}:</b>&nbsp;{$itemLink}</span><br/>
 STRING;
 
-            $itemTitle = $this->dataHelper->escapeHtml($item->getChildObject()->getTitle());
+            $itemTitle = $this->dataHelper->escapeHtml($amazonOrderItem->getTitle());
+
+            if ($amazonOrderItem->isReturnRequestStatusApproved()) {
+                $itemTitle .= sprintf(
+                    "&nbsp;<span style='color: #E83C3C'>(%s)</span>",
+                    __('Return Requested')
+                );
+            }
+
             $qtyLabel = __('QTY');
             $qtyHtml = <<<HTML
-<span style="padding-left: 10px;"><b>{$qtyLabel}:</b> {$item->getChildObject()->getQtyPurchased()}</span>
+<span style="padding-left: 10px;"><b>{$qtyLabel}:</b> {$amazonOrderItem->getQtyPurchased()}</span>
 HTML;
 
             $html .= <<<HTML

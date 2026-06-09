@@ -8951,6 +8951,12 @@ class Installer
                 self::LONG_COLUMN_SIZE,
                 ['default' => null]
             )
+            ->addColumn(
+                AmazonAccountResource::COLUMN_ORDER_RETURN_DATA_LAST_SYNCHRONIZATION,
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
+            )
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci')
@@ -10561,128 +10567,160 @@ class Installer
         #endregion
 
         # region amazon_order_item
-        $amazonOrderItemTable = $this->getConnection()->newTable($this->getFullTableName('amazon_order_item'))
-                                     ->addColumn(
-                                         'order_item_id',
-                                         Table::TYPE_INTEGER,
-                                         null,
-                                         ['unsigned' => true, 'primary' => true, 'nullable' => false]
-                                     )
-                                     ->addColumn(
-                                         'amazon_order_item_id',
-                                         Table::TYPE_TEXT,
-                                         255,
-                                         ['nullable' => false]
-                                     )
-                                     ->addColumn(
-                                         'title',
-                                         Table::TYPE_TEXT,
-                                         255,
-                                         ['nullable' => false]
-                                     )
-                                     ->addColumn(
-                                         'sku',
-                                         Table::TYPE_TEXT,
-                                         255,
-                                         ['default' => null]
-                                     )
-                                     ->addColumn(
-                                         'general_id',
-                                         Table::TYPE_TEXT,
-                                         255,
-                                         ['default' => null]
-                                     )
-                                     ->addColumn(
-                                         'is_isbn_general_id',
-                                         Table::TYPE_SMALLINT,
-                                         null,
-                                         ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                     )
-                                     ->addColumn(
-                                         'price',
-                                         Table::TYPE_DECIMAL,
-                                         [12, 4],
-                                         ['unsigned' => true, 'nullable' => false]
-                                     )
-                                     ->addColumn(
-                                         'shipping_price',
-                                         Table::TYPE_DECIMAL,
-                                         [12, 4],
-                                         ['unsigned' => true, 'nullable' => false, 'default' => '0.0000']
-                                     )
-                                     ->addColumn(
-                                         'gift_price',
-                                         Table::TYPE_DECIMAL,
-                                         [12, 4],
-                                         ['unsigned' => true, 'nullable' => false, 'default' => '0.0000']
-                                     )
-                                     ->addColumn(
-                                         'gift_message',
-                                         Table::TYPE_TEXT,
-                                         null,
-                                         ['default' => null]
-                                     )
-                                     ->addColumn(
-                                         'gift_type',
-                                         Table::TYPE_TEXT,
-                                         255,
-                                         ['default' => null]
-                                     )
-                                     ->addColumn(
-                                         'tax_details',
-                                         Table::TYPE_TEXT,
-                                         null,
-                                         ['default' => null]
-                                     )
-                                     ->addColumn(
-                                         'discount_details',
-                                         Table::TYPE_TEXT,
-                                         null,
-                                         ['default' => null]
-                                     )
-                                     ->addColumn(
-                                         'currency',
-                                         Table::TYPE_TEXT,
-                                         10,
-                                         ['nullable' => false]
-                                     )
-                                     ->addColumn(
-                                         'qty_purchased',
-                                         Table::TYPE_INTEGER,
-                                         null,
-                                         ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                     )
-                                     ->addColumn(
-                                         'fulfillment_center_id',
-                                         Table::TYPE_TEXT,
-                                         10,
-                                         ['default' => null]
-                                     )
-                                     ->addColumn(
-                                         'buyer_customized_info',
-                                         Table::TYPE_TEXT,
-                                         null,
-                                         ['default' => null]
-                                     )
-                                     ->addColumn(
-                                         AmazonOrderItem::COLUMN_IS_SHIPPING_PALLET_DELIVERY,
-                                         Table::TYPE_SMALLINT,
-                                         null,
-                                         ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                     )
-                                     ->addColumn(
-                                         AmazonOrderItem::COLUMN_CUSTOMIZATION_DETAILS,
-                                         Table::TYPE_TEXT,
-                                         self::LONG_COLUMN_SIZE,
-                                         ['default' => null]
-                                     )
-                                     ->addIndex('general_id', 'general_id')
-                                     ->addIndex('sku', 'sku')
-                                     ->addIndex('title', 'title')
-                                     ->setOption('type', 'INNODB')
-                                     ->setOption('charset', 'utf8')
-                                     ->setOption('collate', 'utf8_general_ci')
-                                     ->setOption('row_format', 'dynamic');
+        $amazonOrderItemTable = $this
+            ->getConnection()
+            ->newTable($this->getFullTableName(TablesHelper::TABLE_AMAZON_ORDER_ITEM))
+            ->addColumn(
+                AmazonOrderItem::COLUMN_ORDER_ITEM_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'amazon_order_item_id',
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'title',
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'sku',
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'general_id',
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'is_isbn_general_id',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'price',
+                Table::TYPE_DECIMAL,
+                [12, 4],
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'shipping_price',
+                Table::TYPE_DECIMAL,
+                [12, 4],
+                ['unsigned' => true, 'nullable' => false, 'default' => '0.0000']
+            )
+            ->addColumn(
+                'gift_price',
+                Table::TYPE_DECIMAL,
+                [12, 4],
+                ['unsigned' => true, 'nullable' => false, 'default' => '0.0000']
+            )
+            ->addColumn(
+                'gift_message',
+                Table::TYPE_TEXT,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'gift_type',
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'tax_details',
+                Table::TYPE_TEXT,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'discount_details',
+                Table::TYPE_TEXT,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'currency',
+                Table::TYPE_TEXT,
+                10,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'qty_purchased',
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'fulfillment_center_id',
+                Table::TYPE_TEXT,
+                10,
+                ['default' => null]
+            )
+            ->addColumn(
+                'buyer_customized_info',
+                Table::TYPE_TEXT,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                AmazonOrderItem::COLUMN_IS_SHIPPING_PALLET_DELIVERY,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                AmazonOrderItem::COLUMN_CUSTOMIZATION_DETAILS,
+                Table::TYPE_TEXT,
+                self::LONG_COLUMN_SIZE,
+                ['default' => null]
+            )
+            ->addColumn(
+                AmazonOrderItem::COLUMN_RETURN_REQUEST_DATE,
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                AmazonOrderItem::COLUMN_RETURN_REQUEST_STATUS,
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
+            )
+            ->addColumn(
+                AmazonOrderItem::COLUMN_RETURN_TRACKING_ID,
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
+            )
+            ->addColumn(
+                AmazonOrderItem::COLUMN_RETURN_QTY,
+                Table::TYPE_INTEGER,
+                null,
+                ['default' => null, 'unsigned' => true]
+            )
+            ->addColumn(
+                AmazonOrderItem::COLUMN_RETURN_RESOLUTION,
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
+            )
+            ->addIndex('general_id', 'general_id')
+            ->addIndex('sku', 'sku')
+            ->addIndex('title', 'title')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci')
+            ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonOrderItemTable);
         # endregion
 

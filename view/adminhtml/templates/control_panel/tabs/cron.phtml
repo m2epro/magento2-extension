@@ -1,72 +1,81 @@
 <?php
-    /** @var \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Cron $this */
+    /** @var \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Cron $block */
 ?>
 
 <style>
-    .group_container_summary_cron .fieldset-wrapper .form-list {
-        font-size: 13px;
-    }
-    .group_container_summary_cron .fieldset-wrapper td.label {
-        width: 420px !important;
-    }
-
-    .group_container_summary_cron .form-list tr:hover {
-        background-color: #f5f5f5;
-    }
-
-    .group_container_summary_cron .form-list td {
-        padding-left: 15px;
-        padding-right: 15px;
+    :root {
+        --loader-image-url: url('<?= /* @noEscape */ $block->getViewFileUrl('images/loader-2.gif') ?>');
     }
 </style>
 
-<div class="entry-edit group_container_summary group_container_summary_cron">
+<div class="cron-tab-container" data-mage-init='{
+    "Ess_M2ePro/js/ControlPanel/CronTab": {
+        "moduleIdentifier": "<?= /* @noEscape */ $block->getModuleIdentifier() ?>",
+        "cronRunUrl": "<?= /* @noEscape */ $block->getCronRunUrl() ?>"
+    }
+}'>
+    <div class="run-task-section" style="">
+        <div class="header">
+            <h3>Run Task</h3>
+        </div>
 
-    <div class="control_panel_head_container">
-        <h4>Run Task</h4>
-    </div>
+        <div class="run-task-form">
+            <label for="task_code">Task Name:</label>
 
-    <div class="col-m-12 controlPanel__block_container">
-        <div class="fieldset-wrapper">
+            <div class="dropdown-container">
+                <div class="dropdown-trigger" id="dropdown-trigger">
+                    <div class="trigger-text"></div>
+                    <div class="trigger-arrow-btn"></div>
+                </div>
 
-            <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
-                <div class="hor-scroll">
-                    <table class="form-list" cellspacing="0" cellpadding="0">
-                        <tr>
-                            <td class="label">Run All</td>
-                            <td class="value">
-                                <a href="<?= /* @noEscape */ $this->getRunAllUrl() ?>" target="_blank">Run</a>
-                            </td>
-                        </tr>
-                    </table>
+                <div class="dropdown-menu" id="dropdown-menu">
+                    <div class="dropdown-item" data-value="">Run All Tasks</div>
+
+                    <?php foreach ($block->getTasks() as $groupName => $tasks) : ?>
+                        <div class="dropdown-group-header">
+                            <span><?= /* @noEscape */ $groupName; ?></span>
+                            <button class="run-group-btn" data-group="<?= /* @noEscape */ $groupName; ?>">Run</button>
+                        </div>
+                        <?php foreach ($tasks as $taskCode => $taskTitle) : ?>
+                        <div class="dropdown-item"
+                             data-value="<?= /* @noEscape */ $taskCode; ?>"
+                             data-group="<?= /* @noEscape */ $groupName; ?>"
+                        ><?= /* @noEscape */ $taskTitle; ?></div>
+                        <?php endforeach; ?>
+                    <?php endforeach; ?>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <?php foreach ($this->tasks as $group => $tasks) : ?>
-        <div class="col-m-4 controlPanel__block_container" style="width: 30%; min-width: 500px;">
-            <div class="fieldset-wrapper">
-
-                <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
-                    <h4><?= /* @noEscape */ $group ?></h4>
-                </div>
-
-                <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
-                    <div class="hor-scroll">
-                        <table class="form-list" cellspacing="0" cellpadding="0">
-                            <?php foreach ($tasks as $taskCode => $taskTitle) : ?>
-                                <tr>
-                                    <td class="label"><?= /* @noEscape */ $taskTitle ?></td>
-                                    <td class="value">
-                                        <a href="<?= /* @noEscape */ $this->getTaskUrl($taskCode) ?>" target="_blank">Run</a>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </table>
-                    </div>
-                </div>
+            <div>
+                <button id="run_task" class="action-primary">Run</button>
+                <button id="add_to_queue">Add to Sequence</button>
             </div>
         </div>
-    <?php endforeach; ?>
+
+    </div>
+
+    <div style="display: flex; gap: 2rem;">
+        <div class="scenario-section">
+            <div class="header">
+                <h3>Scenario Queue</h3>
+                <div class="scenario-controls">
+                    <button class="action-primary" id="run-scenario">Run Scenario</button>
+                    <button id="clear-queue">Clear Queue</button>
+                </div>
+            </div>
+
+            <ul id="queue_list" class="list-queue"></ul>
+
+            <div class="hint">
+                * You can drag and drop items to reorder the execution sequence.
+            </div>
+        </div>
+
+        <div class="results-card">
+            <div class="header">
+                <h3>Execution Results</h3>
+            </div>
+            <pre id="execution-results"></pre>
+        </div>
+    </div>
 </div>

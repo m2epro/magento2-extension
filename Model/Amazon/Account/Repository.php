@@ -14,11 +14,14 @@ class Repository
     private $entitiesById = [];
     /** @var array<string, \Ess\M2ePro\Model\Amazon\Account[]> */
     private $entitiesGroupByMerchantId = [];
+    private \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory $accountCollectionFactory;
 
     public function __construct(
-        \Ess\M2ePro\Model\ResourceModel\Amazon\Account\CollectionFactory $collectionFactory
+        \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory $accountCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Amazon\Account\CollectionFactory $amazonAccountCollectionFactory
     ) {
-        $this->collectionFactory = $collectionFactory;
+        $this->collectionFactory = $amazonAccountCollectionFactory;
+        $this->accountCollectionFactory = $accountCollectionFactory;
     }
 
     public function find(int $accountId): ?\Ess\M2ePro\Model\Amazon\Account
@@ -158,5 +161,26 @@ class Repository
         }
 
         $this->isLoaded = true;
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\Account[]
+     * @throws \Exception
+     */
+    public function getAccountsForReceiveReturnDetails(): array
+    {
+        $collection = $this->accountCollectionFactory->createWithAmazonChildMode();
+        $collection->addFieldToFilter(
+            [
+                \Ess\M2ePro\Model\ResourceModel\Amazon\Account::COLUMN_ORDER_RETURN_DATA_LAST_SYNCHRONIZATION,
+                \Ess\M2ePro\Model\ResourceModel\Amazon\Account::COLUMN_ORDER_RETURN_DATA_LAST_SYNCHRONIZATION,
+            ],
+            [
+                ['null' => true],
+                ['lteq' => \Ess\M2ePro\Helper\Date::createCurrentGmt()->modify('-1 day')->format('Y-m-d H:i:s')],
+            ]
+        );
+
+        return array_values($collection->getItems());
     }
 }
