@@ -22,3 +22,34 @@
 #amazonOrderViewFinalFees_table > tbody > tr:not(:first-child):last-child {
     font-weight: bold;
 }
+
+.amazon-order-number-block {
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    min-width: 160px;
+    gap: 3px;
+    line-height: 10px;
+    margin-bottom: 5px;
+}
+
+.amazon-bages-container {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 3px;
+    align-items: flex-start;
+}
+
+.amazon-badge {
+    cursor: default;
+    text-align: center;
+    padding: 2px 10px;
+    border-radius: 15px;
+    font-weight: 600;
+    color: #FFF;
+}
+
+.amazon-badge.fbm-ship-plus {
+    background-color: #2F6FC2;
+}

@@ -389,6 +389,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return (bool)$this->getData('is_sold_by_amazon');
     }
 
+    public function isFbmShipPlus(): bool
+    {
+        return (bool)$this->getData('is_fbm_ship_plus');
+    }
+
     /**
      * @return bool
      */

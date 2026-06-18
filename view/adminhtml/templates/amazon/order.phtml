@@ -53,6 +53,9 @@ if (empty($currency)) {
                             src="<?php /* @noEscape */ echo $block->getViewFileUrl('Ess_M2ePro::images/invoice-by-amazon.png'); ?>"
                             style="margin-left: 5px; vertical-align: middle;"/>
                     <?php endif; ?>
+                    <?php if ($block->order->getChildObject()->isFbmShipPlus()) : ?>
+                        <span class="amazon-badge fbm-ship-plus"><?= /* @noEscape */ __('FBM Ship+') ?></span>
+                    <?php endif; ?>
                 </span>
                     <?php if ($block->order->getChildObject()->getReplacedAmazonOrderId()) : ?>
                         &nbsp;<div class="label-replacement-order">Replacement</div>

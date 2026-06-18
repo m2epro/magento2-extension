@@ -92,6 +92,7 @@ class Grid extends AbstractGrid
         $this->addPrimeFilter();
         $this->addB2BFilter();
         $this->addInvoiceByAmazonFilter();
+        $this->addFbmShipPlusFilter();
     }
 
     protected function _prepareCollection()
@@ -437,52 +438,59 @@ class Grid extends AbstractGrid
     {
         $back = $this->dataHelper->makeBackUrlParam('*/amazon_order/index');
         $itemUrl = $this->getUrl('*/amazon_order/view', ['id' => $row->getId(), 'back' => $back]);
-
         $orderId = $this->dataHelper->escapeHtml($row->getChildObject()->getData('amazon_order_id'));
+        $orderNumberHtml = sprintf('<a href="%s">%s</a>', $itemUrl, $orderId);
+
         $url = $this->amazonHelper->getOrderUrl($orderId, $row->getData('marketplace_id'));
+        $viewOnAmazonHtml = sprintf(
+            '<a title="%s" target="_blank" href="%s"><img src="%s" /></a>',
+            __('View on Amazon'),
+            $url,
+            $this->getViewFileUrl('Ess_M2ePro::images/view_amazon.png')
+        );
 
-        $returnString = <<<HTML
-<a href="{$itemUrl}">{$orderId}</a>
-HTML;
+        $returnString = sprintf(
+            '<div class="amazon-order-number-block">%s%s</div>',
+            $orderNumberHtml,
+            $viewOnAmazonHtml
+        );
 
-        $primeImageHtml = '';
+        $bages = [];
         if ($row->getChildObject()->getData('is_prime')) {
-            $imageURL = $this->getViewFileUrl('Ess_M2ePro::images/prime.png');
-            $primeImageHtml = <<<HTML
-<div style="margin-top: 2px;"><img src="{$imageURL}" /></div>
-HTML;
+            $bages[] = sprintf(
+                '<div style="margin-top: 2px;"><img src="%s" /></div>',
+                $this->getViewFileUrl('Ess_M2ePro::images/prime.png')
+            );
         }
 
-        $businessImageHtml = '';
         if ($row->getChildObject()->getData('is_business')) {
-            $imageURL = $this->getViewFileUrl('Ess_M2ePro::images/amazon-business.png');
-            $businessImageHtml = <<<HTML
-<div style="margin-top: 2px;"><img src="{$imageURL}" /></div>
-HTML;
+            $bages[] = sprintf(
+                '<div style="margin-top: 2px;"><img src="%s" /></div>',
+                $this->getViewFileUrl('Ess_M2ePro::images/amazon-business.png')
+            );
         }
 
-        $isSoldByAmazonImageHtml = '';
         if ($row->getChildObject()->getData('is_sold_by_amazon')) {
-            $imageURL = $this->getViewFileUrl('Ess_M2ePro::images/invoice-by-amazon.png');
-            $isSoldByAmazonImageHtml = <<<HTML
-<div style="margin-top: 2px;"><img height="22px" src="{$imageURL}" /></div>
-HTML;
+            $bages[] = sprintf(
+                '<div style="margin-top: 2px;"><img height="22px" src="%s" /></div>',
+                $this->getViewFileUrl('Ess_M2ePro::images/invoice-by-amazon.png')
+            );
         }
 
-        $isReplacementOrder = '';
+        if ($row->getChildObject()->getData('is_fbm_ship_plus')) {
+            $bages[] = sprintf(
+                '<div class="amazon-badge fbm-ship-plus">%s</div>',
+                __('FBM Ship+')
+            );
+        }
+
         if ($row->getChildObject()->getReplacedAmazonOrderId()) {
-            $isReplacementOrder = '<div class="label-replacement-order">Replacement</div>';
+            $bages[] = '<div class="label-replacement-order">Replacement</div>';
         }
 
-        $returnString .= <<<HTML
-<a title="{$this->__('View on Amazon')}" target="_blank" href="{$url}">
-<img style="margin-top: 6px; float: right"
- src="{$this->getViewFileUrl('Ess_M2ePro::images/view_amazon.png')}" alt="{$this->__('View on Amazon')}" /></a>
-HTML;
-        $returnString .= $primeImageHtml;
-        $returnString .= $businessImageHtml;
-        $returnString .= $isSoldByAmazonImageHtml;
-        $returnString .= $isReplacementOrder;
+        if (count($bages) > 0) {
+            $returnString .= sprintf('<div class="amazon-bages-container">%s</div>', implode('', $bages));
+        }
 
         /** @var \Ess\M2ePro\Model\Order\Note[] $notes */
         $notes = $this->notesCollection->getItemsByColumnValue('order_id', $row->getData('id'));
@@ -1115,6 +1123,27 @@ JS
         $filter = $this->advancedFilterFactory->createDropDownFilter(
             'is_sold_by_amazon',
             __('Invoice by Amazon'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addFbmShipPlusFilter(): void
+    {
+        $options = $this->advancedFilterAllOrdersOptions->getYesNoOptions();
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Order\Collection $orders,
+            string $filterValue
+        ): void {
+            $orders->addFieldToFilter('is_fbm_ship_plus', ['eq' => $filterValue]);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'is_fbm_ship_plus',
+            __('FBM Ship+'),
             $options,
             $filterCallback
         );

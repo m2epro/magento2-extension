@@ -2057,7 +2057,7 @@ JS
                 ],
                 'class' => 'M2ePro-required-if-calculated',
                 'create_magento_attribute' => true,
-                'value' => $mode !== Description::CONDITION_DESCRIPTOR_MODE_NONE ? (string)$mode : '',
+                'value' => $mode !== Description::CONDITION_DESCRIPTOR_MODE_ATTRIBUTE ? (string)$mode : '',
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 

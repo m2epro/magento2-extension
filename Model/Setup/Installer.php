@@ -10295,274 +10295,281 @@ class Installer
         # endregion
 
         #region amazon_order
-        $amazonOrderTable = $this->getConnection()->newTable(
-            $this->getFullTableName(TablesHelper::TABLE_AMAZON_ORDER)
-        )
-                                 ->addColumn(
-                                     \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_ORDER_ID,
-                                     Table::TYPE_INTEGER,
-                                     null,
-                                     ['unsigned' => true, 'primary' => true, 'nullable' => false]
-                                 )
-                                 ->addColumn(
-                                     \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_AMAZON_ORDER_ID,
-                                     Table::TYPE_TEXT,
-                                     255,
-                                     ['nullable' => false]
-                                 )
-                                 ->addColumn(
-                                     'seller_order_id',
-                                     Table::TYPE_TEXT,
-                                     255,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'is_afn_channel',
-                                     Table::TYPE_SMALLINT,
-                                     null,
-                                     ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                 )
-                                 ->addColumn(
-                                     'is_prime',
-                                     Table::TYPE_SMALLINT,
-                                     null,
-                                     ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                 )
-                                 ->addColumn(
-                                     'is_sold_by_amazon',
-                                     Table::TYPE_SMALLINT,
-                                     null,
-                                     ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                 )
-                                 ->addColumn(
-                                     'is_business',
-                                     Table::TYPE_SMALLINT,
-                                     null,
-                                     ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                 )
-                                 ->addColumn(
-                                     'is_replacement',
-                                     Table::TYPE_SMALLINT,
-                                     null,
-                                     ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                 )
-                                 ->addColumn(
-                                     'status',
-                                     Table::TYPE_SMALLINT,
-                                     null,
-                                     ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                 )
-                                 ->addColumn(
-                                     \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_IS_INVOICE_SENT,
-                                     Table::TYPE_SMALLINT,
-                                     null,
-                                     ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                 )
-                                 ->addColumn(
-                                     \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_DATE_OF_INVOICE_SENDING,
-                                     Table::TYPE_DATETIME,
-                                     null,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'is_credit_memo_sent',
-                                     Table::TYPE_SMALLINT,
-                                     null,
-                                     ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                 )
-                                ->addColumn(
-                                    'is_get_delivery_preferences',
-                                    Table::TYPE_SMALLINT,
-                                    null,
-                                    ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                )
-                                 ->addColumn(
-                                     'invoice_data_report',
-                                     Table::TYPE_TEXT,
-                                     self::LONG_COLUMN_SIZE,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'buyer_name',
-                                     Table::TYPE_TEXT,
-                                     255,
-                                     ['nullable' => false]
-                                 )
-                                 ->addColumn(
-                                     'buyer_email',
-                                     Table::TYPE_TEXT,
-                                     255,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'shipping_service',
-                                     Table::TYPE_TEXT,
-                                     255,
-                                     ['default' => null]
-                                 )
-                                ->addColumn(
-                                    'shipping_category',
-                                    Table::TYPE_TEXT,
-                                    255,
-                                    ['default' => null]
-                                )
-                                ->addColumn(
-                                    'shipping_mapping',
-                                    Table::TYPE_TEXT,
-                                    255,
-                                    ['default' => null]
-                                )
-                                 ->addColumn(
-                                     'shipping_address',
-                                     Table::TYPE_TEXT,
-                                     null,
-                                     ['nullable' => false]
-                                 )
-                                 ->addColumn(
-                                     'shipping_price',
-                                     Table::TYPE_DECIMAL,
-                                     [12, 4],
-                                     ['unsigned' => true, 'nullable' => false]
-                                 )
-                                 ->addColumn(
-                                     'shipping_date_to',
-                                     Table::TYPE_DATETIME,
-                                     null,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_DELIVERY_DATE_FROM,
-                                     Table::TYPE_DATETIME,
-                                     null,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'delivery_date_to',
-                                     Table::TYPE_DATETIME,
-                                     null,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'paid_amount',
-                                     Table::TYPE_DECIMAL,
-                                     [12, 4],
-                                     ['unsigned' => true, 'nullable' => false]
-                                 )
-                                 ->addColumn(
-                                     'tax_details',
-                                     Table::TYPE_TEXT,
-                                     null,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_PAYMENT_METHOD_DETAILS,
-                                     Table::TYPE_TEXT,
-                                     self::LONG_COLUMN_SIZE,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'ioss_number',
-                                     Table::TYPE_TEXT,
-                                     72,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'tax_registration_id',
-                                     Table::TYPE_TEXT,
-                                     72,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'is_buyer_requested_cancel',
-                                     Table::TYPE_SMALLINT,
-                                     null,
-                                     ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                 )
-                                 ->addColumn(
-                                     'buyer_cancel_reason',
-                                     Table::TYPE_TEXT,
-                                     null,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'discount_details',
-                                     Table::TYPE_TEXT,
-                                     null,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'qty_shipped',
-                                     Table::TYPE_INTEGER,
-                                     null,
-                                     ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                 )
-                                 ->addColumn(
-                                     'qty_unshipped',
-                                     Table::TYPE_INTEGER,
-                                     null,
-                                     ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                 )
-                                 ->addColumn(
-                                     'currency',
-                                     Table::TYPE_TEXT,
-                                     10,
-                                     ['nullable' => false]
-                                 )
-                                 ->addColumn(
-                                     'purchase_update_date',
-                                     Table::TYPE_DATETIME,
-                                     null,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'purchase_create_date',
-                                     Table::TYPE_DATETIME,
-                                     null,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'merchant_fulfillment_data',
-                                     Table::TYPE_TEXT,
-                                     null,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'merchant_fulfillment_label',
-                                     Table::TYPE_BLOB,
-                                     null,
-                                     ['default' => null]
-                                 )
-                                ->addColumn(
-                                    'final_fees',
-                                    Table::TYPE_TEXT,
-                                    null,
-                                    ['default' => null]
-                                )
-                                ->addColumn(
-                                    'replaced_amazon_order_id',
-                                    Table::TYPE_TEXT,
-                                    255,
-                                    ['default' => null]
-                                )
-                                 ->addIndex('amazon_order_id', 'amazon_order_id')
-                                 ->addIndex('seller_order_id', 'seller_order_id')
-                                 ->addIndex('is_prime', 'is_prime')
-                                 ->addIndex('is_business', 'is_business')
-                                 ->addIndex(
-                                     'is_invoice_sent',
-                                     \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_IS_INVOICE_SENT,
-                                 )
-                                 ->addIndex('is_credit_memo_sent', 'is_credit_memo_sent')
-                                 ->addIndex('buyer_email', 'buyer_email')
-                                 ->addIndex('buyer_name', 'buyer_name')
-                                 ->addIndex('paid_amount', 'paid_amount')
-                                 ->addIndex('purchase_create_date', 'purchase_create_date')
-                                 ->addIndex('shipping_date_to', 'shipping_date_to')
-                                 ->addIndex('replaced_amazon_order_id', 'replaced_amazon_order_id')
-                                 ->setOption('type', 'INNODB')
-                                 ->setOption('charset', 'utf8')
-                                 ->setOption('collate', 'utf8_general_ci')
-                                 ->setOption('row_format', 'dynamic');
+        $amazonOrderTableName = $this->getFullTableName(TablesHelper::TABLE_AMAZON_ORDER);
+        $amazonOrderTable = $this
+            ->getConnection()
+            ->newTable($amazonOrderTableName)
+            ->addColumn(
+                \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_ORDER_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_AMAZON_ORDER_ID,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'seller_order_id',
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'is_afn_channel',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'is_prime',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'is_sold_by_amazon',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_IS_FBM_SHIP_PLUS,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'is_business',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'is_replacement',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'status',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_IS_INVOICE_SENT,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_DATE_OF_INVOICE_SENDING,
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'is_credit_memo_sent',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'is_get_delivery_preferences',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'invoice_data_report',
+                Table::TYPE_TEXT,
+                self::LONG_COLUMN_SIZE,
+                ['default' => null]
+            )
+            ->addColumn(
+                'buyer_name',
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'buyer_email',
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'shipping_service',
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'shipping_category',
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'shipping_mapping',
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'shipping_address',
+                Table::TYPE_TEXT,
+                null,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'shipping_price',
+                Table::TYPE_DECIMAL,
+                [12, 4],
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'shipping_date_to',
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_DELIVERY_DATE_FROM,
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'delivery_date_to',
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'paid_amount',
+                Table::TYPE_DECIMAL,
+                [12, 4],
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'tax_details',
+                Table::TYPE_TEXT,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_PAYMENT_METHOD_DETAILS,
+                Table::TYPE_TEXT,
+                self::LONG_COLUMN_SIZE,
+                ['default' => null]
+            )
+            ->addColumn(
+                'ioss_number',
+                Table::TYPE_TEXT,
+                72,
+                ['default' => null]
+            )
+            ->addColumn(
+                'tax_registration_id',
+                Table::TYPE_TEXT,
+                72,
+                ['default' => null]
+            )
+            ->addColumn(
+                'is_buyer_requested_cancel',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'buyer_cancel_reason',
+                Table::TYPE_TEXT,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'discount_details',
+                Table::TYPE_TEXT,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'qty_shipped',
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'qty_unshipped',
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'currency',
+                Table::TYPE_TEXT,
+                10,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'purchase_update_date',
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'purchase_create_date',
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'merchant_fulfillment_data',
+                Table::TYPE_TEXT,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'merchant_fulfillment_label',
+                Table::TYPE_BLOB,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'final_fees',
+                Table::TYPE_TEXT,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'replaced_amazon_order_id',
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
+            )
+            ->addIndex('amazon_order_id', 'amazon_order_id')
+            ->addIndex('seller_order_id', 'seller_order_id')
+            ->addIndex('is_prime', 'is_prime')
+            ->addIndex('is_business', 'is_business')
+            ->addIndex(
+                'is_invoice_sent',
+                \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_IS_INVOICE_SENT,
+            )
+            ->addIndex('is_credit_memo_sent', 'is_credit_memo_sent')
+            ->addIndex('buyer_email', 'buyer_email')
+            ->addIndex('buyer_name', 'buyer_name')
+            ->addIndex('paid_amount', 'paid_amount')
+            ->addIndex('purchase_create_date', 'purchase_create_date')
+            ->addIndex('shipping_date_to', 'shipping_date_to')
+            ->addIndex('replaced_amazon_order_id', 'replaced_amazon_order_id')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci')
+            ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonOrderTable);
         #endregion
 

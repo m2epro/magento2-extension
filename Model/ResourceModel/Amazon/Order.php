@@ -11,6 +11,7 @@ class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
     public const COLUMN_PURCHASE_CREATE_DATE = 'purchase_create_date';
     public const COLUMN_DELIVERY_DATE_FROM = 'delivery_date_from';
     public const COLUMN_PAYMENT_METHOD_DETAILS = 'payment_method_details';
+    public const COLUMN_IS_FBM_SHIP_PLUS = 'is_fbm_ship_plus';
 
     /** @var bool  */
     protected $_isPkAutoIncrement = false;
