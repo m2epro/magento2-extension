@@ -51,14 +51,13 @@ abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\C
 
     /**
      * @param $helperName
-     * @param array $arguments
      *
      * @return \Magento\Framework\App\Helper\AbstractHelper
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    protected function getHelper($helperName, array $arguments = [])
+    protected function getHelper($helperName)
     {
-        return $this->helperFactory->getObject($helperName, $arguments);
+        return $this->helperFactory->getObject($helperName);
     }
 
     //########################################

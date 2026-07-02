@@ -55,7 +55,7 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
      */
     public function getItemId()
     {
-        return (double)$this->getData('item_id');
+        return (float)$this->getData('item_id');
     }
 
     public function getTitle()

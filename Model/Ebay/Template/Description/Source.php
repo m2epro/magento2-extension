@@ -373,6 +373,10 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                 $template->getConditionProfessionalGraderIdAttribute()
             );
 
+            if ($attribute === null) {
+                return null;
+            }
+
             $availableDescriptorValuesCard = array_flip(Description::getConditionalProfessionalGraderCardIdLabelMap());
             $availableDescriptorValuesCoin = array_flip(Description::getConditionalProfessionalGraderCoinIdLabelMap());
 

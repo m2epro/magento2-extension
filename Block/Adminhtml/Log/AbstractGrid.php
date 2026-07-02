@@ -232,7 +232,11 @@ HTML;
 
         $countHtml = '';
 
-        if (isset($this->messageCount[$row[$this->entityIdFieldName]])) {
+        $messageCountKey = (string)$row[(string)$this->entityIdFieldName];
+        if (
+            !empty($messageCountKey)
+            && isset($this->messageCount[$messageCountKey])
+        ) {
             $colorMap = [
                 \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO => 'gray',
                 \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => 'green',
@@ -240,10 +244,10 @@ HTML;
                 \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => 'red',
             ];
 
-            $count = $this->messageCount[$row[$this->entityIdFieldName]][$row['description']]['count'];
+            $count = $this->messageCount[$messageCountKey][$row['description']]['count'];
             if ($count > 1) {
                 $color = $colorMap[$row['type']];
-                $countHtml = " <span style='color: {$color}; font-weight: bold'>({$count})</span>";
+                $countHtml = " <span style='color: $color; font-weight: bold'>($count)</span>";
             }
         }
 

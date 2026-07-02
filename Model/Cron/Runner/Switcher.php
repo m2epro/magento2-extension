@@ -29,8 +29,8 @@ class Switcher extends \Ess\M2ePro\Model\AbstractModel
     {
         $helper = $this->getHelper('Module\Cron');
 
-        $currentPriority = $this->getRunnerPriority($currentRunner->getNick());
-        $configPriority = $this->getRunnerPriority($helper->getRunner());
+        $currentPriority = $this->getRunnerPriority((string)$currentRunner->getNick());
+        $configPriority = $this->getRunnerPriority((string)$helper->getRunner());
 
         // switch to a new runner by higher priority
         if ($currentPriority > $configPriority) {
@@ -63,9 +63,15 @@ class Switcher extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    protected function getRunnerPriority($nick)
+    protected function getRunnerPriority(string $nick)
     {
-        return isset($this->runnerPriority[$nick]) ? $this->runnerPriority[$nick] : -1;
+        if (
+            empty($nick)
+            || !isset($this->runnerPriority[$nick])
+        ) {
+            return -1;
+        }
+        return $this->runnerPriority[$nick];
     }
 
     //########################################

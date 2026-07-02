@@ -39,7 +39,7 @@ class Request
         }
 
         $curlObject = $this->buildCurlObject($package, $this->helperServer->getEndpoint());
-        // @codingStandardsIgnoreLine
+
         $responseBody = curl_exec($curlObject);
 
         // @codingStandardsIgnoreStart
@@ -51,8 +51,7 @@ class Request
         ];
         // @codingStandardsIgnoreEnd
 
-        // @codingStandardsIgnoreLine
-        curl_close($curlObject);
+        unset($curlObject);
 
         if ($response['body'] === false) {
             $this->helperModuleLogger->process(
@@ -102,7 +101,7 @@ class Request
         if (count($packages) === 1 || !$asynchronous) {
             foreach ($packages as $key => $package) {
                 $curlObject = $this->buildCurlObject($package, $serverHost);
-                // @codingStandardsIgnoreLine
+
                 $responseBody = curl_exec($curlObject);
 
                 // @codingStandardsIgnoreStart
@@ -114,8 +113,7 @@ class Request
                 ];
                 // @codingStandardsIgnoreEnd
 
-                // @codingStandardsIgnoreLine
-                curl_close($curlObject);
+                unset($curlObject);
             }
         } else {
             $curlObjectsPool = [];
@@ -149,7 +147,7 @@ class Request
                 ];
 
                 curl_multi_remove_handle($multiCurlObject, $curlObject);
-                curl_close($curlObject);
+                unset($curlObject);
             }
 
             curl_multi_close($multiCurlObject);

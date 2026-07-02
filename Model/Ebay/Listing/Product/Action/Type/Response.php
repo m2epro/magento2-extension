@@ -229,7 +229,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         $data = [
             'account_id' => $this->getAccount()->getId(),
             'marketplace_id' => $this->getMarketplace()->getId(),
-            'item_id' => (double)$itemId,
+            'item_id' => (float)$itemId,
             'product_id' => (int)$this->getListingProduct()->getProductId(),
             'store_id' => (int)$this->getListing()->getStoreId(),
         ];

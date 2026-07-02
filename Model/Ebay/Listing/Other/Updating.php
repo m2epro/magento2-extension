@@ -152,7 +152,7 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
             if ($existsId) {
                 $newData['id'] = $existsId;
             } else {
-                $newData['item_id'] = (double)$receivedItem['id'];
+                $newData['item_id'] = (float)$receivedItem['id'];
                 $newData['account_id'] = (int)$this->getAccount()->getId();
                 $newData['marketplace_id'] = $itemMarketplace->getId();
             }

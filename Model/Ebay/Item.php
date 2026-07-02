@@ -160,7 +160,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getItemId(): float
     {
-        return (double)$this->getData('item_id');
+        return (float)$this->getData('item_id');
     }
 
     /**
@@ -168,7 +168,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getAccountId()
     {
-        return (double)$this->getData('account_id');
+        return (float)$this->getData('account_id');
     }
 
     /**
@@ -176,7 +176,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getMarketplaceId()
     {
-        return (double)$this->getData('marketplace_id');
+        return (float)$this->getData('marketplace_id');
     }
 
     /**

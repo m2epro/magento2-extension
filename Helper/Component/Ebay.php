@@ -138,7 +138,7 @@ class Ebay
 
         return $accountMode === \Ess\M2ePro\Model\Ebay\Account::MODE_SANDBOX
             ? $this->getSandboxItemUrl($ebayItemId, $marketplace)
-            : 'http://www.' . $marketplace->getUrl() . '/itm/' . (double)$ebayItemId;
+            : 'http://www.' . $marketplace->getUrl() . '/itm/' . (float)$ebayItemId;
     }
 
     /**
@@ -163,7 +163,7 @@ class Ebay
                 $subDomain = end($domainParts) . '.';
         }
 
-        return 'https://www.' . $subDomain . 'sandbox.ebay.com/itm/' . (double)$ebayItemId;
+        return 'https://www.' . $subDomain . 'sandbox.ebay.com/itm/' . (float)$ebayItemId;
     }
 
     /**

@@ -587,7 +587,7 @@ abstract class PriceCalculator extends AbstractModel
                 && $value > 0
                 && $this->getMagentoProduct()->isSpecialPriceActual()
             ) {
-                $percent = (double)$this->getMagentoProduct()->getProduct()->getSpecialPrice();
+                $percent = (float)$this->getMagentoProduct()->getProduct()->getSpecialPrice();
                 $value = round((($value * $percent) / 100), 2);
             }
 
@@ -1005,7 +1005,7 @@ abstract class PriceCalculator extends AbstractModel
             return $value;
         }
 
-        $percent = (double)$product->getProduct()->getSpecialPrice();
+        $percent = (float)$product->getProduct()->getSpecialPrice();
 
         return round((($value * $percent) / 100), 2);
     }
@@ -1237,7 +1237,7 @@ abstract class PriceCalculator extends AbstractModel
         $value = [];
 
         foreach ($tierPrice as $qty => $discount) {
-            $value[$qty] = round(($baseValue - ($baseValue * (double)$discount) / 100), 2);
+            $value[$qty] = round(($baseValue - ($baseValue * (float)$discount) / 100), 2);
         }
 
         return $value;
