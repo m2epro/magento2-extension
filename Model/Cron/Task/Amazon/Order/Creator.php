@@ -116,6 +116,7 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
         if ($order->canCreateMagentoOrder()) {
             try {
                 $order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
+
                 $order->addInfoLog(
                     'Magento order creation rules are met. M2E Pro will attempt to create Magento order.',
                     [],
@@ -127,6 +128,13 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
             } catch (\Exception $exception) {
                 return;
             }
+        } elseif ($order->getChildObject()->isBlockedCreateByBillingAddress()) {
+            $order->addWarningLog(
+                'Magento order creation is on hold: the billing address has not been received yet.',
+                [],
+                [],
+                true
+            );
         }
 
         if ($order->getReserve()->isNotProcessed() && $order->isReservable()) {

@@ -141,6 +141,10 @@ class Builder extends AbstractModel
         $this->setData('buyer_message', $data['buyer']['message']);
         $this->setData('buyer_tax_id', trim($data['buyer']['tax_id']));
 
+        if (!empty($data['buyer']['address'])) {
+            $this->setData('billing_address', json_encode($data['buyer']['address']));
+        }
+
         $this->setData(
             \Ess\M2ePro\Model\ResourceModel\Ebay\Order::COLUMN_IS_FULL_REFUNDED,
             $this->helper->isFullRefunded(

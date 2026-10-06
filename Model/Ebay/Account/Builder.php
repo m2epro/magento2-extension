@@ -271,7 +271,6 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'id',
             'website_id',
             'group_id',
-            'billing_address_mode',
         ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {

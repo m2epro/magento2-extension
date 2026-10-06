@@ -67,6 +67,7 @@ class Tables
     public const TABLE_AMAZON_TEMPLATE_SHIPPING = self::PREFIX . 'amazon_template_shipping';
 
     public const TABLE_AMAZON_ORDER_ITEM = self::PREFIX . 'amazon_order_item';
+    public const TABLE_AMAZON_LISTING_AUTO_ADVANCED_FILTER = self::PREFIX . 'amazon_listing_auto_advanced_filter';
 
     public const TABLE_WALMART_ACCOUNT = self::PREFIX . 'walmart_account';
     public const TABLE_WALMART_LISTING = self::PREFIX . 'walmart_listing';

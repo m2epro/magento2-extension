@@ -5770,6 +5770,12 @@ class Installer
                 ['default' => null]
             )
             ->addColumn(
+                \Ess\M2ePro\Model\ResourceModel\Ebay\Order::COLUMN_BILLING_ADDRESS,
+                Table::TYPE_TEXT,
+                self::LONG_COLUMN_SIZE,
+                ['nullable' => true]
+            )
+            ->addColumn(
                 'shipping_date_to',
                 Table::TYPE_DATETIME,
                 null,
@@ -10497,6 +10503,12 @@ class Installer
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
+                \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_IS_EASY_SHIP,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
                 'is_business',
                 Table::TYPE_SMALLINT,
                 null,
@@ -10579,6 +10591,12 @@ class Installer
                 Table::TYPE_TEXT,
                 null,
                 ['nullable' => false]
+            )
+            ->addColumn(
+                \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_BILLING_ADDRESS,
+                Table::TYPE_TEXT,
+                self::LONG_COLUMN_SIZE,
+                ['nullable' => true]
             )
             ->addColumn(
                 'shipping_price',
@@ -11920,6 +11938,30 @@ class Installer
                                                    ->setOption('collate', 'utf8_general_ci')
                                                    ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonTemplateSynchronizationTable);
+
+        $amazonListingAutoAdvancedFilterTableName = $this
+            ->getFullTableName(TablesHelper::TABLE_AMAZON_LISTING_AUTO_ADVANCED_FILTER);
+
+        $amazonListingAutoAdvancedFilterTable = $this
+            ->getConnection()
+            ->newTable($amazonListingAutoAdvancedFilterTableName)
+            ->addColumn(
+                \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Auto\Advanced\Filter::COLUMN_LISTING_AUTO_ADVANCED_FILTER_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Auto\Advanced\Filter::COLUMN_ADDING_PRODUCT_TYPE_TEMPLATE_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true]
+            )
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+
+        $this->getConnection()->createTable($amazonListingAutoAdvancedFilterTable);
     }
 
     /**

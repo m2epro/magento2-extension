@@ -170,7 +170,7 @@ HTML
             ]
         );
 
-        if ($this->isEbayListing()) {
+        if ($this->isShowAdvancedFilterMode()) {
             $form->addField(
                 'mode_advanced_filter',
                 'radio',
@@ -205,11 +205,12 @@ HTML
         return $form->toHtml();
     }
 
-    private function isEbayListing(): bool
+    private function isShowAdvancedFilterMode(): bool
     {
         /** @var \Ess\M2ePro\Model\Listing $listing */
         $listing = $this->globalDataHelper->getValue('listing');
 
-        return $listing->getComponentMode() === \Ess\M2ePro\Helper\Component\Ebay::NICK;
+        return $listing->getComponentMode() === \Ess\M2ePro\Helper\Component\Ebay::NICK
+            || $listing->getComponentMode() === \Ess\M2ePro\Helper\Component\Amazon::NICK;
     }
 }

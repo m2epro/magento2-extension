@@ -470,6 +470,20 @@ define([
                     appendIn.appendChild(option);
                 });
 
+                if (options.magento_attributes) {
+                    let optionGroup = new Element('optgroup', {label: 'Magento Attributes'});
+                    select.appendChild(optionGroup);
+                    options.magento_attributes.forEach(function (attribute) {
+                        var option = new Element('option', {
+                            value: attribute.code,
+                            mode: M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Shipping::SHIPPING_RATE_TABLE_ATTRIBUTE_MODE'),
+                            selected: attribute.code == options.value
+                        });
+                        option.innerText = attribute.label;
+                        optionGroup.appendChild(option);
+                    });
+                }
+
                 select.setAttribute('sell-api', 1);
 
             } else {

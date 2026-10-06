@@ -29,8 +29,10 @@ class AttributeCollector
             $attributes = array_merge($attributes, $advancedFilter->getConditionAttributes());
         }
 
+        $attributes = array_unique($attributes);
+
         $this->attributesCache->set($attributes);
 
-        return array_unique($attributes);
+        return $attributes;
     }
 }

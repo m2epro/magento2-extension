@@ -5,15 +5,18 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Auto\Actions;
 class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
 {
     private \Ess\M2ePro\Model\Amazon\Template\ProductType\Repository $templateProductTypeRepository;
+    private \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction $instructionResource;
 
     public function __construct(
         \Ess\M2ePro\Model\Amazon\Template\ProductType\Repository $templateProductTypeRepository,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction $instructionResource,
         \Ess\M2ePro\Model\Listing $listing,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Module\Exception $exceptionHelper
     ) {
         parent::__construct($listing, $activeRecordFactory, $exceptionHelper);
         $this->templateProductTypeRepository = $templateProductTypeRepository;
+        $this->instructionResource = $instructionResource;
     }
 
     /**
@@ -37,6 +40,7 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         /** @var \Ess\M2ePro\Model\Listing\Product[] $parentsForRemove */
         $parentsForRemove = [];
 
+        $deleteInstructions = [];
         foreach ($listingsProducts as $listingProduct) {
             if (!($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product)) {
                 return;
@@ -60,21 +64,19 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
                     $instructionType = self::INSTRUCTION_TYPE_STOP_AND_REMOVE;
                 }
 
-                $this->activeRecordFactory
-                    ->getObject('Listing_Product_Instruction')
-                    ->getResource()
-                    ->addForComponent(
-                        [
-                            'listing_product_id' => $listingProduct->getId(),
-                            'type' => $instructionType,
-                            'initiator' => self::INSTRUCTION_INITIATOR,
-                            'priority' => $listingProduct->isStoppable() ? 60 : 0,
-                        ],
-                        $listingProduct->getComponentMode()
-                    );
+                $deleteInstructions[] = [
+                    'listing_product_id' => $listingProduct->getId(),
+                    'type' => $instructionType,
+                    'initiator' => self::INSTRUCTION_INITIATOR,
+                    'priority' => $listingProduct->isStoppable() ? 60 : 0,
+                ];
             } catch (\Exception $exception) {
                 $this->exceptionHelper->process($exception);
             }
+        }
+
+        if (!empty($deleteInstructions)) {
+            $this->instructionResource->add($deleteInstructions);
         }
 
         if (empty($parentsForRemove)) {
@@ -218,6 +220,35 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         \Magento\Catalog\Model\Product $product,
         \Ess\M2ePro\Model\Listing\Auto\Advanced\Filter $autoAdvancedFilter
     ): void {
+        $logData = [
+            'reason' => __METHOD__,
+            'rule_id' => $autoAdvancedFilter->getId(),
+            'rule_title' => $autoAdvancedFilter->getTitle(),
+        ];
+        $listingProduct = $this->getListing()->addProduct(
+            $product,
+            \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
+            false,
+            true,
+            $logData
+        );
+
+        if (!($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product)) {
+            return;
+        }
+
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
+        $amazonListingProduct = $listingProduct->getChildObject();
+        $amazonListingProduct->searchAsin();
+
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Auto\Advanced\Filter $amazonAdvancedFilter */
+        $amazonAdvancedFilter = $autoAdvancedFilter->getChildObject();
+
+        $params = [
+            'template_product_type_id' => $amazonAdvancedFilter->getAddingProductTypeTemplateId(),
+        ];
+
+        $this->processAddedListingProduct($listingProduct, $params);
     }
 
     /**

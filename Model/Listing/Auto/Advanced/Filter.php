@@ -6,7 +6,7 @@ namespace Ess\M2ePro\Model\Listing\Auto\Advanced;
 
 class Filter extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
-    public const RULE_MODEL_PREFIX = 'ebay_auto_action_advanced_filter';
+    public const RULE_MODEL_PREFIX = 'auto_action_advanced_filter';
 
     public function _construct()
     {

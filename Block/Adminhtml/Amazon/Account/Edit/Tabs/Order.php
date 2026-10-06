@@ -107,7 +107,7 @@ in the Shipping Address of your Magento Order.'
     {
         /** @var \Ess\M2ePro\Model\Account|null $account */
         $account = $this->globalDataHelper->getValue('edit_account');
-        /** @var \Ess\M2ePro\Model\Amazon\Account|null $amazonAccount */
+        /** @var Account|null $amazonAccount */
         $amazonAccount = $account !== null ? $account->getChildObject() : null;
 
         // ---------------------------------------
@@ -537,6 +537,51 @@ HTML
                 ),
             ]
         );
+
+        if ($amazonAccount->getMarketplace()->isEuropeanRegion()) {
+            $billingInformationFieldset = $form->addFieldset(
+                'magento_block_amazon_accounts_magento_orders_billing_information',
+                [
+                    'legend' => __('Billing Information'),
+                    'collapsable' => true,
+                ]
+            );
+
+            $helpText = __(
+                'In this block, you can define how M2E Pro sets the billing address for Magento ' .
+                'orders.<br><br>' .
+                '<strong>Use Shipping Address as Billing</strong> — the default behaviour, uses the shipping ' .
+                'address as billing.<br>' .
+                '<strong>Retrieve Accurate Billing Address</strong> — retrieves the billing address from an ' .
+                'Amazon order report.<br>' .
+                '<i>Please note: with this option enabled, order processing will be delayed while the report ' .
+                'is being processed and M2E Pro receives the data.</i>'
+            );
+
+            $billingInformationFieldset->addField(
+                'invoices_and_shipments',
+                \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\HelpBlock::class,
+                [
+                    'no_hide' => true,
+                    'no_collapse' => true,
+                    'content' => $helpText,
+                ]
+            );
+
+            $billingInformationFieldset->addField(
+                'magento_orders_billing_address_usage',
+                \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select::class,
+                [
+                    'name' => 'magento_orders_settings[billing_information][billing_address_usage]',
+                    'label' => __('Billing Address Usage'),
+                    'values' => [
+                        Account::BILLING_ADDRESS_USE_SHIPPING => __('Use Shipping Address as Billing Address'),
+                        Account::BILLING_ADDRESS_RETRIEVE_ACCURATE => __('Retrieve Accurate Billing Address'),
+                    ],
+                    'value' => $formData['magento_orders_settings']['billing_information']['billing_address_usage'],
+                ]
+            );
+        }
 
         $fieldset = $form->addFieldset(
             'magento_block_amazon_accounts_magento_orders_number',

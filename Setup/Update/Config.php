@@ -470,7 +470,13 @@ class Config extends AbstractConfig
             ],
             'y26_m09' => [
                 'AutoActionAdvancedFilterMode',
+                'AmazonRetrieveBillingAddress',
+                'AmazonAutoActionAdvancedFilterMode',
+                'EbayRetrieveBillingAddress',
             ],
+            'y26_m10' => [
+                'AddIsEasyShipSignToAmazonOrder'
+            ]
         ];
     }
 
@@ -597,7 +603,11 @@ class Config extends AbstractConfig
             \Ess\M2ePro\Setup\Update\y26_m06\AddFbmShipPlusSignToAmazonOrder::class,
             \Ess\M2ePro\Setup\Update\y26_m06\AddEbayAutoActionAdvancedFilterMode::class,
             \Ess\M2ePro\Setup\Update\y26_m07\AddAmazonAutoSearchAsinCron::class,
-            \Ess\M2ePro\Setup\Update\y26_m09\AutoActionAdvancedFilterMode::class
+            \Ess\M2ePro\Setup\Update\y26_m09\AutoActionAdvancedFilterMode::class,
+            \Ess\M2ePro\Setup\Update\y26_m09\AmazonRetrieveBillingAddress::class,
+            \Ess\M2ePro\Setup\Update\y26_m09\AmazonAutoActionAdvancedFilterMode::class,
+            \Ess\M2ePro\Setup\Update\y26_m09\EbayRetrieveBillingAddress::class,
+            \Ess\M2ePro\Setup\Update\y26_m10\AddIsEasyShipSignToAmazonOrder::class,
         ];
     }
 

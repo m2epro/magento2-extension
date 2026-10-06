@@ -19,4 +19,11 @@ class FilterFactory
             ->create(Filter::class)
             ->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK);
     }
+
+    public function createWithComponentModeAmazon(): Filter
+    {
+        return $this->objectManager
+            ->create(Filter::class)
+            ->setComponentMode(\Ess\M2ePro\Helper\Component\Amazon::NICK);
+    }
 }

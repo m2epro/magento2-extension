@@ -49,6 +49,28 @@ class Repository
     }
 
     /**
+     * @param string[] $amazonOrderIds
+     *
+     * @return array<string, \Ess\M2ePro\Model\Order>
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function findByAmazonOrderIds(array $amazonOrderIds): array
+    {
+        $collection = $this->orderCollectionFactory->createWithAmazonChildMode();
+        $collection->addFieldToFilter(
+            AmazonOrderResource::COLUMN_AMAZON_ORDER_ID,
+            ['in' => $amazonOrderIds]
+        );
+
+        $result = [];
+        foreach ($collection->getItems() as $order) {
+            $result[$order->getChildObject()->getAmazonOrderId()] = $order;
+        }
+
+        return $result;
+    }
+
+    /**
      * @return \Ess\M2ePro\Model\Order[]
      */
     public function retrieveWithoutMagentoOrders(
@@ -76,5 +98,47 @@ class Repository
             );
 
         return array_values($collection->getItems());
+    }
+
+    public function findOlderForReceiveBillingAddress(int $accountId): ?\Ess\M2ePro\Model\Order
+    {
+        $collection = $this->orderCollectionFactory->createWithAmazonChildMode();
+        $collection->addFieldToFilter(
+            OrderResource::COLUMN_ACCOUNT_ID,
+            ['eq' => $accountId]
+        );
+        $collection->addFieldToFilter(
+            OrderResource::COLUMN_MAGENTO_ORDER_ID,
+            ['null' => true]
+        );
+
+        $collection->addFieldToFilter(
+            'status',
+            ['neq' => \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED]
+        );
+
+        $dateFrom = \Ess\M2ePro\Helper\Date::createCurrentGmt()->modify('-1 month');
+        $dateTo = \Ess\M2ePro\Helper\Date::createCurrentGmt()->modify('-20 minutes');
+
+        $collection->addFieldToFilter(
+            AmazonOrderResource::COLUMN_PURCHASE_CREATE_DATE,
+            ['gteq' => $dateFrom->format('Y-m-d H:i:s')]
+        );
+        $collection->addFieldToFilter(
+            AmazonOrderResource::COLUMN_PURCHASE_CREATE_DATE,
+            ['lteq' => $dateTo->format('Y-m-d H:i:s')]
+        );
+        $collection->addOrder(
+            AmazonOrderResource::COLUMN_PURCHASE_CREATE_DATE,
+            \Magento\Framework\Data\Collection::SORT_ORDER_ASC
+        );
+        $collection->getSelect()->limit(1);
+
+        $result = $collection->getFirstItem();
+        if ($result->isObjectNew()) {
+            return null;
+        }
+
+        return $result;
     }
 }

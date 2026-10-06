@@ -43,8 +43,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     public const CANCEL_REASON_DEFAULT = 'OTHER';
     public const CANCEL_REASON_BUYER_ASK = 'BUYER_ASKED_CANCEL';
 
-    /** @var \Ess\M2ePro\Model\Ebay\Order\ShippingAddressFactory */
-    private $shippingAddressFactory;
+    private Order\AddressFactory $addressFactory;
     /** @var \Ess\M2ePro\Model\Magento\Order\ShipmentFactory */
     private $shipmentFactory;
     private $externalTransactionsCollection = null;
@@ -66,7 +65,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay $componentEbay,
         \Ess\M2ePro\Model\Magento\Order\ShipmentFactory $shipmentFactory,
-        \Ess\M2ePro\Model\Ebay\Order\ShippingAddressFactory $shippingAddressFactory,
+        \Ess\M2ePro\Model\Ebay\Order\AddressFactory $addressFactory,
         \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender,
         \Magento\Sales\Model\Order\Email\Sender\InvoiceSender $invoiceSender,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -95,7 +94,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         );
 
         $this->shipmentFactory = $shipmentFactory;
-        $this->shippingAddressFactory = $shippingAddressFactory;
+        $this->addressFactory = $addressFactory;
         $this->orderSender = $orderSender;
         $this->invoiceSender = $invoiceSender;
         $this->componentEbay = $componentEbay;
@@ -389,11 +388,17 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         $shippingDetails = $this->getShippingDetails();
         $address = isset($shippingDetails['address']) ? $shippingDetails['address'] : [];
 
-        return $this->shippingAddressFactory->create(
-            [
-                'order' => $this->getParentObject(),
-            ]
-        )->setData($address);
+        return $this->addressFactory->createShippingAddress($this->getParentObject(), $address);
+    }
+
+    public function getBillingAddress(): ?\Ess\M2ePro\Model\Ebay\Order\BillingAddress
+    {
+        $address = $this->getSettings('billing_address');
+        if (empty($address)) {
+            return null;
+        }
+
+        return $this->addressFactory->createBillingAddress($this->getParentObject(), $address);
     }
 
     /**
@@ -455,11 +460,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         $warehouseAddress = is_array($globalShippingData['warehouse_address'])
             ? $globalShippingData['warehouse_address'] : [];
 
-        return $this->shippingAddressFactory->create(
-            [
-                'order' => $this->getParentObject(),
-            ]
-        )->setData($warehouseAddress);
+        return $this->addressFactory->createShippingAddress($this->getParentObject(), $warehouseAddress);
     }
 
     /**

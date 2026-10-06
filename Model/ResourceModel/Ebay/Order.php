@@ -7,6 +7,7 @@ class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
     public const COLUMN_ORDER_ID = 'order_id';
     public const COLUMN_PURCHASE_CREATE_DATE = 'purchase_create_date';
     public const COLUMN_IS_FULL_REFUNDED = 'is_full_refunded';
+    public const COLUMN_BILLING_ADDRESS = 'billing_address';
 
     /** @var bool  */
     protected $_isPkAutoIncrement = false;

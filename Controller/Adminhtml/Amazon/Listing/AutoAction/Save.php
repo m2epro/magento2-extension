@@ -1,18 +1,28 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction\Save
- */
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
 {
+    private \Ess\M2ePro\Model\Amazon\Listing\Auto\Advanced\Filter\Create $amazonAutoAdvancedFilterCreate;
+    private \Ess\M2ePro\Model\Amazon\Listing\Auto\Advanced\Filter\Update $amazonAutoAdvancedFilterUpdate;
+    private \Ess\M2ePro\Model\Amazon\Listing\Auto\Advanced\Filter\Repository $amazonAutoAdvancedFilterRepository;
+
+    public function __construct(
+        \Ess\M2ePro\Model\Amazon\Listing\Auto\Advanced\Filter\Create $amazonAutoAdvancedFilterCreate,
+        \Ess\M2ePro\Model\Amazon\Listing\Auto\Advanced\Filter\Update $amazonAutoAdvancedFilterUpdate,
+        \Ess\M2ePro\Model\Amazon\Listing\Auto\Advanced\Filter\Repository $amazonAutoAdvancedFilterRepository,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+        $this->amazonAutoAdvancedFilterCreate = $amazonAutoAdvancedFilterCreate;
+        $this->amazonAutoAdvancedFilterUpdate = $amazonAutoAdvancedFilterUpdate;
+        $this->amazonAutoAdvancedFilterRepository = $amazonAutoAdvancedFilterRepository;
+    }
+
     public function execute()
     {
         if (!$post = $this->getRequest()->getPost()) {
@@ -119,6 +129,13 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
                 $category->save();
             }
         }
+
+        // mode advanced filter
+        // ----------------------------------------
+        if ($data['auto_mode'] == \Ess\M2ePro\Model\Listing::AUTO_MODE_ADVANCED_FILTER) {
+            $listingData['auto_mode'] = \Ess\M2ePro\Model\Listing::AUTO_MODE_ADVANCED_FILTER;
+            $this->saveAdvancedFilter($data, (int)$listing->getId());
+        }
         // ---------------------------------------
 
         $listing->addData($listingData);
@@ -128,5 +145,54 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
         $this->setJsonContent(['success' => true]);
 
         return $this->getResult();
+    }
+
+    private function saveAdvancedFilter(array $requestData, int $listingId)
+    {
+        $model = $this->amazonAutoAdvancedFilterRepository->find((int)$requestData['id']);
+
+        $addingProductTypeTemplateId = !empty($requestData['adding_product_type_template_id'])
+            ? (int)$requestData['adding_product_type_template_id']
+            : null;
+
+        if ($model !== null) {
+            $this->amazonAutoAdvancedFilterUpdate->execute(
+                $model,
+                (string)$requestData['title'],
+                (int)$requestData['adding_mode'],
+                (int)$requestData['adding_add_not_visible'],
+                (int)$requestData['deleting_mode'],
+                $this->prepareAdvancedFilterCondition($requestData['condition']),
+                $addingProductTypeTemplateId
+            );
+
+            return;
+        }
+
+        $this->amazonAutoAdvancedFilterCreate->execute(
+            $listingId,
+            (string)$requestData['title'],
+            (int)$requestData['adding_mode'],
+            (int)$requestData['adding_add_not_visible'],
+            (int)$requestData['deleting_mode'],
+            $this->prepareAdvancedFilterCondition($requestData['condition']),
+            $addingProductTypeTemplateId
+        );
+    }
+
+    private function prepareAdvancedFilterCondition($data): ?string
+    {
+        $post = [];
+        parse_str($data, $post);
+
+        if (empty($post['rule'][\Ess\M2ePro\Model\Listing\Auto\Advanced\Filter::RULE_MODEL_PREFIX])) {
+            return null;
+        }
+
+        $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
+            ['prefix' => \Ess\M2ePro\Model\Listing\Auto\Advanced\Filter::RULE_MODEL_PREFIX]
+        );
+
+        return $ruleModel->getSerializedFromPost($post);
     }
 }

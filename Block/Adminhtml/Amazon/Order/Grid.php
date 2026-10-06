@@ -10,6 +10,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Order;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 use Ess\M2ePro\Model\Amazon\Listing\Product;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Order as AmazonOrderResource;
 
 class Grid extends AbstractGrid
 {
@@ -93,6 +94,7 @@ class Grid extends AbstractGrid
         $this->addB2BFilter();
         $this->addInvoiceByAmazonFilter();
         $this->addFbmShipPlusFilter();
+        $this->addEasyShipFilter();
     }
 
     protected function _prepareCollection()
@@ -477,10 +479,17 @@ class Grid extends AbstractGrid
             );
         }
 
-        if ($row->getChildObject()->getData('is_fbm_ship_plus')) {
+        if ($row->getChildObject()->getData(AmazonOrderResource::COLUMN_IS_FBM_SHIP_PLUS)) {
             $bages[] = sprintf(
                 '<div class="amazon-badge fbm-ship-plus">%s</div>',
                 __('FBM Ship+')
+            );
+        }
+
+        if ($row->getChildObject()->getData(AmazonOrderResource::COLUMN_IS_EASY_SHIP)) {
+            $bages[] = sprintf(
+                '<div class="amazon-badge easy-ship">%s</div>',
+                __('Easy Ship')
             );
         }
 
@@ -1144,6 +1153,30 @@ JS
         $filter = $this->advancedFilterFactory->createDropDownFilter(
             'is_fbm_ship_plus',
             __('FBM Ship+'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addEasyShipFilter()
+    {
+        $options = $this->advancedFilterAllOrdersOptions->getYesNoOptions();
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Order\Collection $orders,
+            string $filterValue
+        ): void {
+            $orders->addFieldToFilter(
+                AmazonOrderResource::COLUMN_IS_EASY_SHIP,
+                ['eq' => $filterValue]
+            );
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'is_easy_ship',
+            __('Easy Ship'),
             $options,
             $filterCallback
         );

@@ -39,6 +39,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     public const SHIPPING_RATE_TABLE_ACCEPT_MODE = 1;
     public const SHIPPING_RATE_TABLE_IDENTIFIER_MODE = 2;
+    public const SHIPPING_RATE_TABLE_ATTRIBUTE_MODE = 3;
 
     public const CROSS_BORDER_TRADE_NONE = 0;
     public const CROSS_BORDER_TRADE_NORTH_AMERICA = 1;
@@ -673,6 +674,31 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         }
 
         return $attributes;
+    }
+
+    public function getShippingRateTableAttributes(): array
+    {
+        $result = [];
+
+        $localRateTables = $this->getSettings('local_shipping_rate_table');
+        foreach ($localRateTables as $rateTable) {
+            if ((int)$rateTable['mode'] !== self::SHIPPING_RATE_TABLE_ATTRIBUTE_MODE) {
+                continue;
+            }
+
+            $result[] = $rateTable['value'];
+        }
+
+        $localRateTables = $this->getSettings('international_shipping_rate_table');
+        foreach ($localRateTables as $rateTable) {
+            if ((int)$rateTable['mode'] !== self::SHIPPING_RATE_TABLE_ATTRIBUTE_MODE) {
+                continue;
+            }
+
+            $result[] = $rateTable['value'];
+        }
+
+        return array_values(array_unique($result));
     }
 
     //########################################

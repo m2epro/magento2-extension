@@ -12,6 +12,8 @@ class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
     public const COLUMN_DELIVERY_DATE_FROM = 'delivery_date_from';
     public const COLUMN_PAYMENT_METHOD_DETAILS = 'payment_method_details';
     public const COLUMN_IS_FBM_SHIP_PLUS = 'is_fbm_ship_plus';
+    public const COLUMN_IS_EASY_SHIP = 'is_easy_ship';
+    public const COLUMN_BILLING_ADDRESS = 'billing_address';
 
     /** @var bool  */
     protected $_isPkAutoIncrement = false;

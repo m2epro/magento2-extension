@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\AdvancedFilter;
 
-class AbstractForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
+abstract class AbstractForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    private array $formData = [];
-
     private ?\Ess\M2ePro\Model\Listing\Auto\Advanced\Filter $advancedFilter;
     private \Ess\M2ePro\Model\Magento\Product\RuleFactory $ruleFactory;
 
@@ -19,25 +17,52 @@ class AbstractForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
+        parent::__construct($context, $registry, $formFactory, $data);
         $this->advancedFilter = $advancedFilter;
         $this->ruleFactory = $ruleFactory;
-        parent::__construct($context, $registry, $formFactory, $data);
     }
 
-    public function _construct()
+    public function _construct(): void
     {
         parent::_construct();
-
         $this->setId('listingAutoActionModeAdvancedFilterForm');
-        $this->formData = $this->getFormData();
     }
 
-    protected function _prepareForm()
+    protected function _toHtml(): string
     {
-        $form = $this->_formFactory->create();
-        $selectElementType = \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select::class;
+        return sprintf('<div id="advanced_filter_child_data_container">%s</div>', parent::_toHtml());
+    }
 
-        $form->addField(
+    protected function hasAdvancedFilter(): bool
+    {
+        return $this->advancedFilter !== null;
+    }
+
+    protected function getAdvancedFilter(): ?\Ess\M2ePro\Model\Listing\Auto\Advanced\Filter
+    {
+        return $this->advancedFilter;
+    }
+
+    protected function addAdvancedFilterIdField(\Magento\Framework\Data\Form\Element\Fieldset $fieldset): void
+    {
+        $fieldValue = null;
+        if ($this->hasAdvancedFilter()) {
+            $fieldValue = $this->getAdvancedFilter()->getId();
+        }
+
+        $fieldset->addField(
+            'advanced_filter_id',
+            'hidden',
+            [
+                'name' => 'advanced_filter_id',
+                'value' => $fieldValue,
+            ]
+        );
+    }
+
+    protected function addAutoModeField(\Magento\Framework\Data\Form\Element\Fieldset $fieldset): void
+    {
+        $fieldset->addField(
             'auto_mode',
             'hidden',
             [
@@ -45,24 +70,16 @@ class AbstractForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_ADVANCED_FILTER,
             ]
         );
+    }
 
-        $form->addField(
-            'advanced_filter_id',
-            'hidden',
-            [
-                'name' => 'advanced_filter_id',
-                'value' => $this->getAdvancedFilter()
-                    ? $this->getAdvancedFilter()->getId()
-                    : null,
-            ]
-        );
+    protected function addTitleField(\Magento\Framework\Data\Form\Element\Fieldset $fieldset): void
+    {
+        $fieldValue = '';
+        if ($this->hasAdvancedFilter()) {
+            $fieldValue = $this->getAdvancedFilter()->getTitle();
+        }
 
-        $fieldSet = $form->addFieldset(
-            'fieldset_container',
-            []
-        );
-
-        $fieldSet->addField(
+        $fieldset->addField(
             'title',
             'text',
             [
@@ -70,95 +87,16 @@ class AbstractForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'class' => 'M2ePro-validate-advanced-filter-title',
                 'required' => true,
                 'style' => 'width: 350px;',
-                'value' => $this->getAdvancedFilter()
-                    ? $this->getAdvancedFilter()->getTitle()
-                    : '',
+                'value' => $fieldValue,
             ]
         );
+    }
 
-        $fieldSet->addField(
-            'adding_mode',
-            $selectElementType,
-            [
-                'name' => 'adding_mode',
-                'label' => __('Products meet the filter conditions'),
-                'title' => __('Products meet the filter conditions'),
-                'style' => 'width: 350px;',
-                'values' => [
-                    \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE => __('No Action'),
-                    \Ess\M2ePro\Model\Ebay\Listing::ADDING_MODE_ADD_AND_ASSIGN_CATEGORY => __(
-                        'Add to the Listing and Assign eBay Category'
-                    ),
-                ],
-                'value' => $this->getAdvancedFilter()
-                    ? $this->getAdvancedFilter()->getAddingMode()
-                    : \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
-            ]
-        );
-
-        $fieldSet->addField(
-            'adding_add_not_visible',
-            $selectElementType,
-            [
-                'name' => 'adding_add_not_visible',
-                'label' => __('Add not Visible Individually Products'),
-                'title' => __('Add not Visible Individually Products'),
-                'values' => [
-                    [
-                        'label' => __('No'),
-                        'value' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_NO,
-                    ],
-                    [
-                        'label' => __('Yes'),
-                        'value' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
-                    ],
-                ],
-                'value' => $this->getAdvancedFilter()
-                    ? $this->getAdvancedFilter()->getAddingAddNotVisible()
-                    : \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
-                'field_extra_attributes' => 'id="adding_add_not_visible_field"',
-                'tooltip' => __(
-                    'Set to <strong>Yes</strong> if you want the Magento Products with
-                    Visibility \'Not visible Individually\' to be added to the Listing
-                    Automatically.<br/>
-                    If set to <strong>No</strong>, only Variation (i.e.
-                    Parent) Magento Products will be added to the Listing Automatically,
-                    excluding Child Products.'
-                ),
-            ]
-        );
-
-        $fieldSet->addField(
-            'deleting_mode',
-            $selectElementType,
-            [
-                'name' => 'deleting_mode',
-                'label' => __('Products no longer meet the filter conditions'),
-                'title' => __('Products no longer meet the filter conditions'),
-                'values' => [
-                    [
-                        'label' => __('No Action'),
-                        'value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE,
-                    ],
-                    [
-                        'label' => __('Stop on Channel'),
-                        'value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP,
-                    ],
-                    [
-                        'label' => __('Stop on Channel and Delete from Listing'),
-                        'value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE,
-                    ],
-                ],
-                'value' => $this->getAdvancedFilter()
-                    ? $this->getAdvancedFilter()->getDeletingMode()
-                    : \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE,
-                'style' => 'width: 350px;',
-            ]
-        );
-
+    protected function addConditionField(\Magento\Framework\Data\Form\Element\Fieldset $fieldset): void
+    {
         $ruleModel = $this->ruleFactory->create(\Ess\M2ePro\Model\Listing\Auto\Advanced\Filter::RULE_MODEL_PREFIX);
-        if ($this->getAdvancedFilter() && !empty($this->getAdvancedFilter()->getCondition())) {
-            $ruleModel->loadFromSerialized($this->getAdvancedFilter()->getCondition());
+        if ($this->hasAdvancedFilter() && !empty($this->getAdvancedFilter()->getCondition())) {
+            $ruleModel->loadFromSerialized($this->advancedFilter->getCondition());
         }
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule $ruleBlock */
@@ -167,7 +105,7 @@ class AbstractForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule::class)
             ->setData(['rule_model' => $ruleModel]);
 
-        $fieldSet->addField(
+        $fieldset->addField(
             'condition',
             self::CUSTOM_CONTAINER,
             [
@@ -176,42 +114,5 @@ class AbstractForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'text' => $ruleBlock->toHtml(),
             ]
         );
-
-        $form->setUseContainer(true);
-        $this->setForm($form);
-
-        return parent::_prepareForm();
-    }
-
-    protected function getAdvancedFilter(): ?\Ess\M2ePro\Model\Listing\Auto\Advanced\Filter
-    {
-        return $this->advancedFilter;
-    }
-
-    private function getFormData(): array
-    {
-        $formData = [];
-        if ($this->getAdvancedFilter() !== null) {
-            $formData = $this->getAdvancedFilter()->getData();
-        }
-
-        $default = $this->getDefault();
-
-        return array_merge($default, $formData);
-    }
-
-    private function getDefault(): array
-    {
-        return [
-            'title' => '',
-            'adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_ADD,
-            'adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
-            'deleting_mode' => \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE,
-        ];
-    }
-
-    protected function _toHtml()
-    {
-        return '<div id="advanced_filter_child_data_container">' . parent::_toHtml() . '</div>';
     }
 }

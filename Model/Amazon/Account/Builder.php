@@ -338,7 +338,6 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'id',
             'website_id',
             'group_id',
-            'billing_address_mode',
             'import_buyer_company_name',
         ];
         foreach ($keys as $key) {
@@ -388,6 +387,21 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'ship_by_date',
             'update_without_track',
             'shipping_address_region_override',
+        ];
+        foreach ($keys as $key) {
+            if (isset($tempSettings[$key])) {
+                $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
+            }
+        }
+
+        // billing information
+        // ----------------------------------------
+        $tempKey = 'billing_information';
+        $tempSettings = !empty($this->rawData['magento_orders_settings'][$tempKey])
+            ? $this->rawData['magento_orders_settings'][$tempKey] : [];
+
+        $keys = [
+            'billing_address_usage',
         ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
@@ -540,6 +554,9 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                     'update_without_track' => 0,
                     'shipping_address_region_override' => 1,
                 ],
+                'billing_information' => [
+                    'billing_address_usage' => Account::BILLING_ADDRESS_USE_SHIPPING
+                ]
             ],
 
             // vcs_upload_invoices

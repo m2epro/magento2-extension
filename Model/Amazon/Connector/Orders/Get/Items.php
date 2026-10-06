@@ -2,6 +2,8 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Orders\Get;
 
+use Ess\M2ePro\Model\ResourceModel\Amazon\Order as AmazonOrderResource;
+
 class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
 {
     public const TIMEOUT_ERRORS_COUNT_TO_RISE = 3;
@@ -174,7 +176,8 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
                 $order['is_afn_channel'] = (int)$orderData['channel']['is_afn'];
                 $order['is_prime'] = (int)$orderData['is_prime'];
                 $order['is_sold_by_amazon'] = (int)$orderData['is_sold_by_amazon'];
-                $order['is_fbm_ship_plus'] = (int)($orderData['is_fbm_ship'] ?? 0);
+                $order[AmazonOrderResource::COLUMN_IS_FBM_SHIP_PLUS] = (int)($orderData['is_fbm_ship'] ?? 0);
+                $order[AmazonOrderResource::COLUMN_IS_EASY_SHIP] = (int)($orderData['is_easy_ship'] ?? 0);
                 $order['is_business'] = (int)$orderData['is_business'];
 
                 $order['purchase_create_date'] = $orderData['purchase_date'];

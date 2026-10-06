@@ -234,8 +234,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
     {
         $billingAddress = parent::getBillingAddressData();
 
-        $rawAddressData = $this->order->getShippingAddress()
-                                      ->getRawData();
+        $rawAddressData = $this->order->getShippingAddress()->getRawData();
         if (!empty($rawAddressData['buyer_name'])) {
             $buyerUserInfo = $this->createUserInfoFromRawName(
                 $rawAddressData['buyer_name']
@@ -246,6 +245,17 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             $billingAddress['middlename'] = $buyerUserInfo->getMiddleName();
             $billingAddress['lastname'] = $buyerUserInfo->getLastName();
             $billingAddress['suffix'] = $buyerUserInfo->getSuffix();
+        }
+
+        if ($this->order->getBillingAddress() !== null) {
+            $orderBillingAddress = $this->order->getBillingAddress();
+
+            $billingAddress['country_id'] = $orderBillingAddress->getCountryId();
+            $billingAddress['region'] = $orderBillingAddress->getState();
+            $billingAddress['region_id'] = $orderBillingAddress->getRegionId();
+            $billingAddress['city'] = $orderBillingAddress->getCity();
+            $billingAddress['postcode'] = $orderBillingAddress->getPostalCode();
+            $billingAddress['street'] = $this->prepareStreetLines($orderBillingAddress->getStreet());
         }
 
         return $billingAddress;

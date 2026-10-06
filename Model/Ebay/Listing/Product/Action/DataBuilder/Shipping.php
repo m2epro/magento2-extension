@@ -184,11 +184,8 @@ class Shipping extends AbstractModel
             $this->getShippingTemplate()->isLocalShippingFlatEnabled() &&
             $this->getShippingTemplate()->isLocalShippingRateTableEnabled($this->getAccount())
         ) {
-            $data['rate_table_mode'] = $this->getShippingTemplate()
-                                            ->getLocalShippingRateTableMode($this->getAccount());
-            $data['rate_table_enabled'] = $this->getShippingTemplate()
-                                               ->isLocalShippingRateTableEnabled($this->getAccount());
-            $data['rate_table_id'] = $this->getShippingTemplate()->getLocalShippingRateTableId($this->getAccount());
+            $rateTableData = $this->getLocalRateTableData();
+            $data = array_merge($data, $rateTableData);
         }
 
         if ($this->getEbayAccount()->isRateTablesExist()) {
@@ -284,12 +281,8 @@ class Shipping extends AbstractModel
             $this->getShippingTemplate()->isInternationalShippingFlatEnabled() &&
             $this->getShippingTemplate()->isInternationalShippingRateTableEnabled($this->getAccount())
         ) {
-            $data['rate_table_mode'] = $this->getShippingTemplate()
-                                            ->getInternationalShippingRateTableMode($this->getAccount());
-            $data['rate_table_enabled'] = $this->getShippingTemplate()
-                                               ->isInternationalShippingRateTableEnabled($this->getAccount());
-            $data['rate_table_id'] = $this->getShippingTemplate()
-                                          ->getInternationalShippingRateTableId($this->getAccount());
+            $rateTableData = $this->getInternationalRateTableData();
+            $data = array_merge($data, $rateTableData);
         }
 
         if ($this->getShippingTemplate()->isInternationalShippingCalculatedEnabled()) {
@@ -395,5 +388,98 @@ class Shipping extends AbstractModel
         return $calculatedShipping !== null ? $calculatedShipping->getSource($this->getMagentoProduct()) : null;
     }
 
-    //########################################
+    private function getLocalRateTableData(): array
+    {
+        $rateTableMode = (int)$this
+            ->getShippingTemplate()
+            ->getLocalShippingRateTableMode($this->getAccount());
+
+        $result = [];
+
+        if ($rateTableMode == \Ess\M2ePro\Model\Ebay\Template\Shipping::SHIPPING_RATE_TABLE_ATTRIBUTE_MODE) {
+            $attributeCode = $this->getShippingTemplate()->getLocalShippingRateTableId($this->getAccount());
+            $attrValue = $this->getMagentoProduct()->getAttributeValue($attributeCode);
+            if (empty($attrValue)) {
+                return [];
+            }
+            $rateTableId = $this->findRateTableId('local', $attrValue) ?: $attrValue;
+
+            $result['rate_table_mode'] = \Ess\M2ePro\Model\Ebay\Template\Shipping::SHIPPING_RATE_TABLE_IDENTIFIER_MODE;
+            $result['rate_table_enabled'] = true;
+            $result['rate_table_id'] = $rateTableId;
+
+            return $result;
+        }
+
+        $result['rate_table_mode'] = $rateTableMode;
+        $result['rate_table_enabled'] = $this
+            ->getShippingTemplate()
+            ->isLocalShippingRateTableEnabled($this->getAccount());
+        $result['rate_table_id'] = $this
+            ->getShippingTemplate()
+            ->getLocalShippingRateTableId($this->getAccount());
+
+        return $result;
+    }
+
+    private function getInternationalRateTableData(): array
+    {
+        $mode = (int)$this
+            ->getShippingTemplate()
+            ->getInternationalShippingRateTableMode($this->getAccount());
+
+        if ($mode === \Ess\M2ePro\Model\Ebay\Template\Shipping::SHIPPING_RATE_TABLE_ATTRIBUTE_MODE) {
+            $attributeCode = $this->getShippingTemplate()->getInternationalShippingRateTableId($this->getAccount());
+            $attrValue = $this->getMagentoProduct()->getAttributeValue($attributeCode);
+            if (empty($attrValue)) {
+                return [];
+            }
+            $rateTableId = $this->findRateTableId('international', $attrValue) ?: $attrValue;
+
+            $result['rate_table_mode'] = \Ess\M2ePro\Model\Ebay\Template\Shipping::SHIPPING_RATE_TABLE_IDENTIFIER_MODE;
+            $result['rate_table_enabled'] = true;
+            $result['rate_table_id'] = $rateTableId;
+
+            return $result;
+        }
+
+        $result = [];
+        $result['rate_table_mode'] = $mode;
+        $result['rate_table_enabled'] = $this->getShippingTemplate()
+                                             ->isInternationalShippingRateTableEnabled($this->getAccount());
+        $result['rate_table_id'] = $this->getShippingTemplate()
+                                        ->getInternationalShippingRateTableId($this->getAccount());
+
+        return $result;
+    }
+
+    private function findRateTableId(string $type, string $query): ?string
+    {
+        $query = trim($query);
+        if (empty($query)) {
+            return null;
+        }
+
+        $countryCode = $this->getMarketplace()->getChildObject()->getOriginCountry();
+
+        $type = $type == 'local' ? 'domestic' : 'international';
+
+        $rateTables = $this->getAccount()->getChildObject()->getRateTables();
+        foreach ($rateTables as $rateTable) {
+            if (
+                strtolower($rateTable['countryCode']) != $countryCode
+                || strtolower($rateTable['locality']) != $type
+            ) {
+                continue;
+            }
+
+            if (mb_strtolower($rateTable['name']) != mb_strtolower($query)) {
+                continue;
+            }
+
+            return (string)$rateTable['rateTableId'];
+        }
+
+        return null;
+    }
 }

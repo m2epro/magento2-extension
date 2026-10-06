@@ -263,7 +263,8 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
             $shippingTemplate->getCountryAttributes(),
             $shippingTemplate->getAddressAttributes(),
             $shippingTemplate->getPostalCodeAttributes(),
-            $shippingTemplate->getDispatchTimeAttributes()
+            $shippingTemplate->getDispatchTimeAttributes(),
+            $shippingTemplate->getShippingRateTableAttributes(),
         );
 
         $calculatedShippingObject = $shippingTemplate->getCalculatedShipping();

@@ -2,8 +2,8 @@
 
 namespace Ess\M2ePro\Model\Amazon;
 
-use Ess\M2ePro\Model\ResourceModel\Amazon\Account as ResourceAccount;
 use Ess\M2ePro\Model\Amazon\Account\MultiLocationInventoryMapping;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Account as ResourceAccount;
 
 class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
@@ -61,6 +61,9 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     public const INVOICE_GENERATION_BY_AMAZON = 1;
     public const INVOICE_GENERATION_BY_EXTENSION = 2;
+
+    public const BILLING_ADDRESS_USE_SHIPPING = 1;
+    public const BILLING_ADDRESS_RETRIEVE_ACCURATE = 2;
 
     /** @var \Ess\M2ePro\Model\Marketplace */
     private $marketplaceModel;
@@ -1214,5 +1217,19 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         }
 
         return \Ess\M2ePro\Helper\Date::createDateGmt($value);
+    }
+
+    public function isEnabledRetrieveAccurateBillingAddress(): bool
+    {
+        if (!$this->getMarketplace()->isEuropeanRegion()) {
+            return false;
+        }
+
+        $value = (int)$this->getSetting(
+            'magento_orders_settings',
+            ['billing_information', 'billing_address_usage'],
+        );
+
+        return $value === self::BILLING_ADDRESS_RETRIEVE_ACCURATE;
     }
 }

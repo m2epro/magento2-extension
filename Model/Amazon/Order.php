@@ -2,8 +2,8 @@
 
 namespace Ess\M2ePro\Model\Amazon;
 
-use Magento\Sales\Model\Order\Creditmemo;
 use Ess\M2ePro\Model\ResourceModel\Amazon\Order as ResourceAmazonOrder;
+use Magento\Sales\Model\Order\Creditmemo;
 
 /**
  * @method \Ess\M2ePro\Model\Order getParentObject()
@@ -24,12 +24,12 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     public const INVOICE_SOURCE_MAGENTO = 'magento';
     public const INVOICE_SOURCE_EXTENSION = 'extension';
 
-    private const DATE_INTERVAL_IN_HOURS_FOR_INVOICE_SENDING_FROM_REPORT  = 24;
+    private const DATE_INTERVAL_IN_HOURS_FOR_INVOICE_SENDING_FROM_REPORT = 24;
 
     /** @var \Ess\M2ePro\Model\Magento\Order\ShipmentFactory */
     private $shipmentFactory;
-    /** @var \Ess\M2ePro\Model\Amazon\Order\ShippingAddressFactory */
-    private $shippingAddressFactory;
+    /** @var \Ess\M2ePro\Model\Amazon\Order\AddressFactory */
+    private $addressFactory;
     /** @var \Magento\Sales\Model\Order\Email\Sender\OrderSender */
     private $orderSender;
     /** @var \Magento\Sales\Model\Order\Email\Sender\InvoiceSender */
@@ -43,9 +43,9 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Other */
     private $listingOtherResourceModel;
 
-    /** @var null|float  */
+    /** @var null|float */
     private $subTotalPrice = null;
-    /** @var null|float  */
+    /** @var null|float */
     private $grandTotalPrice = null;
     private \Magento\Sales\Model\Order\CreditmemoFactory $creditmemoFactory;
     /** @var \Magento\Sales\Model\Service\CreditmemoService */
@@ -57,7 +57,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\Magento\Order\ShipmentFactory $shipmentFactory,
-        \Ess\M2ePro\Model\Amazon\Order\ShippingAddressFactory $shippingAddressFactory,
+        \Ess\M2ePro\Model\Amazon\Order\AddressFactory $addressFactory,
         \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender,
         \Magento\Sales\Model\Order\Email\Sender\InvoiceSender $invoiceSender,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -90,7 +90,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         $this->amazonHelper = $amazonHelper;
         $this->amazonFactory = $amazonFactory;
         $this->shipmentFactory = $shipmentFactory;
-        $this->shippingAddressFactory = $shippingAddressFactory;
+        $this->addressFactory = $addressFactory;
         $this->orderSender = $orderSender;
         $this->invoiceSender = $invoiceSender;
         $this->listingOtherResourceModel = $listingOtherResourceModel;
@@ -177,11 +177,10 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
      */
     public function getShippingAddress()
     {
-        $address = \Ess\M2ePro\Helper\Json::decode($this->getData('shipping_address'));
+        $addressData = \Ess\M2ePro\Helper\Json::decode($this->getData('shipping_address'));
 
-        return $this->shippingAddressFactory->create([
-            'order' => $this->getParentObject(),
-        ])->setData($address);
+        return $this->addressFactory
+            ->createShippingAddress($this->getParentObject(), $addressData);
     }
 
     public function getPurchaseCreateDate(): \DateTime
@@ -391,7 +390,12 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
     public function isFbmShipPlus(): bool
     {
-        return (bool)$this->getData('is_fbm_ship_plus');
+        return (bool)$this->getData(ResourceAmazonOrder::COLUMN_IS_FBM_SHIP_PLUS);
+    }
+
+    public function isEasyShip(): bool
+    {
+        return (bool)$this->getData(ResourceAmazonOrder::COLUMN_IS_EASY_SHIP);
     }
 
     /**
@@ -623,7 +627,20 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             return false;
         }
 
+        if ($this->isBlockedCreateByBillingAddress()) {
+            return false;
+        }
+
         return true;
+    }
+
+    public function isBlockedCreateByBillingAddress(): bool
+    {
+        return empty($this->getParentObject()->getMagentoOrderId())
+            && !$this->isPending()
+            && !$this->isCanceled()
+            && $this->getAmazonAccount()->isEnabledRetrieveAccurateBillingAddress()
+            && $this->getBillingAddress() === null;
     }
 
     public function beforeCreateMagentoOrder(): void
@@ -1290,5 +1307,28 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         }
 
         return json_decode($data, true);
+    }
+
+    public function setBillingAddress(Order\BillingAddress $billingAddress): self
+    {
+        $this->setData(ResourceAmazonOrder::COLUMN_BILLING_ADDRESS, json_encode($billingAddress->getData()));
+
+        return $this;
+    }
+
+    public function getBillingAddress(): ?Order\BillingAddress
+    {
+        $value = $this->getData(ResourceAmazonOrder::COLUMN_BILLING_ADDRESS);
+        if (empty($value)) {
+            return null;
+        }
+
+        $addressData = json_decode($value, true);
+        if (empty($addressData)) {
+            return null;
+        }
+
+        return $this->addressFactory
+            ->createBillingAddress($this->getParentObject(), $addressData);
     }
 }

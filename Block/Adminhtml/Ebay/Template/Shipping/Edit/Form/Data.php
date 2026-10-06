@@ -370,7 +370,10 @@ Select which Shipping Rate Table mode to use:<br>
 <strong>Rate Table</strong> -  allows you to apply a
 <a target="_blank"
     href="http://pages.ebay.com/seller-center/seller-updates/2017spring/shipping-tools.html">certain</a>
-Shipping Rate Table from the list you have created to the current eBay Seller Account.<br><br>
+Shipping Rate Table from the list you have created to the current eBay Seller Account.<br>
+<strong>Magento Attributes</strong> – select a Magento attribute whose value contains the title of the Shipping Rate
+Table configured on eBay. The table is then determined for each product by its attribute value, so the value must
+exactly match the table title on eBay.<br><br>
 Click <strong>Refresh</strong> to download the latest Shipping Rate Tables from eBay.
 HTML
             );
@@ -791,7 +794,10 @@ Select which Shipping Rate Table mode to use:<br>
 <strong>Rate Table</strong> -  allows you to apply a
 <a target="_blank"
     href="http://pages.ebay.com/seller-center/seller-updates/2017spring/shipping-tools.html">certain</a>
-Shipping Rate Table from the list you have created to the current eBay Seller Account.<br><br>
+Shipping Rate Table from the list you have created to the current eBay Seller Account.<br>
+<strong>Magento Attributes</strong> – select a Magento attribute whose value contains the title of the Shipping Rate
+Table configured on eBay. The table is then determined for each product by its attribute value, so the value must
+exactly match the table title on eBay.<br><br>
 Click <strong>Refresh</strong> to download the latest Shipping Rate Tables from eBay.
 HTML
             );
@@ -2740,12 +2746,15 @@ JS;
                 $localShippingRateTablesJson = \Ess\M2ePro\Helper\Json::encode(
                     $this->getLocalShippingRateTables($this->getAccount())
                 );
+                $magentoAttributes = json_encode($this->attributesByInputTypes['text_select']);
+
                 $rateTablesHtml .= <<<JS
     EbayTemplateShippingObj.renderRateTables({
         accountId: {$this->getAccountId()},
         marketplaceId: {$this->getMarketplace()->getId()},
         elementId: "local_shipping_rate_table_value_{$this->getAccountId()}",
         data: {$localShippingRateTablesJson},
+        magento_attributes: {$magentoAttributes},
         value: {$rateTablesValue},
         type: "local"
     });
@@ -2761,12 +2770,15 @@ JS;
                     $this->getInternationalShippingRateTables($this->getAccount())
                 );
 
+                $magentoAttributes = json_encode($this->attributesByInputTypes['text_select']);
+
                 $rateTablesHtml .= <<<JS
     EbayTemplateShippingObj.renderRateTables({
         accountId: {$this->getAccountId()},
         marketplaceId: {$this->getMarketplace()->getId()},
         elementId: "international_shipping_rate_table_value_{$this->getAccountId()}",
         data: {$internationalShippingRateTablesJson},
+        magento_attributes: {$magentoAttributes},
         value: {$rateTablesValue},
         type: "international"
     });
@@ -2784,12 +2796,15 @@ JS;
                             $this->getLocalShippingRateTables($account)
                         );
 
+                        $magentoAttributes = json_encode($this->attributesByInputTypes['text_select']);
+
                         $rateTablesHtml .= <<<JS
     EbayTemplateShippingObj.renderRateTables({
         accountId: {$account->getId()},
         marketplaceId: {$this->getMarketplace()->getId()},
         elementId: "local_shipping_rate_table_value_{$account->getId()}",
         data: {$localShippingRateTablesJson},
+        magento_attributes: {$magentoAttributes},
         value: {$rateTablesValue},
         type: "local"
     });
@@ -2805,12 +2820,15 @@ JS;
                             $this->getInternationalShippingRateTables($account)
                         );
 
+                        $magentoAttributes = json_encode($this->attributesByInputTypes['text_select']);
+
                         $rateTablesHtml .= <<<JS
     EbayTemplateShippingObj.renderRateTables({
         accountId: {$account->getId()},
         marketplaceId: {$this->getMarketplace()->getId()},
         elementId: "international_shipping_rate_table_value_{$account->getId()}",
         data: {$internationalShippingRateTablesJson},
+        magento_attributes: {$magentoAttributes},
         value: {$rateTablesValue},
         type: "international"
     });
