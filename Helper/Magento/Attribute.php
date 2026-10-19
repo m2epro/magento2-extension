@@ -80,6 +80,10 @@ class Attribute extends AbstractHelper
                 $attribute['frontend_label'] = 'Product Base Image';
             }
 
+            if ($attribute['frontend_label'] === null) {
+                continue;
+            }
+
             if (empty($attributesByLabels[$attribute['frontend_label']])) {
                 $attributesByLabels[$attribute['frontend_label']] = [];
             }

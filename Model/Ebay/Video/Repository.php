@@ -62,4 +62,24 @@ class Repository
             [\Ess\M2ePro\Model\ResourceModel\Ebay\Video::COLUMN_ACCOUNT_ID . ' = ?' => $accountId],
         );
     }
+
+    /**
+     * @return \Ess\M2ePro\Model\Ebay\Video[]
+     */
+    public function getHangingRecords(\DateTime $boundaryDate, int $limit): array
+    {
+        $collection = $this->videoCollectionFactory->create();
+        $collection->addFieldToFilter(
+            \Ess\M2ePro\Model\ResourceModel\Ebay\Video::COLUMN_STATUS,
+            ['eq' => \Ess\M2ePro\Model\Ebay\ComplianceDocuments::STATUS_UPLOADING]
+        );
+        $collection->addFieldToFilter(
+            \Ess\M2ePro\Model\ResourceModel\Ebay\Video::COLUMN_UPDATE_DATE,
+            ['lt' => $boundaryDate->format('Y-m-d H:i:s')]
+        );
+
+        $collection->getSelect()->limit($limit);
+
+        return array_values($collection->getItems());
+    }
 }

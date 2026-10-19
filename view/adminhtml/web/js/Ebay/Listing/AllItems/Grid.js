@@ -35,6 +35,7 @@ define([
                 reviseAction: this.actionHandler.reviseAction.bind(this.actionHandler),
                 stopAction: this.actionHandler.stopAction.bind(this.actionHandler),
                 stopAndRemoveAction: this.actionHandler.stopAndRemoveAction.bind(this.actionHandler),
+                changePolicyAction: this.actionHandler.changePolicyAction.bind(this.actionHandler),
             };
         },
 

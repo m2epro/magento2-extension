@@ -382,6 +382,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'url' => '',
         ], 'actions');
 
+        $this->getMassactionBlock()->addItem('changePolicy', [
+            'label' => __('Change Policies'),
+            'url' => '',
+        ], 'actions');
+
         return parent::_prepareMassaction();
     }
 
@@ -403,6 +408,12 @@ JS
             'runReviseProducts' => $this->getUrl('*/ebay_listing_allItems_actions/runReviseProducts'),
             'runStopProducts' => $this->getUrl('*/ebay_listing_allItems_actions/runStopProducts'),
             'runStopAndRemoveProducts' => $this->getUrl('*/ebay_listing_allItems_actions/runStopAndRemoveProducts'),
+        ]);
+
+        $this->jsUrl->addUrls([
+            'changePolicy/groupByMarketplace' => $this->getUrl('*/ebay_template/groupByMarketplace'),
+            'changePolicy/getPopupHtml' => $this->getUrl('*/ebay_template/editListingProductsPolicy'),
+            'changePolicy/savePolicies' => $this->getUrl('*/ebay_template/saveListingProductsPolicy'),
         ]);
 
         $this->jsUrl->add($this->getUrl('*/listing/getErrorsSummary'), 'getErrorsSummary');

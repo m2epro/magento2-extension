@@ -83,4 +83,24 @@ class Repository
 
         return $document;
     }
+
+    /**
+     * @return \Ess\M2ePro\Model\Ebay\ComplianceDocuments[]
+     */
+    public function getHangingRecords(\DateTime $boundaryDate, int $limit): array
+    {
+        $collection = $this->collectionFactory->create();
+        $collection->addFieldToFilter(
+            DocumentsResource::COLUMN_STATUS,
+            ['eq' => \Ess\M2ePro\Model\Ebay\ComplianceDocuments::STATUS_UPLOADING]
+        );
+        $collection->addFieldToFilter(
+            DocumentsResource::COLUMN_UPDATE_DATE,
+            ['lt' => $boundaryDate->format('Y-m-d H:i:s')]
+        );
+
+        $collection->getSelect()->limit($limit);
+
+        return array_values($collection->getItems());
+    }
 }

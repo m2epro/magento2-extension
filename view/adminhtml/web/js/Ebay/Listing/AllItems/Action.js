@@ -1,6 +1,7 @@
 define([
-    'M2ePro/Common'
-], function () {
+    'M2ePro/Ebay/Listing/AllItems/ChangePolicyAction',
+    'M2ePro/Common',
+], function (ChangePolicyAction) {
 
     window.EbayListingAllItemsAction = Class.create(Common, {
 
@@ -48,6 +49,14 @@ define([
                     M2ePro.translator.translate('stopping_and_removing_selected_items_message'),
                     M2ePro.url.get('runStopAndRemoveProducts'),
             );
+        },
+
+        changePolicyAction: function ()
+        {
+            const action = new ChangePolicyAction(this.actionProcessor.gridHandler);
+            const productIds = this.actionProcessor.gridHandler.getSelectedProductsArray();
+
+            action.handle(productIds)
         },
 
         // ---------------------------------------

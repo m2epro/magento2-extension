@@ -475,7 +475,8 @@ class Config extends AbstractConfig
                 'EbayRetrieveBillingAddress',
             ],
             'y26_m10' => [
-                'AddIsEasyShipSignToAmazonOrder'
+                'AddIsEasyShipSignToAmazonOrder',
+                'RemoveOldHangingUploads',
             ]
         ];
     }
@@ -608,6 +609,7 @@ class Config extends AbstractConfig
             \Ess\M2ePro\Setup\Update\y26_m09\AmazonAutoActionAdvancedFilterMode::class,
             \Ess\M2ePro\Setup\Update\y26_m09\EbayRetrieveBillingAddress::class,
             \Ess\M2ePro\Setup\Update\y26_m10\AddIsEasyShipSignToAmazonOrder::class,
+            \Ess\M2ePro\Setup\Update\y26_m10\RemoveOldHangingUploads::class,
         ];
     }
 

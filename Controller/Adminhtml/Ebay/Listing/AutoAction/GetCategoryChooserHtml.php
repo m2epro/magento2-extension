@@ -283,7 +283,7 @@ class GetCategoryChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listi
         $template = $this->activeRecordFactory
             ->getObjectLoaded('Ebay_Listing_Auto_Category_Group', $groupId);
 
-        if ($categoryType == \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN) {
+        if ($categoryType == \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN) {
             return $template->getStoreCategoryTemplate();
         }
 
