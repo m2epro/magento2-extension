@@ -123,7 +123,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         }
 
         if (
-            $this->order->getAmazonAccount()->isImportBuyerCompanyName()
+            $this->order->getAmazonAccount()->isEnabledRetrieveAccurateBillingAddress()
             && $this->order->getBillingAddress() !== null
         ) {
             $orderBillingAddress = $this->order->getBillingAddress();
