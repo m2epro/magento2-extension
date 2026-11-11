@@ -465,7 +465,9 @@ class Builder extends AbstractModel
             $transaction = $transactionBuilder->process();
             $transaction->setOrder($this->order);
 
-            $externalTransactionsCollection->removeItemByKey($transaction->getId());
+            if (!empty($transaction->getId())) {
+                $externalTransactionsCollection->removeItemByKey($transaction->getId());
+            }
             $externalTransactionsCollection->addItem($transaction);
         }
     }
