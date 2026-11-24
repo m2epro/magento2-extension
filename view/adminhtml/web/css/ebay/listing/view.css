@@ -124,3 +124,14 @@ a.ebay-listing-view-icon.ebay-listing-view-remove:before {
 }
 
 /* ================================================ */
+
+.listing-view-warning-icon > span::before {
+    background-image: url(../../../images/warning.png);
+    width: 15px;
+    height: 15px;
+    background-size: cover;
+    content: '';
+    display: inline-block;
+    margin-right: 8px;
+    vertical-align: middle;
+}

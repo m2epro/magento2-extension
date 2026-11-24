@@ -204,5 +204,31 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMod
         return $this->getData('option');
     }
 
+    public function setChannelOption(string $channelOption): self
+    {
+        $this->setData(\Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\Option::COLUMN_CHANNEL_OPTION, $channelOption);
+
+        return $this;
+    }
+
+    public function resetChannelOption(): self
+    {
+        $this->setData(\Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\Option::COLUMN_CHANNEL_OPTION, null);
+
+        return $this;
+    }
+
+    public function getChannelOption(bool $returnOptionIfEmpty = true): string
+    {
+        $channelOption = (string)$this
+            ->getData(\Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\Option::COLUMN_CHANNEL_OPTION);
+
+        if (empty($channelOption) && $returnOptionIfEmpty) {
+            return $this->getOption();
+        }
+
+        return $channelOption;
+    }
+
     //########################################
 }

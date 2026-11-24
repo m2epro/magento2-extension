@@ -128,6 +128,17 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         ) {
             $orderBillingAddress = $this->order->getBillingAddress();
 
+            $billingAddressName = $orderBillingAddress->getName();
+            if (!empty($billingAddressName)) {
+                $buyerUserInfo = $this->createUserInfoFromRawName($billingAddressName);
+
+                $billingAddress['prefix'] = $buyerUserInfo->getPrefix();
+                $billingAddress['firstname'] = $buyerUserInfo->getFirstName();
+                $billingAddress['middlename'] = $buyerUserInfo->getMiddleName();
+                $billingAddress['lastname'] = $buyerUserInfo->getLastName();
+                $billingAddress['suffix'] = $buyerUserInfo->getSuffix();
+            }
+
             $billingAddress['country_id'] = $orderBillingAddress->getCountryId();
             $billingAddress['region'] = $orderBillingAddress->getState();
             $billingAddress['region_id'] = $orderBillingAddress->getRegionId();

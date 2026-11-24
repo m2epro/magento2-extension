@@ -34,7 +34,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
                     (string)$rawOrderItem['tracking_id'],
                     (string)$rawOrderItem['return_reason'],
                     \Ess\M2ePro\Helper\Date::createDateGmt($rawOrderItem['return_request_date']),
-                    (string)$rawOrderItem['return_request_status']
+                    (string)$rawOrderItem['return_request_status'],
+                    (string)($rawOrderItem['return_carrier'] ?: ''),
                 );
             }
 

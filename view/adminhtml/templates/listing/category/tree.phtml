@@ -58,79 +58,57 @@ $callback = $block->getCallback();
         <?php } ?>
 
         function init() {
-            if ($('#tree-div-auto-action').length) {
-                window.tree = $('#tree-div-auto-action').jstree({
+            const jsTreeContainer = $('#tree-div-auto-action');
+
+            if (jsTreeContainer.length) {
+                jsTreeContainer.jstree({
                     'core': {
-                        'themes': { 'responsive': false },
+                        'themes': {
+                            'responsive': false
+                        },
                         'data': <?php /* @noEscape */ echo $block->getTreeJson(); ?>,
                     },
+                    'multiple': true,
                     'plugins': ['checkbox'],
                     'checkbox': {
                         'three_state': false,
-                        'whole_node': false,
-                        'tie_selection': false
+                        'whole_node': true,
+                        'tie_selection': true,
                     }
                 });
 
-                tree.on('ready.jstree', function () {
-                    $('#expand-all').on('click', function () {
-                        tree.jstree('open_all');
-                        return false;
-                    });
+                window.tree = jsTreeContainer.jstree(true);
 
-                    $('#collapse-all').on('click', function () {
-                        tree.jstree('close_all');
-                        return false;
-                    });
+                jsTreeContainer.on('ready.jstree', function () {
+                    jsTreeContainer.on('click', '#expand-all', () => tree.open_all());
+                    jsTreeContainer.on('click', '#collapse-all', () => tree.close_all());
 
-                    for (var i = 0; i < initTreeSelectedNodes.length; i++) {
-                        tree.jstree('select_node', initTreeSelectedNodes[i][0]);
-                    }
-
-                    for (var j = 0; j < initTreeHighlightedNodes.length; j++) {
-                        tree.jstree('highlight_node', initTreeHighlightedNodes[j][0]);
+                    for (let i = 0; i < initTreeSelectedNodes.length; i++) {
+                        tree.select_node(initTreeSelectedNodes[i][0]);
                     }
                 });
 
-                tree.on('select_node.jstree', function (e, data) {
-                    <?php if (!empty($callback)) : ?>
-                    !ignoreTreeCallback && (<?php /* @noEscape */ echo $callback ?>)([data.node.id]);
-                    <?php endif; ?>
-
-                    categories_selected_items.forEach(function (nodeId) {
-                        tree.jstree('uncheck_node', nodeId);
-                    });
-
-                    categories_selected_items = [data.node.id];
-                });
-
-                tree.on('check_node.jstree', function (e, data) {
+                jsTreeContainer.on('select_node.jstree', function (e, data) {
                     if (!categories_selected_items.includes(data.node.id)) {
                         categories_selected_items.push(data.node.id);
                     }
 
-                    ListingCategoryTreeObj.tree_categoryAdd(data.node.id);
-
                     <?php if (!empty($callback)) : ?>
-                    !ignoreTreeCallback && (<?php /* @noEscape */ echo $callback ?>)(categories_selected_items);
+                    if (!ignoreTreeCallback) {
+                        (<?php /* @noEscape */ echo $callback ?>)([data.node.id]);
+                    }
                     <?php endif; ?>
                 });
 
-                tree.on('uncheck_node.jstree', function (e, data) {
-                    categories_selected_items = categories_selected_items.filter(function(id) {
+                jsTreeContainer.on('deselect_node.jstree', function (e, data) {
+                    categories_selected_items = categories_selected_items.filter(function (id) {
                         return id !== data.node.id;
                     });
-
-                    ListingCategoryTreeObj.tree_categoryRemove(data.node.id);
-
-                    <?php if (!empty($callback)) : ?>
-                    !ignoreTreeCallback && (<?php /* @noEscape */ echo $callback ?>)(categories_selected_items);
-                    <?php endif; ?>
                 });
             }
         }
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             init();
         });
     });

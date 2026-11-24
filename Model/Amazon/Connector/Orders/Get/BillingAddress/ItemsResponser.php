@@ -21,6 +21,7 @@ abstract class ItemsResponser extends \Ess\M2ePro\Model\Connector\Command\Pendin
         $responseItems = [];
         foreach ($rawResponseData['data'] as $orderBillingAddressData) {
             $responseItems[] = new ResponseItem(
+                (string)($orderBillingAddressData['name'] ?? ''),
                 $orderBillingAddressData['order_id'],
                 $orderBillingAddressData['billing_address']['country'],
                 $orderBillingAddressData['billing_address']['city'],

@@ -185,8 +185,10 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
     protected function replaceVariationSpecificsNames(array $data)
     {
         if (
-            !$this->getIsVariationItem() || !$this->getMagentoProduct()->isConfigurableType() ||
-            empty($data['variations_sets']) || !is_array($data['variations_sets'])
+            !$this->getIsVariationItem()
+            || !$this->getMagentoProduct()->isConfigurableType()
+            || empty($data['variations_sets'])
+            || !is_array($data['variations_sets'])
         ) {
             return $data;
         }

@@ -20,6 +20,8 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public const RESOLVE_KTYPE_STATUS_FINISHED = 2;
     public const RESOLVE_KTYPE_NOT_RESOLVED = 3;
 
+    public const ADDITIONAL_DATA_REPLACED_VARIATION_OPTIONS_KEY = 'replaced_variation_options';
+
     /** @var \Ess\M2ePro\Model\Ebay\Item */
     protected $ebayItemModel = null;
 
@@ -1508,5 +1510,44 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         }
 
         return (float)$onlineStrikeThroughPrice;
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\Ebay\Listing\Product\Variation\ReplacedOptionDto[]
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getReplacedVariationOptions(): array
+    {
+        $replacedOptions = $this->getParentObject()->getSetting(
+            'additional_data',
+            self::ADDITIONAL_DATA_REPLACED_VARIATION_OPTIONS_KEY,
+            []
+        );
+
+        if (empty($replacedOptions)) {
+            return [];
+        }
+
+        return array_map(
+            fn($item) => \Ess\M2ePro\Model\Ebay\Listing\Product\Variation\ReplacedOptionDto::createFromArray($item),
+            $replacedOptions
+        );
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Ebay\Listing\Product\Variation\ReplacedOptionDto[] $replacedOptions
+     *
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function setReplacedVariationOptions(array $replacedOptions): void
+    {
+        $this->getParentObject()->setSetting(
+            'additional_data',
+            self::ADDITIONAL_DATA_REPLACED_VARIATION_OPTIONS_KEY,
+            array_map(
+                fn($replacedOption) => $replacedOption->toArray(),
+                $replacedOptions
+            )
+        );
     }
 }

@@ -20,6 +20,34 @@ class Repository
         $this->listingProductCollectionFactory = $listingProductCollectionFactory;
     }
 
+    public function get(int $listingProductId): \Ess\M2ePro\Model\Listing\Product
+    {
+        $result = $this->find($listingProductId);
+        if ($result === null) {
+            throw new \Ess\M2ePro\Model\Exception\EntityNotFound(
+                'Listing product with id ' . $listingProductId . ' does not exists.'
+            );
+        }
+
+        return $result;
+    }
+
+    public function find(int $listingProductId): ?\Ess\M2ePro\Model\Listing\Product
+    {
+        $collection = $this->listingProductCollectionFactory->createWithEbayChildMode();
+        $collection->addFieldToFilter(
+            \Ess\M2ePro\Model\ResourceModel\Listing\Product::COLUMN_ID,
+            ['eq' => $listingProductId]
+        );
+
+        $result = $collection->getFirstItem();
+        if ($result->isObjectNew()) {
+            return null;
+        }
+
+        return $result;
+    }
+
     public function findByItemId(string $itemId): ?\Ess\M2ePro\Model\Ebay\Listing\Product
     {
         $collection = $this->ebayListingProductCollectionFactory->create();
@@ -47,6 +75,7 @@ class Repository
 
     /**
      * Key is eBay item_id
+     *
      * @param string[] $itemIds
      *
      * @return array<string, \Ess\M2ePro\Model\Ebay\Listing\Product>
@@ -81,6 +110,7 @@ class Repository
 
     /**
      * Key is eBay item_id
+     *
      * @param string[] $listingProductIds
      *
      * @return array<string, \Ess\M2ePro\Model\Ebay\Listing\Product>
@@ -119,6 +149,7 @@ class Repository
 
     /**
      * Key is eBay item_id
+     *
      * @param string[] $listingProductIds
      *
      * @return array<string, \Ess\M2ePro\Model\Ebay\Listing\Product>
@@ -154,5 +185,27 @@ class Repository
         }
 
         return $result;
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\Listing\Product[]
+     */
+    public function getForUpdateReplacedVariationOptions(int $templateCategoryId, int $listingId): array
+    {
+        $collection = $this->listingProductCollectionFactory->createWithEbayChildMode();
+        $collection->addFieldToFilter(
+            \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Wizard\Product::COLUMN_TEMPLATE_CATEGORY_ID,
+            ['eq' => $templateCategoryId]
+        );
+        $collection->addFieldToFilter(
+            \Ess\M2ePro\Model\ResourceModel\Listing\Product::LISTING_ID_FIELD,
+            ['eq' => $listingId]
+        );
+        $collection->addFieldToFilter(
+            \Ess\M2ePro\Model\ResourceModel\Listing\Product::STATUS_FIELD,
+            ['eq' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED]
+        );
+
+        return array_values($collection->getItems());
     }
 }

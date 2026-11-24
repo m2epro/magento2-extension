@@ -6,10 +6,15 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 {
     private \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory;
     private Updater\GroupedModifier $groupedModifier;
+    /**
+     * @var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation\Updater\VariationOptionsReplacer
+     */
+    private Updater\VariationOptionsReplacer $variationOptionsReplacer;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
-        Updater\GroupedModifier $groupedModifier,
+        \Ess\M2ePro\Model\Ebay\Listing\Product\Variation\Updater\GroupedModifier $groupedModifier,
+        \Ess\M2ePro\Model\Ebay\Listing\Product\Variation\Updater\VariationOptionsReplacer $variationOptionsReplacer,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
@@ -17,6 +22,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 
         $this->ebayFactory = $ebayFactory;
         $this->groupedModifier = $groupedModifier;
+        $this->variationOptionsReplacer = $variationOptionsReplacer;
     }
 
     public function process(\Ess\M2ePro\Model\Listing\Product $listingProduct)
@@ -33,6 +39,8 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
             $this->groupedModifier->modify($suite, $listingProduct->getMagentoProduct());
         }
 
+        $this->variationOptionsReplacer->replace($suite, $listingProduct);
+
         $magentoVariations = $suite->getVariations();
         $magentoVariationsData = $this->prepareMagentoVariationOptions($magentoVariations);
         $magentoVariations = $this->prepareMagentoVariations($magentoVariationsData);
@@ -48,6 +56,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 
         $addedVariations = $this->getAddedVariations($magentoVariations, $currentVariations);
         $deletedVariations = $this->getDeletedVariations($magentoVariations, $currentVariations);
+        $updatedVariations = $this->getChangedVariations($magentoVariations, $currentVariations);
 
         $this->addNewVariations($listingProduct, $addedVariations);
         $this->markAsDeletedVariations($deletedVariations);
@@ -265,6 +274,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
                     'product_type' => $aOption['product_type'],
                     'attribute' => $aOption['attribute'],
                     'option' => $aOption['option'],
+                    'channel_option' => $aOption['channel_option'] ?? null,
                 ];
 
                 $this->ebayFactory->getObject('Listing_Product_Variation_Option')->addData($dataForAdd)->save();
@@ -338,7 +348,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
                 if (
                     trim($mOption['product_id']) == trim($cOption['product_id'])
                     && trim($mOption['attribute']) == trim($cOption['attribute'])
-                    && trim($mOption['option']) == trim($cOption['option'])
+                    && trim($mOption['channel_option'] ?? $mOption['option']) == trim($cOption['channel_option'] ?? $cOption['option'])
                 ) {
                     $haveOption = true;
                     break;

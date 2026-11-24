@@ -175,7 +175,7 @@ class Images extends AbstractModel
                 /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
 
                 $optionLabel = trim($option->getAttribute());
-                $optionValue = trim($option->getOption());
+                $optionValue = trim($option->getChannelOption());
 
                 $foundAttributeLabel = false;
                 foreach ($attributeLabels as $tempLabel) {

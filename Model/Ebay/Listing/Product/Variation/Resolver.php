@@ -209,7 +209,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
                 /**@var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
 
                 $optionName = trim($option->getAttribute());
-                $optionValue = trim($option->getOption());
+                $optionValue = trim($option->getChannelOption());
 
                 if (array_key_exists($optionName, $trimmedSpecificsReplacements)) {
                     $optionName = $trimmedSpecificsReplacements[$optionName];
@@ -672,7 +672,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
                     continue;
                 }
 
-                $specifics[$variationOption->getAttribute()] = $variationOption->getOption();
+                $specifics[$variationOption->getAttribute()] = $variationOption->getChannelOption();
                 unset($variationOptions[$id]);
             }
 

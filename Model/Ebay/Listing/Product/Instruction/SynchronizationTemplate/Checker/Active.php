@@ -359,7 +359,7 @@ class Active extends AbstractModel
             }
         }
 
-        if ($this->input->hasInstructionWithTypes($this->getBundleOptionsMappingInstructionTypes())) {
+        if ($this->input->hasInstructionWithTypes($this->getOptionsMappingInstructionTypes())) {
             $configurator->allowQty();
             $configurator->allowPrice();
             $configurator->allowVariations();

@@ -44,7 +44,7 @@ class GetRuleConditionChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Gener
                 }
 
                 $block = $this->getLayout()->createBlock(
-                    \Magento\Catalog\Block\Adminhtml\Category\Checkboxes\Tree::class,
+                    \Ess\M2ePro\Block\Adminhtml\Magento\Category\CheckboxesTree::class,
                     'promo_widget_chooser_category_ids',
                     [
                         'data' => [

@@ -69,10 +69,11 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\ReturnDeta
 
             if ($this->isChangedReturnStatusToApproved($orderItem)) {
                 $noteMessages[] = (string)__(
-                    'Return was requested: SKU %sku, Reason %reason, Tracking ID %tracking_id',
+                    'Return was requested: SKU %sku, Reason %reason, Carrier %carrier, Tracking ID %tracking_id',
                     [
                         'sku' => $returnOrderItem->sku,
                         'reason' => $returnOrderItem->returnReason,
+                        'carrier' => $returnOrderItem->returnCarrier,
                         'tracking_id' => $returnOrderItem->trackingId,
                     ]
                 );

@@ -132,8 +132,7 @@ class Variations extends AbstractModel
 
             foreach ($variation->getOptions(true) as $option) {
                 /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
-
-                $item['specifics'][$option->getAttribute()] = $option->getOption();
+                $item['specifics'][$option->getAttribute()] = $option->getChannelOption();
             }
 
             //-- MPN Specific has been changed

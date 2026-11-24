@@ -3,6 +3,7 @@
 namespace Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges;
 
 use Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges\ItemsProcessor\StatusResolver;
+use Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\Option as OptionResource;
 
 class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
 {
@@ -489,7 +490,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
                 80,
                 $isNeedDelayInstruction
                     ? \Ess\M2ePro\Helper\Date::createCurrentGmt()
-                    ->modify('+30 minutes')
+                                             ->modify('+30 minutes')
                     : null
             );
         }
@@ -661,7 +662,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
                 80,
                 $isNeedDelayInstruction
                     ? \Ess\M2ePro\Helper\Date::createCurrentGmt()
-                    ->modify('+30 minutes')
+                                             ->modify('+30 minutes')
                     : null
             );
         }
@@ -718,7 +719,10 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $variationSnapshotOption */
 
             $variationSnapshotOptionName = trim($variationSnapshotOption->getData('attribute'));
-            $variationSnapshotOptionValue = trim($variationSnapshotOption->getData('option'));
+            $variationSnapshotOptionValue = trim(
+                $variationSnapshotOption->getData(OptionResource::COLUMN_CHANNEL_OPTION)
+                    ?? $variationSnapshotOption->getData('option')
+            );
 
             if (array_key_exists($variationSnapshotOptionName, $specificsReplacements)) {
                 $variationSnapshotOptionName = $specificsReplacements[$variationSnapshotOptionName];
@@ -820,7 +824,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
                     'type' => $type,
                     'initiator' => self::INSTRUCTION_INITIATOR,
                     'priority' => $priority,
-                    'skip_until' => $skipUntil ? $skipUntil->format('Y-m-d H:i:s') : null
+                    'skip_until' => $skipUntil ? $skipUntil->format('Y-m-d H:i:s') : null,
                 ],
                 \Ess\M2ePro\Helper\Component\Ebay::NICK
             );

@@ -1,33 +1,34 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
-namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Variation\Product\Manage;
+namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Variation\Product\Manage\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Variation\Product\Manage\View
- */
-class View extends AbstractContainer
+class Variations extends AbstractContainer
 {
+    private \Ess\M2ePro\Model\Listing\Product $listingProduct;
+
+    public function __construct(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+        $this->listingProduct = $listingProduct;
+    }
+
     protected function _construct()
     {
         parent::_construct();
-
-        $this->_controller = 'adminhtml_ebay_listing_variation_product_manage_view';
-
         $this->removeButton('add');
     }
 
     protected function _toHtml()
     {
         $block = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
-            'content' => $this->__(
+            'content' => __(
                 'In this Section you can find all Item Variations with possibility to search, filter,
                 sort etc.<br/><br/>
 
@@ -60,5 +61,20 @@ JS
             $block->toHtml() .
             '<div id="listing_product_variation_action_messages_container"></div>' .
             parent::_toHtml();
+    }
+
+    protected function _prepareLayout()
+    {
+        $gridBlock = $this
+            ->getLayout()
+            ->createBlock(
+                \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Variation\Product\Manage\Tabs\Variations\Grid::class,
+                '',
+                ['listingProduct' => $this->listingProduct]
+            );
+
+        $this->setChild('grid', $gridBlock);
+
+        return parent::_prepareLayout();
     }
 }

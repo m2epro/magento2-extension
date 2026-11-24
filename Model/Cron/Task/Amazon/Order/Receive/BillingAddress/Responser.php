@@ -102,6 +102,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\BillingAdd
         \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\BillingAddress\ResponseItem $responseItem
     ): void {
         $billingAddress = $this->addressFactory->createBillingAddress($order, [
+            \Ess\M2ePro\Model\Amazon\Order\BillingAddress::DATA_KEY_NAME => $responseItem->name,
             \Ess\M2ePro\Model\Amazon\Order\BillingAddress::DATA_KEY_COUNTRY_CODE => $responseItem->country,
             \Ess\M2ePro\Model\Amazon\Order\BillingAddress::DATA_KEY_STATE => $responseItem->state,
             \Ess\M2ePro\Model\Amazon\Order\BillingAddress::DATA_KEY_CITY => $responseItem->city,

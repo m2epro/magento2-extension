@@ -6,7 +6,7 @@
  * @license    Commercial use is forbidden
  */
 
-namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Variation\Product\Manage\View;
+namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Variation\Product\Manage\Tabs\Variations;
 
 use Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty as OnlineQty;
 
@@ -15,13 +15,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public const VARIATION_STATUS_ADD = 1;
     public const VARIATION_STATUS_DELETE = 2;
 
-    protected $localeCurrency;
-
-    protected $resourceConnection;
-
-    protected $wrapperCollection;
-
-    protected $ebayFactory;
+    protected \Magento\Framework\Locale\CurrencyInterface $localeCurrency;
+    protected \Magento\Framework\App\ResourceConnection $resourceConnection;
+    protected \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory $wrapperCollection;
+    protected \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory;
 
     protected $variationAttributes;
 
@@ -37,11 +34,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
-
-    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
-    private $globalDataHelper;
+    private \Ess\M2ePro\Model\Listing\Product $listingProduct;
 
     public function __construct(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory $wrapperCollection,
@@ -49,7 +45,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
-        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->localeCurrency = $localeCurrency;
@@ -57,30 +52,19 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->wrapperCollection = $wrapperCollection;
         $this->ebayFactory = $ebayFactory;
         $this->dataHelper = $dataHelper;
-        $this->globalDataHelper = $globalDataHelper;
+        $this->listingProduct = $listingProduct;
         parent::__construct($context, $backendHelper, $data);
     }
 
-    /**
-     * @return mixed
-     */
-    public function getListingProductId()
+    public function getListingProductId(): int
     {
-        return $this->listingProductId;
+        return (int)$this->listingProduct->getId();
     }
 
     // ---------------------------------------
 
-    /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-    protected $listingProduct;
-
-    protected function getListingProduct()
+    protected function getListingProduct(): \Ess\M2ePro\Model\Listing\Product
     {
-        if (empty($this->listingProduct)) {
-            $this->listingProduct = $this->ebayFactory
-                ->getObjectLoaded('Listing\Product', $this->getListingProductId());
-        }
-
         return $this->listingProduct;
     }
 
@@ -94,8 +78,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setDefaultSort('id');
         $this->setDefaultDir('ASC');
         $this->setUseAjax(true);
-
-        $this->listingProductId = $this->globalDataHelper->getValue('listing_product_id');
     }
 
     protected function _prepareCollection()
@@ -103,7 +85,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // Get collection
         // ---------------------------------------
         $collection = $this->ebayFactory->getObject('Listing_Product_Variation')->getCollection();
-        $collection->getSelect()->where('main_table.listing_product_id = ?', (int)$this->getListingProductId());
+        $collection->getSelect()->where('main_table.listing_product_id = ?', $this->getListingProductId());
         $collection->getSelect()->group('main_table.id');
         // ---------------------------------------
 
@@ -133,8 +115,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 ),
                 'online_qty_sold' => 'second_table.online_qty_sold',
                 'status' => 'second_table.status',
-                'attributes' => 'GROUP_CONCAT(`mlpvo`.`attribute`, \'==\', `mlpvo`.`option` SEPARATOR \'||\')',
-                'products_ids' => 'GROUP_CONCAT(`mlpvo`.`attribute`, \'==\', `mlpvo`.`product_id` SEPARATOR \'||\')',
+                'channel_options' => "GROUP_CONCAT(`mlpvo`.`attribute`, '==', `mlpvo`.`channel_option` SEPARATOR '||')",
+                'attributes' => "GROUP_CONCAT(`mlpvo`.`attribute`, '==', `mlpvo`.`option` SEPARATOR '||')",
+                'products_ids' => "GROUP_CONCAT(`mlpvo`.`attribute`, '==', `mlpvo`.`product_id` SEPARATOR '||')",
             ]
         );
 
@@ -155,6 +138,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'status',
                 'attributes',
                 'products_ids',
+                'channel_options',
             ]
         );
 
@@ -263,7 +247,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $attributes = $this->parseGroupedData($row->getData('attributes'));
         $productsIds = $this->parseGroupedData($row->getData('products_ids'));
-        $uniqueProductsIds = count(array_unique($productsIds)) > 1;
+        $channelOptions = $this->parseGroupedData($row->getData('channel_options'));
+        $uniqueProductsIds = \count(array_unique($productsIds)) > 1;
 
         $html = '<div class="m2ePro-variation-attributes" style="margin-left: 5px;">';
         if (!$uniqueProductsIds) {
@@ -277,6 +262,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         foreach ($attributes as $attribute => $option) {
             $optionHtml = '<b>' . $this->dataHelper->escapeHtml($attribute) .
                 '</b>:&nbsp;' . $this->dataHelper->escapeHtml($option);
+
+            if (isset($channelOptions[$attribute])) {
+                $optionHtml .= ' (' . __('replaced to %channel_option', ['channel_option' => $channelOptions[$attribute]]) . ')';
+            }
 
             if ($uniqueProductsIds) {
                 $data['id'] = $productsIds[$attribute];
@@ -552,7 +541,7 @@ JS
 
         $this->js->addRequireJs(
             [
-            'vpmvg' => 'M2ePro/Ebay/Listing/VariationProductManageVariationsGrid',
+                'vpmvg' => 'M2ePro/Ebay/Listing/VariationProductManageVariationsGrid',
             ],
             <<<JS
         M2ePro.url.add({$urls});
@@ -589,7 +578,7 @@ JS
                        'mlpvo.listing_product_variation_id = mlpv.id',
                        ['attribute']
                    )
-                   ->where('listing_product_id = ?', (int)$this->getListingProductId());
+                   ->where('listing_product_id = ?', $this->getListingProductId());
 
             $attributes = $this->resourceConnection->getConnection()->fetchCol($select);
 
@@ -601,6 +590,10 @@ JS
 
     private function parseGroupedData($data)
     {
+        if (empty($data)) {
+            return [];
+        }
+
         $result = [];
 
         $variationData = explode('||', $data);

@@ -18,6 +18,7 @@ class Item
     public string $returnReason;
     public \DateTime $returnRequestDate;
     public string $returnRequestStatus;
+    public string $returnCarrier;
 
     public function __construct(
         string $itemId,
@@ -29,7 +30,8 @@ class Item
         string $trackingId,
         string $returnReason,
         \DateTime $returnRequestDate,
-        string $returnRequestStatus
+        string $returnRequestStatus,
+        string $returnCarrier
     ) {
         $this->itemId = $itemId;
         $this->sku = $sku;
@@ -41,5 +43,6 @@ class Item
         $this->returnReason = $returnReason;
         $this->returnRequestDate = $returnRequestDate;
         $this->returnRequestStatus = $returnRequestStatus;
+        $this->returnCarrier = $returnCarrier;
     }
 }

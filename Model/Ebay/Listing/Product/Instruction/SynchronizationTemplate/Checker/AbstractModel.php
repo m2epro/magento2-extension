@@ -26,7 +26,7 @@ abstract class AbstractModel extends CheckerAbstractModel
                 $this->getReviseShippingInstructionTypes(),
                 $this->getReviseReturnInstructionTypes(),
                 $this->getReviseOtherInstructionTypes(),
-                $this->getBundleOptionsMappingInstructionTypes(),
+                $this->getOptionsMappingInstructionTypes(),
             )
         );
     }
@@ -147,6 +147,7 @@ abstract class AbstractModel extends CheckerAbstractModel
     protected function getReviseImagesInstructionTypes(): array
     {
         return [
+            \Ess\M2ePro\Model\Ebay\Listing\Product\Variation\SaveOptionMap::INSTRUCTION_TYPE,
             \Ess\M2ePro\Model\Ebay\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
             \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract::
             INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
@@ -169,6 +170,7 @@ abstract class AbstractModel extends CheckerAbstractModel
     protected function getReviseVariationImagesInstructionTypes(): array
     {
         return [
+            \Ess\M2ePro\Model\Ebay\Listing\Product\Variation\SaveOptionMap::INSTRUCTION_TYPE,
             \Ess\M2ePro\Model\Ebay\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
             \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract::
             INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
@@ -303,10 +305,11 @@ abstract class AbstractModel extends CheckerAbstractModel
         ];
     }
 
-    protected function getBundleOptionsMappingInstructionTypes(): array
+    protected function getOptionsMappingInstructionTypes(): array
     {
         return [
             \Ess\M2ePro\Model\Ebay\Bundle\Options\Mapping\Instructions::INSTRUCTION_TYPE,
+            \Ess\M2ePro\Model\Ebay\Listing\Product\Variation\SaveOptionMap::INSTRUCTION_TYPE,
         ];
     }
 

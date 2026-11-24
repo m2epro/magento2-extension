@@ -11,6 +11,7 @@ namespace Ess\M2ePro\Model\Ebay\Connector\Item;
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 use Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator;
 use Ess\M2ePro\Model\Ebay\Listing\Product\Variation as EbayVariation;
+use Ess\M2ePro\Model\Ebay\Listing\Product\Variation\VariationOptionModifier;
 use Ess\M2ePro\Model\Exception\Logic;
 
 /**
@@ -107,7 +108,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
         $this->addTags();
 
-        if ($this->isTemporaryErrorAppeared($this->getResponse()->getMessages()->getEntities())) {
+        $responseMessages = $this->getResponse()->getMessages()->getEntities();
+        if ($this->isTemporaryErrorAppeared($responseMessages)) {
             $this->getResponseObject()->throwRepeatActionInstructions();
         }
     }
@@ -264,8 +266,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
     /**
      * @param Message[] $messages
-     * @return Message|bool
      *
+     * @return Message|bool
      * 21919301: (UPC/EAN/ISBN) is missing a value. Enter a value and try again.
      */
     protected function isProductIdentifierNeeded(array $messages)

@@ -8,8 +8,8 @@
 
 namespace Ess\M2ePro\Model\Order;
 
-use Ess\M2ePro\Model\Ebay\Order\Item as EbayItem;
 use Ess\M2ePro\Model\Amazon\Order\Item as AmazonItem;
+use Ess\M2ePro\Model\Ebay\Order\Item as EbayItem;
 use Ess\M2ePro\Model\Walmart\Order\Item as WalmartItem;
 
 /**
@@ -408,7 +408,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
                 \Ess\M2ePro\Model\Ebay\Order\Item\OptionsFinder\MagentoOption\Modifier::class
             );
 
-            $ebayOptionsModifier->modify($rawSuite);
+            $ebayOptionsModifier->modify($rawSuite, $this->getChildObject()->getChannelItem());
         }
 
         return $rawSuite->getOptions();

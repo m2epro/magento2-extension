@@ -6,6 +6,7 @@ namespace Ess\M2ePro\Model\Amazon\Order;
 
 class BillingAddress extends \Ess\M2ePro\Model\Order\ShippingAddress
 {
+    public const DATA_KEY_NAME = 'name';
     public const DATA_KEY_COUNTRY_CODE = 'country_code';
     public const DATA_KEY_STATE = 'country_state';
     public const DATA_KEY_CITY = 'city';
@@ -35,6 +36,7 @@ class BillingAddress extends \Ess\M2ePro\Model\Order\ShippingAddress
     public function getRawData(): array
     {
         return [
+            'name' => $this->getName(),
             'country_id' => $this->getCountryId(),
             'region' => $this->getState(),
             'city' => $this->getCity(),
@@ -69,5 +71,15 @@ class BillingAddress extends \Ess\M2ePro\Model\Order\ShippingAddress
         }
 
         return $postalCode;
+    }
+
+    public function getName(): string
+    {
+        $name = $this->getData(self::DATA_KEY_NAME);
+        if (empty($name)) {
+            return '';
+        }
+
+        return (string)$name;
     }
 }

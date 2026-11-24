@@ -822,81 +822,87 @@ class Installer
                                              ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($listingProductVariationTable);
 
-        $listingProductVariationOptionTable = $this->getConnection()->newTable(
-            $this->getFullTableName('listing_product_variation_option')
-        )
-                                                   ->addColumn(
-                                                       'id',
-                                                       Table::TYPE_INTEGER,
-                                                       null,
-                                                       [
-                                                           'unsigned' => true,
-                                                           'primary' => true,
-                                                           'nullable' => false,
-                                                           'auto_increment' => true,
-                                                       ]
-                                                   )
-                                                   ->addColumn(
-                                                       'listing_product_variation_id',
-                                                       Table::TYPE_INTEGER,
-                                                       null,
-                                                       ['unsigned' => true, 'nullable' => false]
-                                                   )
-                                                   ->addColumn(
-                                                       'product_id',
-                                                       Table::TYPE_INTEGER,
-                                                       null,
-                                                       ['unsigned' => true, 'default' => null]
-                                                   )
-                                                   ->addColumn(
-                                                       'product_type',
-                                                       Table::TYPE_TEXT,
-                                                       255,
-                                                       ['nullable' => false]
-                                                   )
-                                                   ->addColumn(
-                                                       'attribute',
-                                                       Table::TYPE_TEXT,
-                                                       255,
-                                                       ['nullable' => false]
-                                                   )
-                                                   ->addColumn(
-                                                       'option',
-                                                       Table::TYPE_TEXT,
-                                                       255,
-                                                       ['nullable' => false]
-                                                   )
-                                                   ->addColumn(
-                                                       'component_mode',
-                                                       Table::TYPE_TEXT,
-                                                       10,
-                                                       ['default' => null]
-                                                   )
-                                                   ->addColumn(
-                                                       'update_date',
-                                                       Table::TYPE_DATETIME,
-                                                       null,
-                                                       ['default' => null]
-                                                   )
-                                                   ->addColumn(
-                                                       'create_date',
-                                                       Table::TYPE_DATETIME,
-                                                       null,
-                                                       ['default' => null]
-                                                   )
-                                                   ->addIndex('attribute', 'attribute')
-                                                   ->addIndex('component_mode', 'component_mode')
-                                                   ->addIndex(
-                                                       'listing_product_variation_id',
-                                                       'listing_product_variation_id'
-                                                   )
-                                                   ->addIndex('option', 'option')
-                                                   ->addIndex('product_id', 'product_id')
-                                                   ->addIndex('product_type', 'product_type')
-                                                   ->setOption('type', 'INNODB')
-                                                   ->setOption('charset', 'utf8')
-                                                   ->setOption('collate', 'utf8_general_ci')
-                                                   ->setOption('row_format', 'dynamic');
+        $listingProductVariationOptionTable = $this
+            ->getConnection()
+            ->newTable($this->getFullTableName('listing_product_variation_option'))
+            ->addColumn(
+                'id',
+                Table::TYPE_INTEGER,
+                null,
+                [
+                    'unsigned' => true,
+                    'primary' => true,
+                    'nullable' => false,
+                    'auto_increment' => true,
+                ]
+            )
+            ->addColumn(
+                'listing_product_variation_id',
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'product_id',
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
+                'product_type',
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'attribute',
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'option',
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                \Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\Option::COLUMN_CHANNEL_OPTION,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'component_mode',
+                Table::TYPE_TEXT,
+                10,
+                ['default' => null]
+            )
+            ->addColumn(
+                'update_date',
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'create_date',
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addIndex('attribute', 'attribute')
+            ->addIndex('component_mode', 'component_mode')
+            ->addIndex(
+                'listing_product_variation_id',
+                'listing_product_variation_id'
+            )
+            ->addIndex('option', 'option')
+            ->addIndex('product_id', 'product_id')
+            ->addIndex('product_type', 'product_type')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci')
+            ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($listingProductVariationOptionTable);
 
         #region listing_wizard

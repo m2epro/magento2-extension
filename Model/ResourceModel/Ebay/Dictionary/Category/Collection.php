@@ -1,15 +1,12 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Dictionary\Category;
 
 /**
- * Class \Ess\M2ePro\Model\ResourceModel\Ebay\Dictionary\Category\Collection
+ * @method \Ess\M2ePro\Model\Ebay\Dictionary\Category getFirstItem()
+ * @method \Ess\M2ePro\Model\Ebay\Dictionary\Category[] getItems()
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {

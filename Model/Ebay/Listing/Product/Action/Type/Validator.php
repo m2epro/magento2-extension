@@ -334,7 +334,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
             /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
             foreach ($variation->getOptions(true) as $option) {
                 if (!$ebayVariation->isDelete()) {
-                    $uniqueAttributesValues[$option->getAttribute()][$option->getOption()] = true;
+                    $uniqueAttributesValues[$option->getAttribute()][$option->getChannelOption()] = true;
                 }
 
                 // Max 5 pair attribute-option:
