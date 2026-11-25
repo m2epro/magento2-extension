@@ -6,8 +6,8 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Orders\Get\BillingAddress;
 
 class ResponseItem
 {
-    public string $name;
     public string $amazonOrderId;
+    public string $name;
     public string $country;
     public string $city;
     public string $state;
@@ -19,16 +19,16 @@ class ResponseItem
      * @param string[] $addressLines
      */
     public function __construct(
-        string $name,
         string $amazonOrderId,
+        string $name,
         string $country,
         string $city,
         string $state,
         string $postalCode,
         array $addressLines
     ) {
-        $this->name = $name;
         $this->amazonOrderId = $amazonOrderId;
+        $this->name = $name;
         $this->country = $country;
         $this->city = $city;
         $this->state = $state;
